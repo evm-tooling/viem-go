@@ -219,7 +219,7 @@ var _ = Describe("Bytes Utils", func() {
 				{"0x01", []byte{1}},
 				{"0xff", []byte{255}},
 				{"0xdeadbeef", []byte{0xde, 0xad, 0xbe, 0xef}},
-				{"deadbeef", []byte{0xde, 0xad, 0xbe, 0xef}}, // without prefix
+				{"deadbeef", []byte{0xde, 0xad, 0xbe, 0xef}},   // without prefix
 				{"0xDEADBEEF", []byte{0xde, 0xad, 0xbe, 0xef}}, // uppercase
 			}
 
@@ -241,9 +241,13 @@ var _ = Describe("Bytes Utils", func() {
 		It("should return error for invalid hex", func() {
 			_, err := utils.HexToBytes("0xGG")
 			Expect(err).To(HaveOccurred())
+		})
 
-			_, err = utils.HexToBytes("0x123") // odd length
-			Expect(err).To(HaveOccurred())
+		It("should handle odd-length hex by padding", func() {
+			// "0x123" (odd length) should be padded to "0x0123"
+			result, err := utils.HexToBytes("0x123")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result).To(Equal([]byte{0x01, 0x23}))
 		})
 	})
 

@@ -2,12 +2,14 @@ package utils
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"math/big"
 )
 
 // ByteConverter provides a fluent API for byte conversions.
 type ByteConverter struct {
 	data []byte
+	err  error
 }
 
 // FromBytes creates a new ByteConverter from a byte slice.
@@ -125,4 +127,12 @@ func BoolToBytes(v bool) []byte {
 		return []byte{1}
 	}
 	return []byte{0}
+}
+
+func BytesToHex(b []byte) string {
+	return "0x" + hex.EncodeToString(b)
+}
+
+func BytesToHexUnprefixed(b []byte) string {
+	return hex.EncodeToString(b)
 }
