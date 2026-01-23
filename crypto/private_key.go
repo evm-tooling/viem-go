@@ -100,6 +100,37 @@ func NewPrivKey() *PrivKey {
 	return (*PrivKey)(privKey)
 }
 
+// PrivKeyFromBytes creates a PrivKey from a 32-byte slice.
+// Useful for deterministic testing with known test vectors.
+func PrivKeyFromBytes(b []byte) (*PrivKey, error) {
+	if len(b) != SizeHintPrivKey {
+		return nil, fmt.Errorf("expected %d bytes, got %d", SizeHintPrivKey, len(b))
+	}
+	privKey, err := crypto.ToECDSA(b)
+	if err != nil {
+		return nil, err
+	}
+	return (*PrivKey)(privKey), nil
+}
+
+// PrivKeyFromHex creates a PrivKey from a hex string (with or without 0x prefix).
+// Useful for deterministic testing with known test vectors.
+func PrivKeyFromHex(hexStr string) (*PrivKey, error) {
+	privKey, err := crypto.HexToECDSA(strip0x(hexStr))
+	if err != nil {
+		return nil, err
+	}
+	return (*PrivKey)(privKey), nil
+}
+
+// strip0x removes the 0x prefix from a hex string if present.
+func strip0x(s string) string {
+	if len(s) >= 2 && s[0:2] == "0x" {
+		return s[2:]
+	}
+	return s
+}
+
 // Sign a Hash and return the resulting Signature, or error.
 func (privKey PrivKey) Sign(hash *Hash) (Signature, error) {
 	rsv, err := crypto.Sign(hash[:], (*ecdsa.PrivateKey)(&privKey))
