@@ -2,123 +2,9 @@ package address
 
 import (
 	"errors"
-	"fmt"
 	"math/big"
-	"regexp"
 	"strings"
-
-	"golang.org/x/crypto/sha3"
 )
-
-var (
-	// addressRegex matches a valid Ethereum address format
-	addressRegex = regexp.MustCompile(`^0x[a-fA-F0-9]{40}$`)
-
-	// ErrInvalidAddress is returned when an address is not valid
-	ErrInvalidAddress = errors.New("invalid address")
-)
-
-// Address represents an Ethereum address as a string.
-type Address = string
-
-// IsAddressOptions configures address validation behavior.
-type IsAddressOptions struct {
-	// Strict enables checksum validation. Default is true.
-	Strict bool
-}
-
-// IsAddress checks if a string is a valid Ethereum address.
-// By default, it validates the checksum if the address contains mixed case.
-func IsAddress(address string, opts ...IsAddressOptions) bool {
-	strict := true
-	if len(opts) > 0 {
-		strict = opts[0].Strict
-	}
-
-	// Check basic format
-	if !addressRegex.MatchString(address) {
-		return false
-	}
-
-	// If all lowercase, it's valid (no checksum to verify)
-	if strings.ToLower(address) == address {
-		return true
-	}
-
-	// If strict mode and contains uppercase, verify checksum
-	if strict {
-		checksummed := ChecksumAddress(address)
-		return checksummed == address
-	}
-
-	return true
-}
-
-// ChecksumAddress converts an address to EIP-55 checksum format.
-// Optionally supports EIP-1191 chain-specific checksums (not recommended for general use).
-func ChecksumAddress(address string, chainId ...int64) string {
-	// Get lowercase address without 0x
-	addr := strings.ToLower(strings.TrimPrefix(address, "0x"))
-	addr = strings.TrimPrefix(addr, "0X")
-
-	// Prepare the string to hash
-	var hashInput string
-	if len(chainId) > 0 && chainId[0] > 0 {
-		// EIP-1191: include chain ID
-		hashInput = fmt.Sprintf("%d0x%s", chainId[0], addr)
-	} else {
-		hashInput = addr
-	}
-
-	// Keccak256 hash
-	hash := keccak256([]byte(hashInput))
-
-	// Apply checksum
-	result := make([]byte, 40)
-	for i := 0; i < 40; i++ {
-		c := addr[i]
-		hashByte := hash[i/2]
-
-		var nibble byte
-		if i%2 == 0 {
-			nibble = hashByte >> 4
-		} else {
-			nibble = hashByte & 0x0f
-		}
-
-		if nibble >= 8 && c >= 'a' && c <= 'f' {
-			result[i] = c - 32 // Convert to uppercase
-		} else {
-			result[i] = c
-		}
-	}
-
-	return "0x" + string(result)
-}
-
-// GetAddress validates an address and returns it in checksummed format.
-// Returns an error if the address is invalid.
-func GetAddress(address string, chainId ...int64) (string, error) {
-	if !IsAddress(address, IsAddressOptions{Strict: false}) {
-		return "", fmt.Errorf("%w: %s", ErrInvalidAddress, address)
-	}
-
-	if len(chainId) > 0 {
-		return ChecksumAddress(address, chainId[0]), nil
-	}
-	return ChecksumAddress(address), nil
-}
-
-// IsAddressEqual compares two addresses for equality (case-insensitive).
-func IsAddressEqual(a, b string) (bool, error) {
-	if !IsAddress(a, IsAddressOptions{Strict: false}) {
-		return false, fmt.Errorf("%w: %s", ErrInvalidAddress, a)
-	}
-	if !IsAddress(b, IsAddressOptions{Strict: false}) {
-		return false, fmt.Errorf("%w: %s", ErrInvalidAddress, b)
-	}
-	return strings.EqualFold(a, b), nil
-}
 
 // GetCreateAddressOptions configures CREATE address computation.
 type GetCreateAddressOptions struct {
@@ -135,6 +21,22 @@ type GetCreate2AddressOptions struct {
 }
 
 // GetContractAddress computes a contract address using either CREATE or CREATE2.
+//
+// Example:
+//
+//	// CREATE
+//	addr, _ := GetContractAddress("CREATE", GetCreateAddressOptions{
+//	  From:  "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+//	  Nonce: 0,
+//	})
+//	// "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"
+//
+//	// CREATE2
+//	addr, _ := GetContractAddress("CREATE2", GetCreate2AddressOptions{
+//	  From:     "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+//	  Bytecode: bytecode,
+//	  Salt:     salt,
+//	})
 func GetContractAddress(opcode string, opts any) (string, error) {
 	switch opcode {
 	case "CREATE2":
@@ -154,6 +56,14 @@ func GetContractAddress(opcode string, opts any) (string, error) {
 
 // GetCreateAddress computes the address of a contract deployed using CREATE opcode.
 // address = keccak256(rlp([sender, nonce]))[12:]
+//
+// Example:
+//
+//	addr, _ := GetCreateAddress(GetCreateAddressOptions{
+//	  From:  "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+//	  Nonce: 0,
+//	})
+//	// "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"
 func GetCreateAddress(opts GetCreateAddressOptions) (string, error) {
 	from, err := GetAddress(opts.From)
 	if err != nil {
@@ -175,6 +85,14 @@ func GetCreateAddress(opts GetCreateAddressOptions) (string, error) {
 
 // GetCreate2Address computes the address of a contract deployed using CREATE2 opcode.
 // address = keccak256(0xff ++ sender ++ salt ++ keccak256(bytecode))[12:]
+//
+// Example:
+//
+//	addr, _ := GetCreate2Address(GetCreate2AddressOptions{
+//	  From:     "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+//	  Bytecode: bytecode,
+//	  Salt:     salt,
+//	})
 func GetCreate2Address(opts GetCreate2AddressOptions) (string, error) {
 	from, err := GetAddress(opts.From)
 	if err != nil {
@@ -211,12 +129,6 @@ func GetCreate2Address(opts GetCreate2AddressOptions) (string, error) {
 }
 
 // Helper functions
-
-func keccak256(data []byte) []byte {
-	h := sha3.NewLegacyKeccak256()
-	h.Write(data)
-	return h.Sum(nil)
-}
 
 func hexToBytes(s string) []byte {
 	s = strings.TrimPrefix(s, "0x")

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/ChefBingbong/viem-go/utils/address"
+	"golang.org/x/crypto/sha3"
 )
 
 func TestIsAddress(t *testing.T) {
@@ -14,20 +15,20 @@ func TestIsAddress(t *testing.T) {
 		expected bool
 	}{
 		// Valid addresses
-		{"lowercase valid", "0xa0cf798816d4b9b9866b5330eea46a18382f251e", true, true},
-		{"checksummed valid", "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e", true, true},
-		{"all caps valid", "0xA0CF798816D4B9B9866B5330EEA46A18382F251E", false, true},
+		{"lowercase valid", "0xa5cc3c03994db5b0d9a5eedd10cabab0813678ac", true, true},
+		{"checksummed valid", "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC", true, true},
+		{"all lowercase valid strict", "0xa0cf798816d4b9b9866b5330eea46a18382f251e", true, true},
 
 		// Invalid addresses
-		{"wrong length", "0xa0cf798816d4b9b9866b5330eea46a18382f251", true, false},
-		{"no prefix", "a0cf798816d4b9b9866b5330eea46a18382f251e", true, false},
-		{"invalid chars", "0xa0cf798816d4b9b9866b5330eea46a18382f251z", true, false},
+		{"wrong length", "0xa5cc3c03994db5b0d9a5eedd10cabab0813678a", true, false},
+		{"no prefix", "a5cc3c03994db5b0d9a5eedd10cabab0813678ac", true, false},
+		{"invalid chars", "0xa5cc3c03994db5b0d9a5eedd10cabab0813678zz", true, false},
 		{"empty", "", true, false},
 		{"just prefix", "0x", true, false},
 
 		// Checksum validation
-		{"invalid checksum strict", "0xa0Cf798816D4b9b9866b5330EEa46a18382f251E", true, false},
-		{"invalid checksum non-strict", "0xa0Cf798816D4b9b9866b5330EEa46a18382f251E", false, true},
+		{"invalid checksum strict", "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678Ac", true, false},
+		{"invalid checksum non-strict", "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678Ac", false, true},
 	}
 
 	for _, tt := range tests {
@@ -41,35 +42,56 @@ func TestIsAddress(t *testing.T) {
 }
 
 func TestChecksumAddress(t *testing.T) {
+	// Test cases from viem's getAddress.test.ts
 	tests := []struct {
 		name     string
 		input    string
 		expected string
 	}{
 		{
-			"address 1",
+			"viem test 1",
 			"0xa0cf798816d4b9b9866b5330eea46a18382f251e",
 			"0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
 		},
 		{
-			"address 2",
+			"viem test 2",
 			"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
 			"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
 		},
 		{
-			"address 3",
+			"viem test 3",
 			"0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
 			"0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
 		},
 		{
-			"address 4",
+			"viem test 4",
 			"0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
 			"0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+		},
+		{
+			"viem test 5",
+			"0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+			"0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+		},
+		{
+			"viem test 6",
+			"0x15d34aaf54267db7d7c367839aaf71a00a2c6a65",
+			"0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+		},
+		{
+			"viem test 7",
+			"0xa5cc3c03994db5b0d9a5eEdD10Cabab0813678ac",
+			"0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC",
 		},
 		{
 			"all zeros",
 			"0x0000000000000000000000000000000000000000",
 			"0x0000000000000000000000000000000000000000",
+		},
+		{
+			"vitalik",
+			"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+			"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
 		},
 	}
 
@@ -85,22 +107,22 @@ func TestChecksumAddress(t *testing.T) {
 
 func TestGetAddress(t *testing.T) {
 	t.Run("valid lowercase", func(t *testing.T) {
-		result, err := address.GetAddress("0xa0cf798816d4b9b9866b5330eea46a18382f251e")
+		result, err := address.GetAddress("0xa5cc3c03994db5b0d9a5eEdD10Cabab0813678ac")
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
 		}
-		expected := "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"
+		expected := "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
 		if result != expected {
 			t.Errorf("got %q, want %q", result, expected)
 		}
 	})
 
 	t.Run("valid checksummed", func(t *testing.T) {
-		result, err := address.GetAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+		result, err := address.GetAddress("0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC")
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
 		}
-		expected := "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+		expected := "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
 		if result != expected {
 			t.Errorf("got %q, want %q", result, expected)
 		}
@@ -125,7 +147,7 @@ func TestIsAddressEqual(t *testing.T) {
 	t.Run("same address different case", func(t *testing.T) {
 		result, err := address.IsAddressEqual(
 			"0xa5cc3c03994db5b0d9a5eedd10cabab0813678ac",
-			"0xa5cC3c03994DB5b0d9A5EEdD10CabaB0813678AC",
+			"0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC",
 		)
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
@@ -164,6 +186,7 @@ func TestIsAddressEqual(t *testing.T) {
 }
 
 func TestGetCreateAddress(t *testing.T) {
+	// Test cases from viem's getContractAddress.test.ts
 	tests := []struct {
 		name     string
 		from     string
@@ -183,7 +206,7 @@ func TestGetCreateAddress(t *testing.T) {
 			"0x30b3F7E5B61d6343Af9B4f98Ed92c003d8fc600F",
 		},
 		{
-			"high nonce",
+			"nonce 69420",
 			"0xc961145a54C96E3aE9bAA048c4F4D6b04C13916b",
 			69420,
 			"0xDf2e056f7062790dF95A472f691670717Ae7b1B6",
@@ -207,17 +230,81 @@ func TestGetCreateAddress(t *testing.T) {
 }
 
 func TestGetCreate2Address(t *testing.T) {
-	// Test using bytecode directly
 	t.Run("with bytecode", func(t *testing.T) {
-		// Bytecode from viem test: 0x6394198df16000526103ff60206004601c335afa6040516060f3
-		bytecode, _ := hexToBytes("0x6394198df16000526103ff60206004601c335afa6040516060f3")
-		// Salt from "hello world" as bytes
+		// Test case from viem's getContractAddress.test.ts
+		bytecode := hexToBytes("0x6394198df16000526103ff60206004601c335afa6040516060f3")
 		salt := []byte("hello world")
 
 		result, err := address.GetCreate2Address(address.GetCreate2AddressOptions{
 			From:     "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
-			Salt:     salt,
 			Bytecode: bytecode,
+			Salt:     salt,
+		})
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		expected := "0x59fbB593ABe27Cb193b6ee5C5DC7bbde312290aB"
+		if result != expected {
+			t.Errorf("GetCreate2Address() = %q, want %q", result, expected)
+		}
+	})
+
+	t.Run("with bytecodeHash", func(t *testing.T) {
+		// Same test as "with bytecode" but using pre-computed hash
+		bytecode := hexToBytes("0x6394198df16000526103ff60206004601c335afa6040516060f3")
+		// Pre-compute keccak256 of bytecode
+		bytecodeHash := keccak256(bytecode)
+		salt := []byte("hello world")
+
+		result, err := address.GetCreate2Address(address.GetCreate2AddressOptions{
+			From:         "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+			BytecodeHash: bytecodeHash,
+			Salt:         salt,
+		})
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		// Should match the "with bytecode" test result
+		expected := "0x59fbB593ABe27Cb193b6ee5C5DC7bbde312290aB"
+		if result != expected {
+			t.Errorf("GetCreate2Address() = %q, want %q", result, expected)
+		}
+	})
+
+	t.Run("missing bytecode", func(t *testing.T) {
+		_, err := address.GetCreate2Address(address.GetCreate2AddressOptions{
+			From: "0x0000000000000000000000000000000000000000",
+			Salt: make([]byte, 32),
+		})
+		if err == nil {
+			t.Error("expected error when bytecode and bytecodeHash are missing")
+		}
+	})
+}
+
+func TestGetContractAddress(t *testing.T) {
+	t.Run("CREATE opcode", func(t *testing.T) {
+		result, err := address.GetContractAddress("CREATE", address.GetCreateAddressOptions{
+			From:  "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+			Nonce: 0,
+		})
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		expected := "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"
+		if result != expected {
+			t.Errorf("got %q, want %q", result, expected)
+		}
+	})
+
+	t.Run("CREATE2 opcode", func(t *testing.T) {
+		bytecode := hexToBytes("0x6394198df16000526103ff60206004601c335afa6040516060f3")
+		salt := []byte("hello world")
+
+		result, err := address.GetContractAddress("CREATE2", address.GetCreate2AddressOptions{
+			From:     "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
+			Bytecode: bytecode,
+			Salt:     salt,
 		})
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
@@ -227,15 +314,34 @@ func TestGetCreate2Address(t *testing.T) {
 			t.Errorf("got %q, want %q", result, expected)
 		}
 	})
+
+	t.Run("invalid opcode options", func(t *testing.T) {
+		_, err := address.GetContractAddress("CREATE", "invalid")
+		if err == nil {
+			t.Error("expected error for invalid options")
+		}
+	})
 }
 
-func hexToBytes(s string) ([]byte, error) {
-	s = s[2:] // strip 0x
+// Helper for tests
+func keccak256(data []byte) []byte {
+	h := sha3.NewLegacyKeccak256()
+	h.Write(data)
+	return h.Sum(nil)
+}
+
+func hexToBytes(s string) []byte {
+	if len(s) >= 2 && s[0:2] == "0x" {
+		s = s[2:]
+	}
+	if len(s)%2 != 0 {
+		s = "0" + s
+	}
 	b := make([]byte, len(s)/2)
 	for i := 0; i < len(b); i++ {
 		b[i] = hexCharToByte(s[i*2])<<4 | hexCharToByte(s[i*2+1])
 	}
-	return b, nil
+	return b
 }
 
 func hexCharToByte(c byte) byte {
@@ -251,94 +357,10 @@ func hexCharToByte(c byte) byte {
 	}
 }
 
-func TestGetCreate2AddressOld(t *testing.T) {
-	tests := []struct {
-		name         string
-		from         string
-		salt         []byte
-		bytecodeHash []byte
-		expected     string
-	}{
-		{
-			"basic with zero hash",
-			"0x0000000000000000000000000000000000000000",
-			make([]byte, 32), // all zeros
-			make([]byte, 32), // all zeros bytecodeHash
-			"",               // We'll verify it doesn't error
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result, err := address.GetCreate2Address(address.GetCreate2AddressOptions{
-				From:         tt.from,
-				Salt:         tt.salt,
-				BytecodeHash: tt.bytecodeHash,
-			})
-			if err != nil {
-				t.Errorf("unexpected error: %v", err)
-			}
-			if result != tt.expected {
-				t.Errorf("GetCreate2Address() = %q, want %q", result, tt.expected)
-			}
-		})
-	}
-}
-
-func TestGetCreate2AddressWithBytecode(t *testing.T) {
-	t.Run("missing bytecode", func(t *testing.T) {
-		_, err := address.GetCreate2Address(address.GetCreate2AddressOptions{
-			From: "0x0000000000000000000000000000000000000000",
-			Salt: make([]byte, 32),
-		})
-		if err == nil {
-			t.Error("expected error when bytecode and bytecodeHash are missing")
-		}
-	})
-}
-
-func TestGetContractAddress(t *testing.T) {
-	t.Run("CREATE opcode", func(t *testing.T) {
-		result, err := address.GetContractAddress("CREATE", address.GetCreateAddressOptions{
-			From:  "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-			Nonce: 0,
-		})
-		if err != nil {
-			t.Errorf("unexpected error: %v", err)
-		}
-		expected := "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-		if result != expected {
-			t.Errorf("got %q, want %q", result, expected)
-		}
-	})
-
-	t.Run("CREATE2 opcode", func(t *testing.T) {
-		result, err := address.GetContractAddress("CREATE2", address.GetCreate2AddressOptions{
-			From:         "0x0000000000000000000000000000000000000000",
-			Salt:         make([]byte, 32),
-			BytecodeHash: make([]byte, 32),
-		})
-		if err != nil {
-			t.Errorf("unexpected error: %v", err)
-		}
-		expected := "0x4D1A2e2bB4F88F0250f26Ffff098B0b30B26BF38"
-		if result != expected {
-			t.Errorf("got %q, want %q", result, expected)
-		}
-	})
-
-	t.Run("invalid opcode options", func(t *testing.T) {
-		_, err := address.GetContractAddress("CREATE", "invalid")
-		if err == nil {
-			t.Error("expected error for invalid options")
-		}
-	})
-}
-
 // Benchmark tests
 
 func BenchmarkIsAddress(b *testing.B) {
-	addr := "0xa5cC3c03994DB5b0d9A5EEdD10CabaB0813678AC"
+	addr := "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
 	for i := 0; i < b.N; i++ {
 		address.IsAddress(addr, address.IsAddressOptions{Strict: true})
 	}
@@ -354,7 +376,7 @@ func BenchmarkChecksumAddress(b *testing.B) {
 func BenchmarkGetCreateAddress(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		address.GetCreateAddress(address.GetCreateAddressOptions{
-			From:  "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+			From:  "0x1a1e021a302c237453d3d45c7b82b19ceeb7e2e6",
 			Nonce: 0,
 		})
 	}
