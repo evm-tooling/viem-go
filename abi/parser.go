@@ -87,53 +87,6 @@ func ParseFromString(jsonABI string) (*ABI, error) {
 	return Parse([]byte(jsonABI))
 }
 
-// GetFunction returns the function with the given name, or an error if not found.
-func (a *ABI) GetFunction(name string) (*Function, error) {
-	fn, ok := a.Functions[name]
-	if !ok {
-		return nil, fmt.Errorf("function %q not found in ABI", name)
-	}
-	return &fn, nil
-}
-
-// GetFunctionBySelector returns the function with the given selector.
-func (a *ABI) GetFunctionBySelector(selector [4]byte) (*Function, error) {
-	for _, fn := range a.Functions {
-		if fn.Selector == selector {
-			return &fn, nil
-		}
-	}
-	return nil, fmt.Errorf("function with selector %x not found in ABI", selector)
-}
-
-// GetEvent returns the event with the given name, or an error if not found.
-func (a *ABI) GetEvent(name string) (*Event, error) {
-	ev, ok := a.Events[name]
-	if !ok {
-		return nil, fmt.Errorf("event %q not found in ABI", name)
-	}
-	return &ev, nil
-}
-
-// GetEventByTopic returns the event with the given topic.
-func (a *ABI) GetEventByTopic(topic [32]byte) (*Event, error) {
-	for _, ev := range a.Events {
-		if ev.Topic == topic {
-			return &ev, nil
-		}
-	}
-	return nil, fmt.Errorf("event with topic %x not found in ABI", topic)
-}
-
-// GetError returns the error with the given name, or an error if not found.
-func (a *ABI) GetError(name string) (*Error, error) {
-	e, ok := a.Errors[name]
-	if !ok {
-		return nil, fmt.Errorf("error %q not found in ABI", name)
-	}
-	return &e, nil
-}
-
 // HasFunction returns true if the ABI contains a function with the given name.
 func (a *ABI) HasFunction(name string) bool {
 	_, ok := a.Functions[name]
