@@ -123,15 +123,15 @@ func (c *HTTPClient) BatchRequest(ctx context.Context, bodies []RPCRequest) ([]R
 func (c *HTTPClient) doRequest(ctx context.Context, bodies []RPCRequest) ([]RPCResponse, error) {
 	// Marshal request body
 	var reqBody []byte
-	var err error
+	var bodyErr error
 
 	if len(bodies) == 1 {
-		reqBody, err = json.Marshal(bodies[0])
+		reqBody, bodyErr = json.Marshal(bodies[0])
 	} else {
-		reqBody, err = json.Marshal(bodies)
+		reqBody, bodyErr = json.Marshal(bodies)
 	}
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	if bodyErr != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", bodyErr)
 	}
 
 	// Create HTTP request
@@ -148,8 +148,8 @@ func (c *HTTPClient) doRequest(ctx context.Context, bodies []RPCRequest) ([]RPCR
 
 	// Call onRequest hook
 	if c.onRequest != nil {
-		if err := c.onRequest(req); err != nil {
-			return nil, err
+		if reqErr := c.onRequest(req); reqErr != nil {
+			return nil, reqErr
 		}
 	}
 
@@ -162,8 +162,8 @@ func (c *HTTPClient) doRequest(ctx context.Context, bodies []RPCRequest) ([]RPCR
 
 	// Call onResponse hook
 	if c.onResponse != nil {
-		if err := c.onResponse(resp); err != nil {
-			return nil, err
+		if respErr := c.onResponse(resp); respErr != nil {
+			return nil, respErr
 		}
 	}
 

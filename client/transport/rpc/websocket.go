@@ -114,7 +114,10 @@ func NewWebSocketClient(url string, opts ...WebSocketClientOptions) (*WebSocketC
 
 // connect establishes the WebSocket connection.
 func (c *WebSocketClient) connect() error {
-	conn, _, err := c.dialer.Dial(c.url, nil)
+	conn, resp, err := c.dialer.Dial(c.url, nil)
+	if resp != nil && resp.Body != nil {
+		_ = resp.Body.Close()
+	}
 	if err != nil {
 		return NewWebSocketRequestError(c.url, nil, err)
 	}
@@ -279,7 +282,9 @@ func (c *WebSocketClient) resubscribe() {
 		}
 
 		// Re-send subscription request
-		c.Request(*callback.body, callback.onResponse, callback.onError)
+		if err := c.Request(*callback.body, callback.onResponse, callback.onError); err != nil {
+			fmt.Println("Error resubscrbing request", err)
+		}
 	}
 }
 
