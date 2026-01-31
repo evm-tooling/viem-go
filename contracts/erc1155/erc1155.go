@@ -9,6 +9,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/contract"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // ContractABI is the ABI of the ERC1155 contract.
@@ -20,7 +21,7 @@ type ERC1155 struct {
 }
 
 // New creates a new ERC1155 contract binding.
-func New(address common.Address, c *client.Client) (*ERC1155, error) {
+func New(address common.Address, c *client.PublicClient) (*ERC1155, error) {
 	cont, err := contract.NewContract(address, []byte(ContractABI), c)
 	if err != nil {
 		return nil, err
@@ -29,7 +30,7 @@ func New(address common.Address, c *client.Client) (*ERC1155, error) {
 }
 
 // MustNew creates a new ERC1155 contract binding, panicking on error.
-func MustNew(address common.Address, c *client.Client) *ERC1155 {
+func MustNew(address common.Address, c *client.PublicClient) *ERC1155 {
 	cont, err := New(address, c)
 	if err != nil {
 		panic(err)
@@ -46,6 +47,8 @@ func (e *ERC1155) Address() common.Address {
 func (e *ERC1155) Contract() *contract.Contract {
 	return e.contract
 }
+
+// ---- Read Methods (Public Actions) ----
 
 // URI returns the URI for a token type.
 func (e *ERC1155) URI(ctx context.Context, id *big.Int) (string, error) {
@@ -87,35 +90,41 @@ func (e *ERC1155) IsApprovedForAll(ctx context.Context, account, operator common
 	return e.contract.ReadBool(ctx, "isApprovedForAll", account, operator)
 }
 
-// SetApprovalForAll sets approval for all tokens to an operator.
-func (e *ERC1155) SetApprovalForAll(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "setApprovalForAll", operator, approved)
+// ---- Write Methods (Prepare Transaction for Signing) ----
+
+// PrepareSetApprovalForAll prepares a setApprovalForAll transaction for signing.
+func (e *ERC1155) PrepareSetApprovalForAll(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "setApprovalForAll", operator, approved)
 }
 
-// SetApprovalForAllAndWait sets approval for all and waits for the transaction.
-func (e *ERC1155) SetApprovalForAllAndWait(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "setApprovalForAll", operator, approved)
+// PrepareSafeTransferFrom prepares a safeTransferFrom transaction for signing.
+func (e *ERC1155) PrepareSafeTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, id, amount *big.Int, data []byte) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "safeTransferFrom", from, to, id, amount, data)
 }
 
-// SafeTransferFrom safely transfers a token from one address to another.
-func (e *ERC1155) SafeTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, id, amount *big.Int, data []byte) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "safeTransferFrom", from, to, id, amount, data)
+// PrepareSafeBatchTransferFrom prepares a safeBatchTransferFrom transaction for signing.
+func (e *ERC1155) PrepareSafeBatchTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, ids, amounts []*big.Int, data []byte) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "safeBatchTransferFrom", from, to, ids, amounts, data)
 }
 
-// SafeTransferFromAndWait safely transfers and waits for the transaction.
-func (e *ERC1155) SafeTransferFromAndWait(ctx context.Context, opts contract.WriteOptions, from, to common.Address, id, amount *big.Int, data []byte) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "safeTransferFrom", from, to, id, amount, data)
+// ---- Gas Estimation ----
+
+// EstimateSetApprovalForAll estimates gas for a setApprovalForAll transaction.
+func (e *ERC1155) EstimateSetApprovalForAll(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "setApprovalForAll", operator, approved)
 }
 
-// SafeBatchTransferFrom safely transfers multiple tokens from one address to another.
-func (e *ERC1155) SafeBatchTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, ids, amounts []*big.Int, data []byte) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "safeBatchTransferFrom", from, to, ids, amounts, data)
+// EstimateSafeTransferFrom estimates gas for a safeTransferFrom transaction.
+func (e *ERC1155) EstimateSafeTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, id, amount *big.Int, data []byte) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "safeTransferFrom", from, to, id, amount, data)
 }
 
-// SafeBatchTransferFromAndWait safely batch transfers and waits for the transaction.
-func (e *ERC1155) SafeBatchTransferFromAndWait(ctx context.Context, opts contract.WriteOptions, from, to common.Address, ids, amounts []*big.Int, data []byte) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "safeBatchTransferFrom", from, to, ids, amounts, data)
+// EstimateSafeBatchTransferFrom estimates gas for a safeBatchTransferFrom transaction.
+func (e *ERC1155) EstimateSafeBatchTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, ids, amounts []*big.Int, data []byte) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "safeBatchTransferFrom", from, to, ids, amounts, data)
 }
+
+// ---- Events ----
 
 // TransferSingleEvent represents a TransferSingle event.
 type TransferSingleEvent struct {
@@ -149,7 +158,7 @@ type URIEvent struct {
 }
 
 // ParseTransferSingle parses a TransferSingle event from a log.
-func (e *ERC1155) ParseTransferSingle(log client.Log) (*TransferSingleEvent, error) {
+func (e *ERC1155) ParseTransferSingle(log types.Log) (*TransferSingleEvent, error) {
 	event, err := e.contract.DecodeEvent("TransferSingle", log.Topics, log.Data)
 	if err != nil {
 		return nil, err
@@ -171,7 +180,7 @@ func (e *ERC1155) ParseTransferSingle(log client.Log) (*TransferSingleEvent, err
 }
 
 // ParseTransferBatch parses a TransferBatch event from a log.
-func (e *ERC1155) ParseTransferBatch(log client.Log) (*TransferBatchEvent, error) {
+func (e *ERC1155) ParseTransferBatch(log types.Log) (*TransferBatchEvent, error) {
 	event, err := e.contract.DecodeEvent("TransferBatch", log.Topics, log.Data)
 	if err != nil {
 		return nil, err
@@ -187,7 +196,7 @@ func (e *ERC1155) ParseTransferBatch(log client.Log) (*TransferBatchEvent, error
 }
 
 // ParseApprovalForAll parses an ApprovalForAll event from a log.
-func (e *ERC1155) ParseApprovalForAll(log client.Log) (*ApprovalForAllEvent, error) {
+func (e *ERC1155) ParseApprovalForAll(log types.Log) (*ApprovalForAllEvent, error) {
 	event, err := e.contract.DecodeEvent("ApprovalForAll", log.Topics, log.Data)
 	if err != nil {
 		return nil, err
@@ -201,7 +210,7 @@ func (e *ERC1155) ParseApprovalForAll(log client.Log) (*ApprovalForAllEvent, err
 }
 
 // ParseURI parses a URI event from a log.
-func (e *ERC1155) ParseURI(log client.Log) (*URIEvent, error) {
+func (e *ERC1155) ParseURI(log types.Log) (*URIEvent, error) {
 	event, err := e.contract.DecodeEvent("URI", log.Topics, log.Data)
 	if err != nil {
 		return nil, err

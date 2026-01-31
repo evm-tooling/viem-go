@@ -9,6 +9,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/contract"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // ContractABI is the ABI of the ERC721 contract.
@@ -20,7 +21,7 @@ type ERC721 struct {
 }
 
 // New creates a new ERC721 contract binding.
-func New(address common.Address, c *client.Client) (*ERC721, error) {
+func New(address common.Address, c *client.PublicClient) (*ERC721, error) {
 	cont, err := contract.NewContract(address, []byte(ContractABI), c)
 	if err != nil {
 		return nil, err
@@ -29,7 +30,7 @@ func New(address common.Address, c *client.Client) (*ERC721, error) {
 }
 
 // MustNew creates a new ERC721 contract binding, panicking on error.
-func MustNew(address common.Address, c *client.Client) *ERC721 {
+func MustNew(address common.Address, c *client.PublicClient) *ERC721 {
 	cont, err := New(address, c)
 	if err != nil {
 		panic(err)
@@ -46,6 +47,8 @@ func (e *ERC721) Address() common.Address {
 func (e *ERC721) Contract() *contract.Contract {
 	return e.contract
 }
+
+// ---- Read Methods (Public Actions) ----
 
 // Name returns the token name.
 func (e *ERC721) Name(ctx context.Context) (string, error) {
@@ -82,50 +85,51 @@ func (e *ERC721) IsApprovedForAll(ctx context.Context, owner, operator common.Ad
 	return e.contract.ReadBool(ctx, "isApprovedForAll", owner, operator)
 }
 
-// Approve approves an address to transfer a token.
-func (e *ERC721) Approve(ctx context.Context, opts contract.WriteOptions, to common.Address, tokenId *big.Int) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "approve", to, tokenId)
+// ---- Write Methods (Prepare Transaction for Signing) ----
+
+// PrepareApprove prepares an approve transaction for signing.
+func (e *ERC721) PrepareApprove(ctx context.Context, opts contract.WriteOptions, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "approve", to, tokenId)
 }
 
-// ApproveAndWait approves and waits for the transaction to be mined.
-func (e *ERC721) ApproveAndWait(ctx context.Context, opts contract.WriteOptions, to common.Address, tokenId *big.Int) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "approve", to, tokenId)
+// PrepareSetApprovalForAll prepares a setApprovalForAll transaction for signing.
+func (e *ERC721) PrepareSetApprovalForAll(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "setApprovalForAll", operator, approved)
 }
 
-// SetApprovalForAll sets approval for all tokens to an operator.
-func (e *ERC721) SetApprovalForAll(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "setApprovalForAll", operator, approved)
+// PrepareTransferFrom prepares a transferFrom transaction for signing.
+func (e *ERC721) PrepareTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "transferFrom", from, to, tokenId)
 }
 
-// SetApprovalForAllAndWait sets approval for all and waits for the transaction.
-func (e *ERC721) SetApprovalForAllAndWait(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "setApprovalForAll", operator, approved)
+// PrepareSafeTransferFrom prepares a safeTransferFrom transaction for signing.
+func (e *ERC721) PrepareSafeTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "safeTransferFrom", from, to, tokenId)
 }
 
-// TransferFrom transfers a token from one address to another.
-func (e *ERC721) TransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "transferFrom", from, to, tokenId)
+// PrepareSafeTransferFromWithData prepares a safeTransferFrom transaction with data for signing.
+func (e *ERC721) PrepareSafeTransferFromWithData(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "safeTransferFrom", from, to, tokenId, data)
 }
 
-// TransferFromAndWait transfers a token and waits for the transaction.
-func (e *ERC721) TransferFromAndWait(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "transferFrom", from, to, tokenId)
+// ---- Gas Estimation ----
+
+// EstimateApprove estimates gas for an approve transaction.
+func (e *ERC721) EstimateApprove(ctx context.Context, opts contract.WriteOptions, to common.Address, tokenId *big.Int) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "approve", to, tokenId)
 }
 
-// SafeTransferFrom safely transfers a token from one address to another.
-func (e *ERC721) SafeTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "safeTransferFrom", from, to, tokenId)
+// EstimateSetApprovalForAll estimates gas for a setApprovalForAll transaction.
+func (e *ERC721) EstimateSetApprovalForAll(ctx context.Context, opts contract.WriteOptions, operator common.Address, approved bool) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "setApprovalForAll", operator, approved)
 }
 
-// SafeTransferFromAndWait safely transfers and waits for the transaction.
-func (e *ERC721) SafeTransferFromAndWait(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "safeTransferFrom", from, to, tokenId)
+// EstimateTransferFrom estimates gas for a transferFrom transaction.
+func (e *ERC721) EstimateTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "transferFrom", from, to, tokenId)
 }
 
-// SafeTransferFromWithData safely transfers a token with additional data.
-func (e *ERC721) SafeTransferFromWithData(ctx context.Context, opts contract.WriteOptions, from, to common.Address, tokenId *big.Int, data []byte) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "safeTransferFrom", from, to, tokenId, data)
-}
+// ---- Events ----
 
 // TransferEvent represents a Transfer event.
 type TransferEvent struct {
@@ -149,7 +153,7 @@ type ApprovalForAllEvent struct {
 }
 
 // ParseTransfer parses a Transfer event from a log.
-func (e *ERC721) ParseTransfer(log client.Log) (*TransferEvent, error) {
+func (e *ERC721) ParseTransfer(log types.Log) (*TransferEvent, error) {
 	event, err := e.contract.DecodeEvent("Transfer", log.Topics, log.Data)
 	if err != nil {
 		return nil, err
@@ -163,7 +167,7 @@ func (e *ERC721) ParseTransfer(log client.Log) (*TransferEvent, error) {
 }
 
 // ParseApproval parses an Approval event from a log.
-func (e *ERC721) ParseApproval(log client.Log) (*ApprovalEvent, error) {
+func (e *ERC721) ParseApproval(log types.Log) (*ApprovalEvent, error) {
 	event, err := e.contract.DecodeEvent("Approval", log.Topics, log.Data)
 	if err != nil {
 		return nil, err
@@ -177,7 +181,7 @@ func (e *ERC721) ParseApproval(log client.Log) (*ApprovalEvent, error) {
 }
 
 // ParseApprovalForAll parses an ApprovalForAll event from a log.
-func (e *ERC721) ParseApprovalForAll(log client.Log) (*ApprovalForAllEvent, error) {
+func (e *ERC721) ParseApprovalForAll(log types.Log) (*ApprovalForAllEvent, error) {
 	event, err := e.contract.DecodeEvent("ApprovalForAll", log.Topics, log.Data)
 	if err != nil {
 		return nil, err

@@ -13,11 +13,11 @@ import (
 type Contract struct {
 	address common.Address
 	abi     *abi.ABI
-	client  *client.Client
+	client  *client.PublicClient
 }
 
 // NewContract creates a new Contract instance.
-func NewContract(address common.Address, abiJSON []byte, c *client.Client) (*Contract, error) {
+func NewContract(address common.Address, abiJSON []byte, c *client.PublicClient) (*Contract, error) {
 	parsedABI, err := abi.Parse(abiJSON)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse ABI: %w", err)
@@ -31,7 +31,7 @@ func NewContract(address common.Address, abiJSON []byte, c *client.Client) (*Con
 }
 
 // NewContractWithABI creates a new Contract instance with a pre-parsed ABI.
-func NewContractWithABI(address common.Address, parsedABI *abi.ABI, c *client.Client) *Contract {
+func NewContractWithABI(address common.Address, parsedABI *abi.ABI, c *client.PublicClient) *Contract {
 	return &Contract{
 		address: address,
 		abi:     parsedABI,
@@ -40,7 +40,7 @@ func NewContractWithABI(address common.Address, parsedABI *abi.ABI, c *client.Cl
 }
 
 // MustNewContract creates a new Contract instance, panicking on error.
-func MustNewContract(address common.Address, abiJSON []byte, c *client.Client) *Contract {
+func MustNewContract(address common.Address, abiJSON []byte, c *client.PublicClient) *Contract {
 	contract, err := NewContract(address, abiJSON, c)
 	if err != nil {
 		panic(err)
@@ -59,7 +59,7 @@ func (c *Contract) ABI() *abi.ABI {
 }
 
 // Client returns the underlying RPC client.
-func (c *Contract) Client() *client.Client {
+func (c *Contract) Client() *client.PublicClient {
 	return c.client
 }
 
@@ -118,7 +118,7 @@ func (c *Contract) Clone(newAddress common.Address) *Contract {
 }
 
 // WithClient creates a copy of the contract with a different client.
-func (c *Contract) WithClient(newClient *client.Client) *Contract {
+func (c *Contract) WithClient(newClient *client.PublicClient) *Contract {
 	return &Contract{
 		address: c.address,
 		abi:     c.abi,

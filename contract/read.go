@@ -8,14 +8,15 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ChefBingbong/viem-go/client"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // ReadOptions contains options for read operations.
 type ReadOptions struct {
 	// From is the address to use as the caller (optional).
 	From *common.Address
-	// Block is the block number to read from (default: latest).
-	Block client.BlockNumber
+	// Block is the block tag to read from (default: latest).
+	Block client.BlockTag
 }
 
 // Read calls a contract method and returns the decoded return values.
@@ -43,7 +44,7 @@ func (c *Contract) ReadWithOptions(ctx context.Context, opts ReadOptions, method
 	}
 
 	// Build call request
-	callReq := client.CallRequest{
+	callReq := types.CallRequest{
 		From: opts.From,
 		To:   c.address,
 		Data: calldata,
@@ -51,7 +52,7 @@ func (c *Contract) ReadWithOptions(ctx context.Context, opts ReadOptions, method
 
 	// Make the call
 	var result []byte
-	if opts.Block != nil {
+	if opts.Block != "" {
 		result, err = c.client.Call(ctx, callReq, opts.Block)
 	} else {
 		result, err = c.client.Call(ctx, callReq)
@@ -246,7 +247,7 @@ func (c *Contract) ReadInto(ctx context.Context, output any, method string, args
 	}
 
 	// Build call request
-	callReq := client.CallRequest{
+	callReq := types.CallRequest{
 		To:   c.address,
 		Data: calldata,
 	}

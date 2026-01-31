@@ -9,6 +9,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/contract"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // ContractABI is the ABI of the ERC20 contract.
@@ -20,7 +21,7 @@ type ERC20 struct {
 }
 
 // New creates a new ERC20 contract binding.
-func New(address common.Address, c *client.Client) (*ERC20, error) {
+func New(address common.Address, c *client.PublicClient) (*ERC20, error) {
 	cont, err := contract.NewContract(address, []byte(ContractABI), c)
 	if err != nil {
 		return nil, err
@@ -29,7 +30,7 @@ func New(address common.Address, c *client.Client) (*ERC20, error) {
 }
 
 // MustNew creates a new ERC20 contract binding, panicking on error.
-func MustNew(address common.Address, c *client.Client) *ERC20 {
+func MustNew(address common.Address, c *client.PublicClient) *ERC20 {
 	cont, err := New(address, c)
 	if err != nil {
 		panic(err)
@@ -46,6 +47,8 @@ func (e *ERC20) Address() common.Address {
 func (e *ERC20) Contract() *contract.Contract {
 	return e.contract
 }
+
+// ---- Read Methods (Public Actions) ----
 
 // Name returns the token name.
 func (e *ERC20) Name(ctx context.Context) (string, error) {
@@ -77,35 +80,42 @@ func (e *ERC20) Allowance(ctx context.Context, owner, spender common.Address) (*
 	return e.contract.ReadBigInt(ctx, "allowance", owner, spender)
 }
 
-// Transfer transfers tokens to a recipient.
-func (e *ERC20) Transfer(ctx context.Context, opts contract.WriteOptions, to common.Address, amount *big.Int) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "transfer", to, amount)
+// ---- Write Methods (Prepare Transaction for Signing) ----
+
+// PrepareTransfer prepares a transfer transaction for signing.
+// Use a WalletClient to sign and send the returned transaction.
+func (e *ERC20) PrepareTransfer(ctx context.Context, opts contract.WriteOptions, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "transfer", to, amount)
 }
 
-// TransferAndWait transfers tokens and waits for the transaction to be mined.
-func (e *ERC20) TransferAndWait(ctx context.Context, opts contract.WriteOptions, to common.Address, amount *big.Int) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "transfer", to, amount)
+// PrepareApprove prepares an approve transaction for signing.
+func (e *ERC20) PrepareApprove(ctx context.Context, opts contract.WriteOptions, spender common.Address, amount *big.Int) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "approve", spender, amount)
 }
 
-// Approve approves a spender to transfer tokens.
-func (e *ERC20) Approve(ctx context.Context, opts contract.WriteOptions, spender common.Address, amount *big.Int) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "approve", spender, amount)
+// PrepareTransferFrom prepares a transferFrom transaction for signing.
+func (e *ERC20) PrepareTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, amount *big.Int) (*types.Transaction, error) {
+	return e.contract.PrepareTransaction(ctx, opts, "transferFrom", from, to, amount)
 }
 
-// ApproveAndWait approves a spender and waits for the transaction to be mined.
-func (e *ERC20) ApproveAndWait(ctx context.Context, opts contract.WriteOptions, spender common.Address, amount *big.Int) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "approve", spender, amount)
+// ---- Gas Estimation ----
+
+// EstimateTransfer estimates gas for a transfer.
+func (e *ERC20) EstimateTransfer(ctx context.Context, opts contract.WriteOptions, to common.Address, amount *big.Int) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "transfer", to, amount)
 }
 
-// TransferFrom transfers tokens from one address to another.
-func (e *ERC20) TransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, amount *big.Int) (common.Hash, error) {
-	return e.contract.Write(ctx, opts, "transferFrom", from, to, amount)
+// EstimateApprove estimates gas for an approve.
+func (e *ERC20) EstimateApprove(ctx context.Context, opts contract.WriteOptions, spender common.Address, amount *big.Int) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "approve", spender, amount)
 }
 
-// TransferFromAndWait transfers tokens from one address to another and waits.
-func (e *ERC20) TransferFromAndWait(ctx context.Context, opts contract.WriteOptions, from, to common.Address, amount *big.Int) (*client.Receipt, error) {
-	return e.contract.WriteAndWait(ctx, opts, "transferFrom", from, to, amount)
+// EstimateTransferFrom estimates gas for a transferFrom.
+func (e *ERC20) EstimateTransferFrom(ctx context.Context, opts contract.WriteOptions, from, to common.Address, amount *big.Int) (uint64, error) {
+	return e.contract.EstimateGas(ctx, opts, "transferFrom", from, to, amount)
 }
+
+// ---- Events ----
 
 // TransferEvent represents a Transfer event.
 type TransferEvent struct {
@@ -122,7 +132,7 @@ type ApprovalEvent struct {
 }
 
 // ParseTransfer parses a Transfer event from a log.
-func (e *ERC20) ParseTransfer(log client.Log) (*TransferEvent, error) {
+func (e *ERC20) ParseTransfer(log types.Log) (*TransferEvent, error) {
 	event, err := e.contract.DecodeEvent("Transfer", log.Topics, log.Data)
 	if err != nil {
 		return nil, err
@@ -136,7 +146,7 @@ func (e *ERC20) ParseTransfer(log client.Log) (*TransferEvent, error) {
 }
 
 // ParseApproval parses an Approval event from a log.
-func (e *ERC20) ParseApproval(log client.Log) (*ApprovalEvent, error) {
+func (e *ERC20) ParseApproval(log types.Log) (*ApprovalEvent, error) {
 	event, err := e.contract.DecodeEvent("Approval", log.Topics, log.Data)
 	if err != nil {
 		return nil, err

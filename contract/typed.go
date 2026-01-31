@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ChefBingbong/viem-go/client"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // ReadMethod is a typed method descriptor for read-only contract calls.
@@ -70,20 +71,10 @@ func ReadTypedWithOptions[TReturn any](c *Contract, ctx context.Context, opts Re
 	return typed, nil
 }
 
-// WriteTyped sends a transaction to a contract method.
-// Returns the transaction hash.
-//
-// Example:
-//
-//	var Transfer = contract.WriteMethod{Name: "transfer"}
-//	txHash, err := contract.WriteTyped(c, ctx, opts, Transfer, to, amount)
-func WriteTyped(c *Contract, ctx context.Context, opts WriteOptions, method WriteMethod, args ...any) (common.Hash, error) {
-	return c.Write(ctx, opts, method.Name, args...)
-}
-
-// WriteTypedAndWait sends a transaction and waits for it to be mined.
-func WriteTypedAndWait(c *Contract, ctx context.Context, opts WriteOptions, method WriteMethod, args ...any) (*client.Receipt, error) {
-	return c.WriteAndWait(ctx, opts, method.Name, args...)
+// PrepareWriteTyped prepares a transaction for a typed write method.
+// Returns the transaction for signing. Use with a WalletClient to send.
+func PrepareWriteTyped(c *Contract, ctx context.Context, opts WriteOptions, method WriteMethod, args ...any) (*types.Transaction, error) {
+	return c.PrepareTransaction(ctx, opts, method.Name, args...)
 }
 
 // TypedContract is a generic wrapper that embeds a Contract and a method template.
@@ -115,7 +106,7 @@ type TypedContract[T any] struct {
 }
 
 // NewTypedContract creates a new TypedContract with the given methods template.
-func NewTypedContract[T any](address common.Address, abiJSON []byte, c *client.Client, methods T) (*TypedContract[T], error) {
+func NewTypedContract[T any](address common.Address, abiJSON []byte, c *client.PublicClient, methods T) (*TypedContract[T], error) {
 	cont, err := NewContract(address, abiJSON, c)
 	if err != nil {
 		return nil, err

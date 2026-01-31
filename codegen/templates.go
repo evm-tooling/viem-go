@@ -10,6 +10,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/contract"
+	"github.com/ChefBingbong/viem-go/types"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -17,6 +18,7 @@ import (
 var (
 	_ = big.NewInt
 	_ = common.Address{}
+	_ types.Transaction
 )
 
 // ContractABI is the ABI of the {{.ContractName}} contract.
@@ -27,7 +29,7 @@ var ContractABI = ` + "`" + `{{.ABIJSON}}` + "`" + `
 // ============================================================================
 
 // {{.ContractName}}Methods defines typed method descriptors for the {{.ContractName}} contract.
-// Use these with contract.ReadTyped() and contract.WriteTyped() for type-safe calls.
+// Use these with contract.ReadTyped() for type-safe calls.
 type {{.ContractName}}Methods struct {
 {{range .Functions}}	{{.GoName}} {{.TypedMethod}}
 {{end}}}
@@ -49,7 +51,7 @@ type {{.ContractName}} struct {
 }
 
 // New creates a new {{.ContractName}} contract binding.
-func New(address common.Address, c *client.Client) (*{{.ContractName}}, error) {
+func New(address common.Address, c *client.PublicClient) (*{{.ContractName}}, error) {
 	cont, err := contract.NewContract(address, []byte(ContractABI), c)
 	if err != nil {
 		return nil, err
@@ -58,7 +60,7 @@ func New(address common.Address, c *client.Client) (*{{.ContractName}}, error) {
 }
 
 // MustNew creates a new {{.ContractName}} contract binding, panicking on error.
-func MustNew(address common.Address, c *client.Client) *{{.ContractName}} {
+func MustNew(address common.Address, c *client.PublicClient) *{{.ContractName}} {
 	cont, err := New(address, c)
 	if err != nil {
 		panic(err)
@@ -94,15 +96,15 @@ func (c *{{$.ContractName}}) {{.GoName}}(ctx context.Context{{range .Inputs}}, {
 	{{end}}
 }
 {{else}}
-// {{.GoName}} sends a transaction to the {{.Name}} function.
+// Prepare{{.GoName}} prepares a transaction for the {{.Name}} function.
 // Solidity: {{.Signature}}
-func (c *{{$.ContractName}}) {{.GoName}}(ctx context.Context, opts contract.WriteOptions{{range .Inputs}}, {{.GoName}} {{.GoType}}{{end}}) (common.Hash, error) {
-	return c.contract.Write(ctx, opts, "{{.Name}}"{{range .Inputs}}, {{.GoName}}{{end}})
+func (c *{{$.ContractName}}) Prepare{{.GoName}}(ctx context.Context, opts contract.WriteOptions{{range .Inputs}}, {{.GoName}} {{.GoType}}{{end}}) (*types.Transaction, error) {
+	return c.contract.PrepareTransaction(ctx, opts, "{{.Name}}"{{range .Inputs}}, {{.GoName}}{{end}})
 }
 
-// {{.GoName}}AndWait sends a transaction and waits for the receipt.
-func (c *{{$.ContractName}}) {{.GoName}}AndWait(ctx context.Context, opts contract.WriteOptions{{range .Inputs}}, {{.GoName}} {{.GoType}}{{end}}) (*client.Receipt, error) {
-	return c.contract.WriteAndWait(ctx, opts, "{{.Name}}"{{range .Inputs}}, {{.GoName}}{{end}})
+// Estimate{{.GoName}} estimates gas for the {{.Name}} function.
+func (c *{{$.ContractName}}) Estimate{{.GoName}}(ctx context.Context, opts contract.WriteOptions{{range .Inputs}}, {{.GoName}} {{.GoType}}{{end}}) (uint64, error) {
+	return c.contract.EstimateGas(ctx, opts, "{{.Name}}"{{range .Inputs}}, {{.GoName}}{{end}})
 }
 {{end}}
 {{end}}
@@ -157,7 +159,7 @@ func zeroValue(goType string) string {
 // nolint:unused // Reserved for future use
 var _ = `
 // Parse{{.GoName}} parses a {{.Name}} event from a log.
-func (c *{{$.ContractName}}) Parse{{.GoName}}(log client.Log) (*{{.GoName}}Event, error) {
+func (c *{{$.ContractName}}) Parse{{.GoName}}(log types.Log) (*{{.GoName}}Event, error) {
 	event, err := c.contract.DecodeEvent("{{.Name}}", log.Topics, log.Data)
 	if err != nil {
 		return nil, err

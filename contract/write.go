@@ -9,6 +9,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/client"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // WriteOptions contains options for write operations.
@@ -29,54 +30,6 @@ type WriteOptions struct {
 	Nonce *uint64
 }
 
-// Write calls a contract method that modifies state.
-// Returns the transaction hash.
-func (c *Contract) Write(ctx context.Context, opts WriteOptions, method string, args ...any) (common.Hash, error) {
-	// Validate method exists
-	_, err := c.abi.GetFunction(method)
-	if err != nil {
-		return common.Hash{}, err
-	}
-
-	// Encode the call
-	calldata, err := c.abi.EncodeCall(method, args...)
-	if err != nil {
-		return common.Hash{}, fmt.Errorf("failed to encode call for %q: %w", method, err)
-	}
-
-	// Build transaction
-	tx := client.Transaction{
-		From:                 opts.From,
-		To:                   &c.address,
-		Data:                 calldata,
-		Value:                opts.Value,
-		Gas:                  opts.Gas,
-		GasPrice:             opts.GasPrice,
-		MaxFeePerGas:         opts.MaxFeePerGas,
-		MaxPriorityFeePerGas: opts.MaxPriorityFeePerGas,
-		Nonce:                opts.Nonce,
-	}
-
-	// Send the transaction
-	hash, err := c.client.SendTransaction(ctx, tx)
-	if err != nil {
-		return common.Hash{}, fmt.Errorf("failed to send transaction for %q: %w", method, err)
-	}
-
-	return hash, nil
-}
-
-// WriteAndWait calls a contract method and waits for the transaction to be mined.
-// Returns the transaction receipt.
-func (c *Contract) WriteAndWait(ctx context.Context, opts WriteOptions, method string, args ...any) (*client.Receipt, error) {
-	hash, err := c.Write(ctx, opts, method, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	return c.client.WaitForTransaction(ctx, hash)
-}
-
 // EstimateGas estimates the gas required for a contract method call.
 func (c *Contract) EstimateGas(ctx context.Context, opts WriteOptions, method string, args ...any) (uint64, error) {
 	// Validate method exists
@@ -92,7 +45,7 @@ func (c *Contract) EstimateGas(ctx context.Context, opts WriteOptions, method st
 	}
 
 	// Build call request
-	callReq := client.CallRequest{
+	callReq := types.CallRequest{
 		From:  &opts.From,
 		To:    c.address,
 		Data:  calldata,
@@ -109,8 +62,8 @@ func (c *Contract) EstimateGas(ctx context.Context, opts WriteOptions, method st
 }
 
 // PrepareTransaction prepares a transaction for signing without sending it.
-// Returns the populated Transaction struct.
-func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, method string, args ...any) (*client.Transaction, error) {
+// Returns the populated Transaction struct. Use this with a signer to send transactions.
+func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, method string, args ...any) (*types.Transaction, error) {
 	// Validate method exists
 	_, err := c.abi.GetFunction(method)
 	if err != nil {
@@ -128,7 +81,7 @@ func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, me
 	if opts.Nonce != nil {
 		nonce = *opts.Nonce
 	} else {
-		nonce, err = c.client.GetTransactionCount(ctx, opts.From, client.BlockPending)
+		nonce, err = c.client.GetTransactionCount(ctx, opts.From, client.BlockTagPending)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get nonce: %w", err)
 		}
@@ -137,7 +90,7 @@ func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, me
 	// Estimate gas if not provided
 	gas := opts.Gas
 	if gas == 0 {
-		callReq := client.CallRequest{
+		callReq := types.CallRequest{
 			From:  &opts.From,
 			To:    c.address,
 			Data:  calldata,
@@ -160,7 +113,13 @@ func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, me
 		}
 	}
 
-	tx := &client.Transaction{
+	// Get chain ID if available
+	var chainID *big.Int
+	if c.client.Chain() != nil {
+		chainID = big.NewInt(int64(c.client.Chain().ID))
+	}
+
+	tx := &types.Transaction{
 		From:                 opts.From,
 		To:                   &c.address,
 		Data:                 calldata,
@@ -170,7 +129,7 @@ func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, me
 		GasPrice:             gasPrice,
 		MaxFeePerGas:         opts.MaxFeePerGas,
 		MaxPriorityFeePerGas: opts.MaxPriorityFeePerGas,
-		ChainID:              c.client.ChainID(),
+		ChainID:              chainID,
 	}
 
 	return tx, nil
@@ -183,59 +142,65 @@ func (c *Contract) Calldata(method string, args ...any) ([]byte, error) {
 }
 
 // Deploy deploys a new contract with the given bytecode and constructor arguments.
-// Returns the transaction hash.
-func Deploy(ctx context.Context, cl *client.Client, contractABI []byte, bytecode []byte, opts WriteOptions, args ...any) (common.Hash, error) {
+// Returns the prepared transaction. Use a WalletClient to sign and send.
+func PrepareDeployTransaction(ctx context.Context, cl *client.PublicClient, contractABI []byte, bytecode []byte, opts WriteOptions, args ...any) (*types.Transaction, error) {
 	parsedABI, err := parseABIForDeploy(contractABI)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
 
 	// Encode constructor arguments if any
 	var data []byte
 	if len(args) > 0 {
-		constructorArgs, err := parsedABI.EncodeConstructor(args...)
-		if err != nil {
-			return common.Hash{}, fmt.Errorf("failed to encode constructor arguments: %w", err)
+		constructorArgs, encodeErr := parsedABI.EncodeConstructor(args...)
+		if encodeErr != nil {
+			return nil, fmt.Errorf("failed to encode constructor arguments: %w", encodeErr)
 		}
 		data = append(bytecode, constructorArgs...)
 	} else {
 		data = bytecode
 	}
 
-	// Build deployment transaction (To is nil for contract creation)
-	tx := client.Transaction{
+	// Get nonce if not provided
+	var nonce uint64
+	if opts.Nonce != nil {
+		nonce = *opts.Nonce
+	} else {
+		nonce, err = cl.GetTransactionCount(ctx, opts.From, client.BlockTagPending)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get nonce: %w", err)
+		}
+	}
+
+	// Get gas price if not provided
+	gasPrice := opts.GasPrice
+	if gasPrice == nil && opts.MaxFeePerGas == nil {
+		gasPrice, err = cl.GetGasPrice(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get gas price: %w", err)
+		}
+	}
+
+	// Get chain ID if available
+	var chainID *big.Int
+	if cl.Chain() != nil {
+		chainID = big.NewInt(int64(cl.Chain().ID))
+	}
+
+	tx := &types.Transaction{
 		From:                 opts.From,
-		To:                   nil,
+		To:                   nil, // nil for contract creation
 		Data:                 data,
 		Value:                opts.Value,
+		Nonce:                &nonce,
 		Gas:                  opts.Gas,
-		GasPrice:             opts.GasPrice,
+		GasPrice:             gasPrice,
 		MaxFeePerGas:         opts.MaxFeePerGas,
 		MaxPriorityFeePerGas: opts.MaxPriorityFeePerGas,
-		Nonce:                opts.Nonce,
+		ChainID:              chainID,
 	}
 
-	return cl.SendTransaction(ctx, tx)
-}
-
-// DeployAndWait deploys a contract and waits for it to be mined.
-// Returns the contract address and receipt.
-func DeployAndWait(ctx context.Context, cl *client.Client, contractABI []byte, bytecode []byte, opts WriteOptions, args ...any) (common.Address, *client.Receipt, error) {
-	hash, err := Deploy(ctx, cl, contractABI, bytecode, opts, args...)
-	if err != nil {
-		return common.Address{}, nil, err
-	}
-
-	receipt, err := cl.WaitForTransaction(ctx, hash)
-	if err != nil {
-		return common.Address{}, nil, err
-	}
-
-	if receipt.ContractAddress == nil {
-		return common.Address{}, receipt, fmt.Errorf("contract deployment failed: no contract address in receipt")
-	}
-
-	return *receipt.ContractAddress, receipt, nil
+	return tx, nil
 }
 
 // parseABIForDeploy is a helper to parse ABI for deployment.
