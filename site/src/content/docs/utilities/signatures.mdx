@@ -1,0 +1,296 @@
+---
+title: Signature Utilities
+description: Utilities for signing, verifying, and recovering Ethereum signatures
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Utilities for signing, verifying, and recovering Ethereum signatures.
+
+## recoverMessageAddress
+
+Recover the address that signed a message:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/utils/signature"
+
+address, err := signature.RecoverMessageAddress(
+    "Hello, Ethereum!",
+    "0x66edc32e2ab001213321ab7d959a2207fcef5190cc9abb6da5b0d2a8a9af2d4d2b0700e2c317c4106f337fd934fbbb0bf62efc8811a78603b33a8265d3b8f8cb1c",
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Signer: %s\n", address.Hex())
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { recoverMessageAddress } from 'viem'
+
+const address = await recoverMessageAddress({
+  message: 'Hello, Ethereum!',
+  signature: '0x66edc32e2ab001213321ab7d959a2207fcef5190cc9abb6da5b0d2a8a9af2d4d2b0700e2c317c4106f337fd934fbbb0bf62efc8811a78603b33a8265d3b8f8cb1c',
+})
+
+console.log('Signer:', address)
+```
+  </TabItem>
+</Tabs>
+
+## recoverAddress
+
+Recover address from a hash and signature:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+// For raw hash recovery (not message)
+address, err := signature.RecoverAddress(hash, sig)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { recoverAddress } from 'viem'
+
+const address = await recoverAddress({
+  hash: '0x...',
+  signature: '0x...',
+})
+```
+  </TabItem>
+</Tabs>
+
+## recoverPublicKey
+
+Recover the public key from a signature:
+
+```go
+pubKey, err := signature.RecoverPublicKey(hash, sig)
+fmt.Printf("Public Key: 0x%x\n", pubKey)
+```
+
+## recoverTypedDataAddress
+
+Recover address from EIP-712 typed data signature:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+address, err := signature.RecoverTypedDataAddress(typedData, sig)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { recoverTypedDataAddress } from 'viem'
+
+const address = await recoverTypedDataAddress({
+  domain: { /* ... */ },
+  types: { /* ... */ },
+  primaryType: 'Mail',
+  message: { /* ... */ },
+  signature: '0x...',
+})
+```
+  </TabItem>
+</Tabs>
+
+## verifyMessage
+
+Verify a message signature matches an address:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+valid, err := signature.VerifyMessage(
+    expectedAddress,
+    "Hello, Ethereum!",
+    sig,
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Valid: %v\n", valid)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { verifyMessage } from 'viem'
+
+const valid = await verifyMessage({
+  address: expectedAddress,
+  message: 'Hello, Ethereum!',
+  signature: sig,
+})
+
+console.log('Valid:', valid)
+```
+  </TabItem>
+</Tabs>
+
+## verifyTypedData
+
+Verify an EIP-712 typed data signature:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+valid, err := signature.VerifyTypedData(
+    expectedAddress,
+    typedData,
+    sig,
+)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { verifyTypedData } from 'viem'
+
+const valid = await verifyTypedData({
+  address: expectedAddress,
+  domain: { /* ... */ },
+  types: { /* ... */ },
+  primaryType: 'Mail',
+  message: { /* ... */ },
+  signature: sig,
+})
+```
+  </TabItem>
+</Tabs>
+
+## parseSignature
+
+Parse a hex signature into its components:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+sig, err := signature.ParseSignature(
+    "0x66edc32e2ab001213321ab7d959a2207fcef5190cc9abb6da5b0d2a8a9af2d4d2b0700e2c317c4106f337fd934fbbb0bf62efc8811a78603b33a8265d3b8f8cb1c",
+)
+
+fmt.Printf("R: 0x%x\n", sig.R)
+fmt.Printf("S: 0x%x\n", sig.S)
+fmt.Printf("V: %d\n", sig.V)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { parseSignature } from 'viem'
+
+const { r, s, v } = parseSignature('0x66edc...')
+```
+  </TabItem>
+</Tabs>
+
+## serializeSignature
+
+Combine signature components into a hex string:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+hexSig := signature.SerializeSignature(signature.Signature{
+    R: r,
+    S: s,
+    V: v,
+})
+fmt.Printf("Signature: %s\n", hexSig)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { serializeSignature } from 'viem'
+
+const hex = serializeSignature({ r, s, v })
+```
+  </TabItem>
+</Tabs>
+
+## Compact Signatures (EIP-2098)
+
+Convert to/from compact signature format:
+
+```go
+// To compact (64 bytes)
+compact := signature.SignatureToCompactSignature(sig)
+
+// From compact
+sig := signature.CompactSignatureToSignature(compact)
+```
+
+## ERC-6492 Signatures
+
+For smart contract wallet signatures:
+
+```go
+// Check if signature is ERC-6492 format
+isErc6492 := signature.IsErc6492Signature(sig)
+
+// Parse ERC-6492 signature
+parsed, err := signature.ParseErc6492Signature(sig)
+// Returns: factoryAddress, factoryData, originalSig
+
+// Create ERC-6492 signature
+erc6492Sig := signature.SerializeErc6492Signature(
+    factoryAddress,
+    factoryData,
+    originalSig,
+)
+```
+
+## Common Use Cases
+
+### Verify User Signed Terms
+
+```go
+func verifyTermsAcceptance(userAddress common.Address, sig string) error {
+    terms := "I accept the Terms of Service v1.0"
+    
+    valid, err := signature.VerifyMessage(userAddress, terms, sig)
+    if err != nil {
+        return err
+    }
+    if !valid {
+        return errors.New("invalid signature")
+    }
+    
+    return nil
+}
+```
+
+### Off-chain Order Signing
+
+```go
+// Define order type
+orderTypedData := signature.TypedDataDefinition{
+    Domain: signature.TypedDataDomain{
+        Name:              "My DEX",
+        Version:           "1",
+        ChainId:           big.NewInt(1),
+        VerifyingContract: dexContract,
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Order": {
+            {Name: "maker", Type: "address"},
+            {Name: "tokenIn", Type: "address"},
+            {Name: "tokenOut", Type: "address"},
+            {Name: "amountIn", Type: "uint256"},
+            {Name: "minAmountOut", Type: "uint256"},
+            {Name: "deadline", Type: "uint256"},
+        },
+    },
+    PrimaryType: "Order",
+    Message: orderData,
+}
+
+// Sign order
+sig, _ := account.SignTypedData(orderTypedData)
+
+// Later, verify order
+valid, _ := signature.VerifyTypedData(maker, orderTypedData, sig)
+```

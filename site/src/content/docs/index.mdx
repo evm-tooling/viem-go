@@ -1,0 +1,100 @@
+---
+title: viem-go
+description: Go Interface for Ethereum - inspired by viem
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+# viem-go
+
+**Go Interface for Ethereum** — inspired by [viem](https://viem.sh).
+
+Build reliable blockchain applications with idiomatic Go, type safety, and familiar APIs.
+
+[Get Started](/getting-started/) · [Why viem-go?](/introduction/) · [GitHub](https://github.com/ChefBingbong/viem-go)
+
+## Installation
+
+```bash
+go get github.com/ChefBingbong/viem-go
+```
+
+## Quick Start
+
+<Tabs>
+  <TabItem label="Go">
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+func main() {
+    // 1. Create a public client
+    c, _ := client.CreatePublicClient(client.PublicClientConfig{
+        Chain:     definitions.Mainnet,
+        Transport: transport.HTTP("https://eth.llamarpc.com"),
+    })
+    defer c.Close()
+
+    // 2. Get the current block number
+    blockNumber, _ := c.GetBlockNumber(context.Background())
+    fmt.Println("Block number:", blockNumber)
+}
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+// 1. Create a public client
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+})
+
+// 2. Get the current block number
+const blockNumber = await client.getBlockNumber()
+console.log('Block number:', blockNumber)
+```
+  </TabItem>
+</Tabs>
+
+## Features
+
+<CardGrid>
+  <Card title="Familiar API" icon="puzzle">
+    Same concepts as viem: Clients, Transports, Actions
+  </Card>
+  <Card title="Type Safety" icon="approve-check">
+    Go's static typing for contract ABIs and transactions
+  </Card>
+  <Card title="go-ethereum Based" icon="setting">
+    Built on proven cryptographic primitives
+  </Card>
+  <Card title="Comprehensive Utils" icon="document">
+    Unit parsing, hashing, signatures, address validation
+  </Card>
+  <Card title="Account Management" icon="star">
+    Private key, mnemonic, and HD wallet support
+  </Card>
+  <Card title="Contract Bindings" icon="rocket">
+    Pre-built ERC20, ERC721, ERC1155 helpers
+  </Card>
+</CardGrid>
+
+## Why viem-go?
+
+| Feature | viem-go | go-ethereum |
+|---------|---------|-------------|
+| High-level API | ✅ | ❌ |
+| Familiar to viem users | ✅ | ❌ |
+| Type-safe ABI encoding | ✅ | ✅ |
+| Multiple account types | ✅ | Limited |
+| Transport abstraction | ✅ | ❌ |

@@ -1,0 +1,71 @@
+---
+interface Props {
+  labels: string[];
+}
+
+const { labels } = Astro.props;
+const id = `code-tabs-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class="code-tabs" data-tabs-id={id}>
+  <div class="tabs-header" role="tablist">
+    {labels.map((label, index) => (
+      <button
+        role="tab"
+        class={`tab-button ${index === 0 ? 'active' : ''}`}
+        aria-selected={index === 0 ? 'true' : 'false'}
+        data-tab-index={index}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+  <div class="tabs-content">
+    <slot />
+  </div>
+</div>
+
+<script>
+  function initCodeTabs() {
+    document.querySelectorAll('.code-tabs').forEach((tabsContainer) => {
+      const buttons = tabsContainer.querySelectorAll('.tab-button');
+      const contentWrapper = tabsContainer.querySelector('.tabs-content');
+      const codeBlocks = contentWrapper?.querySelectorAll(':scope > .expressive-code, :scope > pre, :scope > div');
+      
+      if (!codeBlocks || codeBlocks.length === 0) return;
+      
+      // Initialize: show only first, hide others
+      codeBlocks.forEach((block, index) => {
+        if (block instanceof HTMLElement) {
+          block.classList.add('tab-content');
+          block.classList.toggle('active', index === 0);
+        }
+      });
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const index = parseInt(button.getAttribute('data-tab-index') || '0');
+          
+          // Update buttons
+          buttons.forEach((btn, i) => {
+            btn.classList.toggle('active', i === index);
+            btn.setAttribute('aria-selected', i === index ? 'true' : 'false');
+          });
+          
+          // Update content
+          codeBlocks.forEach((block, i) => {
+            if (block instanceof HTMLElement) {
+              block.classList.toggle('active', i === index);
+            }
+          });
+        });
+      });
+    });
+  }
+
+  // Run on initial load
+  initCodeTabs();
+  
+  // Re-run on view transitions (Astro's client-side navigation)
+  document.addEventListener('astro:page-load', initCodeTabs);
+</script>

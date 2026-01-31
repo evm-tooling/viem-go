@@ -1,0 +1,331 @@
+---
+title: Examples
+description: Real-world examples showing viem-go in action, with TypeScript comparisons
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Basic Examples
+
+### Get Block Number
+
+<Tabs>
+  <TabItem label="Go">
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+)
+
+func main() {
+    c, _ := client.CreatePublicClient(client.PublicClientConfig{
+        Transport: transport.HTTP("https://eth.llamarpc.com"),
+    })
+    defer c.Close()
+
+    blockNumber, _ := c.GetBlockNumber(context.Background())
+    fmt.Println("Current block:", blockNumber)
+}
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { createPublicClient, http } from 'viem'
+
+const client = createPublicClient({
+  transport: http('https://eth.llamarpc.com'),
+})
+
+const blockNumber = await client.getBlockNumber()
+console.log('Current block:', blockNumber)
+```
+  </TabItem>
+</Tabs>
+
+### Get Account Balance
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/utils/unit"
+)
+
+address := common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
+
+balance, _ := c.GetBalance(context.Background(), address)
+
+// Format as ETH
+ethBalance := unit.FormatEther(balance)
+fmt.Printf("Balance: %s ETH\n", ethBalance)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { formatEther } from 'viem'
+
+const balance = await client.getBalance({
+  address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+})
+
+console.log('Balance:', formatEther(balance), 'ETH')
+```
+  </TabItem>
+</Tabs>
+
+### Get Transaction Receipt
+
+<Tabs>
+  <TabItem label="Go">
+```go
+txHash := common.HexToHash("0x...")
+
+receipt, err := c.GetTransactionReceipt(context.Background(), txHash)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Status: %d\n", receipt.Status)
+fmt.Printf("Gas Used: %d\n", receipt.GasUsed)
+fmt.Printf("Block: %d\n", receipt.BlockNumber)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+const receipt = await client.getTransactionReceipt({
+  hash: '0x...',
+})
+
+console.log('Status:', receipt.status)
+console.log('Gas Used:', receipt.gasUsed)
+console.log('Block:', receipt.blockNumber)
+```
+  </TabItem>
+</Tabs>
+
+## Contract Examples
+
+### Read ERC20 Token Info
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/contracts/erc20"
+
+usdcAddress := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+token, _ := erc20.New(usdcAddress, publicClient)
+
+name, _ := token.Name(context.Background())
+symbol, _ := token.Symbol(context.Background())
+decimals, _ := token.Decimals(context.Background())
+totalSupply, _ := token.TotalSupply(context.Background())
+
+fmt.Printf("Token: %s (%s)\n", name, symbol)
+fmt.Printf("Decimals: %d\n", decimals)
+fmt.Printf("Total Supply: %s\n", totalSupply.String())
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { erc20Abi, formatUnits } from 'viem'
+
+const usdcAddress = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+
+const [name, symbol, decimals, totalSupply] = await Promise.all([
+  client.readContract({ address: usdcAddress, abi: erc20Abi, functionName: 'name' }),
+  client.readContract({ address: usdcAddress, abi: erc20Abi, functionName: 'symbol' }),
+  client.readContract({ address: usdcAddress, abi: erc20Abi, functionName: 'decimals' }),
+  client.readContract({ address: usdcAddress, abi: erc20Abi, functionName: 'totalSupply' }),
+])
+
+console.log(`Token: ${name} (${symbol})`)
+console.log(`Decimals: ${decimals}`)
+console.log(`Total Supply: ${formatUnits(totalSupply, decimals)}`)
+```
+  </TabItem>
+</Tabs>
+
+### Encode Function Data
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/abi"
+
+parsed, _ := abi.Parse([]byte(`[{
+    "name": "transfer",
+    "type": "function",
+    "inputs": [
+        {"name": "to", "type": "address"},
+        {"name": "amount", "type": "uint256"}
+    ]
+}]`))
+
+data, _ := parsed.EncodeFunctionData("transfer",
+    common.HexToAddress("0x..."),
+    big.NewInt(1000000),
+)
+
+fmt.Printf("Encoded: 0x%x\n", data)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { encodeFunctionData, parseAbi } from 'viem'
+
+const data = encodeFunctionData({
+  abi: parseAbi(['function transfer(address to, uint256 amount)']),
+  functionName: 'transfer',
+  args: ['0x...', 1000000n],
+})
+
+console.log('Encoded:', data)
+```
+  </TabItem>
+</Tabs>
+
+## Account Examples
+
+### Create Account from Private Key
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/accounts"
+
+account, _ := accounts.PrivateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+
+fmt.Printf("Address: %s\n", account.Address)
+fmt.Printf("Public Key: %s\n", account.PublicKey)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { privateKeyToAccount } from 'viem/accounts'
+
+const account = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+
+console.log('Address:', account.address)
+console.log('Public Key:', account.publicKey)
+```
+  </TabItem>
+</Tabs>
+
+### Create Account from Mnemonic
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/accounts"
+
+mnemonic := "test test test test test test test test test test test junk"
+
+account, _ := accounts.MnemonicToAccount(mnemonic, nil)
+
+fmt.Printf("Address: %s\n", account.Address)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { mnemonicToAccount } from 'viem/accounts'
+
+const account = mnemonicToAccount(
+  'test test test test test test test test test test test junk'
+)
+
+console.log('Address:', account.address)
+```
+  </TabItem>
+</Tabs>
+
+## Utility Examples
+
+### Parse and Format Units
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/utils/unit"
+
+// Parse ETH to wei
+wei, _ := unit.ParseEther("1.5")
+fmt.Println("Wei:", wei) // 1500000000000000000
+
+// Parse USDC (6 decimals)
+usdcAmount, _ := unit.ParseUnits("100", 6)
+fmt.Println("USDC:", usdcAmount) // 100000000
+
+// Format back
+ethString := unit.FormatEther(wei)
+fmt.Println("ETH:", ethString) // 1.5
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { parseEther, parseUnits, formatEther } from 'viem'
+
+// Parse ETH to wei
+const wei = parseEther('1.5')
+console.log('Wei:', wei) // 1500000000000000000n
+
+// Parse USDC (6 decimals)
+const usdcAmount = parseUnits('100', 6)
+console.log('USDC:', usdcAmount) // 100000000n
+
+// Format back
+const ethString = formatEther(wei)
+console.log('ETH:', ethString) // "1.5"
+```
+  </TabItem>
+</Tabs>
+
+### Hash and Signature Utilities
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import (
+    "github.com/ChefBingbong/viem-go/utils/hash"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+)
+
+// Keccak256 hash
+h := hash.Keccak256([]byte("hello"))
+fmt.Printf("Hash: 0x%x\n", h)
+
+// Hash a message for signing (EIP-191)
+messageHash := signature.HashMessage("hello world")
+fmt.Printf("Message Hash: 0x%x\n", messageHash)
+
+// Recover address from signature
+address, _ := signature.RecoverMessageAddress("hello world", sig)
+fmt.Printf("Recovered: %s\n", address)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { keccak256, hashMessage, recoverMessageAddress } from 'viem'
+
+// Keccak256 hash
+const hash = keccak256(toBytes('hello'))
+console.log('Hash:', hash)
+
+// Hash a message for signing (EIP-191)
+const messageHash = hashMessage('hello world')
+console.log('Message Hash:', messageHash)
+
+// Recover address from signature
+const address = await recoverMessageAddress({
+  message: 'hello world',
+  signature: sig,
+})
+console.log('Recovered:', address)
+```
+  </TabItem>
+</Tabs>

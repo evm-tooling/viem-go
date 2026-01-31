@@ -1,0 +1,136 @@
+---
+title: WebSocket Transport
+description: Persistent connection to Ethereum nodes for real-time subscriptions
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+The WebSocket transport provides a persistent connection to Ethereum nodes, enabling real-time subscriptions and lower latency for high-frequency requests.
+
+## Usage
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+)
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.WebSocket("wss://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer publicClient.Close()
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { createPublicClient, webSocket } from 'viem'
+
+const client = createPublicClient({
+  transport: webSocket('wss://eth.llamarpc.com'),
+})
+```
+  </TabItem>
+</Tabs>
+
+## Configuration
+
+### WebSocketTransportConfig
+
+```go
+transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    // Reconnect on connection loss
+    Reconnect: true,
+    
+    // Delay between reconnection attempts
+    ReconnectDelay: 2 * time.Second,
+    
+    // Max reconnection attempts (0 = infinite)
+    ReconnectAttempts: 10,
+    
+    // Ping interval to keep connection alive
+    KeepAliveInterval: 30 * time.Second,
+})
+```
+
+### Options
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `Reconnect` | `bool` | `true` | Auto-reconnect on disconnect |
+| `ReconnectDelay` | `time.Duration` | `2s` | Delay between reconnect attempts |
+| `ReconnectAttempts` | `int` | `0` | Max reconnect attempts (0 = infinite) |
+| `KeepAliveInterval` | `time.Duration` | `30s` | Ping interval for keep-alive |
+
+## When to Use WebSocket
+
+**Use WebSocket when:**
+- You need real-time event subscriptions
+- Making many rapid requests
+- Building trading bots or monitoring systems
+
+**Use HTTP when:**
+- Making occasional requests
+- Running in serverless environments
+- Connection persistence isn't needed
+
+## Subscriptions (Coming Soon)
+
+WebSocket enables real-time subscriptions:
+
+```go
+// Subscribe to new block headers
+sub, err := publicClient.SubscribeNewHeads(ctx, func(header *types.Header) {
+    fmt.Printf("New block: %d\n", header.Number)
+})
+defer sub.Unsubscribe()
+
+// Subscribe to pending transactions
+sub, err := publicClient.SubscribePendingTransactions(ctx, func(txHash common.Hash) {
+    fmt.Printf("Pending tx: %s\n", txHash.Hex())
+})
+
+// Subscribe to contract events
+sub, err := publicClient.SubscribeLogs(ctx, types.FilterQuery{
+    Addresses: []common.Address{contractAddress},
+    Topics:    [][]common.Hash{{eventTopic}},
+}, func(log types.Log) {
+    fmt.Printf("Event: %+v\n", log)
+})
+```
+
+## Connection Management
+
+The WebSocket transport handles connection lifecycle automatically:
+
+```go
+publicClient, _ := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+        Reconnect:         true,
+        ReconnectAttempts: 5,
+    }),
+})
+
+// Always close when done
+defer publicClient.Close()
+```
+
+## Combining with HTTP Fallback
+
+For production systems, consider using both transports:
+
+```go
+// Primary: WebSocket for subscriptions
+wsClient, _ := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.WebSocket("wss://eth.llamarpc.com"),
+})
+
+// Fallback: HTTP for reliability
+httpClient, _ := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+```

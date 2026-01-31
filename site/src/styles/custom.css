@@ -1,0 +1,184 @@
+:root {
+  --sl-color-accent-low: #3d2400;
+  --sl-color-accent: #ff9318;
+  --sl-color-accent-high: #ffc517;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #eceef2;
+  --sl-color-gray-2: #c0c2c7;
+  --sl-color-gray-3: #888b96;
+  --sl-color-gray-4: #545861;
+  --sl-color-gray-5: #353841;
+  --sl-color-gray-6: #24272f;
+  --sl-color-black: #17181c;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #fff4e6;
+  --sl-color-accent: #ff9318;
+  --sl-color-accent-high: #c66800;
+}
+
+/* Landing page styles */
+.hero-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--sl-color-accent), var(--sl-color-accent-high));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-section .tagline {
+  font-size: 1.5rem;
+  color: var(--sl-color-gray-2);
+  margin-bottom: 2rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.hero-actions a {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.hero-actions a.primary {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-black);
+}
+
+.hero-actions a.primary:hover {
+  background: var(--sl-color-accent-high);
+}
+
+.hero-actions a.secondary {
+  border: 2px solid var(--sl-color-gray-4);
+  color: var(--sl-color-white);
+}
+
+.hero-actions a.secondary:hover {
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-accent);
+}
+
+/* Code tabs styling */
+.code-tabs {
+  margin: 1.5rem 0;
+}
+
+.code-tabs .tabs-header {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-gray-6);
+  border-radius: 0.5rem 0.5rem 0 0;
+  overflow: hidden;
+}
+
+.code-tabs .tab-button {
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--sl-color-gray-3);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.code-tabs .tab-button:hover {
+  color: var(--sl-color-gray-1);
+}
+
+.code-tabs .tab-button.active {
+  color: var(--sl-color-accent);
+  border-bottom-color: var(--sl-color-accent);
+}
+
+.code-tabs .tab-content {
+  display: none;
+}
+
+.code-tabs .tab-content.active {
+  display: block;
+}
+
+.code-tabs .tab-content pre {
+  margin: 0 !important;
+  border-radius: 0 0 0.5rem 0.5rem !important;
+}
+
+/* Feature grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  background: var(--sl-color-gray-6);
+  border-radius: 0.75rem;
+  border: 1px solid var(--sl-color-gray-5);
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  color: var(--sl-color-white);
+}
+
+.feature-card p {
+  color: var(--sl-color-gray-2);
+  margin-bottom: 0;
+}
+
+/* Comparison table improvements */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+th {
+  background: var(--sl-color-gray-6);
+  font-weight: 600;
+}
+
+/* Install command box */
+.install-box {
+  background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  font-family: var(--sl-font-mono);
+}
+
+.install-box code {
+  background: transparent;
+  padding: 0;
+}

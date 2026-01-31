@@ -1,0 +1,176 @@
+---
+title: HD Wallet Account
+description: Create accounts using Hierarchical Deterministic (HD) keys for advanced key derivation
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Create accounts using Hierarchical Deterministic (HD) keys for advanced key derivation scenarios.
+
+## Overview
+
+HD wallets allow deriving multiple keys from a single seed. This is useful when you need:
+- Multiple accounts from one mnemonic
+- Custom derivation paths
+- Access to the underlying HD key for advanced operations
+
+## From Mnemonic to HD Key
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import "github.com/ChefBingbong/viem-go/accounts"
+
+// First, derive an HD key from a mnemonic
+mnemonic := "test test test test test test test test test test test junk"
+path := "m/44'/60'/0'/0/0"
+
+hdKey, err := accounts.MnemonicToHDKey(mnemonic, path)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Then create an account from the HD key
+account, err := accounts.HDKeyToAccount(hdKey)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Address: %s\n", account.Address)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { hdKeyToAccount } from 'viem/accounts'
+import { HDKey } from '@scure/bip32'
+import { mnemonicToSeedSync } from '@scure/bip39'
+
+const seed = mnemonicToSeedSync(
+  'test test test test test test test test test test test junk'
+)
+const hdKey = HDKey.fromMasterSeed(seed).derive("m/44'/60'/0'/0/0")
+const account = hdKeyToAccount(hdKey)
+
+console.log('Address:', account.address)
+```
+  </TabItem>
+</Tabs>
+
+## Accessing HD Key Properties
+
+The HD account provides access to the underlying key:
+
+```go
+// Get the HD key from the account
+hdKey := account.GetHdKey()
+
+// HD key properties
+fmt.Printf("Public Key: %x\n", hdKey.PublicKey)
+fmt.Printf("Chain Code: %x\n", hdKey.ChainCode)
+fmt.Printf("Depth: %d\n", hdKey.Depth)
+```
+
+## Deriving Child Keys
+
+Derive child keys from a parent HD key:
+
+```go
+// Start from master
+masterKey, _ := accounts.MnemonicToHDKey(mnemonic, "m")
+
+// Derive the Ethereum path manually
+purposeKey, _ := masterKey.Derive(44 + 0x80000000) // Hardened 44
+coinKey, _ := purposeKey.Derive(60 + 0x80000000)   // Hardened 60 (ETH)
+accountKey, _ := coinKey.Derive(0 + 0x80000000)    // Hardened 0
+changeKey, _ := accountKey.Derive(0)                // External chain
+addressKey, _ := changeKey.Derive(0)                // First address
+
+account, _ := accounts.HDKeyToAccount(addressKey)
+```
+
+## Batch Account Generation
+
+Generate multiple accounts efficiently:
+
+```go
+func GenerateAccounts(mnemonic string, count int) ([]*accounts.HDAccount, error) {
+    accts := make([]*accounts.HDAccount, count)
+    
+    for i := 0; i < count; i++ {
+        path := fmt.Sprintf("m/44'/60'/0'/0/%d", i)
+        hdKey, err := accounts.MnemonicToHDKey(mnemonic, path)
+        if err != nil {
+            return nil, err
+        }
+        
+        accts[i], err = accounts.HDKeyToAccount(hdKey)
+        if err != nil {
+            return nil, err
+        }
+    }
+    
+    return accts, nil
+}
+
+// Usage
+accounts, _ := GenerateAccounts(mnemonic, 10)
+for i, acc := range accounts {
+    fmt.Printf("Account %d: %s\n", i, acc.Address)
+}
+```
+
+## HD Paths
+
+Common derivation paths:
+
+| Path | Description |
+|------|-------------|
+| `m/44'/60'/0'/0/0` | Standard Ethereum (Metamask, etc.) |
+| `m/44'/60'/0'/0/n` | nth account |
+| `m/44'/60'/0'/1/n` | Internal (change) addresses |
+| `m/44'/60'/n'/0/0` | Different "accounts" (hardened) |
+
+### Hardened vs Non-Hardened
+
+- Hardened derivation (`'` suffix): More secure, can't derive parent from child
+- Non-hardened: Allows deriving child public keys from parent public key
+
+```go
+// Hardened (recommended for account level)
+path := "m/44'/60'/0'"
+
+// Non-hardened (ok for address derivation)
+path := "m/44'/60'/0'/0/0"
+```
+
+## Signing with HD Accounts
+
+HD accounts have full signing capabilities:
+
+```go
+// Sign message
+sig, _ := account.SignMessage(signature.SignableMessage{
+    Raw: []byte("Hello!"),
+})
+
+// Sign transaction
+signedTx, _ := account.SignTransaction(tx)
+
+// Sign typed data
+sig, _ := account.SignTypedData(typedData)
+
+// Sign authorization (EIP-7702)
+signedAuth, _ := account.SignAuthorization(authRequest)
+```
+
+## Account Sources
+
+The account tracks its origin:
+
+```go
+fmt.Printf("Source: %s\n", account.Source)
+// Output: "hd" (for HD-derived accounts)
+
+fmt.Printf("Type: %s\n", account.Type)
+// Output: "local"
+```

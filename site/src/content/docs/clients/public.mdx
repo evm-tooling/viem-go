@@ -1,0 +1,272 @@
+---
+title: Public Client
+description: Read-only access to the Ethereum blockchain through standard JSON-RPC methods
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+A Public Client provides read-only access to the Ethereum blockchain through standard JSON-RPC methods like `eth_blockNumber`, `eth_getBalance`, `eth_call`, and more.
+
+## Creating a Public Client
+
+<Tabs>
+  <TabItem label="Go">
+```go
+import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer publicClient.Close()
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+})
+```
+  </TabItem>
+</Tabs>
+
+## Configuration Options
+
+### PublicClientConfig
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `Chain` | `*chain.Chain` | Chain configuration (optional) |
+| `Transport` | `TransportFactory` | Transport to use for RPC calls |
+| `Key` | `string` | Client identifier (default: "public") |
+| `Name` | `string` | Client name (default: "Public Client") |
+| `PollingInterval` | `time.Duration` | Polling frequency for subscriptions |
+| `CacheTime` | `time.Duration` | Cache duration for repeated calls |
+| `ExperimentalBlockTag` | `BlockTag` | Default block tag for calls |
+
+## Available Methods
+
+### Block Methods
+
+<Tabs>
+  <TabItem label="GetBlockNumber">
+```go
+blockNumber, err := publicClient.GetBlockNumber(ctx)
+// Returns: uint64
+```
+  </TabItem>
+  <TabItem label="GetBlock">
+```go
+block, err := publicClient.GetBlock(ctx, client.BlockTagLatest, false)
+// Returns: *types.Block
+```
+  </TabItem>
+  <TabItem label="GetBlockByNumber">
+```go
+block, err := publicClient.GetBlockByNumber(ctx, 12345678, true) // with transactions
+// Returns: *types.Block
+```
+  </TabItem>
+  <TabItem label="GetBlockByHash">
+```go
+block, err := publicClient.GetBlockByHash(ctx, hash, false)
+// Returns: *types.Block
+```
+  </TabItem>
+</Tabs>
+
+### Account Methods
+
+<Tabs>
+  <TabItem label="GetBalance">
+```go
+balance, err := publicClient.GetBalance(ctx, address)
+// Returns: *big.Int (wei)
+```
+  </TabItem>
+  <TabItem label="GetTransactionCount">
+```go
+nonce, err := publicClient.GetTransactionCount(ctx, address)
+// Returns: uint64
+```
+  </TabItem>
+  <TabItem label="GetCode">
+```go
+code, err := publicClient.GetCode(ctx, contractAddress)
+// Returns: []byte
+```
+  </TabItem>
+  <TabItem label="GetStorageAt">
+```go
+value, err := publicClient.GetStorageAt(ctx, address, slot)
+// Returns: []byte
+```
+  </TabItem>
+</Tabs>
+
+### Transaction Methods
+
+<Tabs>
+  <TabItem label="GetTransaction">
+```go
+tx, err := publicClient.GetTransaction(ctx, txHash)
+// Returns: json.RawMessage
+```
+  </TabItem>
+  <TabItem label="GetTransactionReceipt">
+```go
+receipt, err := publicClient.GetTransactionReceipt(ctx, txHash)
+// Returns: *types.Receipt
+```
+  </TabItem>
+  <TabItem label="WaitForTransactionReceipt">
+```go
+receipt, err := publicClient.WaitForTransactionReceipt(ctx, txHash)
+// Polls until transaction is mined
+```
+  </TabItem>
+</Tabs>
+
+### Call Methods
+
+<Tabs>
+  <TabItem label="Call">
+```go
+result, err := publicClient.Call(ctx, types.CallRequest{
+    To:   contractAddress,
+    Data: calldata,
+})
+// Returns: []byte
+```
+  </TabItem>
+  <TabItem label="EstimateGas">
+```go
+gas, err := publicClient.EstimateGas(ctx, types.CallRequest{
+    From: sender,
+    To:   recipient,
+    Data: data,
+})
+// Returns: uint64
+```
+  </TabItem>
+</Tabs>
+
+### Fee Methods
+
+<Tabs>
+  <TabItem label="GetGasPrice">
+```go
+gasPrice, err := publicClient.GetGasPrice(ctx)
+// Returns: *big.Int
+```
+  </TabItem>
+  <TabItem label="GetMaxPriorityFeePerGas">
+```go
+priorityFee, err := publicClient.GetMaxPriorityFeePerGas(ctx)
+// Returns: *big.Int
+```
+  </TabItem>
+  <TabItem label="GetFeeHistory">
+```go
+history, err := publicClient.GetFeeHistory(ctx, 10, client.BlockTagLatest, []float64{25, 50, 75})
+// Returns: json.RawMessage
+```
+  </TabItem>
+</Tabs>
+
+### Chain Methods
+
+<Tabs>
+  <TabItem label="GetChainID">
+```go
+chainID, err := publicClient.GetChainID(ctx)
+// Returns: uint64
+```
+  </TabItem>
+  <TabItem label="GetLogs">
+```go
+logs, err := publicClient.GetLogs(ctx, types.FilterQuery{
+    FromBlock: big.NewInt(12345678),
+    ToBlock:   big.NewInt(12345778),
+    Addresses: []common.Address{contractAddress},
+    Topics:    [][]common.Hash{{eventTopic}},
+})
+// Returns: []types.Log
+```
+  </TabItem>
+</Tabs>
+
+## Contract Interactions
+
+The Public Client also supports contract read operations:
+
+<Tabs>
+  <TabItem label="Go">
+```go
+result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
+    Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+    ABI:          `[{"name":"balanceOf","type":"function","inputs":[{"name":"owner","type":"address"}],"outputs":[{"type":"uint256"}]}]`,
+    FunctionName: "balanceOf",
+    Args:         []any{ownerAddress},
+})
+
+balance := result.(*big.Int)
+```
+  </TabItem>
+  <TabItem label="TypeScript (viem)">
+```typescript
+const balance = await publicClient.readContract({
+  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  abi: parseAbi(['function balanceOf(address) view returns (uint256)']),
+  functionName: 'balanceOf',
+  args: [ownerAddress],
+})
+```
+  </TabItem>
+</Tabs>
+
+See [Reading Contracts](/docs/contract/read-contract/) for more details.
+
+## Block Tags
+
+When querying state, you can specify which block to read from:
+
+```go
+const (
+    BlockTagLatest    = "latest"    // Most recent mined block
+    BlockTagPending   = "pending"   // Pending state
+    BlockTagEarliest  = "earliest"  // Genesis block
+    BlockTagSafe      = "safe"      // Safe head
+    BlockTagFinalized = "finalized" // Finalized block
+)
+
+// Usage
+balance, err := publicClient.GetBalance(ctx, address, client.BlockTagSafe)
+```
+
+## Error Handling
+
+All methods return Go-style errors. RPC errors include additional context:
+
+```go
+balance, err := publicClient.GetBalance(ctx, address)
+if err != nil {
+    // Check if it's an RPC error
+    var rpcErr *transport.RPCRequestError
+    if errors.As(err, &rpcErr) {
+        fmt.Printf("RPC Error %d: %s\n", rpcErr.Code, rpcErr.Message)
+    }
+    return err
+}
+```
