@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/ChefBingbong/viem-go/abi"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
 // ReadContractOptions contains options for reading from a contract.
@@ -25,13 +26,12 @@ type ReadContractOptions struct {
 	Args []any
 	// From is the address to use as the caller (optional).
 	From *common.Address
-	// Block is the block number to read from (default: latest).
-	Block BlockNumber
+	// Block is the block tag to read from (default: latest).
+	Block BlockTag
 }
 
-// WriteContractOptions contains options for writing to a contract.
-// This mirrors viem's writeContract API.
-type WriteContractOptions struct {
+// PrepareContractWriteOptions contains options for preparing a contract write transaction.
+type PrepareContractWriteOptions struct {
 	// Address is the contract address.
 	Address common.Address
 	// ABI is the contract ABI as a JSON string or []byte.
@@ -94,7 +94,7 @@ type DecodeFunctionResultOptions struct {
 //	    FunctionName: "balanceOf",
 //	    Args:         []any{common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")},
 //	})
-func (c *Client) ReadContract(ctx context.Context, opts ReadContractOptions) ([]any, error) {
+func (c *PublicClient) ReadContract(ctx context.Context, opts ReadContractOptions) ([]any, error) {
 	// Parse ABI
 	parsedABI, err := parseABIInput(opts.ABI)
 	if err != nil {
@@ -108,39 +108,25 @@ func (c *Client) ReadContract(ctx context.Context, opts ReadContractOptions) ([]
 	}
 
 	// Build call request
-	callReq := CallRequest{
+	callReq := types.CallRequest{
 		From: opts.From,
 		To:   opts.Address,
 		Data: calldata,
 	}
 
-	// Determine block parameter
-	var blockParam string
-	if opts.Block != nil {
-		blockParam = opts.Block.String()
-	} else {
-		blockParam = BlockLatest.String()
-	}
-
 	// Execute eth_call
-	result, err := c.transport.Call(ctx, "eth_call", callReq, blockParam)
+	var result []byte
+	if opts.Block != "" {
+		result, err = c.Call(ctx, callReq, opts.Block)
+	} else {
+		result, err = c.Call(ctx, callReq)
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	// Decode the hex result
-	var hexResult string
-	if unmarshalErr := json.Unmarshal(result, &hexResult); unmarshalErr != nil {
-		return nil, fmt.Errorf("failed to unmarshal call result: %w", unmarshalErr)
-	}
-
-	resultBytes, err := hexutil.Decode(hexResult)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode result hex: %w", err)
-	}
-
 	// Decode the return values
-	decoded, err := parsedABI.DecodeFunctionResult(opts.FunctionName, resultBytes)
+	decoded, err := parsedABI.DecodeFunctionResult(opts.FunctionName, result)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode result for %q: %w", opts.FunctionName, err)
 	}
@@ -150,7 +136,7 @@ func (c *Client) ReadContract(ctx context.Context, opts ReadContractOptions) ([]
 
 // SimulateContract simulates a contract call without sending a transaction.
 // This is useful for checking if a transaction would succeed and getting return values.
-func (c *Client) SimulateContract(ctx context.Context, opts SimulateContractOptions) ([]any, error) {
+func (c *PublicClient) SimulateContract(ctx context.Context, opts SimulateContractOptions) ([]any, error) {
 	// Parse ABI
 	parsedABI, err := parseABIInput(opts.ABI)
 	if err != nil {
@@ -164,40 +150,26 @@ func (c *Client) SimulateContract(ctx context.Context, opts SimulateContractOpti
 	}
 
 	// Build call request
-	callReq := CallRequest{
+	callReq := types.CallRequest{
 		From:  opts.From,
 		To:    opts.Address,
 		Data:  calldata,
 		Value: opts.Value,
 	}
 
-	// Determine block parameter
-	var blockParam string
-	if opts.Block != nil {
-		blockParam = opts.Block.String()
-	} else {
-		blockParam = BlockLatest.String()
-	}
-
 	// Execute eth_call
-	result, err := c.transport.Call(ctx, "eth_call", callReq, blockParam)
+	var result []byte
+	if opts.Block != "" {
+		result, err = c.Call(ctx, callReq, opts.Block)
+	} else {
+		result, err = c.Call(ctx, callReq)
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	// Decode the hex result
-	var hexResult string
-	if unmarshalErr := json.Unmarshal(result, &hexResult); unmarshalErr != nil {
-		return nil, fmt.Errorf("failed to unmarshal call result: %w", unmarshalErr)
-	}
-
-	resultBytes, err := hexutil.Decode(hexResult)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode result hex: %w", err)
-	}
-
 	// Decode the return values
-	decoded, err := parsedABI.DecodeFunctionResult(opts.FunctionName, resultBytes)
+	decoded, err := parsedABI.DecodeFunctionResult(opts.FunctionName, result)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode result for %q: %w", opts.FunctionName, err)
 	}
@@ -205,43 +177,78 @@ func (c *Client) SimulateContract(ctx context.Context, opts SimulateContractOpti
 	return decoded, nil
 }
 
-// WriteContract sends a transaction to a contract.
-// Note: This requires the node to have the 'from' account unlocked,
-// or you need to use SendRawTransaction with a signed transaction.
-//
-// For most use cases, you'll want to:
-// 1. Use SimulateContract to check the call would succeed
-// 2. Build and sign the transaction yourself
-// 3. Use SendRawTransaction to submit it
-func (c *Client) WriteContract(ctx context.Context, opts WriteContractOptions) (common.Hash, error) {
+// PrepareContractWrite prepares a transaction for a contract write.
+// Returns a Transaction that can be signed and sent via WalletClient.
+func (c *PublicClient) PrepareContractWrite(ctx context.Context, opts PrepareContractWriteOptions) (*types.Transaction, error) {
 	// Parse ABI
 	parsedABI, err := parseABIInput(opts.ABI)
 	if err != nil {
-		return common.Hash{}, fmt.Errorf("failed to parse ABI: %w", err)
+		return nil, fmt.Errorf("failed to parse ABI: %w", err)
 	}
 
 	// Encode the function call
 	calldata, err := parsedABI.EncodeCall(opts.FunctionName, opts.Args...)
 	if err != nil {
-		return common.Hash{}, fmt.Errorf("failed to encode call for %q: %w", opts.FunctionName, err)
+		return nil, fmt.Errorf("failed to encode call for %q: %w", opts.FunctionName, err)
 	}
 
-	// Build transaction
-	tx := Transaction{
+	// Get nonce if not provided
+	var nonce uint64
+	if opts.Nonce != nil {
+		nonce = *opts.Nonce
+	} else {
+		nonce, err = c.GetTransactionCount(ctx, opts.From, BlockTagPending)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get nonce: %w", err)
+		}
+	}
+
+	// Estimate gas if not provided
+	gas := opts.Gas
+	if gas == 0 {
+		callReq := types.CallRequest{
+			From:  &opts.From,
+			To:    opts.Address,
+			Data:  calldata,
+			Value: opts.Value,
+		}
+		gas, err = c.EstimateGas(ctx, callReq)
+		if err != nil {
+			return nil, fmt.Errorf("failed to estimate gas: %w", err)
+		}
+		// Add 20% buffer
+		gas = gas * 120 / 100
+	}
+
+	// Get gas price if not provided (for legacy transactions)
+	gasPrice := opts.GasPrice
+	if gasPrice == nil && opts.MaxFeePerGas == nil {
+		gasPrice, err = c.GetGasPrice(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get gas price: %w", err)
+		}
+	}
+
+	// Get chain ID if available
+	var chainID *big.Int
+	if c.chain != nil {
+		chainID = big.NewInt(int64(c.chain.ID))
+	}
+
+	tx := &types.Transaction{
 		From:                 opts.From,
 		To:                   &opts.Address,
 		Data:                 calldata,
 		Value:                opts.Value,
-		Nonce:                opts.Nonce,
-		Gas:                  opts.Gas,
-		GasPrice:             opts.GasPrice,
+		Nonce:                &nonce,
+		Gas:                  gas,
+		GasPrice:             gasPrice,
 		MaxFeePerGas:         opts.MaxFeePerGas,
 		MaxPriorityFeePerGas: opts.MaxPriorityFeePerGas,
-		ChainID:              c.chainID,
+		ChainID:              chainID,
 	}
 
-	// Send transaction
-	return c.SendTransaction(ctx, tx)
+	return tx, nil
 }
 
 // EncodeFunctionData encodes function call data for a contract.
@@ -249,7 +256,7 @@ func (c *Client) WriteContract(ctx context.Context, opts WriteContractOptions) (
 //
 // Example:
 //
-//	data, err := client.EncodeFunctionData(EncodeFunctionDataOptions{
+//	data, err := EncodeFunctionData(EncodeFunctionDataOptions{
 //	    ABI:          `[{"name":"transfer","type":"function","inputs":[{"name":"to","type":"address"},{"name":"amount","type":"uint256"}]}]`,
 //	    FunctionName: "transfer",
 //	    Args:         []any{common.HexToAddress("0x..."), big.NewInt(1000000)},
@@ -286,3 +293,7 @@ func parseABIInput(input any) (*abi.ABI, error) {
 		return nil, fmt.Errorf("unsupported ABI type: %T (expected string, []byte, or *abi.ABI)", input)
 	}
 }
+
+// Suppress unused import warning for hexutil
+var _ = hexutil.Encode
+var _ = json.Marshal

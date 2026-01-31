@@ -115,7 +115,7 @@ func TestCreateClientWithAccount(t *testing.T) {
 	assert.Equal(t, addr, c.Account().Address())
 }
 
-func TestBaseClient_GetBlockNumber(t *testing.T) {
+func TestPublicClient_GetBlockNumber(t *testing.T) {
 	server := createTestServer(t, func(method string, params []any) any {
 		if method == "eth_blockNumber" {
 			return "0x10"
@@ -124,7 +124,7 @@ func TestBaseClient_GetBlockNumber(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreateClient(client.ClientConfig{
+	c, err := client.CreatePublicClient(client.PublicClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
@@ -136,7 +136,7 @@ func TestBaseClient_GetBlockNumber(t *testing.T) {
 	assert.Equal(t, uint64(16), blockNumber)
 }
 
-func TestBaseClient_GetChainID(t *testing.T) {
+func TestPublicClient_GetChainID(t *testing.T) {
 	server := createTestServer(t, func(method string, params []any) any {
 		if method == "eth_chainId" {
 			return "0x1"
@@ -145,7 +145,7 @@ func TestBaseClient_GetChainID(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreateClient(client.ClientConfig{
+	c, err := client.CreatePublicClient(client.PublicClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
@@ -157,7 +157,7 @@ func TestBaseClient_GetChainID(t *testing.T) {
 	assert.Equal(t, uint64(1), chainID)
 }
 
-func TestBaseClient_GetBalance(t *testing.T) {
+func TestPublicClient_GetBalance(t *testing.T) {
 	server := createTestServer(t, func(method string, params []any) any {
 		if method == "eth_getBalance" {
 			return "0xde0b6b3a7640000" // 1 ETH in wei
@@ -166,7 +166,7 @@ func TestBaseClient_GetBalance(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreateClient(client.ClientConfig{
+	c, err := client.CreatePublicClient(client.PublicClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
@@ -179,7 +179,7 @@ func TestBaseClient_GetBalance(t *testing.T) {
 	assert.NotNil(t, balance)
 }
 
-func TestBaseClient_Call(t *testing.T) {
+func TestPublicClient_Call(t *testing.T) {
 	server := createTestServer(t, func(method string, params []any) any {
 		if method == "eth_call" {
 			return "0x000000000000000000000000000000000000000000000000000000000000002a" // 42
@@ -188,16 +188,16 @@ func TestBaseClient_Call(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreateClient(client.ClientConfig{
+	c, err := client.CreatePublicClient(client.PublicClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
 	defer c.Close()
 
 	ctx := context.Background()
-	result, err := c.Call(ctx, map[string]any{
-		"to":   "0x1234567890123456789012345678901234567890",
-		"data": "0x",
+	to := common.HexToAddress("0x1234567890123456789012345678901234567890")
+	result, err := c.Call(ctx, client.CallRequest{
+		To: to,
 	})
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -233,18 +233,14 @@ func TestCreatePublicClient(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreatePublicClient(client.ClientConfig{
+	c, err := client.CreatePublicClient(client.PublicClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
 	defer c.Close()
 
-	assert.Equal(t, "public", c.Type())
+	assert.Equal(t, "publicClient", c.Type())
 	assert.Equal(t, "Public Client", c.Name())
-
-	// Check that public actions are available
-	_, ok := c.GetExtension("getBlockNumber")
-	assert.True(t, ok)
 }
 
 func TestCreateWalletClient(t *testing.T) {
@@ -253,18 +249,14 @@ func TestCreateWalletClient(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreateWalletClient(client.ClientConfig{
+	c, err := client.CreateWalletClient(client.WalletClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
 	defer c.Close()
 
-	assert.Equal(t, "wallet", c.Type())
+	assert.Equal(t, "walletClient", c.Type())
 	assert.Equal(t, "Wallet Client", c.Name())
-
-	// Check that wallet actions are available
-	_, ok := c.GetExtension("sendRawTransaction")
-	assert.True(t, ok)
 }
 
 func TestClientConfig_Defaults(t *testing.T) {
@@ -290,21 +282,19 @@ func TestPublicActions(t *testing.T) {
 	})
 	defer server.Close()
 
-	c, err := client.CreateClient(client.ClientConfig{
+	c, err := client.CreatePublicClient(client.PublicClientConfig{
 		Transport: transport.HTTP(server.URL),
 	})
 	require.NoError(t, err)
 	defer c.Close()
 
-	actions := client.NewPublicActions(c)
-
 	ctx := context.Background()
 
-	blockNumber, err := actions.GetBlockNumber(ctx)
+	blockNumber, err := c.GetBlockNumber(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, uint64(256), blockNumber)
 
-	chainID, err := actions.GetChainID(ctx)
+	chainID, err := c.GetChainID(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, uint64(1), chainID)
 }

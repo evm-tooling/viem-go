@@ -8,9 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ChefBingbong/viem-go/client/transport"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/ChefBingbong/viem-go/client/transport"
 )
 
 func TestHTTPTransport_BasicRequest(t *testing.T) {
