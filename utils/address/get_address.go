@@ -24,7 +24,7 @@ var (
 //
 //	checksumAddress("0xa5cc3c03994db5b0d9a5eedd10cabab0813678ac")
 //	// "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
-func ChecksumAddress(address string, chainId ...int64) string {
+func ChecksumAddress(address string, chainId ...int64) Address {
 	// Get lowercase address without 0x
 	addr := strings.ToLower(strings.TrimPrefix(address, "0x"))
 	addr = strings.TrimPrefix(addr, "0X")
@@ -61,7 +61,7 @@ func ChecksumAddress(address string, chainId ...int64) string {
 		}
 	}
 
-	return "0x" + string(result)
+	return "0x" + Address(result)
 }
 
 // GetAddress validates an address and returns it in checksummed format.
@@ -71,7 +71,7 @@ func ChecksumAddress(address string, chainId ...int64) string {
 //
 //	getAddress("0xa5cc3c03994db5b0d9a5eedd10cabab0813678ac")
 //	// "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
-func GetAddress(address string, chainId ...int64) (string, error) {
+func GetAddress(address string, chainId ...int64) (Address, error) {
 	if !IsAddress(address, IsAddressOptions{Strict: false}) {
 		return "", fmt.Errorf("%w: %s", ErrInvalidAddress, address)
 	}

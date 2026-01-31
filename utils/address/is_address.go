@@ -43,7 +43,7 @@ func IsAddress(address string, opts ...IsAddressOptions) bool {
 	// If strict mode and contains uppercase, verify checksum
 	if strict {
 		checksummed := ChecksumAddress(address)
-		return checksummed == address
+		return checksummed == Address(address)
 	}
 
 	return true

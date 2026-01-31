@@ -37,7 +37,7 @@ type GetCreate2AddressOptions struct {
 //	  Bytecode: bytecode,
 //	  Salt:     salt,
 //	})
-func GetContractAddress(opcode string, opts any) (string, error) {
+func GetContractAddress(opcode string, opts any) (Address, error) {
 	switch opcode {
 	case "CREATE2":
 		createOpts, ok := opts.(GetCreate2AddressOptions)
@@ -64,13 +64,13 @@ func GetContractAddress(opcode string, opts any) (string, error) {
 //	  Nonce: 0,
 //	})
 //	// "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"
-func GetCreateAddress(opts GetCreateAddressOptions) (string, error) {
+func GetCreateAddress(opts GetCreateAddressOptions) (Address, error) {
 	from, err := GetAddress(opts.From)
 	if err != nil {
 		return "", err
 	}
 
-	fromBytes := hexToBytes(from)
+	fromBytes := hexToBytes(string(from))
 	nonceBytes := encodeNonce(opts.Nonce)
 
 	// RLP encode [from, nonce]
@@ -93,13 +93,13 @@ func GetCreateAddress(opts GetCreateAddressOptions) (string, error) {
 //	  Bytecode: bytecode,
 //	  Salt:     salt,
 //	})
-func GetCreate2Address(opts GetCreate2AddressOptions) (string, error) {
+func GetCreate2Address(opts GetCreate2AddressOptions) (Address, error) {
 	from, err := GetAddress(opts.From)
 	if err != nil {
 		return "", err
 	}
 
-	fromBytes := hexToBytes(from)
+	fromBytes := hexToBytes(string(from))
 
 	// Pad salt to 32 bytes
 	salt := padLeft(opts.Salt, 32)

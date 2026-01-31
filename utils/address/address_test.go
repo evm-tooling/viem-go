@@ -99,7 +99,7 @@ func TestChecksumAddress(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := address.ChecksumAddress(tt.input)
-			if result != tt.expected {
+			if result != address.Address(tt.expected) {
 				t.Errorf("ChecksumAddress(%q) = %q, want %q", tt.input, result, tt.expected)
 			}
 		})
@@ -113,7 +113,7 @@ func TestGetAddress(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		expected := "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
-		if result != expected {
+		if result != address.Address(expected) {
 			t.Errorf("got %q, want %q", result, expected)
 		}
 	})
@@ -124,7 +124,7 @@ func TestGetAddress(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		expected := "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
-		if result != expected {
+		if result != address.Address(expected) {
 			t.Errorf("got %q, want %q", result, expected)
 		}
 	})
@@ -223,7 +223,7 @@ func TestGetCreateAddress(t *testing.T) {
 			if err != nil {
 				t.Errorf("unexpected error: %v", err)
 			}
-			if result != tt.expected {
+			if result != address.Address(tt.expected) {
 				t.Errorf("GetCreateAddress(from=%q, nonce=%d) = %q, want %q", tt.from, tt.nonce, result, tt.expected)
 			}
 		})
@@ -245,7 +245,7 @@ func TestGetCreate2Address(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		expected := "0x59fbB593ABe27Cb193b6ee5C5DC7bbde312290aB"
-		if result != expected {
+		if result != address.Address(expected) {
 			t.Errorf("GetCreate2Address() = %q, want %q", result, expected)
 		}
 	})
@@ -267,7 +267,7 @@ func TestGetCreate2Address(t *testing.T) {
 		}
 		// Should match the "with bytecode" test result
 		expected := "0x59fbB593ABe27Cb193b6ee5C5DC7bbde312290aB"
-		if result != expected {
+		if result != address.Address(expected) {
 			t.Errorf("GetCreate2Address() = %q, want %q", result, expected)
 		}
 	})
@@ -293,7 +293,7 @@ func TestGetContractAddress(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		expected := "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"
-		if result != expected {
+		if result != address.Address(expected) {
 			t.Errorf("got %q, want %q", result, expected)
 		}
 	})
@@ -311,7 +311,7 @@ func TestGetContractAddress(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		expected := "0x59fbB593ABe27Cb193b6ee5C5DC7bbde312290aB"
-		if result != expected {
+		if result != address.Address(expected) {
 			t.Errorf("got %q, want %q", result, expected)
 		}
 	})
