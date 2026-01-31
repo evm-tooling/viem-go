@@ -29,10 +29,6 @@ formatters:
   enable:
     - gofmt
     - goimports
-  settings:
-    goimports:
-      local-prefixes:
-        - github.com/ChefBingbong/viem-go
 
 issues:
   # Maximum issues count per one linter
