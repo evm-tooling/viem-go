@@ -3,56 +3,23 @@ package abi
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+
+	"github.com/ChefBingbong/viem-go/types"
 )
 
-// StateMutability represents the state mutability of a function.
-type StateMutability uint8
+// Re-export StateMutability from types package
+type StateMutability = types.StateMutability
 
+// Re-export StateMutability constants
 const (
-	// Pure functions promise not to read from or modify the state.
-	Pure StateMutability = iota
-	// View functions promise not to modify the state.
-	View
-	// NonPayable functions may read and modify the state but cannot receive Ether.
-	NonPayable
-	// Payable functions may read and modify the state and can receive Ether.
-	Payable
+	Pure       = types.StateMutabilityPure
+	View       = types.StateMutabilityView
+	NonPayable = types.StateMutabilityNonPayable
+	Payable    = types.StateMutabilityPayable
 )
-
-// String returns the string representation of StateMutability.
-func (s StateMutability) String() string {
-	switch s {
-	case Pure:
-		return "pure"
-	case View:
-		return "view"
-	case NonPayable:
-		return "nonpayable"
-	case Payable:
-		return "payable"
-	default:
-		return "unknown"
-	}
-}
 
 // ParseStateMutability parses a string into a StateMutability.
-func ParseStateMutability(s string) StateMutability {
-	switch s {
-	case "pure":
-		return Pure
-	case "view":
-		return View
-	case "payable":
-		return Payable
-	default:
-		return NonPayable
-	}
-}
-
-// IsReadOnly returns true if the function is read-only (pure or view).
-func (s StateMutability) IsReadOnly() bool {
-	return s == Pure || s == View
-}
+var ParseStateMutability = types.ParseStateMutability
 
 // ABI represents a parsed Ethereum ABI that wraps go-ethereum's ABI.
 type ABI struct {
