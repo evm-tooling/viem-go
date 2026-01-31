@@ -67,7 +67,7 @@ func installTools() {
 		pkg  string
 	}{
 		{"goimports", "golang.org/x/tools/cmd/goimports@latest"},
-		{"golangci-lint", "github.com/golangci/golangci-lint/cmd/golangci-lint@latest"},
+		{"golangci-lint", "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.8.0"},
 	}
 
 	for _, tool := range tools {
