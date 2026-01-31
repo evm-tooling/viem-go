@@ -8,6 +8,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
+	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/client/transport"
 	"github.com/ChefBingbong/viem-go/types"
 )
@@ -18,7 +19,7 @@ type WalletClientConfig struct {
 	// Account is the account to use for the client.
 	Account Account
 	// Chain is the chain configuration.
-	Chain *Chain
+	Chain *chain.Chain
 	// CacheTime is the time (in ms) that cached data will remain in memory.
 	CacheTime time.Duration
 	// Key is a key for the client (default: "wallet").
@@ -198,22 +199,20 @@ func (c *WalletClient) SwitchChain(ctx context.Context, chainID *big.Int) error 
 }
 
 // AddChain adds a chain using wallet_addEthereumChain.
-func (c *WalletClient) AddChain(ctx context.Context, chain *Chain) error {
+func (c *WalletClient) AddChain(ctx context.Context, ch *chain.Chain) error {
 	params := map[string]any{
-		"chainId":   "0x" + big.NewInt(int64(chain.ID)).Text(16),
-		"chainName": chain.Name,
+		"chainId":   "0x" + big.NewInt(ch.ID).Text(16),
+		"chainName": ch.Name,
 	}
 
-	if chain.NativeCurrency != nil {
-		params["nativeCurrency"] = map[string]any{
-			"name":     chain.NativeCurrency.Name,
-			"symbol":   chain.NativeCurrency.Symbol,
-			"decimals": chain.NativeCurrency.Decimals,
-		}
+	params["nativeCurrency"] = map[string]any{
+		"name":     ch.NativeCurrency.Name,
+		"symbol":   ch.NativeCurrency.Symbol,
+		"decimals": ch.NativeCurrency.Decimals,
 	}
 
-	if chain.RPCUrls != nil && len(chain.RPCUrls.Default.HTTP) > 0 {
-		params["rpcUrls"] = chain.RPCUrls.Default.HTTP
+	if urls, ok := ch.RpcUrls["default"]; ok && len(urls.HTTP) > 0 {
+		params["rpcUrls"] = urls.HTTP
 	}
 
 	_, err := c.Request(ctx, "wallet_addEthereumChain", params)

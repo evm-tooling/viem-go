@@ -116,7 +116,7 @@ func (c *Contract) PrepareTransaction(ctx context.Context, opts WriteOptions, me
 	// Get chain ID if available
 	var chainID *big.Int
 	if c.client.Chain() != nil {
-		chainID = big.NewInt(int64(c.client.Chain().ID))
+		chainID = big.NewInt(c.client.Chain().ID)
 	}
 
 	tx := &types.Transaction{
@@ -184,7 +184,7 @@ func PrepareDeployTransaction(ctx context.Context, cl *client.PublicClient, cont
 	// Get chain ID if available
 	var chainID *big.Int
 	if cl.Chain() != nil {
-		chainID = big.NewInt(int64(cl.Chain().ID))
+		chainID = big.NewInt(cl.Chain().ID)
 	}
 
 	tx := &types.Transaction{

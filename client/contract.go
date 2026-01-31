@@ -30,6 +30,14 @@ type ReadContractOptions struct {
 	Block BlockTag
 }
 
+// WithFunction returns a copy of the options with the function name and args set.
+// This enables a spread-like pattern similar to TypeScript's { ...token, functionName: 'name' }.
+func (o ReadContractOptions) WithFunction(name string, args ...any) ReadContractOptions {
+	o.FunctionName = name
+	o.Args = args
+	return o
+}
+
 // PrepareContractWriteOptions contains options for preparing a contract write transaction.
 type PrepareContractWriteOptions struct {
 	// Address is the contract address.
@@ -94,7 +102,7 @@ type DecodeFunctionResultOptions struct {
 //	    FunctionName: "balanceOf",
 //	    Args:         []any{common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")},
 //	})
-func (c *PublicClient) ReadContract(ctx context.Context, opts ReadContractOptions) ([]any, error) {
+func (c *PublicClient) ReadContract(ctx context.Context, opts ReadContractOptions) (any, error) {
 	// Parse ABI
 	parsedABI, err := parseABIInput(opts.ABI)
 	if err != nil {
@@ -131,7 +139,7 @@ func (c *PublicClient) ReadContract(ctx context.Context, opts ReadContractOption
 		return nil, fmt.Errorf("failed to decode result for %q: %w", opts.FunctionName, err)
 	}
 
-	return decoded, nil
+	return decoded[0], nil
 }
 
 // SimulateContract simulates a contract call without sending a transaction.
@@ -174,6 +182,7 @@ func (c *PublicClient) SimulateContract(ctx context.Context, opts SimulateContra
 		return nil, fmt.Errorf("failed to decode result for %q: %w", opts.FunctionName, err)
 	}
 
+	fmt.Println(decoded)
 	return decoded, nil
 }
 
@@ -232,7 +241,7 @@ func (c *PublicClient) PrepareContractWrite(ctx context.Context, opts PrepareCon
 	// Get chain ID if available
 	var chainID *big.Int
 	if c.chain != nil {
-		chainID = big.NewInt(int64(c.chain.ID))
+		chainID = big.NewInt(c.chain.ID)
 	}
 
 	tx := &types.Transaction{
