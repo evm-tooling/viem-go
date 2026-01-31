@@ -215,7 +215,21 @@ func (b *BatchTransport) BatchCall(ctx context.Context, requests []BatchRequest)
 	// Map responses by ID
 	responseMap := make(map[uint64]RPCResponse)
 	for _, r := range batchResp {
-		responseMap[r.ID] = r
+		// Handle ID which can be any type (usually float64 from JSON or uint64)
+		var id uint64
+		switch v := r.ID.(type) {
+		case float64:
+			id = uint64(v)
+		case int64:
+			id = uint64(v)
+		case uint64:
+			id = v
+		case int:
+			id = uint64(v)
+		default:
+			continue // Skip if ID is not a number
+		}
+		responseMap[id] = r
 	}
 
 	// Build result in original order

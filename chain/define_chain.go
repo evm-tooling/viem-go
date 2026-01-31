@@ -66,18 +66,31 @@ func copyBlockExplorers(m map[string]ChainBlockExplorer) map[string]ChainBlockEx
 	return out
 }
 
-func copyContracts(m map[string]ChainContract) map[string]ChainContract {
-	if m == nil {
+func copyContracts(c *ChainContracts) *ChainContracts {
+	if c == nil {
 		return nil
 	}
-	out := make(map[string]ChainContract, len(m))
-	for k, v := range m {
-		cp := ChainContract{Address: v.Address}
-		if v.BlockCreated != nil {
-			bc := *v.BlockCreated
-			cp.BlockCreated = &bc
-		}
-		out[k] = cp
+	out := &ChainContracts{}
+	if c.Multicall3 != nil {
+		out.Multicall3 = copyChainContract(c.Multicall3)
+	}
+	if c.EnsRegistry != nil {
+		out.EnsRegistry = copyChainContract(c.EnsRegistry)
+	}
+	if c.EnsUniversalResolver != nil {
+		out.EnsUniversalResolver = copyChainContract(c.EnsUniversalResolver)
+	}
+	return out
+}
+
+func copyChainContract(c *ChainContract) *ChainContract {
+	if c == nil {
+		return nil
+	}
+	out := &ChainContract{Address: c.Address}
+	if c.BlockCreated != nil {
+		bc := *c.BlockCreated
+		out.BlockCreated = &bc
 	}
 	return out
 }

@@ -11,17 +11,18 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ChefBingbong/viem-go/client/transport"
+	"github.com/ChefBingbong/viem-go/types"
 )
 
-// BlockTag represents a block tag for RPC requests.
-type BlockTag string
+// BlockTag is an alias for types.BlockTag.
+type BlockTag = types.BlockTag
 
 const (
-	BlockTagLatest    BlockTag = "latest"
-	BlockTagPending   BlockTag = "pending"
-	BlockTagEarliest  BlockTag = "earliest"
-	BlockTagSafe      BlockTag = "safe"
-	BlockTagFinalized BlockTag = "finalized"
+	BlockTagLatest    = types.BlockTagLatest
+	BlockTagPending   = types.BlockTagPending
+	BlockTagEarliest  = types.BlockTagEarliest
+	BlockTagSafe      = types.BlockTagSafe
+	BlockTagFinalized = types.BlockTagFinalized
 )
 
 // MulticallBatchOptions contains options for multicall batching.

@@ -1,7 +1,7 @@
 package chain
 
 import (
-	"github.com/ChefBingbong/viem-go/utils/address"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // ChainBlockExplorer represents a block explorer for a chain.
@@ -13,8 +13,8 @@ type ChainBlockExplorer struct {
 
 // ChainContract represents a contract address on a chain.
 type ChainContract struct {
-	Address      address.Address `json:"address"`
-	BlockCreated *uint64         `json:"blockCreated,omitempty"`
+	Address      common.Address `json:"address"`
+	BlockCreated *uint64        `json:"blockCreated,omitempty"`
 }
 
 // ChainNativeCurrency represents the native currency of a chain.
@@ -30,6 +30,13 @@ type ChainRpcUrls struct {
 	WebSocket []string `json:"webSocket,omitempty"`
 }
 
+// ChainContracts contains well-known contract addresses.
+type ChainContracts struct {
+	Multicall3           *ChainContract `json:"multicall3,omitempty"`
+	EnsRegistry          *ChainContract `json:"ensRegistry,omitempty"`
+	EnsUniversalResolver *ChainContract `json:"ensUniversalResolver,omitempty"`
+}
+
 // Chain is the basic chain definition, mirroring viem's Chain type.
 // It omits formatters, fees, serializers, and other chain config for simplicity.
 type Chain struct {
@@ -39,7 +46,7 @@ type Chain struct {
 	RpcUrls                         map[string]ChainRpcUrls       `json:"rpcUrls"`
 	BlockExplorers                  map[string]ChainBlockExplorer `json:"blockExplorers,omitempty"`
 	BlockTime                       *int64                        `json:"blockTime,omitempty"`
-	Contracts                       map[string]ChainContract      `json:"contracts,omitempty"`
+	Contracts                       *ChainContracts               `json:"contracts,omitempty"`
 	EnsTlds                         []string                      `json:"ensTlds,omitempty"`
 	SourceID                        *int64                        `json:"sourceId,omitempty"`
 	Testnet                         bool                          `json:"testnet,omitempty"`
