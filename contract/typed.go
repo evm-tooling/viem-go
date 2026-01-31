@@ -11,13 +11,85 @@ import (
 	"github.com/ChefBingbong/viem-go/types"
 )
 
+// =============================================================================
+// Typed Function Descriptors (Fn, Fn1, Fn2, Fn3, Fn4)
+// =============================================================================
+
+// Fn represents a zero-argument function returning TReturn.
+// Use this to define typed method descriptors for contract calls.
+//
+// Example:
+//
+//	var Name = contract.Fn[string]{Name: "name"}
+//	name, err := contract.Call(bc, ctx, Name)
+type Fn[TReturn any] struct {
+	Name string
+}
+
+// Fn1 represents a single-argument function.
+// The type parameters specify the argument type and return type.
+//
+// Example:
+//
+//	var BalanceOf = contract.Fn1[common.Address, *big.Int]{Name: "balanceOf"}
+//	balance, err := contract.Call1(bc, ctx, BalanceOf, ownerAddr)
+type Fn1[TArg, TReturn any] struct {
+	Name string
+}
+
+// Fn2 represents a two-argument function.
+//
+// Example:
+//
+//	var Allowance = contract.Fn2[common.Address, common.Address, *big.Int]{Name: "allowance"}
+//	allowance, err := contract.Call2(bc, ctx, Allowance, owner, spender)
+type Fn2[TArg1, TArg2, TReturn any] struct {
+	Name string
+}
+
+// Fn3 represents a three-argument function.
+type Fn3[TArg1, TArg2, TArg3, TReturn any] struct {
+	Name string
+}
+
+// Fn4 represents a four-argument function.
+type Fn4[TArg1, TArg2, TArg3, TArg4, TReturn any] struct {
+	Name string
+}
+
+// FnWrite represents a write function (state-changing).
+type FnWrite struct {
+	Name string
+}
+
+// FnWrite1 represents a single-argument write function.
+type FnWrite1[TArg any] struct {
+	Name string
+}
+
+// FnWrite2 represents a two-argument write function.
+type FnWrite2[TArg1, TArg2 any] struct {
+	Name string
+}
+
+// FnWrite3 represents a three-argument write function.
+type FnWrite3[TArg1, TArg2, TArg3 any] struct {
+	Name string
+}
+
+// =============================================================================
+// Legacy Types (kept for backwards compatibility)
+// =============================================================================
+
 // ReadMethod is a typed method descriptor for read-only contract calls.
 // The type parameter TReturn specifies the return type of the method.
+// Deprecated: Use Fn, Fn1, Fn2 etc. for better type safety on arguments.
 type ReadMethod[TReturn any] struct {
 	Name string
 }
 
 // WriteMethod is a method descriptor for state-changing contract calls.
+// Deprecated: Use FnWrite, FnWrite1, FnWrite2 etc. for better type safety.
 type WriteMethod struct {
 	Name string
 }
@@ -44,7 +116,12 @@ func ReadTyped[TReturn any](c *Contract, ctx context.Context, method ReadMethod[
 	// Type assert the result
 	typed, ok := result[0].(TReturn)
 	if !ok {
-		return zero, fmt.Errorf("method %q returned %T, expected %T", method.Name, result[0], zero)
+		// Try type conversion
+		converted, convErr := convertResult[TReturn](result[0], method.Name)
+		if convErr != nil {
+			return zero, fmt.Errorf("method %q returned %T, expected %T", method.Name, result[0], zero)
+		}
+		return converted, nil
 	}
 
 	return typed, nil
@@ -65,7 +142,11 @@ func ReadTypedWithOptions[TReturn any](c *Contract, ctx context.Context, opts Re
 
 	typed, ok := result[0].(TReturn)
 	if !ok {
-		return zero, fmt.Errorf("method %q returned %T, expected %T", method.Name, result[0], zero)
+		converted, convErr := convertResult[TReturn](result[0], method.Name)
+		if convErr != nil {
+			return zero, fmt.Errorf("method %q returned %T, expected %T", method.Name, result[0], zero)
+		}
+		return converted, nil
 	}
 
 	return typed, nil
@@ -76,6 +157,10 @@ func ReadTypedWithOptions[TReturn any](c *Contract, ctx context.Context, opts Re
 func PrepareWriteTyped(c *Contract, ctx context.Context, opts WriteOptions, method WriteMethod, args ...any) (*types.Transaction, error) {
 	return c.PrepareTransaction(ctx, opts, method.Name, args...)
 }
+
+// =============================================================================
+// TypedContract
+// =============================================================================
 
 // TypedContract is a generic wrapper that embeds a Contract and a method template.
 // The template type T should be a struct containing ReadMethod and WriteMethod fields.
@@ -123,7 +208,10 @@ func (tc *TypedContract[T]) Read(ctx context.Context, method ReadMethod[any], ar
 	return ReadTyped(tc.Contract, ctx, method, args...)
 }
 
-// Convenience type aliases for common return types
+// =============================================================================
+// Convenience Type Aliases
+// =============================================================================
+
 type (
 	// ReadBigInt is a method that returns *big.Int
 	ReadBigInt = ReadMethod[*big.Int]
@@ -140,3 +228,37 @@ type (
 	// ReadUint64 is a method that returns uint64
 	ReadUint64 = ReadMethod[uint64]
 )
+
+// =============================================================================
+// Helper Functions
+// =============================================================================
+
+// convertResult attempts to convert a value to the target type TReturn.
+func convertResult[TReturn any](value any, methodName string) (TReturn, error) {
+	var zero TReturn
+
+	// Try direct conversion for common types
+	switch v := value.(type) {
+	case *big.Int:
+		if result, ok := any(v).(TReturn); ok {
+			return result, nil
+		}
+		// Handle uint8, uint64 conversions from *big.Int
+		switch any(zero).(type) {
+		case uint8:
+			return any(uint8(v.Uint64())).(TReturn), nil
+		case uint64:
+			return any(v.Uint64()).(TReturn), nil
+		}
+	case int64:
+		if _, ok := any(zero).(*big.Int); ok {
+			return any(big.NewInt(v)).(TReturn), nil
+		}
+	case uint64:
+		if _, ok := any(zero).(*big.Int); ok {
+			return any(new(big.Int).SetUint64(v)).(TReturn), nil
+		}
+	}
+
+	return zero, fmt.Errorf("cannot convert %T to %T for method %q", value, zero, methodName)
+}

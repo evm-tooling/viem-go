@@ -1,6 +1,8 @@
 package contract_test
 
 import (
+	"context"
+
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ChefBingbong/viem-go/contract"
@@ -18,6 +20,7 @@ var _ = Describe("Contract", func() {
 
 			// Note: This will work for ABI parsing but client will be nil
 			cont, err := contract.NewContract(addr, erc20ABI, nil)
+			cont.Read(context.Background(), "balanceOf", common.HexToAddress("0x1234567890123456789012345678901234567890"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(cont).ToNot(BeNil())
 			Expect(cont.Address()).To(Equal(addr))
