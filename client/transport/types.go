@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/ChefBingbong/viem-go/client/transport/rpc"
+	"github.com/ChefBingbong/viem-go/utils/rpc"
 )
 
 // Re-export types from rpc package for convenience

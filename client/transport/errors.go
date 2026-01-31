@@ -3,7 +3,7 @@ package transport
 import (
 	"errors"
 
-	"github.com/ChefBingbong/viem-go/client/transport/rpc"
+	"github.com/ChefBingbong/viem-go/utils/rpc"
 )
 
 // Common transport errors

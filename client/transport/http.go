@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ChefBingbong/viem-go/client/transport/rpc"
+	"github.com/ChefBingbong/viem-go/utils/rpc"
 )
 
 // HTTPTransportConfig contains configuration for the HTTP transport.

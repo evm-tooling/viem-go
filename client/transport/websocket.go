@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/ChefBingbong/viem-go/client/transport/rpc"
+	"github.com/ChefBingbong/viem-go/utils/rpc"
 )
 
 // WebSocketTransportConfig contains configuration for the WebSocket transport.
