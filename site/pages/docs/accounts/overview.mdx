@@ -1,0 +1,176 @@
+# Accounts
+
+Accounts in viem-go handle key management and signing operations. There are two main account types:
+
+- **Local Accounts**: Keys are managed in your application (private key, mnemonic, HD wallet)
+- **JSON-RPC Accounts**: Keys are managed by an external wallet/node
+
+## Local Accounts
+
+Local accounts keep the private key in memory and can sign transactions, messages, and typed data directly.
+
+### From Private Key
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/accounts"
+
+account, err := accounts.PrivateKeyToAccount(
+    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Address: %s\n", account.Address)
+fmt.Printf("Public Key: %s\n", account.PublicKey)
+```
+
+```typescript [TypeScript (viem)]
+import { privateKeyToAccount } from 'viem/accounts'
+
+const account = privateKeyToAccount(
+  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+)
+
+console.log('Address:', account.address)
+console.log('Public Key:', account.publicKey)
+```
+
+:::
+
+### From Mnemonic
+
+:::code-group
+
+```go [Go]
+account, err := accounts.MnemonicToAccount(
+    "test test test test test test test test test test test junk",
+    nil, // Use default HD path
+)
+
+// With custom HD path
+account, err := accounts.MnemonicToAccount(
+    "test test test test test test test test test test test junk",
+    &accounts.HDOptions{
+        Path: "m/44'/60'/0'/0/1", // Second account
+    },
+)
+```
+
+```typescript [TypeScript (viem)]
+import { mnemonicToAccount } from 'viem/accounts'
+
+const account = mnemonicToAccount(
+  'test test test test test test test test test test test junk'
+)
+
+// With custom path
+const account2 = mnemonicToAccount(
+  'test test test test test test test test test test test junk',
+  { addressIndex: 1 }
+)
+```
+
+:::
+
+### From HD Key
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/accounts"
+
+// First derive the HD key from a mnemonic
+hdKey, err := accounts.MnemonicToHDKey(mnemonic, "m/44'/60'/0'/0/0")
+if err != nil {
+    log.Fatal(err)
+}
+
+// Then create an account from the HD key
+account, err := accounts.HDKeyToAccount(hdKey)
+```
+
+```typescript [TypeScript (viem)]
+import { hdKeyToAccount } from 'viem/accounts'
+import { HDKey } from '@scure/bip32'
+
+const hdKey = HDKey.fromMasterSeed(seed).derive("m/44'/60'/0'/0/0")
+const account = hdKeyToAccount(hdKey)
+```
+
+:::
+
+## Account Capabilities
+
+Local accounts can:
+
+| Operation | Method |
+|-----------|--------|
+| Sign hash | `account.Sign(hash)` |
+| Sign message | `account.SignMessage(message)` |
+| Sign transaction | `account.SignTransaction(tx)` |
+| Sign typed data | `account.SignTypedData(data)` |
+| Sign authorization | `account.SignAuthorization(auth)` |
+
+## Generating Keys
+
+### Generate Private Key
+
+```go
+import "github.com/ChefBingbong/viem-go/accounts"
+
+// Generate a random private key
+privateKey, err := accounts.GeneratePrivateKey()
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Private Key: %s\n", privateKey)
+// 0x... (64 hex characters)
+```
+
+### Generate Mnemonic
+
+```go
+// Generate a 12-word mnemonic (128 bits entropy)
+mnemonic, err := accounts.GenerateMnemonic(12)
+
+// Generate a 24-word mnemonic (256 bits entropy)
+mnemonic, err := accounts.GenerateMnemonic(24)
+
+fmt.Println("Mnemonic:", mnemonic)
+// "word1 word2 word3 ..."
+```
+
+## Account Properties
+
+```go
+// LocalAccount fields
+account.Address   // "0x..." - checksummed address
+account.PublicKey // "0x..." - compressed public key
+account.Source    // "privateKey", "mnemonic", etc.
+account.Type      // "local"
+
+// HDAccount additional fields
+hdAccount.GetHdKey() // Returns the underlying HD key
+```
+
+## Security Considerations
+
+:::warning
+Never commit private keys or mnemonics to source control. Use environment variables or secure key management systems in production.
+:::
+
+```go
+import "os"
+
+// Load from environment
+privateKey := os.Getenv("PRIVATE_KEY")
+if privateKey == "" {
+    log.Fatal("PRIVATE_KEY not set")
+}
+
+account, _ := accounts.PrivateKeyToAccount(privateKey)
+```

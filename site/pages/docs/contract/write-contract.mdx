@@ -1,0 +1,249 @@
+# Writing Contracts
+
+Send transactions to modify smart contract state. Unlike read operations, writes require gas and must be signed.
+
+## Preparing a Contract Write
+
+Use `PrepareContractWrite` to build a transaction for a contract call:
+
+:::code-group
+
+```go [Go]
+import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/client"
+    "math/big"
+)
+
+// Prepare the transaction
+tx, err := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptions{
+    Address: common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+    ABI: `[{
+        "name": "transfer",
+        "type": "function",
+        "inputs": [
+            {"name": "to", "type": "address"},
+            {"name": "amount", "type": "uint256"}
+        ],
+        "outputs": [{"type": "bool"}]
+    }]`,
+    FunctionName: "transfer",
+    Args: []any{
+        common.HexToAddress("0xRecipient..."),
+        big.NewInt(1000000), // 1 USDC (6 decimals)
+    },
+    From: senderAddress,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("To: %s\n", tx.To.Hex())
+fmt.Printf("Data: 0x%x\n", tx.Data)
+fmt.Printf("Gas: %d\n", tx.Gas)
+```
+
+```typescript [TypeScript (viem)]
+import { parseAbi } from 'viem'
+
+// Simulate first to check if it will succeed
+const { request } = await publicClient.simulateContract({
+  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  abi: parseAbi(['function transfer(address to, uint256 amount) returns (bool)']),
+  functionName: 'transfer',
+  args: ['0xRecipient...', 1000000n],
+  account: senderAddress,
+})
+
+// Then write
+const hash = await walletClient.writeContract(request)
+```
+
+:::
+
+## PrepareContractWriteOptions
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `Address` | `common.Address` | Yes | Contract address |
+| `ABI` | `string` or `[]byte` | Yes | Contract ABI |
+| `FunctionName` | `string` | Yes | Function to call |
+| `Args` | `[]any` | No | Function arguments |
+| `From` | `common.Address` | Yes | Sender address |
+| `Value` | `*big.Int` | No | ETH to send (for payable functions) |
+| `Gas` | `uint64` | No | Gas limit (estimated if not provided) |
+| `GasPrice` | `*big.Int` | No | Gas price (legacy tx) |
+| `MaxFeePerGas` | `*big.Int` | No | Max fee (EIP-1559) |
+| `MaxPriorityFeePerGas` | `*big.Int` | No | Priority fee (EIP-1559) |
+| `Nonce` | `*uint64` | No | Nonce (fetched if not provided) |
+
+## Signing and Sending
+
+After preparing, sign and send the transaction:
+
+:::code-group
+
+```go [Go - With Local Account]
+import (
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/utils/transaction"
+)
+
+// 1. Create account from private key
+account, _ := accounts.PrivateKeyToAccount("0x...")
+
+// 2. Prepare the transaction
+tx, _ := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptions{
+    Address:      contractAddress,
+    ABI:          abi,
+    FunctionName: "transfer",
+    Args:         []any{recipient, amount},
+    From:         common.HexToAddress(account.Address),
+})
+
+// 3. Convert to transaction for signing
+signableTx := &transaction.Transaction{
+    To:       tx.To,
+    Data:     tx.Data,
+    Value:    tx.Value,
+    Gas:      tx.Gas,
+    GasPrice: tx.GasPrice,
+    Nonce:    *tx.Nonce,
+    ChainID:  tx.ChainID,
+}
+
+// 4. Sign the transaction
+signedTx, err := account.SignTransaction(signableTx)
+if err != nil {
+    log.Fatal(err)
+}
+
+// 5. Send the signed transaction
+txHash, err := walletClient.SendRawTransaction(ctx, []byte(signedTx))
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Transaction sent: %s\n", txHash.Hex())
+
+// 6. Wait for receipt
+receipt, err := publicClient.WaitForTransactionReceipt(ctx, txHash)
+fmt.Printf("Status: %d\n", receipt.Status)
+```
+
+```go [Go - With JSON-RPC Wallet]
+// If your RPC endpoint manages the account (less common)
+txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
+    From:  senderAddress,
+    To:    tx.To,
+    Data:  tx.Data,
+    Value: tx.Value,
+    Gas:   tx.Gas,
+})
+```
+
+:::
+
+## Using Typed Contract Bindings
+
+The ERC20 binding includes write methods:
+
+```go
+import "github.com/ChefBingbong/viem-go/contracts/erc20"
+
+token, _ := erc20.New(usdcAddress, publicClient)
+
+// Prepare a transfer
+tx, err := token.PrepareTransfer(ctx, recipient, amount, senderAddress)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Sign and send...
+```
+
+## Payable Functions
+
+For functions that accept ETH, use the `Value` parameter:
+
+```go
+tx, err := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptions{
+    Address:      wethAddress,
+    ABI:          `[{"name":"deposit","type":"function","inputs":[],"stateMutability":"payable"}]`,
+    FunctionName: "deposit",
+    From:         senderAddress,
+    Value:        big.NewInt(1e18), // 1 ETH
+})
+```
+
+## Encoding Function Data
+
+If you need just the calldata without a full transaction:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/client"
+
+data, err := client.EncodeFunctionData(client.EncodeFunctionDataOptions{
+    ABI: `[{
+        "name": "transfer",
+        "type": "function",
+        "inputs": [
+            {"name": "to", "type": "address"},
+            {"name": "amount", "type": "uint256"}
+        ]
+    }]`,
+    FunctionName: "transfer",
+    Args: []any{recipient, amount},
+})
+
+fmt.Printf("Calldata: 0x%x\n", data)
+// Output: 0xa9059cbb000000000000000000000000...
+```
+
+```typescript [TypeScript (viem)]
+import { encodeFunctionData, parseAbi } from 'viem'
+
+const data = encodeFunctionData({
+  abi: parseAbi(['function transfer(address to, uint256 amount)']),
+  functionName: 'transfer',
+  args: [recipient, amount],
+})
+
+console.log('Calldata:', data)
+```
+
+:::
+
+## Gas Estimation
+
+Gas is automatically estimated, but you can override:
+
+```go
+// Let it estimate (adds 20% buffer)
+tx, _ := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptions{
+    // ...
+})
+fmt.Printf("Estimated gas: %d\n", tx.Gas)
+
+// Or specify manually
+tx, _ := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptions{
+    // ...
+    Gas: 100000,
+})
+```
+
+## Error Handling
+
+```go
+tx, err := publicClient.PrepareContractWrite(ctx, opts)
+if err != nil {
+    // Estimation failed - likely the transaction would revert
+    if strings.Contains(err.Error(), "execution reverted") {
+        log.Println("Transaction would revert")
+        // Decode revert reason if available
+    }
+    return err
+}
+```

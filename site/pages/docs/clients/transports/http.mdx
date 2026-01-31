@@ -1,0 +1,159 @@
+# HTTP Transport
+
+The HTTP transport connects to Ethereum nodes via standard JSON-RPC over HTTP/HTTPS. It's the most common transport type.
+
+## Usage
+
+:::code-group
+
+```go [Go]
+import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+)
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+```
+
+```typescript [TypeScript (viem)]
+import { createPublicClient, http } from 'viem'
+
+const client = createPublicClient({
+  transport: http('https://eth.llamarpc.com'),
+})
+```
+
+:::
+
+## Configuration
+
+### HTTPTransportConfig
+
+```go
+transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    // Timeout for each request
+    Timeout: 10 * time.Second,
+    
+    // Number of retry attempts
+    RetryCount: 3,
+    
+    // Base delay between retries (exponential backoff)
+    RetryDelay: 150 * time.Millisecond,
+    
+    // Custom HTTP headers
+    Headers: map[string]string{
+        "Authorization": "Bearer your-api-key",
+    },
+    
+    // Enable request batching
+    Batch: &transport.BatchConfig{
+        Enabled:   true,
+        BatchSize: 1000,
+        Wait:      10 * time.Millisecond,
+    },
+})
+```
+
+### Options
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `Timeout` | `time.Duration` | `10s` | Request timeout |
+| `RetryCount` | `int` | `3` | Max retry attempts |
+| `RetryDelay` | `time.Duration` | `150ms` | Base delay between retries |
+| `Headers` | `map[string]string` | `nil` | Custom HTTP headers |
+| `Batch` | `*BatchConfig` | `nil` | Request batching config |
+| `Methods` | `*MethodFilter` | `nil` | Allowed/blocked RPC methods |
+
+## Request Batching
+
+Enable batching to combine multiple RPC calls into a single HTTP request:
+
+```go
+publicClient, _ := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+        Batch: &transport.BatchConfig{
+            Enabled:   true,
+            BatchSize: 1000,  // Max bytes per batch
+            Wait:      10 * time.Millisecond, // Wait time before sending
+        },
+    }),
+})
+```
+
+With batching enabled, concurrent requests will be automatically combined:
+
+```go
+// These will be batched into a single HTTP request
+var wg sync.WaitGroup
+var blockNumber uint64
+var balance *big.Int
+
+wg.Add(2)
+go func() {
+    defer wg.Done()
+    blockNumber, _ = publicClient.GetBlockNumber(ctx)
+}()
+go func() {
+    defer wg.Done()
+    balance, _ = publicClient.GetBalance(ctx, address)
+}()
+wg.Wait()
+```
+
+## Retry Logic
+
+The HTTP transport automatically retries failed requests with exponential backoff:
+
+- Retry on network errors
+- Retry on rate limiting (429 status)
+- Retry on server errors (5xx status)
+- Exponential backoff: `delay * 2^attempt`
+
+```go
+transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    RetryCount: 5,
+    RetryDelay: 200 * time.Millisecond,
+    // Delays: 200ms, 400ms, 800ms, 1600ms, 3200ms
+})
+```
+
+## Authentication
+
+For authenticated RPC endpoints:
+
+```go
+// API key in URL
+transport.HTTP("https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY")
+
+// Or via headers
+transport.HTTP("https://your-rpc-endpoint.com", transport.HTTPTransportConfig{
+    Headers: map[string]string{
+        "Authorization": "Bearer YOUR_API_KEY",
+    },
+})
+```
+
+## Method Filtering
+
+Restrict which RPC methods can be called:
+
+```go
+transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Methods: &transport.MethodFilter{
+        // Only allow these methods
+        Allow: []string{
+            "eth_blockNumber",
+            "eth_getBalance",
+            "eth_call",
+        },
+        // Or block specific methods
+        Block: []string{
+            "eth_sendTransaction",
+            "eth_sendRawTransaction",
+        },
+    },
+})
+```

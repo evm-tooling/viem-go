@@ -1,0 +1,246 @@
+# Unit Utilities
+
+Convert between Ethereum denominations (wei, gwei, ether) and human-readable formats.
+
+## Overview
+
+Ethereum uses wei as the base unit (1 ETH = 10^18 wei). These utilities help convert between different denominations.
+
+| Unit | Wei | Symbol |
+|------|-----|--------|
+| Wei | 1 | wei |
+| Gwei | 10^9 | gwei |
+| Ether | 10^18 | ETH |
+
+## parseEther
+
+Convert ETH to wei:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/unit"
+
+// Parse "1.5" ETH to wei
+wei, err := unit.ParseEther("1.5")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(wei.String())
+// 1500000000000000000
+```
+
+```typescript [TypeScript (viem)]
+import { parseEther } from 'viem'
+
+const wei = parseEther('1.5')
+console.log(wei)
+// 1500000000000000000n
+```
+
+:::
+
+## formatEther
+
+Convert wei to ETH string:
+
+:::code-group
+
+```go [Go]
+wei := big.NewInt(1500000000000000000)
+
+eth := unit.FormatEther(wei)
+fmt.Println(eth)
+// "1.5"
+```
+
+```typescript [TypeScript (viem)]
+import { formatEther } from 'viem'
+
+const eth = formatEther(1500000000000000000n)
+console.log(eth)
+// "1.5"
+```
+
+:::
+
+## parseGwei
+
+Convert gwei to wei (commonly used for gas prices):
+
+:::code-group
+
+```go [Go]
+// Parse "20" gwei to wei
+wei, err := unit.ParseGwei("20")
+fmt.Println(wei.String())
+// 20000000000
+```
+
+```typescript [TypeScript (viem)]
+import { parseGwei } from 'viem'
+
+const wei = parseGwei('20')
+console.log(wei)
+// 20000000000n
+```
+
+:::
+
+## formatGwei
+
+Convert wei to gwei string:
+
+:::code-group
+
+```go [Go]
+wei := big.NewInt(20000000000)
+
+gwei := unit.FormatGwei(wei)
+fmt.Println(gwei)
+// "20"
+```
+
+```typescript [TypeScript (viem)]
+import { formatGwei } from 'viem'
+
+const gwei = formatGwei(20000000000n)
+console.log(gwei)
+// "20"
+```
+
+:::
+
+## parseUnits
+
+Convert a string to a big integer with custom decimals:
+
+:::code-group
+
+```go [Go]
+// Parse USDC amount (6 decimals)
+amount, err := unit.ParseUnits("100.50", 6)
+fmt.Println(amount.String())
+// 100500000
+
+// Parse DAI amount (18 decimals)
+amount, err = unit.ParseUnits("100.50", 18)
+fmt.Println(amount.String())
+// 100500000000000000000
+```
+
+```typescript [TypeScript (viem)]
+import { parseUnits } from 'viem'
+
+// USDC (6 decimals)
+const usdc = parseUnits('100.50', 6)
+console.log(usdc) // 100500000n
+
+// DAI (18 decimals)
+const dai = parseUnits('100.50', 18)
+console.log(dai) // 100500000000000000000n
+```
+
+:::
+
+## formatUnits
+
+Convert a big integer to a string with custom decimals:
+
+:::code-group
+
+```go [Go]
+// Format USDC amount (6 decimals)
+amount := big.NewInt(100500000)
+formatted := unit.FormatUnits(amount, 6)
+fmt.Println(formatted)
+// "100.5"
+
+// Format with more precision
+amount = big.NewInt(100500001)
+formatted = unit.FormatUnits(amount, 6)
+fmt.Println(formatted)
+// "100.500001"
+```
+
+```typescript [TypeScript (viem)]
+import { formatUnits } from 'viem'
+
+// Format USDC
+const formatted = formatUnits(100500000n, 6)
+console.log(formatted) // "100.5"
+```
+
+:::
+
+## Common Use Cases
+
+### Display Token Balance
+
+```go
+// Fetch raw balance (in smallest unit)
+balance, _ := token.BalanceOf(ctx, address)
+
+// Get token decimals
+decimals, _ := token.Decimals(ctx)
+
+// Format for display
+displayBalance := unit.FormatUnits(balance, int(decimals))
+fmt.Printf("Balance: %s USDC\n", displayBalance)
+```
+
+### Set Gas Price
+
+```go
+// User inputs gas price in gwei
+gasPriceGwei := "25.5"
+gasPrice, _ := unit.ParseGwei(gasPriceGwei)
+
+tx := &transaction.Transaction{
+    GasPrice: gasPrice,
+    // ...
+}
+```
+
+### Parse User Input for Transfer
+
+```go
+// User wants to send 1.5 ETH
+amountStr := "1.5"
+amount, _ := unit.ParseEther(amountStr)
+
+tx := &transaction.Transaction{
+    Value: amount,
+    // ...
+}
+```
+
+### Calculate Transaction Cost
+
+```go
+gasUsed := big.NewInt(21000)
+gasPrice := big.NewInt(20e9) // 20 gwei
+
+// Cost in wei
+cost := new(big.Int).Mul(gasUsed, gasPrice)
+
+// Display in ETH
+fmt.Printf("Cost: %s ETH\n", unit.FormatEther(cost))
+// Cost: 0.00042 ETH
+```
+
+## Error Handling
+
+```go
+// Invalid input
+_, err := unit.ParseEther("not-a-number")
+if err != nil {
+    fmt.Println("Invalid input:", err)
+}
+
+// Too many decimal places
+_, err = unit.ParseUnits("1.1234567", 6) // More than 6 decimals
+if err != nil {
+    fmt.Println("Too many decimals:", err)
+}
+```

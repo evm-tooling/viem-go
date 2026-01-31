@@ -1,0 +1,80 @@
+---
+title: viem-go · Go Interface for Ethereum
+---
+
+# viem-go
+
+**Go Interface for Ethereum** — inspired by [viem](https://viem.sh).
+
+Build reliable blockchain applications with idiomatic Go, type safety, and familiar APIs.
+
+[Get Started](/docs/getting-started) · [Why viem-go?](/docs/introduction) · [GitHub](https://github.com/ChefBingbong/viem-go)
+
+## Installation
+
+```bash
+go get github.com/ChefBingbong/viem-go
+```
+
+## Quick Start
+
+:::code-group
+
+```go [Go]
+package main
+
+import (
+    "context"
+    "fmt"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+func main() {
+    // 1. Create a public client
+    c, _ := client.CreatePublicClient(client.PublicClientConfig{
+        Chain:     definitions.Mainnet,
+        Transport: transport.HTTP("https://eth.llamarpc.com"),
+    })
+    defer c.Close()
+
+    // 2. Get the current block number
+    blockNumber, _ := c.GetBlockNumber(context.Background())
+    fmt.Println("Block number:", blockNumber)
+}
+```
+
+```typescript [TypeScript (viem)]
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+// 1. Create a public client
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+})
+
+// 2. Get the current block number
+const blockNumber = await client.getBlockNumber()
+console.log('Block number:', blockNumber)
+```
+
+:::
+
+## Features
+
+viem-go brings the developer experience of viem to Go:
+
+- **Familiar API** — Same concepts as viem: Clients, Transports, Actions
+- **Type Safety** — Go's static typing for contract ABIs and transactions
+- **go-ethereum Based** — Built on proven cryptographic primitives
+- **Comprehensive Utils** — Unit parsing, hashing, signatures, address validation
+- **Account Management** — Private key, mnemonic, and HD wallet support
+- **Contract Bindings** — Pre-built ERC20, ERC721, ERC1155 helpers
+
+## Side-by-Side Comparison
+
+See how viem-go maps to viem throughout the documentation. Every code example shows both languages so you can translate your TypeScript knowledge to Go.
+
+[Start Building →](/docs/getting-started)

@@ -1,0 +1,242 @@
+# Hashing Utilities
+
+Cryptographic hashing functions used throughout Ethereum.
+
+## keccak256
+
+The primary hash function used in Ethereum:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Hash bytes
+h := hash.Keccak256([]byte("hello"))
+fmt.Printf("0x%x\n", h)
+// 0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8
+```
+
+```typescript [TypeScript (viem)]
+import { keccak256, toBytes } from 'viem'
+
+const hash = keccak256(toBytes('hello'))
+console.log(hash)
+// 0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8
+```
+
+:::
+
+## sha256
+
+Standard SHA-256 hash:
+
+:::code-group
+
+```go [Go]
+h := hash.Sha256([]byte("hello"))
+fmt.Printf("0x%x\n", h)
+// 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+```
+
+```typescript [TypeScript (viem)]
+import { sha256, toBytes } from 'viem'
+
+const hash = sha256(toBytes('hello'))
+console.log(hash)
+```
+
+:::
+
+## ripemd160
+
+RIPEMD-160 hash (used in Bitcoin addresses):
+
+```go
+h := hash.Ripemd160([]byte("hello"))
+fmt.Printf("0x%x\n", h)
+// 0x108f07b8382412612c048d07d13f814118445acd
+```
+
+## hashMessage
+
+Hash a message for EIP-191 personal sign:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/signature"
+
+// This prepends "\x19Ethereum Signed Message:\n" + length
+messageHash := signature.HashMessage("Hello, Ethereum!")
+fmt.Printf("0x%x\n", messageHash)
+```
+
+```typescript [TypeScript (viem)]
+import { hashMessage } from 'viem'
+
+const hash = hashMessage('Hello, Ethereum!')
+console.log(hash)
+```
+
+:::
+
+The message hash is computed as:
+```
+keccak256("\x19Ethereum Signed Message:\n" + len(message) + message)
+```
+
+## hashTypedData
+
+Hash EIP-712 typed structured data:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/signature"
+
+typedData := signature.TypedDataDefinition{
+    Domain: signature.TypedDataDomain{
+        Name:    "My App",
+        Version: "1",
+        ChainId: big.NewInt(1),
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Message": {
+            {Name: "content", Type: "string"},
+        },
+    },
+    PrimaryType: "Message",
+    Message: map[string]any{
+        "content": "Hello!",
+    },
+}
+
+hash, err := signature.HashTypedData(typedData)
+fmt.Printf("0x%x\n", hash)
+```
+
+```typescript [TypeScript (viem)]
+import { hashTypedData } from 'viem'
+
+const hash = hashTypedData({
+  domain: {
+    name: 'My App',
+    version: '1',
+    chainId: 1,
+  },
+  types: {
+    Message: [{ name: 'content', type: 'string' }],
+  },
+  primaryType: 'Message',
+  message: { content: 'Hello!' },
+})
+```
+
+:::
+
+## toFunctionSelector
+
+Get the 4-byte function selector:
+
+:::code-group
+
+```go [Go]
+selector := hash.ToFunctionSelector("transfer(address,uint256)")
+fmt.Printf("0x%x\n", selector)
+// 0xa9059cbb
+```
+
+```typescript [TypeScript (viem)]
+import { toFunctionSelector } from 'viem'
+
+const selector = toFunctionSelector('function transfer(address, uint256)')
+console.log(selector)
+// 0xa9059cbb
+```
+
+:::
+
+## toEventSelector
+
+Get the event topic hash:
+
+:::code-group
+
+```go [Go]
+topic := hash.ToEventSelector("Transfer(address,address,uint256)")
+fmt.Printf("%s\n", topic.Hex())
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+```
+
+```typescript [TypeScript (viem)]
+import { toEventSelector } from 'viem'
+
+const topic = toEventSelector('event Transfer(address, address, uint256)')
+console.log(topic)
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+```
+
+:::
+
+## isHash
+
+Check if a value is a valid hash:
+
+:::code-group
+
+```go [Go]
+valid := hash.IsHash("0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8")
+fmt.Println(valid) // true
+
+invalid := hash.IsHash("0x123") // Too short
+fmt.Println(invalid) // false
+```
+
+```typescript [TypeScript (viem)]
+import { isHash } from 'viem'
+
+isHash('0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8')
+// true
+
+isHash('0x123')
+// false
+```
+
+:::
+
+## Common Use Cases
+
+### Verify Contract Deployment
+
+```go
+// Check if code exists at address
+code, _ := client.GetCode(ctx, address)
+codeHash := hash.Keccak256(code)
+fmt.Printf("Code hash: 0x%x\n", codeHash)
+```
+
+### Create Deterministic IDs
+
+```go
+// Create unique ID from components
+id := hash.Keccak256(append(
+    address.Bytes(),
+    big.NewInt(timestamp).Bytes()...,
+))
+```
+
+### Verify Message Signature
+
+```go
+// Hash the message the same way it was signed
+messageHash := signature.HashMessage(originalMessage)
+
+// Recover the signer
+recovered, _ := signature.RecoverAddress(messageHash, sig)
+
+// Verify it matches expected signer
+if recovered != expectedSigner {
+    return errors.New("invalid signature")
+}
+```

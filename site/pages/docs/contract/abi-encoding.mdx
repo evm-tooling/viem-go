@@ -1,0 +1,281 @@
+# ABI Encoding & Decoding
+
+viem-go provides utilities for encoding and decoding data according to the Ethereum ABI specification.
+
+## Parsing ABIs
+
+Parse a JSON ABI into a usable structure:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/abi"
+
+// Parse from JSON string
+parsed, err := abi.Parse([]byte(`[
+    {
+        "name": "transfer",
+        "type": "function",
+        "inputs": [
+            {"name": "to", "type": "address"},
+            {"name": "amount", "type": "uint256"}
+        ],
+        "outputs": [{"type": "bool"}]
+    },
+    {
+        "name": "Transfer",
+        "type": "event",
+        "inputs": [
+            {"name": "from", "type": "address", "indexed": true},
+            {"name": "to", "type": "address", "indexed": true},
+            {"name": "value", "type": "uint256", "indexed": false}
+        ]
+    }
+]`))
+if err != nil {
+    log.Fatal(err)
+}
+
+// Access functions
+transferFunc := parsed.Functions["transfer"]
+fmt.Println("Selector:", hex.EncodeToString(transferFunc.Selector[:]))
+
+// Access events
+transferEvent := parsed.Events["Transfer"]
+fmt.Println("Topic:", transferEvent.Topic.Hex())
+```
+
+```typescript [TypeScript (viem)]
+import { parseAbi, parseAbiItem } from 'viem'
+
+// Parse multiple ABI items
+const abi = parseAbi([
+  'function transfer(address to, uint256 amount) returns (bool)',
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
+])
+
+// Parse single item
+const func = parseAbiItem('function transfer(address to, uint256 amount)')
+```
+
+:::
+
+## Encoding Function Calls
+
+### encodeFunctionData
+
+Encode a function call for use in a transaction's `data` field:
+
+:::code-group
+
+```go [Go]
+// Using parsed ABI
+data, err := parsed.EncodeCall("transfer",
+    common.HexToAddress("0xRecipient..."),
+    big.NewInt(1000000),
+)
+fmt.Printf("Encoded: 0x%x\n", data)
+
+// Or using EncodeFunctionData helper
+data, err := client.EncodeFunctionData(client.EncodeFunctionDataOptions{
+    ABI:          abiJSON,
+    FunctionName: "transfer",
+    Args:         []any{recipient, amount},
+})
+```
+
+```typescript [TypeScript (viem)]
+import { encodeFunctionData } from 'viem'
+
+const data = encodeFunctionData({
+  abi,
+  functionName: 'transfer',
+  args: [recipient, amount],
+})
+```
+
+:::
+
+### Encoding with Different Types
+
+```go
+// Address
+addr := common.HexToAddress("0x...")
+
+// Uint256
+amount := big.NewInt(1000000)
+
+// Bytes
+data := []byte{0x01, 0x02, 0x03}
+
+// Bytes32
+var fixedBytes [32]byte
+copy(fixedBytes[:], someHash)
+
+// String
+name := "Hello"
+
+// Bool
+approved := true
+
+// Array
+addresses := []common.Address{addr1, addr2, addr3}
+
+// Tuple/Struct
+type Order struct {
+    Maker  common.Address
+    Amount *big.Int
+}
+order := Order{Maker: addr, Amount: amount}
+```
+
+## Decoding Function Results
+
+### decodeFunctionResult
+
+Decode the return value from a contract call:
+
+:::code-group
+
+```go [Go]
+// Decode using parsed ABI
+results, err := parsed.DecodeFunctionResult("balanceOf", resultData)
+if err != nil {
+    log.Fatal(err)
+}
+balance := results[0].(*big.Int)
+
+// Or using DecodeFunctionResult helper
+results, err := client.DecodeFunctionResult(client.DecodeFunctionResultOptions{
+    ABI:          abiJSON,
+    FunctionName: "balanceOf",
+    Data:         resultData,
+})
+```
+
+```typescript [TypeScript (viem)]
+import { decodeFunctionResult } from 'viem'
+
+const balance = decodeFunctionResult({
+  abi,
+  functionName: 'balanceOf',
+  data: resultData,
+})
+```
+
+:::
+
+## Encoding Event Topics
+
+Encode event topics for filtering logs:
+
+```go
+// Get event topic (function signature hash)
+topic := parsed.Events["Transfer"].Topic
+fmt.Println("Topic:", topic.Hex())
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+
+// Filter logs by event
+logs, err := publicClient.GetLogs(ctx, types.FilterQuery{
+    Topics: [][]common.Hash{{topic}},
+})
+```
+
+## Decoding Event Logs
+
+Decode log data back into structured values:
+
+```go
+// Assuming you have a log from GetLogs
+log := logs[0]
+
+// The indexed parameters are in Topics[1:]
+from := common.BytesToAddress(log.Topics[1].Bytes())
+to := common.BytesToAddress(log.Topics[2].Bytes())
+
+// Non-indexed parameters are in Data
+value := new(big.Int).SetBytes(log.Data)
+
+fmt.Printf("Transfer: %s -> %s: %s\n", from.Hex(), to.Hex(), value.String())
+```
+
+## Function Selectors
+
+Get the 4-byte function selector:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// From function signature
+selector := hash.ToFunctionSelector("transfer(address,uint256)")
+fmt.Printf("Selector: 0x%x\n", selector) // 0xa9059cbb
+
+// From parsed ABI
+selector := parsed.Functions["transfer"].Selector
+```
+
+```typescript [TypeScript (viem)]
+import { toFunctionSelector } from 'viem'
+
+const selector = toFunctionSelector('function transfer(address, uint256)')
+// 0xa9059cbb
+```
+
+:::
+
+## Event Signatures
+
+Get the event topic hash:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// From event signature
+topic := hash.ToEventSelector("Transfer(address,address,uint256)")
+fmt.Printf("Topic: %s\n", topic.Hex())
+
+// From parsed ABI
+topic := parsed.Events["Transfer"].Topic
+```
+
+```typescript [TypeScript (viem)]
+import { toEventSelector } from 'viem'
+
+const topic = toEventSelector('event Transfer(address, address, uint256)')
+```
+
+:::
+
+## Packed Encoding
+
+For non-standard encoding (e.g., `abi.encodePacked` in Solidity):
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/abi"
+
+// encodePacked equivalent
+packed, err := abi.EncodePacked(
+    []abi.PackedValue{
+        {Type: "address", Value: common.HexToAddress("0x...")},
+        {Type: "uint256", Value: big.NewInt(1000)},
+        {Type: "string", Value: "hello"},
+    },
+)
+```
+
+```typescript [TypeScript (viem)]
+import { encodePacked } from 'viem'
+
+const packed = encodePacked(
+  ['address', 'uint256', 'string'],
+  ['0x...', 1000n, 'hello']
+)
+```
+
+:::

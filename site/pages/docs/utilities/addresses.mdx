@@ -1,0 +1,237 @@
+# Address Utilities
+
+Utilities for validating, formatting, and working with Ethereum addresses.
+
+## isAddress
+
+Check if a string is a valid Ethereum address:
+
+:::code-group
+
+```go [Go]
+import "github.com/ChefBingbong/viem-go/utils/address"
+
+valid := address.IsAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
+fmt.Println(valid) // true
+
+valid = address.IsAddress("0xinvalid")
+fmt.Println(valid) // false
+
+valid = address.IsAddress("not an address")
+fmt.Println(valid) // false
+```
+
+```typescript [TypeScript (viem)]
+import { isAddress } from 'viem'
+
+isAddress('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045')
+// true
+
+isAddress('0xinvalid')
+// false
+```
+
+:::
+
+## getAddress
+
+Convert an address to its checksummed format (EIP-55):
+
+:::code-group
+
+```go [Go]
+checksummed, err := address.GetAddress("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(checksummed)
+// 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+```
+
+```typescript [TypeScript (viem)]
+import { getAddress } from 'viem'
+
+const checksummed = getAddress('0xd8da6bf26964af9d7eed9e03e53415d37aa96045')
+// 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+```
+
+:::
+
+## isAddressEqual
+
+Compare two addresses (case-insensitive):
+
+:::code-group
+
+```go [Go]
+equal := address.IsAddressEqual(
+    "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+    "0xD8DA6BF26964AF9D7EED9E03E53415D37AA96045",
+)
+fmt.Println(equal) // true
+```
+
+```typescript [TypeScript (viem)]
+import { isAddressEqual } from 'viem'
+
+isAddressEqual(
+  '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+  '0xD8DA6BF26964AF9D7EED9E03E53415D37AA96045'
+)
+// true
+```
+
+:::
+
+## getContractAddress
+
+Compute the address of a contract deployed with CREATE:
+
+:::code-group
+
+```go [Go]
+contractAddr := address.GetContractAddress(address.GetContractAddressOptions{
+    From:  common.HexToAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
+    Nonce: 0,
+})
+fmt.Println(contractAddr.Hex())
+```
+
+```typescript [TypeScript (viem)]
+import { getContractAddress } from 'viem'
+
+const address = getContractAddress({
+  from: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+  nonce: 0n,
+})
+```
+
+:::
+
+## getCreate2Address
+
+Compute the address of a contract deployed with CREATE2:
+
+:::code-group
+
+```go [Go]
+contractAddr := address.GetCreate2Address(address.GetCreate2AddressOptions{
+    From: factoryAddress,
+    Salt: salt,        // [32]byte
+    InitCodeHash: initCodeHash, // keccak256 of init code
+})
+```
+
+```typescript [TypeScript (viem)]
+import { getCreate2Address } from 'viem'
+
+const address = getCreate2Address({
+  from: factoryAddress,
+  salt: '0x...',
+  bytecodeHash: '0x...',
+})
+```
+
+:::
+
+## Working with go-ethereum
+
+viem-go uses `go-ethereum`'s `common.Address` type:
+
+```go
+import "github.com/ethereum/go-ethereum/common"
+
+// Parse string to Address
+addr := common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
+
+// Get hex string
+hex := addr.Hex() // "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+
+// Get bytes
+bytes := addr.Bytes() // [20]byte
+
+// Compare addresses
+addr1 := common.HexToAddress("0x...")
+addr2 := common.HexToAddress("0x...")
+if addr1 == addr2 {
+    fmt.Println("Addresses match")
+}
+
+// Check for zero address
+if addr == (common.Address{}) {
+    fmt.Println("Zero address")
+}
+```
+
+## Common Patterns
+
+### Validate User Input
+
+```go
+func parseUserAddress(input string) (common.Address, error) {
+    // Validate format
+    if !address.IsAddress(input) {
+        return common.Address{}, errors.New("invalid address format")
+    }
+    
+    // Convert to checksummed
+    checksummed, err := address.GetAddress(input)
+    if err != nil {
+        return common.Address{}, err
+    }
+    
+    return common.HexToAddress(checksummed), nil
+}
+```
+
+### Predict Contract Address
+
+```go
+// Predict where a contract will be deployed
+nonce, _ := client.GetTransactionCount(ctx, deployer)
+
+predictedAddr := address.GetContractAddress(address.GetContractAddressOptions{
+    From:  deployer,
+    Nonce: nonce,
+})
+
+fmt.Printf("Contract will deploy to: %s\n", predictedAddr.Hex())
+```
+
+### Create2 Deterministic Deployment
+
+```go
+// Compute CREATE2 address before deployment
+salt := common.HexToHash("0x1234...")
+initCode := contractBytecode
+initCodeHash := crypto.Keccak256Hash(initCode)
+
+predictedAddr := address.GetCreate2Address(address.GetCreate2AddressOptions{
+    From:         factoryAddress,
+    Salt:         salt,
+    InitCodeHash: initCodeHash,
+})
+
+// Deploy will result in this exact address regardless of nonce
+fmt.Printf("Deterministic address: %s\n", predictedAddr.Hex())
+```
+
+## Zero Address
+
+The zero address (`0x0000000000000000000000000000000000000000`) is commonly used to represent:
+- Contract creation transactions (no `to` address)
+- Burn addresses
+- Uninitialized address fields
+
+```go
+// Check for zero address
+zeroAddr := common.Address{}
+if addr == zeroAddr {
+    fmt.Println("Address is zero")
+}
+
+// Or use bytes comparison
+if addr == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+    fmt.Println("Address is zero")
+}
+```

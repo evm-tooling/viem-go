@@ -1,0 +1,325 @@
+# Wallet Client
+
+A Wallet Client provides write access to the Ethereum blockchain, handling transaction signing and sending through JSON-RPC methods like `eth_sendTransaction`, `eth_sign`, and wallet-specific methods.
+
+## Creating a Wallet Client
+
+:::code-group
+
+```go [Go]
+import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer walletClient.Close()
+```
+
+```typescript [TypeScript (viem)]
+import { createWalletClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const walletClient = createWalletClient({
+  chain: mainnet,
+  transport: http(),
+})
+```
+
+:::
+
+## Configuration Options
+
+### WalletClientConfig
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `Account` | `Account` | Account for signing (optional) |
+| `Chain` | `*chain.Chain` | Chain configuration |
+| `Transport` | `TransportFactory` | Transport for RPC calls |
+| `Key` | `string` | Client identifier (default: "wallet") |
+| `Name` | `string` | Client name (default: "Wallet Client") |
+| `PollingInterval` | `time.Duration` | Polling frequency |
+| `CacheTime` | `time.Duration` | Cache duration |
+
+## Available Methods
+
+### Transaction Methods
+
+#### SendRawTransaction
+
+Send a pre-signed transaction:
+
+:::code-group
+
+```go [Go]
+// signedTx is a serialized signed transaction ([]byte)
+txHash, err := walletClient.SendRawTransaction(ctx, signedTx)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Transaction sent: %s\n", txHash.Hex())
+```
+
+```typescript [TypeScript (viem)]
+const hash = await walletClient.sendRawTransaction({
+  serializedTransaction: signedTx,
+})
+console.log('Transaction sent:', hash)
+```
+
+:::
+
+#### SendTransaction
+
+Send a transaction (requires unlocked account on the node):
+
+:::code-group
+
+```go [Go]
+txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
+    From:  senderAddress,
+    To:    &recipientAddress,
+    Value: big.NewInt(1e18), // 1 ETH
+})
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+```typescript [TypeScript (viem)]
+const hash = await walletClient.sendTransaction({
+  to: recipientAddress,
+  value: parseEther('1'),
+})
+```
+
+:::
+
+### Signing Methods
+
+#### SignMessage
+
+Sign a message using EIP-191 personal sign:
+
+:::code-group
+
+```go [Go]
+signature, err := walletClient.SignMessage(ctx, address, []byte("Hello, Ethereum!"))
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Signature: 0x%x\n", signature)
+```
+
+```typescript [TypeScript (viem)]
+const signature = await walletClient.signMessage({
+  account: address,
+  message: 'Hello, Ethereum!',
+})
+console.log('Signature:', signature)
+```
+
+:::
+
+#### SignTypedData
+
+Sign EIP-712 typed structured data:
+
+:::code-group
+
+```go [Go]
+typedData := map[string]any{
+    "types": map[string]any{
+        "EIP712Domain": []map[string]string{
+            {"name": "name", "type": "string"},
+            {"name": "version", "type": "string"},
+            {"name": "chainId", "type": "uint256"},
+        },
+        "Mail": []map[string]string{
+            {"name": "from", "type": "string"},
+            {"name": "to", "type": "string"},
+            {"name": "contents", "type": "string"},
+        },
+    },
+    "primaryType": "Mail",
+    "domain": map[string]any{
+        "name":    "Ether Mail",
+        "version": "1",
+        "chainId": 1,
+    },
+    "message": map[string]any{
+        "from":     "alice@example.com",
+        "to":       "bob@example.com",
+        "contents": "Hello, Bob!",
+    },
+}
+
+signature, err := walletClient.SignTypedData(ctx, address, typedData)
+```
+
+```typescript [TypeScript (viem)]
+const signature = await walletClient.signTypedData({
+  account: address,
+  domain: {
+    name: 'Ether Mail',
+    version: '1',
+    chainId: 1,
+  },
+  types: {
+    Mail: [
+      { name: 'from', type: 'string' },
+      { name: 'to', type: 'string' },
+      { name: 'contents', type: 'string' },
+    ],
+  },
+  primaryType: 'Mail',
+  message: {
+    from: 'alice@example.com',
+    to: 'bob@example.com',
+    contents: 'Hello, Bob!',
+  },
+})
+```
+
+:::
+
+### Account Methods
+
+#### GetAccounts
+
+Get accounts managed by the connected wallet:
+
+```go
+accounts, err := walletClient.GetAccounts(ctx)
+// Returns: []common.Address
+```
+
+#### RequestAccounts
+
+Request account access (triggers wallet popup in browser contexts):
+
+```go
+accounts, err := walletClient.RequestAccounts(ctx)
+```
+
+### Chain Methods
+
+#### SwitchChain
+
+Switch to a different chain:
+
+```go
+err := walletClient.SwitchChain(ctx, big.NewInt(137)) // Polygon
+```
+
+#### AddChain
+
+Add a new chain to the wallet:
+
+```go
+err := walletClient.AddChain(ctx, &chain.Chain{
+    ID:   137,
+    Name: "Polygon",
+    NativeCurrency: chain.NativeCurrency{
+        Name:     "MATIC",
+        Symbol:   "MATIC",
+        Decimals: 18,
+    },
+    RpcUrls: map[string]chain.RpcUrls{
+        "default": {HTTP: []string{"https://polygon-rpc.com"}},
+    },
+})
+```
+
+### Permissions Methods
+
+```go
+// Get current permissions
+permissions, err := walletClient.GetPermissions(ctx)
+
+// Request new permissions
+permissions, err := walletClient.RequestPermissions(ctx, []map[string]any{
+    {"eth_accounts": map[string]any{}},
+})
+```
+
+### Asset Methods
+
+#### WatchAsset
+
+Add a token to the wallet's watch list:
+
+```go
+success, err := walletClient.WatchAsset(ctx, 
+    "ERC20",                            // token type
+    tokenAddress,                        // contract address
+    "USDC",                              // symbol
+    6,                                   // decimals
+    "https://example.com/usdc-icon.png", // image URL
+)
+```
+
+## Local Signing
+
+For local signing without relying on the RPC node, use accounts:
+
+:::code-group
+
+```go [Go]
+import (
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/utils/transaction"
+)
+
+// Create account from private key
+account, _ := accounts.PrivateKeyToAccount("0x...")
+
+// Sign a message
+sig, err := account.SignMessage(signature.SignableMessage{
+    Raw: []byte("Hello, Ethereum!"),
+})
+
+// Sign a transaction
+tx := &transaction.Transaction{
+    To:       &recipientAddress,
+    Value:    big.NewInt(1e18),
+    Gas:      21000,
+    GasPrice: big.NewInt(20e9),
+    Nonce:    0,
+    ChainID:  big.NewInt(1),
+}
+signedTx, err := account.SignTransaction(tx)
+
+// Send the signed transaction
+txHash, err := walletClient.SendRawTransaction(ctx, signedTx)
+```
+
+```typescript [TypeScript (viem)]
+import { privateKeyToAccount } from 'viem/accounts'
+
+const account = privateKeyToAccount('0x...')
+
+// Sign a message
+const sig = await account.signMessage({
+  message: 'Hello, Ethereum!',
+})
+
+// Sign and send a transaction
+const hash = await walletClient.sendTransaction({
+  account,
+  to: recipientAddress,
+  value: parseEther('1'),
+})
+```
+
+:::
+
+See [Accounts](/docs/accounts/overview) for more details on local signing.
