@@ -1,10 +1,10 @@
-.PHONY: fmt lint test test-cover verify
+.PHONY: fmt lint test test-cover verify check
 
 fmt:
 	gofmt -w .
 	goimports -local github.com/ChefBingbong/viem-go -w .
 
-lint: fmt
+lint:
 	golangci-lint run
 
 verify:
@@ -15,3 +15,5 @@ test:
 
 test-cover:
 	go test -v -race -coverprofile=coverage.out $$(go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+
+check: fmt lint test
