@@ -15,6 +15,52 @@ import (
 // ContractABI is the ABI of the ERC20 contract.
 var ContractABI = `[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"owner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"type":"function"},{"constant":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"}]`
 
+// =============================================================================
+// Typed Method Descriptors (New Pattern)
+// =============================================================================
+
+// Methods contains typed method descriptors for ERC20 contracts.
+// Use these with contract.Call, contract.Call1, etc. for fully type-safe calls.
+//
+// Example:
+//
+//	token := contract.MustBind(tokenAddr, []byte(erc20.ContractABI), client)
+//
+//	name, err := contract.Call(token, ctx, erc20.Methods.Name)
+//	balance, err := contract.Call1(token, ctx, erc20.Methods.BalanceOf, ownerAddr)
+//	allowance, err := contract.Call2(token, ctx, erc20.Methods.Allowance, owner, spender)
+var Methods = struct {
+	// Read methods
+	Name        contract.Fn[string]
+	Symbol      contract.Fn[string]
+	Decimals    contract.Fn[uint8]
+	TotalSupply contract.Fn[*big.Int]
+	BalanceOf   contract.Fn1[common.Address, *big.Int]
+	Allowance   contract.Fn2[common.Address, common.Address, *big.Int]
+
+	// Write methods
+	Transfer     contract.FnWrite2[common.Address, *big.Int]
+	Approve      contract.FnWrite2[common.Address, *big.Int]
+	TransferFrom contract.FnWrite3[common.Address, common.Address, *big.Int]
+}{
+	// Read methods
+	Name:        contract.Fn[string]{Name: "name"},
+	Symbol:      contract.Fn[string]{Name: "symbol"},
+	Decimals:    contract.Fn[uint8]{Name: "decimals"},
+	TotalSupply: contract.Fn[*big.Int]{Name: "totalSupply"},
+	BalanceOf:   contract.Fn1[common.Address, *big.Int]{Name: "balanceOf"},
+	Allowance:   contract.Fn2[common.Address, common.Address, *big.Int]{Name: "allowance"},
+
+	// Write methods
+	Transfer:     contract.FnWrite2[common.Address, *big.Int]{Name: "transfer"},
+	Approve:      contract.FnWrite2[common.Address, *big.Int]{Name: "approve"},
+	TransferFrom: contract.FnWrite3[common.Address, common.Address, *big.Int]{Name: "transferFrom"},
+}
+
+// =============================================================================
+// Classic API (Backwards Compatible)
+// =============================================================================
+
 // ERC20 is a binding to an ERC20 token contract.
 type ERC20 struct {
 	contract *contract.Contract
@@ -46,6 +92,17 @@ func (e *ERC20) Address() common.Address {
 // Contract returns the underlying contract instance.
 func (e *ERC20) Contract() *contract.Contract {
 	return e.contract
+}
+
+// Bound returns a BoundContract for use with the typed Call functions.
+// This allows mixing the classic API with the new typed API.
+//
+// Example:
+//
+//	token := erc20.MustNew(addr, client)
+//	name, err := contract.Call(token.Bound(), ctx, erc20.Methods.Name)
+func (e *ERC20) Bound() *contract.BoundContract {
+	return &contract.BoundContract{Contract: e.contract}
 }
 
 // ---- Read Methods (Public Actions) ----
@@ -157,4 +214,69 @@ func (e *ERC20) ParseApproval(log types.Log) (*ApprovalEvent, error) {
 		Spender: event["spender"].(common.Address),
 		Value:   event["value"].(*big.Int),
 	}, nil
+}
+
+// =============================================================================
+// ReadContract Helper
+// =============================================================================
+
+// ReadBalanceOf is a convenience function using the generic ReadContract API.
+// This demonstrates the Tier 1 approach from the plan.
+//
+// Example:
+//
+//	balance, err := erc20.ReadBalanceOf(client, tokenAddr, ownerAddr)
+func ReadBalanceOf(c *client.PublicClient, tokenAddr, owner common.Address) (*big.Int, error) {
+	return contract.ReadContract[*big.Int](c, contract.ReadContractParams{
+		Address:      tokenAddr,
+		ABI:          ContractABI,
+		FunctionName: "balanceOf",
+		Args:         []any{owner},
+	})
+}
+
+// ReadName is a convenience function using the generic ReadContract API.
+func ReadName(c *client.PublicClient, tokenAddr common.Address) (string, error) {
+	return contract.ReadContract[string](c, contract.ReadContractParams{
+		Address:      tokenAddr,
+		ABI:          ContractABI,
+		FunctionName: "name",
+	})
+}
+
+// ReadSymbol is a convenience function using the generic ReadContract API.
+func ReadSymbol(c *client.PublicClient, tokenAddr common.Address) (string, error) {
+	return contract.ReadContract[string](c, contract.ReadContractParams{
+		Address:      tokenAddr,
+		ABI:          ContractABI,
+		FunctionName: "symbol",
+	})
+}
+
+// ReadDecimals is a convenience function using the generic ReadContract API.
+func ReadDecimals(c *client.PublicClient, tokenAddr common.Address) (uint8, error) {
+	return contract.ReadContract[uint8](c, contract.ReadContractParams{
+		Address:      tokenAddr,
+		ABI:          ContractABI,
+		FunctionName: "decimals",
+	})
+}
+
+// ReadTotalSupply is a convenience function using the generic ReadContract API.
+func ReadTotalSupply(c *client.PublicClient, tokenAddr common.Address) (*big.Int, error) {
+	return contract.ReadContract[*big.Int](c, contract.ReadContractParams{
+		Address:      tokenAddr,
+		ABI:          ContractABI,
+		FunctionName: "totalSupply",
+	})
+}
+
+// ReadAllowance is a convenience function using the generic ReadContract API.
+func ReadAllowance(c *client.PublicClient, tokenAddr, owner, spender common.Address) (*big.Int, error) {
+	return contract.ReadContract[*big.Int](c, contract.ReadContractParams{
+		Address:      tokenAddr,
+		ABI:          ContractABI,
+		FunctionName: "allowance",
+		Args:         []any{owner, spender},
+	})
 }
