@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/utils/rpc"
 )
 
@@ -125,41 +126,13 @@ type Transport interface {
 // TransportParams contains parameters passed when creating a transport instance.
 type TransportParams struct {
 	// Chain is the chain configuration (optional).
-	Chain *Chain
+	Chain *chain.Chain
 	// PollingInterval is the interval for polling operations.
 	PollingInterval time.Duration
 	// RetryCount overrides the default retry count.
 	RetryCount *int
 	// Timeout overrides the default timeout.
 	Timeout *time.Duration
-}
-
-// Chain represents minimal chain information needed by transports.
-type Chain struct {
-	// ID is the chain ID.
-	ID int
-	// Name is the chain name.
-	Name string
-	// RPCUrls contains the RPC URLs for the chain.
-	RPCUrls ChainRPCUrls
-	// BlockTime is the expected block time in milliseconds.
-	BlockTime int
-}
-
-// ChainRPCUrls contains RPC URLs for different transport types.
-type ChainRPCUrls struct {
-	// Default contains the default RPC URLs.
-	Default ChainRPCEndpoints
-	// Public contains public RPC URLs.
-	Public ChainRPCEndpoints
-}
-
-// ChainRPCEndpoints contains HTTP and WebSocket endpoints.
-type ChainRPCEndpoints struct {
-	// HTTP contains HTTP RPC URLs.
-	HTTP []string
-	// WebSocket contains WebSocket RPC URLs.
-	WebSocket []string
 }
 
 // TransportFactory is a function that creates a transport instance.

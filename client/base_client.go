@@ -9,6 +9,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
+	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/client/transport"
 	"github.com/ChefBingbong/viem-go/types"
 )
@@ -61,53 +62,8 @@ func (a *AddressAccount) Address() common.Address {
 	return a.addr
 }
 
-// Chain represents chain configuration for the client.
-type Chain struct {
-	// ID is the chain ID.
-	ID int
-	// Name is the human-readable chain name.
-	Name string
-	// BlockTime is the block time in milliseconds.
-	BlockTime int
-	// NativeCurrency contains the native currency information.
-	NativeCurrency *NativeCurrency
-	// RPCUrls contains the RPC endpoints.
-	RPCUrls *ChainRPCUrls
-	// Contracts contains well-known contract addresses.
-	Contracts *ChainContracts
-	// Testnet indicates if this is a test network.
-	Testnet bool
-}
-
-// NativeCurrency represents the native currency of a chain.
-type NativeCurrency struct {
-	Name     string
-	Symbol   string
-	Decimals int
-}
-
-// ChainRPCUrls contains RPC URLs for a chain.
-type ChainRPCUrls struct {
-	Default ChainRPCEndpoints
-	Public  ChainRPCEndpoints
-}
-
-// ChainRPCEndpoints contains HTTP and WebSocket endpoints.
-type ChainRPCEndpoints struct {
-	HTTP      []string
-	WebSocket []string
-}
-
-// ChainContracts contains well-known contract addresses.
-type ChainContracts struct {
-	Multicall3 *ChainContract
-}
-
-// ChainContract represents a contract address with optional creation block.
-type ChainContract struct {
-	Address      common.Address
-	BlockCreated uint64
-}
+// Chain is an alias for chain.Chain.
+type Chain = chain.Chain
 
 // ClientConfig contains configuration for creating a client.
 type ClientConfig struct {
@@ -196,12 +152,12 @@ func CreateClient(config ClientConfig) (*BaseClient, error) {
 	}
 
 	// Calculate default polling interval based on chain block time
-	blockTime := 12000 // Default 12 seconds
-	if config.Chain != nil && config.Chain.BlockTime > 0 {
-		blockTime = config.Chain.BlockTime
+	blockTime := int64(12000) // Default 12 seconds
+	if config.Chain != nil && config.Chain.BlockTime != nil && *config.Chain.BlockTime > 0 {
+		blockTime = *config.Chain.BlockTime
 	}
 
-	defaultPollingInterval := time.Duration(min(max(blockTime/2, 500), 4000)) * time.Millisecond
+	defaultPollingInterval := time.Duration(min(max(int(blockTime/2), 500), 4000)) * time.Millisecond
 	if config.PollingInterval == 0 {
 		config.PollingInterval = defaultPollingInterval
 	}
@@ -217,26 +173,8 @@ func CreateClient(config ClientConfig) (*BaseClient, error) {
 		return nil, transport.ErrURLRequired
 	}
 
-	// Convert chain to transport chain
-	var transportChain *transport.Chain
-	if config.Chain != nil {
-		transportChain = &transport.Chain{
-			ID:        config.Chain.ID,
-			Name:      config.Chain.Name,
-			BlockTime: config.Chain.BlockTime,
-		}
-		if config.Chain.RPCUrls != nil {
-			transportChain.RPCUrls = transport.ChainRPCUrls{
-				Default: transport.ChainRPCEndpoints{
-					HTTP:      config.Chain.RPCUrls.Default.HTTP,
-					WebSocket: config.Chain.RPCUrls.Default.WebSocket,
-				},
-			}
-		}
-	}
-
 	tr, err := config.Transport(transport.TransportParams{
-		Chain:           transportChain,
+		Chain:           config.Chain,
 		PollingInterval: config.PollingInterval,
 	})
 	if err != nil {

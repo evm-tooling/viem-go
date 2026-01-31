@@ -78,8 +78,8 @@ func HTTP(url string, config ...HTTPTransportConfig) TransportFactory {
 			finalURL = cfg.URL
 		}
 		if finalURL == "" && params.Chain != nil {
-			if len(params.Chain.RPCUrls.Default.HTTP) > 0 {
-				finalURL = params.Chain.RPCUrls.Default.HTTP[0]
+			if urls, ok := params.Chain.RpcUrls["default"]; ok && len(urls.HTTP) > 0 {
+				finalURL = urls.HTTP[0]
 			}
 		}
 		if finalURL == "" {

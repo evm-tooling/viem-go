@@ -10,6 +10,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
+	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/client/transport"
 	"github.com/ChefBingbong/viem-go/types"
 )
@@ -22,7 +23,7 @@ type PublicClientConfig struct {
 	// CacheTime is the time (in ms) that cached data will remain in memory.
 	CacheTime time.Duration
 	// Chain is the chain configuration.
-	Chain *Chain
+	Chain *chain.Chain
 	// ExperimentalBlockTag is the default block tag for RPC requests.
 	ExperimentalBlockTag BlockTag
 	// Key is a key for the client (default: "public").

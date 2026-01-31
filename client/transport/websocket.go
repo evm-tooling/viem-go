@@ -88,8 +88,8 @@ func WebSocket(url string, config ...WebSocketTransportConfig) TransportFactory 
 			finalURL = cfg.URL
 		}
 		if finalURL == "" && params.Chain != nil {
-			if len(params.Chain.RPCUrls.Default.WebSocket) > 0 {
-				finalURL = params.Chain.RPCUrls.Default.WebSocket[0]
+			if urls, ok := params.Chain.RpcUrls["default"]; ok && len(urls.WebSocket) > 0 {
+				finalURL = urls.WebSocket[0]
 			}
 		}
 		if finalURL == "" {

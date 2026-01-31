@@ -1,0 +1,31 @@
+{
+  "name": "examples",
+  "module": "main.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check": "tsc --noEmit",
+    "ts:client": "bun run main.ts --example=client",
+    "ts:read-contract": "bun run main.ts --example=read-contract",
+    "ts:all": "bun run main.ts --example=all",
+    "go:client": "go run ./main.go -example=client",
+    "go:read-contract": "go run ./main.go -example=read-contract",
+    "go:all": "go run ./main.go -example=all",
+    "all": "bun run ts:all && bun run go:all",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "format": "biome format . --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.13",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "viem": "^2.45.1"
+  },
+  "packageManager": "bun@1.2.0"
+}

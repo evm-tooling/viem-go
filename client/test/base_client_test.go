@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/client/transport"
 )
@@ -72,11 +73,12 @@ func TestCreateClientWithChain(t *testing.T) {
 	})
 	defer server.Close()
 
-	chain := &client.Chain{
+	blockTime := int64(12000)
+	testChain := &chain.Chain{
 		ID:        1,
 		Name:      "Ethereum",
-		BlockTime: 12000,
-		NativeCurrency: &client.NativeCurrency{
+		BlockTime: &blockTime,
+		NativeCurrency: chain.ChainNativeCurrency{
 			Name:     "Ether",
 			Symbol:   "ETH",
 			Decimals: 18,
@@ -85,13 +87,13 @@ func TestCreateClientWithChain(t *testing.T) {
 
 	c, err := client.CreateClient(client.ClientConfig{
 		Transport: transport.HTTP(server.URL),
-		Chain:     chain,
+		Chain:     testChain,
 	})
 	require.NoError(t, err)
 	defer c.Close()
 
-	assert.Equal(t, chain, c.Chain())
-	assert.Equal(t, 1, c.Chain().ID)
+	assert.Equal(t, testChain, c.Chain())
+	assert.Equal(t, int64(1), c.Chain().ID)
 	assert.Equal(t, "Ethereum", c.Chain().Name)
 }
 

@@ -24,6 +24,10 @@ linters:
         - shadow
     misspell:
       locale: US
+  exclusions:
+    paths:
+      - examples/src
+      - examples/
 
 formatters:
   enable:
