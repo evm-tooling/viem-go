@@ -24,7 +24,7 @@ jobs:
         run: go mod download
 
       - name: Build
-        run: go build ./...
+        run: go run build/ci.go build
 
   lint:
     name: Lint
@@ -39,30 +39,13 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
-      - name: Install goimports
-        run: go install golang.org/x/tools/cmd/goimports@latest
-
-      - name: Check formatting (gofmt)
+      - name: Install tools
         run: |
-          if [ -n "$(gofmt -l .)" ]; then
-            echo "The following files are not formatted:"
-            gofmt -l .
-            exit 1
-          fi
+          go install golang.org/x/tools/cmd/goimports@latest
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-      - name: Check imports (goimports)
-        run: |
-          if [ -n "$(goimports -local github.com/ChefBingbong/viem-go -l .)" ]; then
-            echo "The following files have incorrect imports:"
-            goimports -local github.com/ChefBingbong/viem-go -l .
-            exit 1
-          fi
-
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          args: --timeout=5m
+      - name: Run lint
+        run: go run build/ci.go lint
 
   test:
     name: Test
@@ -81,7 +64,7 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test -v -race -coverprofile=coverage.out $(go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+        run: go run build/ci.go test-cover
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
