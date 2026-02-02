@@ -1,17 +1,26 @@
 :root {
-  --sl-color-accent-low: #3d2400;
-  --sl-color-accent: #ff9318;
-  --sl-color-accent-high: #ffc517;
+  /* Accent colors - Blue/Navy from Golem brand */
+  --sl-color-accent-low: #1a2942;
+  --sl-color-accent: #3991cd;
+  --sl-color-accent-high: #5fb8e8;
+  
+  /* Brand colors */
+  --sl-color-brand-navy: #5a5785;
+  --sl-color-brand-blue: #3991cd;
+  
+  /* Text colors */
   --sl-color-white: #ffffff;
-  --sl-color-gray-1: #eceef2;
-  --sl-color-gray-2: #c0c2c7;
-  --sl-color-gray-3: #888b96;
-  --sl-color-gray-4: #545861;
-  --sl-color-gray-5: #353841;
-  --sl-color-gray-6: #24272f;
-  --sl-color-black: #17181c;
+  
+  /* Gray scale - with blue undertones */
+  --sl-color-gray-1: #e8eef4;
+  --sl-color-gray-2: #b8c5d4;
+  --sl-color-gray-3: #8494a8;
+  --sl-color-gray-4: #5a6778;
+  --sl-color-gray-5: #3a4555;
+  --sl-color-gray-6: #252d3a;
+  --sl-color-black: #171c24;
 
-  /* Pagefind search styling to match viem's theme */
+  /* Pagefind search styling */
   --pagefind-ui-scale: 1;
   --pagefind-ui-primary: var(--sl-color-accent);
   --pagefind-ui-text: var(--sl-color-white);
@@ -21,62 +30,126 @@
   --pagefind-ui-border-radius: 8px;
   --pagefind-ui-tag: var(--sl-color-gray-5);
   --pagefind-ui-font: inherit;
+  
+  /* Force dark mode */
+  color-scheme: dark;
 }
 
-:root[data-theme='light'] {
-  --sl-color-accent-low: #fff4e6;
-  --sl-color-accent: #ff9318;
-  --sl-color-accent-high: #c66800;
-
-  /* Pagefind search styling for light theme */
-  --pagefind-ui-text: var(--sl-color-black);
-  --pagefind-ui-background: var(--sl-color-gray-1);
-  --pagefind-ui-border: var(--sl-color-gray-2);
-  --pagefind-ui-tag: var(--sl-color-gray-2);
+/* Hide Starlight's default hero on landing page */
+[data-has-hero] .hero {
+  display: none !important;
 }
 
-/* Landing page styles */
-.hero-section {
-  text-align: center;
-  padding: 4rem 2rem;
+/* Make navbar logo bigger */
+.site-title img {
+  height: 5.0rem !important;
+  width: auto !important;
+}
+
+header.header {
+  padding-block: 0.75rem;
+}
+
+/* Landing page styles - viem-inspired */
+.landing-container {
   max-width: 1120px;
   margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
-.hero-section h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--sl-color-accent), var(--sl-color-accent-high));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.hero-section {
+  position: relative;
+  padding: 3rem 0 2rem;
 }
 
-.hero-section .tagline {
-  font-size: 1.5rem;
-  color: var(--sl-color-gray-2);
-  margin-bottom: 2rem;
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/colosseum.svg');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 3rem;
+  margin-bottom: 5rem;
+  margin-top: 3rem;
+
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.hero-left {
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-logo {
+  height: 46px;
+  width: auto;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .hero-logo {
+    height: 38px;
+  }
+}
+
+.hero-tagline {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--sl-color-gray-3);
+}
+
+.hero-tagline strong {
+  color: var(--sl-color-white);
 }
 
 .hero-actions {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .hero-actions {
+    justify-content: center;
+  }
 }
 
 .hero-actions a {
-  padding: 0.75rem 1.5rem;
+  padding: 0.625rem 1rem;
   border-radius: 0.5rem;
   text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: all 0.15s ease;
 }
 
 .hero-actions a.primary {
   background: var(--sl-color-accent);
-  color: var(--sl-color-black);
+  color: #ffffff;
 }
 
 .hero-actions a.primary:hover {
@@ -84,13 +157,302 @@
 }
 
 .hero-actions a.secondary {
-  border: 2px solid var(--sl-color-gray-4);
+  background: transparent;
+  border: 1px solid var(--sl-color-gray-4);
   color: var(--sl-color-white);
 }
 
 .hero-actions a.secondary:hover {
   border-color: var(--sl-color-accent);
   color: var(--sl-color-accent);
+}
+
+.hero-right {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .hero-right {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-right {
+    display: none;
+  }
+}
+
+/* Install terminal - blue-tinted style */
+.install-terminal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(57, 145, 205, 0.2);
+  background: rgba(37, 45, 58, 0.8);
+}
+
+.terminal-header {
+  display: flex;
+  background: rgba(23, 28, 36, 0.6);
+  border-bottom: 1px solid rgba(57, 145, 205, 0.15);
+}
+
+.terminal-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #8494a8;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+}
+
+.terminal-tab.active {
+  color: var(--sl-color-white);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom-color: var(--sl-color-accent);
+}
+
+.terminal-tab .go-icon {
+  width: 18px;
+  height: 18px;
+  color: #00ADD8;
+}
+
+.terminal-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding: 0.5rem 1.25rem;
+  font-family: var(--sl-font-mono);
+  font-size: 0.9375rem;
+}
+
+.terminal-content code {
+  background: transparent;
+  padding: 0;
+  color: var(--sl-color-gray-2);
+  white-space: nowrap;
+}
+
+.terminal-prompt {
+  color: #4ade80;
+}
+
+.terminal-dir {
+  color: #60a5fa;
+}
+
+.terminal-symbol {
+  color: var(--sl-color-gray-3);
+}
+
+.terminal-cmd {
+  color: #fb923c;
+}
+
+/* Stats row - exact viem style */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.stat-badge {
+  flex: 1;
+  height: 44px;
+  padding: 6px;
+  margin-top: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(57, 145, 205, 0.2);
+  background: rgba(37, 45, 58, 0.6);
+}
+
+.stat-badge.green {
+  border-color: rgba(74, 222, 128, 0.3);
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.stat-label {
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.7;
+  background: rgba(23, 28, 36, 0.6);
+  padding: 0 0.75rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 0.375rem;
+  color: #ffffff;
+}
+
+.stat-badge.green .stat-label {
+  background: #041204;
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+  color: #ffffff;
+}
+
+.stat-badge.green .stat-value {
+  color: rgb(74, 222, 128);
+}
+
+/* Hide third stat badge on smaller screens like viem */
+@media (max-width: 1024px) {
+  .stat-badge:nth-child(3) {
+    display: none;
+  }
+}
+
+/* Feature cards grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-top: 3rem;
+}
+
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-box {
+  position: relative;
+  height: 168px;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(57, 145, 205, 0.15);
+  padding: 1.25rem;
+  margin-top: 8px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: rgba(37, 45, 58, 0.5);
+  backdrop-filter: blur(2px);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.feature-box:hover {
+  border-color: rgba(57, 145, 205, 0.35);
+  background: rgba(37, 45, 58, 0.7);
+}
+
+@media (max-width: 1024px) {
+  .feature-box {
+    height: 142px;
+  }
+}
+
+.feature-box h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+  color: #ffffff;
+}
+
+.feature-box p {
+  font-size: 1rem;
+  color: #8494a8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.feature-box a {
+  color: var(--sl-color-accent);
+  font-size: 1rem;
+}
+
+/* Content sections */
+.content-section {
+  max-width: 70ch;
+  margin: 4rem auto;
+}
+
+.content-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.content-section p {
+  margin-bottom: 1.5rem;
+  color: var(--sl-color-gray-2);
+  line-height: 1.7;
+}
+
+.content-section ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  color: #b8c5d4;
+}
+
+.content-section li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.content-section a {
+  color: var(--sl-color-accent);
+}
+
+.content-section a:hover {
+  text-decoration: underline;
+}
+
+/* Comparison section */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comparison-card {
+  background: var(--sl-color-gray-6);
+  border: 1px solid rgba(57, 145, 205, 0.15);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.comparison-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #8494a8;
 }
 
 /* Code tabs styling */
@@ -101,7 +463,7 @@
 .code-tabs .tabs-header {
   display: flex;
   gap: 0;
-  border-bottom: 1px solid var(--sl-color-gray-5);
+  border-bottom: 1px solid rgba(57, 145, 205, 0.15);
   background: var(--sl-color-gray-6);
   border-radius: 0.5rem 0.5rem 0 0;
   overflow: hidden;
@@ -142,6 +504,72 @@
   border-radius: 0 0 0.5rem 0.5rem !important;
 }
 
+/* Overview section tabs - terminal style */
+.content-section starlight-tabs {
+  display: block;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(57, 145, 205, 0.2);
+  background: rgba(37, 45, 58, 0.8);
+  margin: 2.5rem 0 1.5rem 0;
+}
+
+.content-section starlight-tabs [role="tablist"] {
+  display: flex;
+  background: rgba(23, 28, 36, 0.6);
+  border-bottom: 1px solid rgba(57, 145, 205, 0.15);
+  gap: 0;
+  padding: 0;
+}
+
+.content-section starlight-tabs [role="tablist"]::after {
+  display: none;
+}
+
+.content-section starlight-tabs [role="tab"] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #8494a8;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.content-section starlight-tabs [role="tab"]:hover {
+  color: var(--sl-color-white);
+}
+
+.content-section starlight-tabs [role="tab"][aria-selected="true"] {
+  color: var(--sl-color-white);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom-color: var(--sl-color-accent);
+}
+
+.content-section starlight-tabs [role="tabpanel"] {
+  padding: 0;
+}
+
+.content-section starlight-tabs [role="tabpanel"] .expressive-code {
+  margin: 0 !important;
+}
+
+.content-section starlight-tabs [role="tabpanel"] .expressive-code pre {
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.content-section starlight-tabs [role="tabpanel"] .expressive-code .frame {
+  border-radius: 0 !important;
+  border: none !important;
+}
+
 /* Feature grid */
 .feature-grid {
   display: grid;
@@ -154,16 +582,16 @@
   padding: 1.5rem;
   background: var(--sl-color-gray-6);
   border-radius: 0.75rem;
-  border: 1px solid var(--sl-color-gray-5);
+  border: 1px solid rgba(57, 145, 205, 0.15);
 }
 
 .feature-card h3 {
   margin-top: 0;
-  color: var(--sl-color-white);
+  color: #ffffff;
 }
 
 .feature-card p {
-  color: var(--sl-color-gray-2);
+  color: #b8c5d4;
   margin-bottom: 0;
 }
 
@@ -177,7 +605,7 @@ table {
 th, td {
   padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid var(--sl-color-gray-5);
+  border-bottom: 1px solid rgba(57, 145, 205, 0.15);
 }
 
 th {
@@ -188,7 +616,7 @@ th {
 /* Install command box */
 .install-box {
   background: var(--sl-color-gray-6);
-  border: 1px solid var(--sl-color-gray-5);
+  border: 1px solid rgba(57, 145, 205, 0.15);
   border-radius: 0.5rem;
   padding: 1rem 1.5rem;
   margin: 1.5rem 0;
@@ -198,4 +626,5 @@ th {
 .install-box code {
   background: transparent;
   padding: 0;
+  color: #ffffff;
 }

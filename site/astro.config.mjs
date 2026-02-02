@@ -6,7 +6,15 @@ export default defineConfig({
     starlight({
       title: 'viem-go',
       description: 'Go Interface for Ethereum',
-      favicon: '/favicons/light.png',
+      logo: {
+        src: './src/assets/golem-logo-full-light.svg',
+        replacesTitle: true,
+      },
+      favicon: '/svg/golem-icon-only-light.svg',
+      // Disable theme switching - dark mode only
+      components: {
+        ThemeSelect: './src/components/ThemeSelect.astro',
+      },
       social: {
         github: 'https://github.com/ChefBingbong/viem-go',
       },
