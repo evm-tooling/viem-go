@@ -10,12 +10,29 @@
   --sl-color-gray-5: #353841;
   --sl-color-gray-6: #24272f;
   --sl-color-black: #17181c;
+
+  /* Pagefind search styling to match viem's theme */
+  --pagefind-ui-scale: 1;
+  --pagefind-ui-primary: var(--sl-color-accent);
+  --pagefind-ui-text: var(--sl-color-white);
+  --pagefind-ui-background: var(--sl-color-gray-6);
+  --pagefind-ui-border: var(--sl-color-gray-5);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 8px;
+  --pagefind-ui-tag: var(--sl-color-gray-5);
+  --pagefind-ui-font: inherit;
 }
 
 :root[data-theme='light'] {
   --sl-color-accent-low: #fff4e6;
   --sl-color-accent: #ff9318;
   --sl-color-accent-high: #c66800;
+
+  /* Pagefind search styling for light theme */
+  --pagefind-ui-text: var(--sl-color-black);
+  --pagefind-ui-background: var(--sl-color-gray-1);
+  --pagefind-ui-border: var(--sl-color-gray-2);
+  --pagefind-ui-tag: var(--sl-color-gray-2);
 }
 
 /* Landing page styles */
