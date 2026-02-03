@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Go modules
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Documentation site (npm/bun)
+  - package-ecosystem: "npm"
+    directory: "/site"
+    schedule:
+      interval: "weekly"
+
+  # Examples - viem (npm/bun)
+  - package-ecosystem: "npm"
+    directory: "/examples/viem"
+    schedule:
+      interval: "weekly"
+
+  # Examples - test-example (npm/bun)
+  - package-ecosystem: "bun"
+    directory: "/examples/test-example"
+    schedule:
+      interval: "weekly"
