@@ -9,6 +9,8 @@ hero:
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import TerminalTyping from '../../components/TerminalTyping.tsx';
+import GitHubStats from '../../components/GitHubStats.tsx';
+import CopyButton from '../../components/CopyButton.tsx';
 
 <div class="landing-container" data-pagefind-weight="10">
 
@@ -32,25 +34,13 @@ import TerminalTyping from '../../components/TerminalTyping.tsx';
         </svg>
         <span>golang</span>
       </div>
+      <CopyButton client:load text="go get github.com/ChefBingbong/viem-go" />
     </div>
     <div class="terminal-content">
       <TerminalTyping client:load />
     </div>
   </div>
-  <div class="stats-row">
-    <div class="stat-badge">
-      <span class="stat-label">stars</span>
-      <span class="stat-value">1.2k</span>
-    </div>
-    <div class="stat-badge green">
-      <span class="stat-label">coverage</span>
-      <span class="stat-value">95%</span>
-    </div>
-    <div class="stat-badge">
-      <span class="stat-label">license</span>
-      <span class="stat-value">MIT</span>
-    </div>
-  </div>
+  <GitHubStats client:load />
 </div>
 </div>
 

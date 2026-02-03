@@ -102,7 +102,7 @@ go: added github.com/ChefBingbong/viem-go v1.0.0`;
           <span className="terminal-prompt">user@golem</span>
           <span className="terminal-dir"> ~</span>
           <span className="terminal-symbol"> % </span>
-          <span >{secondCommand}</span>
+          <span>{secondCommand}</span>
           <span className="typing-cursor">|</span>
         </div>
       )}
