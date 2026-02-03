@@ -1,8 +1,10 @@
+import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   integrations: [
+    react(),
     starlight({
       title: 'viem-go',
       description: 'Go Interface for Ethereum',
@@ -11,9 +13,11 @@ export default defineConfig({
         replacesTitle: true,
       },
       favicon: '/svg/golem-icon-only-light.svg',
-      // Disable theme switching - dark mode only
+      // Custom components
       components: {
         ThemeSelect: './src/components/ThemeSelect.astro',
+        Header: './src/components/Header.astro',
+        Sidebar: './src/components/Sidebar.astro',
       },
       social: {
         github: 'https://github.com/ChefBingbong/viem-go',
