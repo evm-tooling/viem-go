@@ -8,6 +8,7 @@ hero:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import TerminalTyping from '../../components/TerminalTyping.tsx';
 
 <div class="landing-container" data-pagefind-weight="10">
 
@@ -33,7 +34,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
       </div>
     </div>
     <div class="terminal-content">
-      <code><span class="terminal-prompt">user@golem</span> <span class="terminal-dir">~</span> <span class="terminal-symbol">%</span> <span class="terminal-cmd">go get</span> github.com/ChefBingbong/viem-go</code>
+      <TerminalTyping client:load />
     </div>
   </div>
   <div class="stats-row">
@@ -118,48 +119,176 @@ const blockNumber = await client.getBlockNumber()
   </TabItem>
 </Tabs>
 
-## Why Go?
-
-viem-go is designed for teams and projects that need Ethereum tooling in the Go ecosystem:
-
-- **Backend Services** — Build high-performance blockchain indexers, APIs, and microservices
-- **CLI Tools** — Create command-line utilities for wallet management and contract interactions
-- **Infrastructure** — Power validators, relayers, and other blockchain infrastructure
-- **Cross-platform** — Compile to a single binary for any OS without dependencies
-
-## Features
-
-viem-go supports all these features out-of-the-box:
-
-- Abstractions over the [JSON-RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/) to make your life easier
-- First-class APIs for interacting with [Smart Contracts](https://ethereum.org/en/glossary/#smart-contract)
-- Language closely aligned to official [Ethereum terminology](https://ethereum.org/en/glossary/)
-- Multiple account types: Private Key, Mnemonic, HD Wallet
-- Go's native `*big.Int` for safe numeric operations
-- Utilities for working with [ABIs](https://ethereum.org/en/glossary/#abi) (encoding/decoding/inspection)
-- Pre-built bindings for ERC20, ERC721, and ERC1155 contracts
-- Test suite running against [Anvil](https://book.getfoundry.sh/) for real-world compatibility
-
-## viem-go vs go-ethereum
-
-| Feature | viem-go | go-ethereum |
-|---------|---------|-------------|
-| High-level API | ✅ | ❌ |
-| Familiar to viem users | ✅ | ❌ |
-| Type-safe ABI encoding | ✅ | ✅ |
-| Multiple account types | ✅ | Limited |
-| Transport abstraction | ✅ | ❌ |
-| Contract bindings | ✅ | Code generation |
-| Learning curve | Low | Steep |
-
-## Community
-
-Check out the following places for more viem-go content:
-
-- Join the [discussions on GitHub](https://github.com/ChefBingbong/viem-go/discussions)
-- Report issues or request features on [GitHub Issues](https://github.com/ChefBingbong/viem-go/issues)
-- Check out the original [viem documentation](https://viem.sh) for conceptual understanding
-
 </div>
+
+<div class="full-width-section">
+<div class="section-header">
+<h2>Why Go?</h2>
+<p>viem-go is designed for teams and projects that need Ethereum tooling in the Go ecosystem and have familiarity with the viem typescript library.</p>
+</div>
+<div class="card-grid four-col">
+<div class="info-card">
+<h3>Backend Services</h3>
+<p>Build high-performance blockchain indexers, APIs, and microservices</p>
+</div>
+<div class="info-card">
+<h3>CLI Tools</h3>
+<p>Create command-line utilities for wallet management and contract interactions</p>
+</div>
+<div class="info-card">
+<h3>Infrastructure</h3>
+<p>Power validators, relayers, and other blockchain infrastructure</p>
+</div>
+<div class="info-card">
+<h3>Cross-platform</h3>
+<p>Compile to a single binary for any OS without dependencies</p>
+</div>
+</div>
+</div>
+
+<div class="full-width-section">
+<div class="section-header">
+<h2>Features</h2>
+<p>viem-go supports all main features from the original viem typescript library. Every feature was built using the same syntax, method-names and patterns so that the developer firendly nature still remains.</p>
+</div>
+<div class="card-grid four-col">
+<div class="info-card">
+<h3>JSON-RPC Abstractions</h3>
+<p>High-level APIs over the JSON-RPC API to make your life easier</p>
+</div>
+<div class="info-card">
+<h3>Smart Contracts</h3>
+<p>First-class APIs for interacting with Smart Contracts</p>
+</div>
+<div class="info-card">
+<h3>Ethereum Terminology</h3>
+<p>Language closely aligned to official Ethereum terminology</p>
+</div>
+<div class="info-card">
+<h3>Multiple Accounts</h3>
+<p>Private Key, Mnemonic, and HD Wallet account types</p>
+</div>
+<div class="info-card">
+<h3>Safe Numerics</h3>
+<p>Go's native big.Int for safe numeric operations</p>
+</div>
+<div class="info-card">
+<h3>ABI Utilities</h3>
+<p>Encoding, decoding, and inspection utilities for ABIs</p>
+</div>
+<div class="info-card">
+<h3>Token Bindings</h3>
+<p>Pre-built bindings for ERC20, ERC721, and ERC1155</p>
+</div>
+<div class="info-card">
+<h3>Battle Tested</h3>
+<p>Test suite running against Anvil for real-world compatibility</p>
+</div>
+</div>
+</div>
+
+<div class="full-width-section">
+<div class="section-header">
+<h2>viem-go vs go-ethereum</h2>
+<p>Viem-go aims to hit that middleground of low level control and high level abstraction resuting in the best developer experience. See how viem-go compares to the standard go-ethereum library</p>
+</div>
+<div class="comparison-grid">
+<div class="comparison-card viem-go">
+<div class="comparison-header">viem-go</div>
+<div class="comparison-items">
+<div class="comparison-item yes"><span class="icon">✓</span> High-level API</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Familiar to viem users</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Type-safe ABI encoding</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Multiple account types</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Transport abstraction</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Contract bindings</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Low learning curve</div>
+</div>
+</div>
+<div class="comparison-card go-ethereum">
+<div class="comparison-header">go-ethereum</div>
+<div class="comparison-items">
+<div class="comparison-item no"><span class="icon">✗</span> High-level API</div>
+<div class="comparison-item no"><span class="icon">✗</span> Familiar to viem users</div>
+<div class="comparison-item yes"><span class="icon">✓</span> Type-safe ABI encoding</div>
+<div class="comparison-item partial"><span class="icon">○</span> Multiple account types</div>
+<div class="comparison-item no"><span class="icon">✗</span> Transport abstraction</div>
+<div class="comparison-item partial"><span class="icon">○</span> Contract bindings (codegen)</div>
+<div class="comparison-item no"><span class="icon">✗</span> Low learning curve</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="full-width-section">
+<div class="section-header">
+<h2>Community</h2>
+<p>Check out the following places for more viem-go content</p>
+</div>
+<div class="card-grid three-col">
+<a href="https://github.com/ChefBingbong/viem-go/discussions" class="info-card link-card" target="_blank" rel="noopener">
+<h3>Discussions</h3>
+<p>Join the discussions on GitHub to ask questions and share ideas</p>
+</a>
+<a href="https://github.com/ChefBingbong/viem-go/issues" class="info-card link-card" target="_blank" rel="noopener">
+<h3>Issues</h3>
+<p>Report issues or request features on GitHub Issues</p>
+</a>
+<a href="https://viem.sh" class="info-card link-card" target="_blank" rel="noopener">
+<h3>viem Docs</h3>
+<p>Check out the original viem documentation for conceptual understanding</p>
+</a>
+</div>
+</div>
+
+<div class="full-width-section support-section">
+<div class="section-header">
+<h2>Support</h2>
+<p>Help support future development and make viem-go a sustainable open-source project</p>
+</div>
+<div class="support-links">
+<a href="https://github.com/sponsors/ChefBingbong" class="support-link" target="_blank" rel="noopener">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+GitHub Sponsors
+</a>
+<a href="https://github.com/ChefBingbong/viem-go" class="support-link" target="_blank" rel="noopener">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+Star on GitHub
+</a>
+</div>
+</div>
+
+<footer class="landing-footer">
+<div class="footer-content">
+<div class="footer-brand">
+<img src="/svg/golem-logo-text-light.svg" alt="viem-go" class="footer-logo" />
+<p>Go Interface for Ethereum</p>
+</div>
+<div class="footer-links">
+<div class="footer-column">
+<h4>Resources</h4>
+<a href="/introduction/">Documentation</a>
+<a href="/getting-started/">Getting Started</a>
+<a href="/examples/">Examples</a>
+</div>
+<div class="footer-column">
+<h4>Community</h4>
+<a href="https://github.com/ChefBingbong/viem-go" target="_blank" rel="noopener">GitHub</a>
+<a href="https://github.com/ChefBingbong/viem-go/discussions" target="_blank" rel="noopener">Discussions</a>
+<a href="https://twitter.com/ChefBingbong" target="_blank" rel="noopener">Twitter</a>
+</div>
+<div class="footer-column">
+<h4>More</h4>
+<a href="https://viem.sh" target="_blank" rel="noopener">viem (TypeScript)</a>
+<a href="https://github.com/ethereum/go-ethereum" target="_blank" rel="noopener">go-ethereum</a>
+<a href="https://ethereum.org" target="_blank" rel="noopener">Ethereum</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<p>Released under the MIT License.</p>
+<p>Inspired by <a href="https://viem.sh" target="_blank" rel="noopener">viem</a></p>
+</div>
+</footer>
 
 </div>
