@@ -1,0 +1,49 @@
+name: Documentation Issue
+description: Report missing, incorrect, or confusing documentation.
+labels: ['documentation']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a documentation request. It helps make viem-go better for everyone.
+
+        If it's a small change, like a typo or outdated example, feel free to submit a PR directly instead of creating this issue.
+
+  - type: dropdown
+    attributes:
+      label: What type of documentation issue is this?
+      multiple: true
+      options:
+        - Documentation is missing
+        - Documentation is incorrect
+        - Documentation is confusing
+        - Example code is not working
+        - API reference is incomplete
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: What is the issue?
+      description: Describe the documentation problem in detail.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Where did you find it?
+      description: Please provide the URL(s) or file path(s) where you found this issue.
+      placeholder: |
+        - https://pkg.go.dev/github.com/ChefBingbong/viem-go
+        - README.md
+        - site/src/content/...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve this documentation?
+    validations:
+      required: false
