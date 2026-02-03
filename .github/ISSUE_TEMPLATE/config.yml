@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a Question
+    url: https://github.com/ChefBingbong/viem-go/discussions/new?category=q-a
+    about: Ask questions and discuss with other community members
+  - name: Request a Feature
+    url: https://github.com/ChefBingbong/viem-go/discussions/new?category=ideas
+    about: Suggest new features or brainstorm ideas for new functionality
+  - name: Report Security Vulnerability
+    url: https://github.com/ChefBingbong/viem-go/security/advisories/new
+    about: Report security vulnerabilities privately

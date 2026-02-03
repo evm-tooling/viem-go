@@ -1,0 +1,47 @@
+name: Question
+description: Ask a question about viem-go usage.
+labels: ['question']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about using viem-go? You're in the right place!
+
+        For broader discussions or feature brainstorming, consider using [GitHub Discussions](https://github.com/ChefBingbong/viem-go/discussions) instead.
+
+  - type: checkboxes
+    attributes:
+      label: Before asking
+      description: Please confirm you've done the following.
+      options:
+        - label: I checked the [documentation](https://pkg.go.dev/github.com/ChefBingbong/viem-go) and README
+          required: true
+        - label: I searched [existing issues](https://github.com/ChefBingbong/viem-go/issues) and [discussions](https://github.com/ChefBingbong/viem-go/discussions)
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Question
+      description: What would you like to know?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Context
+      description: |
+        Provide any relevant context, code examples, or what you've already tried.
+
+        ```go
+        // Your code here
+        ```
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: viem-go Version
+      description: What version are you using? (if relevant)
+      placeholder: x.y.z
+    validations:
+      required: false
