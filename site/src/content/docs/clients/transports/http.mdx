@@ -3,35 +3,38 @@ title: HTTP Transport
 description: Connect to Ethereum nodes via standard JSON-RPC over HTTP/HTTPS
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../../components/CodePanel';
 
 The HTTP transport connects to Ethereum nodes via standard JSON-RPC over HTTP/HTTPS. It's the most common transport type.
 
 ## Usage
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
 )
 
 publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
     Transport: transport.HTTP("https://eth.llamarpc.com"),
-})
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { createPublicClient, http } from 'viem'
+})`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createPublicClient, http } from 'viem'
 
 const client = createPublicClient({
   transport: http('https://eth.llamarpc.com'),
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## Configuration
 

@@ -3,7 +3,8 @@ title: Getting Started
 description: Get up and running with viem-go in minutes
 ---
 
-import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../components/CodePanel';
 
 <div data-pagefind-weight="10">
 
@@ -21,10 +22,13 @@ go get github.com/ChefBingbong/viem-go
 
 Set up a [Public Client](/docs/clients/public/) with a [Transport](/docs/clients/transports/http/) and optional [Chain](/docs/clients/intro/) configuration.
 
-<Tabs>
-  <TabItem label="Go">
-```go
-package main
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `package main
 
 import (
     "context"
@@ -48,12 +52,12 @@ func main() {
     defer publicClient.Close()
     
     fmt.Println("Client created successfully!")
-}
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { createPublicClient, http } from 'viem'
+}`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
 const publicClient = createPublicClient({
@@ -61,10 +65,10 @@ const publicClient = createPublicClient({
   transport: http(),
 })
 
-console.log('Client created successfully!')
-```
-  </TabItem>
-</Tabs>
+console.log('Client created successfully!')`
+    }
+  ]}
+/>
 
 <Aside type="tip">
 In production, always use an authenticated RPC endpoint (Infura, Alchemy, etc.) instead of public endpoints.
@@ -74,10 +78,13 @@ In production, always use an authenticated RPC endpoint (Infura, Alchemy, etc.) 
 
 Once you have a client, you can query the blockchain:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-// Get the current block number
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Get the current block number
 blockNumber, err := publicClient.GetBlockNumber(context.Background())
 if err != nil {
     log.Fatal(err)
@@ -92,12 +99,12 @@ balance, err := publicClient.GetBalance(
 if err != nil {
     log.Fatal(err)
 }
-fmt.Println("Balance:", balance)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-// Get the current block number
+fmt.Println("Balance:", balance)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `// Get the current block number
 const blockNumber = await publicClient.getBlockNumber()
 console.log('Block number:', blockNumber)
 
@@ -105,19 +112,22 @@ console.log('Block number:', blockNumber)
 const balance = await publicClient.getBalance({
   address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
 })
-console.log('Balance:', balance)
-```
-  </TabItem>
-</Tabs>
+console.log('Balance:', balance)`
+    }
+  ]}
+/>
 
 ### 3. Read from a Contract
 
 Use `ReadContract` to call view/pure functions on smart contracts:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ethereum/go-ethereum/common"
     "math/big"
 )
@@ -125,7 +135,7 @@ import (
 // Read USDC balance
 result, err := publicClient.ReadContract(context.Background(), client.ReadContractOptions{
     Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-    ABI:          `[{"name":"balanceOf","type":"function","inputs":[{"name":"owner","type":"address"}],"outputs":[{"type":"uint256"}]}]`,
+    ABI:          \`[{"name":"balanceOf","type":"function","inputs":[{"name":"owner","type":"address"}],"outputs":[{"type":"uint256"}]}]\`,
     FunctionName: "balanceOf",
     Args:         []any{common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")},
 })
@@ -134,12 +144,12 @@ if err != nil {
 }
 
 balance := result.(*big.Int)
-fmt.Println("USDC Balance:", balance)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseAbi } from 'viem'
+fmt.Println("USDC Balance:", balance)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseAbi } from 'viem'
 
 // Read USDC balance
 const balance = await publicClient.readContract({
@@ -149,19 +159,22 @@ const balance = await publicClient.readContract({
   args: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
 })
 
-console.log('USDC Balance:', balance)
-```
-  </TabItem>
-</Tabs>
+console.log('USDC Balance:', balance)`
+    }
+  ]}
+/>
 
 ### 4. Using Pre-built Contract Bindings
 
 For common contracts like ERC20, use the typed bindings:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/contracts/erc20"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/contracts/erc20"
 
 // Create typed ERC20 instance
 usdc := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
@@ -182,12 +195,12 @@ name, _ := token.Name(context.Background())
 symbol, _ := token.Symbol(context.Background())
 decimals, _ := token.Decimals(context.Background())
 
-fmt.Printf("Token: %s (%s) - %d decimals\n", name, symbol, decimals)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { erc20Abi } from 'viem'
+fmt.Printf("Token: %s (%s) - %d decimals\\n", name, symbol, decimals)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { erc20Abi } from 'viem'
 
 const usdc = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 
@@ -206,10 +219,10 @@ const name = await publicClient.readContract({
 })
 
 console.log('Balance:', balance)
-console.log('Name:', name)
-```
-  </TabItem>
-</Tabs>
+console.log('Name:', name)`
+    }
+  ]}
+/>
 
 ## Next Steps
 

@@ -3,7 +3,7 @@ title: Unit Utilities
 description: Convert between Ethereum denominations (wei, gwei, ether) and human-readable formats
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Convert between Ethereum denominations (wei, gwei, ether) and human-readable formats.
 
@@ -21,10 +21,13 @@ Ethereum uses wei as the base unit (1 ETH = 10^18 wei). These utilities help con
 
 Convert ETH to wei:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/unit"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/unit"
 
 // Parse "1.5" ETH to wei
 wei, err := unit.ParseEther("1.5")
@@ -32,102 +35,114 @@ if err != nil {
     log.Fatal(err)
 }
 fmt.Println(wei.String())
-// 1500000000000000000
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseEther } from 'viem'
+// 1500000000000000000`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseEther } from 'viem'
 
 const wei = parseEther('1.5')
 console.log(wei)
-// 1500000000000000000n
-```
-  </TabItem>
-</Tabs>
+// 1500000000000000000n`
+    }
+  ]}
+/>
 
 ## formatEther
 
 Convert wei to ETH string:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-wei := big.NewInt(1500000000000000000)
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `wei := big.NewInt(1500000000000000000)
 
 eth := unit.FormatEther(wei)
 fmt.Println(eth)
-// "1.5"
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { formatEther } from 'viem'
+// "1.5"`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { formatEther } from 'viem'
 
 const eth = formatEther(1500000000000000000n)
 console.log(eth)
-// "1.5"
-```
-  </TabItem>
-</Tabs>
+// "1.5"`
+    }
+  ]}
+/>
 
 ## parseGwei
 
 Convert gwei to wei (commonly used for gas prices):
 
-<Tabs>
-  <TabItem label="Go">
-```go
-// Parse "20" gwei to wei
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Parse "20" gwei to wei
 wei, err := unit.ParseGwei("20")
 fmt.Println(wei.String())
-// 20000000000
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseGwei } from 'viem'
+// 20000000000`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseGwei } from 'viem'
 
 const wei = parseGwei('20')
 console.log(wei)
-// 20000000000n
-```
-  </TabItem>
-</Tabs>
+// 20000000000n`
+    }
+  ]}
+/>
 
 ## formatGwei
 
 Convert wei to gwei string:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-wei := big.NewInt(20000000000)
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `wei := big.NewInt(20000000000)
 
 gwei := unit.FormatGwei(wei)
 fmt.Println(gwei)
-// "20"
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { formatGwei } from 'viem'
+// "20"`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { formatGwei } from 'viem'
 
 const gwei = formatGwei(20000000000n)
 console.log(gwei)
-// "20"
-```
-  </TabItem>
-</Tabs>
+// "20"`
+    }
+  ]}
+/>
 
 ## parseUnits
 
 Convert a string to a big integer with custom decimals:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-// Parse USDC amount (6 decimals)
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Parse USDC amount (6 decimals)
 amount, err := unit.ParseUnits("100.50", 6)
 fmt.Println(amount.String())
 // 100500000
@@ -135,12 +150,12 @@ fmt.Println(amount.String())
 // Parse DAI amount (18 decimals)
 amount, err = unit.ParseUnits("100.50", 18)
 fmt.Println(amount.String())
-// 100500000000000000000
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseUnits } from 'viem'
+// 100500000000000000000`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseUnits } from 'viem'
 
 // USDC (6 decimals)
 const usdc = parseUnits('100.50', 6)
@@ -148,19 +163,22 @@ console.log(usdc) // 100500000n
 
 // DAI (18 decimals)
 const dai = parseUnits('100.50', 18)
-console.log(dai) // 100500000000000000000n
-```
-  </TabItem>
-</Tabs>
+console.log(dai) // 100500000000000000000n`
+    }
+  ]}
+/>
 
 ## formatUnits
 
 Convert a big integer to a string with custom decimals:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-// Format USDC amount (6 decimals)
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Format USDC amount (6 decimals)
 amount := big.NewInt(100500000)
 formatted := unit.FormatUnits(amount, 6)
 fmt.Println(formatted)
@@ -170,19 +188,19 @@ fmt.Println(formatted)
 amount = big.NewInt(100500001)
 formatted = unit.FormatUnits(amount, 6)
 fmt.Println(formatted)
-// "100.500001"
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { formatUnits } from 'viem'
+// "100.500001"`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { formatUnits } from 'viem'
 
 // Format USDC
 const formatted = formatUnits(100500000n, 6)
-console.log(formatted) // "100.5"
-```
-  </TabItem>
-</Tabs>
+console.log(formatted) // "100.5"`
+    }
+  ]}
+/>
 
 ## Common Use Cases
 

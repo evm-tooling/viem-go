@@ -3,16 +3,19 @@ title: Private Key Account
 description: Create an account from a private key for signing transactions and messages locally
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Create an account from a private key for signing transactions and messages locally.
 
 ## Usage
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/accounts"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
 
 account, err := accounts.PrivateKeyToAccount(
     "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
@@ -21,32 +24,35 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Address: %s\n", account.Address)
-// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { privateKeyToAccount } from 'viem/accounts'
+fmt.Printf("Address: %s\\n", account.Address)
+// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { privateKeyToAccount } from 'viem/accounts'
 
 const account = privateKeyToAccount(
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 )
 
 console.log('Address:', account.address)
-// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-```
-  </TabItem>
-</Tabs>
+// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+    }
+  ]}
+/>
 
 ## Signing Messages
 
 Sign an EIP-191 personal message:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/signature"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
 
 sig, err := account.SignMessage(signature.SignableMessage{
     Raw: []byte("Hello, Ethereum!"),
@@ -55,26 +61,29 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Signature: %s\n", sig)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const signature = await account.signMessage({
+fmt.Printf("Signature: %s\\n", sig)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await account.signMessage({
   message: 'Hello, Ethereum!',
 })
 
-console.log('Signature:', signature)
-```
-  </TabItem>
-</Tabs>
+console.log('Signature:', signature)`
+    }
+  ]}
+/>
 
 ## Signing Transactions
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ChefBingbong/viem-go/utils/transaction"
     "math/big"
 )
@@ -94,29 +103,32 @@ if err != nil {
 }
 
 // signedTx is the serialized signed transaction ready to broadcast
-fmt.Printf("Signed TX: %s\n", signedTx)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const signature = await account.signTransaction({
+fmt.Printf("Signed TX: %s\\n", signedTx)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await account.signTransaction({
   to: recipientAddress,
   value: parseEther('1'),
   gas: 21000n,
   gasPrice: parseGwei('20'),
   nonce: 0,
   chainId: 1,
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## Signing Typed Data (EIP-712)
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/signature"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
 
 typedData := signature.TypedDataDefinition{
     Domain: signature.TypedDataDomain{
@@ -150,12 +162,12 @@ typedData := signature.TypedDataDefinition{
     },
 }
 
-sig, err := account.SignTypedData(typedData)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const signature = await account.signTypedData({
+sig, err := account.SignTypedData(typedData)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await account.signTypedData({
   domain: {
     name: 'Ether Mail',
     version: '1',
@@ -179,10 +191,10 @@ const signature = await account.signTypedData({
     to: { name: 'Bob', wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB' },
     contents: 'Hello, Bob!',
   },
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## Generating a Private Key
 

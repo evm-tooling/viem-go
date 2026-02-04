@@ -3,7 +3,7 @@ title: Hashing Utilities
 description: Cryptographic hashing functions used throughout Ethereum
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Cryptographic hashing functions used throughout Ethereum.
 
@@ -11,49 +11,55 @@ Cryptographic hashing functions used throughout Ethereum.
 
 The primary hash function used in Ethereum:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/hash"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
 
 // Hash bytes
 h := hash.Keccak256([]byte("hello"))
-fmt.Printf("0x%x\n", h)
-// 0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { keccak256, toBytes } from 'viem'
+fmt.Printf("0x%x\\n", h)
+// 0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { keccak256, toBytes } from 'viem'
 
 const hash = keccak256(toBytes('hello'))
 console.log(hash)
-// 0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8
-```
-  </TabItem>
-</Tabs>
+// 0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8`
+    }
+  ]}
+/>
 
 ## sha256
 
 Standard SHA-256 hash:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-h := hash.Sha256([]byte("hello"))
-fmt.Printf("0x%x\n", h)
-// 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { sha256, toBytes } from 'viem'
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `h := hash.Sha256([]byte("hello"))
+fmt.Printf("0x%x\\n", h)
+// 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { sha256, toBytes } from 'viem'
 
 const hash = sha256(toBytes('hello'))
-console.log(hash)
-```
-  </TabItem>
-</Tabs>
+console.log(hash)`
+    }
+  ]}
+/>
 
 ## ripemd160
 
@@ -69,25 +75,28 @@ fmt.Printf("0x%x\n", h)
 
 Hash a message for EIP-191 personal sign:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/signature"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
 
-// This prepends "\x19Ethereum Signed Message:\n" + length
+// This prepends "\\x19Ethereum Signed Message:\\n" + length
 messageHash := signature.HashMessage("Hello, Ethereum!")
-fmt.Printf("0x%x\n", messageHash)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { hashMessage } from 'viem'
+fmt.Printf("0x%x\\n", messageHash)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { hashMessage } from 'viem'
 
 const hash = hashMessage('Hello, Ethereum!')
-console.log(hash)
-```
-  </TabItem>
-</Tabs>
+console.log(hash)`
+    }
+  ]}
+/>
 
 The message hash is computed as:
 ```
@@ -98,10 +107,13 @@ keccak256("\x19Ethereum Signed Message:\n" + len(message) + message)
 
 Hash EIP-712 typed structured data:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/signature"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
 
 typedData := signature.TypedDataDefinition{
     Domain: signature.TypedDataDomain{
@@ -121,12 +133,12 @@ typedData := signature.TypedDataDefinition{
 }
 
 hash, err := signature.HashTypedData(typedData)
-fmt.Printf("0x%x\n", hash)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { hashTypedData } from 'viem'
+fmt.Printf("0x%x\\n", hash)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { hashTypedData } from 'viem'
 
 const hash = hashTypedData({
   domain: {
@@ -139,83 +151,92 @@ const hash = hashTypedData({
   },
   primaryType: 'Message',
   message: { content: 'Hello!' },
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## toFunctionSelector
 
 Get the 4-byte function selector:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-selector := hash.ToFunctionSelector("transfer(address,uint256)")
-fmt.Printf("0x%x\n", selector)
-// 0xa9059cbb
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { toFunctionSelector } from 'viem'
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `selector := hash.ToFunctionSelector("transfer(address,uint256)")
+fmt.Printf("0x%x\\n", selector)
+// 0xa9059cbb`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toFunctionSelector } from 'viem'
 
 const selector = toFunctionSelector('function transfer(address, uint256)')
 console.log(selector)
-// 0xa9059cbb
-```
-  </TabItem>
-</Tabs>
+// 0xa9059cbb`
+    }
+  ]}
+/>
 
 ## toEventSelector
 
 Get the event topic hash:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-topic := hash.ToEventSelector("Transfer(address,address,uint256)")
-fmt.Printf("%s\n", topic.Hex())
-// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { toEventSelector } from 'viem'
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `topic := hash.ToEventSelector("Transfer(address,address,uint256)")
+fmt.Printf("%s\\n", topic.Hex())
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toEventSelector } from 'viem'
 
 const topic = toEventSelector('event Transfer(address, address, uint256)')
 console.log(topic)
-// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
-```
-  </TabItem>
-</Tabs>
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`
+    }
+  ]}
+/>
 
 ## isHash
 
 Check if a value is a valid hash:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-valid := hash.IsHash("0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8")
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid := hash.IsHash("0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8")
 fmt.Println(valid) // true
 
 invalid := hash.IsHash("0x123") // Too short
-fmt.Println(invalid) // false
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { isHash } from 'viem'
+fmt.Println(invalid) // false`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { isHash } from 'viem'
 
 isHash('0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8')
 // true
 
 isHash('0x123')
-// false
-```
-  </TabItem>
-</Tabs>
+// false`
+    }
+  ]}
+/>
 
 ## Common Use Cases
 

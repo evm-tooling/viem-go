@@ -3,23 +3,26 @@ title: Reading Contracts
 description: Read data from smart contracts using view and pure functions
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Read data from smart contracts using view and pure functions. These calls don't require gas since they don't modify state.
 
 ## Basic Usage
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ethereum/go-ethereum/common"
     "github.com/ChefBingbong/viem-go/client"
 )
 
 result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
     Address:      common.HexToAddress("0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"),
-    ABI:          `[{"name":"totalSupply","type":"function","inputs":[],"outputs":[{"type":"uint256"}]}]`,
+    ABI:          \`[{"name":"totalSupply","type":"function","inputs":[],"outputs":[{"type":"uint256"}]}]\`,
     FunctionName: "totalSupply",
 })
 if err != nil {
@@ -27,12 +30,12 @@ if err != nil {
 }
 
 totalSupply := result.(*big.Int)
-fmt.Println("Total Supply:", totalSupply)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseAbi } from 'viem'
+fmt.Println("Total Supply:", totalSupply)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseAbi } from 'viem'
 
 const totalSupply = await publicClient.readContract({
   address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
@@ -40,46 +43,49 @@ const totalSupply = await publicClient.readContract({
   functionName: 'totalSupply',
 })
 
-console.log('Total Supply:', totalSupply)
-```
-  </TabItem>
-</Tabs>
+console.log('Total Supply:', totalSupply)`
+    }
+  ]}
+/>
 
 ## Passing Arguments
 
 Pass function arguments using the `Args` slice:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
     Address: common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-    ABI: `[{
+    ABI: \`[{
         "name": "balanceOf",
         "type": "function",
         "inputs": [{"name": "owner", "type": "address"}],
         "outputs": [{"type": "uint256"}]
-    }]`,
+    }]\`,
     FunctionName: "balanceOf",
     Args: []any{
         common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
     },
 })
 
-balance := result.(*big.Int)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const balance = await publicClient.readContract({
+balance := result.(*big.Int)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.readContract({
   address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
   abi: parseAbi(['function balanceOf(address owner) view returns (uint256)']),
   functionName: 'balanceOf',
   args: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## ReadContractOptions
 
@@ -96,10 +102,13 @@ const balance = await publicClient.readContract({
 
 For frequently used contracts, viem-go provides pre-built typed bindings:
 
-<Tabs>
-  <TabItem label="Go - Typed Binding">
-```go
-import "github.com/ChefBingbong/viem-go/contracts/erc20"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Typed Binding",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/contracts/erc20"
 
 // Create typed ERC20 instance
 usdc := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
@@ -114,22 +123,22 @@ name, err := token.Name(ctx)
 symbol, err := token.Symbol(ctx)
 decimals, err := token.Decimals(ctx)
 totalSupply, err := token.TotalSupply(ctx)
-allowance, err := token.Allowance(ctx, owner, spender)
-```
-  </TabItem>
-  <TabItem label="Go - Raw ReadContract">
-```go
-// Same operation without typed binding
+allowance, err := token.Allowance(ctx, owner, spender)`
+    },
+    {
+      title: "Raw ReadContract",
+      language: "go",
+      code: `// Same operation without typed binding
 result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
     Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
     ABI:          erc20ABI,
     FunctionName: "balanceOf",
     Args:         []any{ownerAddress},
 })
-balance := result.(*big.Int)
-```
-  </TabItem>
-</Tabs>
+balance := result.(*big.Int)`
+    }
+  ]}
+/>
 
 ### Available Bindings
 

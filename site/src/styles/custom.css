@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   /* Accent colors - Blue/Navy from Golem brand */
   --sl-color-accent-low: #1a2942;

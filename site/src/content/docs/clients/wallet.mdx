@@ -3,16 +3,19 @@ title: Wallet Client
 description: Write access to the Ethereum blockchain for signing and sending transactions
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 A Wallet Client provides write access to the Ethereum blockchain, handling transaction signing and sending through JSON-RPC methods like `eth_sendTransaction`, `eth_sign`, and wallet-specific methods.
 
 ## Creating a Wallet Client
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
     "github.com/ChefBingbong/viem-go/chain/definitions"
@@ -25,21 +28,21 @@ walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
 if err != nil {
     log.Fatal(err)
 }
-defer walletClient.Close()
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { createWalletClient, http } from 'viem'
+defer walletClient.Close()`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createWalletClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
 const walletClient = createWalletClient({
   chain: mainnet,
   transport: http(),
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## Configuration Options
 
@@ -63,53 +66,59 @@ const walletClient = createWalletClient({
 
 Send a pre-signed transaction:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-// signedTx is a serialized signed transaction ([]byte)
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// signedTx is a serialized signed transaction ([]byte)
 txHash, err := walletClient.SendRawTransaction(ctx, signedTx)
 if err != nil {
     log.Fatal(err)
 }
-fmt.Printf("Transaction sent: %s\n", txHash.Hex())
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const hash = await walletClient.sendRawTransaction({
+fmt.Printf("Transaction sent: %s\\n", txHash.Hex())`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const hash = await walletClient.sendRawTransaction({
   serializedTransaction: signedTx,
 })
-console.log('Transaction sent:', hash)
-```
-  </TabItem>
-</Tabs>
+console.log('Transaction sent:', hash)`
+    }
+  ]}
+/>
 
 #### SendTransaction
 
 Send a transaction (requires unlocked account on the node):
 
-<Tabs>
-  <TabItem label="Go">
-```go
-txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
     From:  senderAddress,
     To:    &recipientAddress,
     Value: big.NewInt(1e18), // 1 ETH
 })
 if err != nil {
     log.Fatal(err)
-}
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const hash = await walletClient.sendTransaction({
+}`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const hash = await walletClient.sendTransaction({
   to: recipientAddress,
   value: parseEther('1'),
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ### Signing Methods
 
@@ -117,35 +126,41 @@ const hash = await walletClient.sendTransaction({
 
 Sign a message using EIP-191 personal sign:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-signature, err := walletClient.SignMessage(ctx, address, []byte("Hello, Ethereum!"))
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `signature, err := walletClient.SignMessage(ctx, address, []byte("Hello, Ethereum!"))
 if err != nil {
     log.Fatal(err)
 }
-fmt.Printf("Signature: 0x%x\n", signature)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const signature = await walletClient.signMessage({
+fmt.Printf("Signature: 0x%x\\n", signature)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await walletClient.signMessage({
   account: address,
   message: 'Hello, Ethereum!',
 })
-console.log('Signature:', signature)
-```
-  </TabItem>
-</Tabs>
+console.log('Signature:', signature)`
+    }
+  ]}
+/>
 
 #### SignTypedData
 
 Sign EIP-712 typed structured data:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-typedData := map[string]any{
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `typedData := map[string]any{
     "types": map[string]any{
         "EIP712Domain": []map[string]string{
             {"name": "name", "type": "string"},
@@ -171,12 +186,12 @@ typedData := map[string]any{
     },
 }
 
-signature, err := walletClient.SignTypedData(ctx, address, typedData)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-const signature = await walletClient.signTypedData({
+signature, err := walletClient.SignTypedData(ctx, address, typedData)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await walletClient.signTypedData({
   account: address,
   domain: {
     name: 'Ether Mail',
@@ -196,10 +211,10 @@ const signature = await walletClient.signTypedData({
     to: 'bob@example.com',
     contents: 'Hello, Bob!',
   },
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ### Account Methods
 
@@ -281,10 +296,13 @@ success, err := walletClient.WatchAsset(ctx,
 
 For local signing without relying on the RPC node, use accounts:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ChefBingbong/viem-go/accounts"
     "github.com/ChefBingbong/viem-go/utils/transaction"
 )
@@ -309,12 +327,12 @@ tx := &transaction.Transaction{
 signedTx, err := account.SignTransaction(tx)
 
 // Send the signed transaction
-txHash, err := walletClient.SendRawTransaction(ctx, signedTx)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { privateKeyToAccount } from 'viem/accounts'
+txHash, err := walletClient.SendRawTransaction(ctx, signedTx)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { privateKeyToAccount } from 'viem/accounts'
 
 const account = privateKeyToAccount('0x...')
 
@@ -328,9 +346,9 @@ const hash = await walletClient.sendTransaction({
   account,
   to: recipientAddress,
   value: parseEther('1'),
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 See [Accounts](/docs/accounts/overview/) for more details on local signing.

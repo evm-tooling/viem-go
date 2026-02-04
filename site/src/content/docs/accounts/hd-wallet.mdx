@@ -3,7 +3,7 @@ title: HD Wallet Account
 description: Create accounts using Hierarchical Deterministic (HD) keys for advanced key derivation
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Create accounts using Hierarchical Deterministic (HD) keys for advanced key derivation scenarios.
 
@@ -16,10 +16,13 @@ HD wallets allow deriving multiple keys from a single seed. This is useful when 
 
 ## From Mnemonic to HD Key
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/accounts"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
 
 // First, derive an HD key from a mnemonic
 mnemonic := "test test test test test test test test test test test junk"
@@ -36,12 +39,12 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Address: %s\n", account.Address)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { hdKeyToAccount } from 'viem/accounts'
+fmt.Printf("Address: %s\\n", account.Address)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { hdKeyToAccount } from 'viem/accounts'
 import { HDKey } from '@scure/bip32'
 import { mnemonicToSeedSync } from '@scure/bip39'
 
@@ -51,10 +54,10 @@ const seed = mnemonicToSeedSync(
 const hdKey = HDKey.fromMasterSeed(seed).derive("m/44'/60'/0'/0/0")
 const account = hdKeyToAccount(hdKey)
 
-console.log('Address:', account.address)
-```
-  </TabItem>
-</Tabs>
+console.log('Address:', account.address)`
+    }
+  ]}
+/>
 
 ## Accessing HD Key Properties
 
