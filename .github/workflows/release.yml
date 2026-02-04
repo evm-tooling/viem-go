@@ -1,25 +1,61 @@
 name: Release
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [production]
+  issue_comment:
+    types: [created, edited]
 
 jobs:
-  # Publish prerelease as latest when PR from master is merged to production
   release:
-    if: |
-      github.event.pull_request.merged == true &&
-      github.event.pull_request.head.ref == 'master'
+    # Only run if the comment contains /release on a PR
+    if: ${{ contains(github.event.comment.body, '/release')
+            && github.event.issue.pull_request }}
     runs-on: ubuntu-latest
+    
     permissions:
       contents: write
       pull-requests: write
+      issues: write
+
     steps:
+      - name: Check PR is open
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            if (pr.data.state !== 'open') {
+              core.setFailed('PR is not open');
+              return;
+            }
+
+      - name: React to comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
+
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Publish draft/prerelease as latest
+      - name: Fast forward merge
+        uses: sequoia-pgp/fast-forward@v1
+        with:
+          merge: true
+          comment: always
+
+      - name: Publish prerelease as latest
         uses: actions/github-script@v7
         with:
           script: |
@@ -29,11 +65,11 @@ jobs:
               per_page: 10
             });
             
-            // Find the latest draft or prerelease
-            const draftRelease = releases.data.find(r => r.draft || r.prerelease);
+            // Find the latest prerelease
+            const prerelease = releases.data.find(r => r.prerelease);
             
-            if (!draftRelease) {
-              console.log('No draft or prerelease found, skipping');
+            if (!prerelease) {
+              console.log('No prerelease found, skipping publish');
               return;
             }
             
@@ -41,15 +77,16 @@ jobs:
             await github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              release_id: draftRelease.id,
-              draft: false,
+              release_id: prerelease.id,
               prerelease: false,
               make_latest: 'true'
             });
             
-            console.log(`Published release: ${draftRelease.tag_name}`);
+            core.setOutput('tag', prerelease.tag_name);
+            core.setOutput('url', prerelease.html_url);
+            console.log(`Published release: ${prerelease.tag_name}`);
 
-      - name: Add comment to PR
+      - name: Comment success
         uses: actions/github-script@v7
         with:
           script: |
@@ -59,12 +96,14 @@ jobs:
               per_page: 1
             });
             
-            const latestRelease = releases.data[0];
-            if (latestRelease) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body: `🚀 Released [${latestRelease.tag_name}](${latestRelease.html_url})`
-              });
-            }
+            const release = releases.data[0];
+            const message = release && !release.prerelease
+              ? `🚀 Released [${release.tag_name}](${release.html_url})`
+              : '✅ Fast-forward merge complete!';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: message
+            });
