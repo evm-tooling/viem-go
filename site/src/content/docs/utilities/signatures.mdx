@@ -3,7 +3,7 @@ title: Signature Utilities
 description: Utilities for signing, verifying, and recovering Ethereum signatures
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Utilities for signing, verifying, and recovering Ethereum signatures.
 
@@ -11,10 +11,13 @@ Utilities for signing, verifying, and recovering Ethereum signatures.
 
 Recover the address that signed a message:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/utils/signature"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
 
 address, err := signature.RecoverMessageAddress(
     "Hello, Ethereum!",
@@ -24,45 +27,48 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Signer: %s\n", address.Hex())
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { recoverMessageAddress } from 'viem'
+fmt.Printf("Signer: %s\\n", address.Hex())`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { recoverMessageAddress } from 'viem'
 
 const address = await recoverMessageAddress({
   message: 'Hello, Ethereum!',
   signature: '0x66edc32e2ab001213321ab7d959a2207fcef5190cc9abb6da5b0d2a8a9af2d4d2b0700e2c317c4106f337fd934fbbb0bf62efc8811a78603b33a8265d3b8f8cb1c',
 })
 
-console.log('Signer:', address)
-```
-  </TabItem>
-</Tabs>
+console.log('Signer:', address)`
+    }
+  ]}
+/>
 
 ## recoverAddress
 
 Recover address from a hash and signature:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-// For raw hash recovery (not message)
-address, err := signature.RecoverAddress(hash, sig)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { recoverAddress } from 'viem'
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// For raw hash recovery (not message)
+address, err := signature.RecoverAddress(hash, sig)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { recoverAddress } from 'viem'
 
 const address = await recoverAddress({
   hash: '0x...',
   signature: '0x...',
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## recoverPublicKey
 
@@ -77,15 +83,18 @@ fmt.Printf("Public Key: 0x%x\n", pubKey)
 
 Recover address from EIP-712 typed data signature:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-address, err := signature.RecoverTypedDataAddress(typedData, sig)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { recoverTypedDataAddress } from 'viem'
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `address, err := signature.RecoverTypedDataAddress(typedData, sig)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { recoverTypedDataAddress } from 'viem'
 
 const address = await recoverTypedDataAddress({
   domain: { /* ... */ },
@@ -93,19 +102,22 @@ const address = await recoverTypedDataAddress({
   primaryType: 'Mail',
   message: { /* ... */ },
   signature: '0x...',
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## verifyMessage
 
 Verify a message signature matches an address:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-valid, err := signature.VerifyMessage(
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid, err := signature.VerifyMessage(
     expectedAddress,
     "Hello, Ethereum!",
     sig,
@@ -114,12 +126,12 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Valid: %v\n", valid)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { verifyMessage } from 'viem'
+fmt.Printf("Valid: %v\\n", valid)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { verifyMessage } from 'viem'
 
 const valid = await verifyMessage({
   address: expectedAddress,
@@ -127,28 +139,31 @@ const valid = await verifyMessage({
   signature: sig,
 })
 
-console.log('Valid:', valid)
-```
-  </TabItem>
-</Tabs>
+console.log('Valid:', valid)`
+    }
+  ]}
+/>
 
 ## verifyTypedData
 
 Verify an EIP-712 typed data signature:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-valid, err := signature.VerifyTypedData(
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid, err := signature.VerifyTypedData(
     expectedAddress,
     typedData,
     sig,
-)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { verifyTypedData } from 'viem'
+)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { verifyTypedData } from 'viem'
 
 const valid = await verifyTypedData({
   address: expectedAddress,
@@ -157,59 +172,65 @@ const valid = await verifyTypedData({
   primaryType: 'Mail',
   message: { /* ... */ },
   signature: sig,
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## parseSignature
 
 Parse a hex signature into its components:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-sig, err := signature.ParseSignature(
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig, err := signature.ParseSignature(
     "0x66edc32e2ab001213321ab7d959a2207fcef5190cc9abb6da5b0d2a8a9af2d4d2b0700e2c317c4106f337fd934fbbb0bf62efc8811a78603b33a8265d3b8f8cb1c",
 )
 
-fmt.Printf("R: 0x%x\n", sig.R)
-fmt.Printf("S: 0x%x\n", sig.S)
-fmt.Printf("V: %d\n", sig.V)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseSignature } from 'viem'
+fmt.Printf("R: 0x%x\\n", sig.R)
+fmt.Printf("S: 0x%x\\n", sig.S)
+fmt.Printf("V: %d\\n", sig.V)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseSignature } from 'viem'
 
-const { r, s, v } = parseSignature('0x66edc...')
-```
-  </TabItem>
-</Tabs>
+const { r, s, v } = parseSignature('0x66edc...')`
+    }
+  ]}
+/>
 
 ## serializeSignature
 
 Combine signature components into a hex string:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-hexSig := signature.SerializeSignature(signature.Signature{
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hexSig := signature.SerializeSignature(signature.Signature{
     R: r,
     S: s,
     V: v,
 })
-fmt.Printf("Signature: %s\n", hexSig)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { serializeSignature } from 'viem'
+fmt.Printf("Signature: %s\\n", hexSig)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { serializeSignature } from 'viem'
 
-const hex = serializeSignature({ r, s, v })
-```
-  </TabItem>
-</Tabs>
+const hex = serializeSignature({ r, s, v })`
+    }
+  ]}
+/>
 
 ## Compact Signatures (EIP-2098)
 

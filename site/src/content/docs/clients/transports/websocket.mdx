@@ -3,16 +3,19 @@ title: WebSocket Transport
 description: Persistent connection to Ethereum nodes for real-time subscriptions
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../../components/CodePanel';
 
 The WebSocket transport provides a persistent connection to Ethereum nodes, enabling real-time subscriptions and lower latency for high-frequency requests.
 
 ## Usage
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
 )
@@ -23,19 +26,19 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
 if err != nil {
     log.Fatal(err)
 }
-defer publicClient.Close()
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { createPublicClient, webSocket } from 'viem'
+defer publicClient.Close()`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createPublicClient, webSocket } from 'viem'
 
 const client = createPublicClient({
   transport: webSocket('wss://eth.llamarpc.com'),
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## Configuration
 

@@ -3,7 +3,7 @@ title: Writing Contracts
 description: Send transactions to modify smart contract state
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { CodeGroup } from '../../../components/CodePanel';
 
 Send transactions to modify smart contract state. Unlike read operations, writes require gas and must be signed.
 
@@ -11,10 +11,13 @@ Send transactions to modify smart contract state. Unlike read operations, writes
 
 Use `PrepareContractWrite` to build a transaction for a contract call:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
     "github.com/ethereum/go-ethereum/common"
     "github.com/ChefBingbong/viem-go/client"
     "math/big"
@@ -23,7 +26,7 @@ import (
 // Prepare the transaction
 tx, err := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptions{
     Address: common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-    ABI: `[{
+    ABI: \`[{
         "name": "transfer",
         "type": "function",
         "inputs": [
@@ -31,7 +34,7 @@ tx, err := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOpt
             {"name": "amount", "type": "uint256"}
         ],
         "outputs": [{"type": "bool"}]
-    }]`,
+    }]\`,
     FunctionName: "transfer",
     Args: []any{
         common.HexToAddress("0xRecipient..."),
@@ -43,14 +46,14 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("To: %s\n", tx.To.Hex())
-fmt.Printf("Data: 0x%x\n", tx.Data)
-fmt.Printf("Gas: %d\n", tx.Gas)
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { parseAbi } from 'viem'
+fmt.Printf("To: %s\\n", tx.To.Hex())
+fmt.Printf("Data: 0x%x\\n", tx.Data)
+fmt.Printf("Gas: %d\\n", tx.Gas)`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseAbi } from 'viem'
 
 // Simulate first to check if it will succeed
 const { request } = await publicClient.simulateContract({
@@ -62,10 +65,10 @@ const { request } = await publicClient.simulateContract({
 })
 
 // Then write
-const hash = await walletClient.writeContract(request)
-```
-  </TabItem>
-</Tabs>
+const hash = await walletClient.writeContract(request)`
+    }
+  ]}
+/>
 
 ## PrepareContractWriteOptions
 
@@ -87,10 +90,13 @@ const hash = await walletClient.writeContract(request)
 
 After preparing, sign and send the transaction:
 
-<Tabs>
-  <TabItem label="Go - With Local Account">
-```go
-import (
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Local Account",
+      language: "go",
+      code: `import (
     "github.com/ChefBingbong/viem-go/accounts"
     "github.com/ChefBingbong/viem-go/utils/transaction"
 )
@@ -130,26 +136,26 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Transaction sent: %s\n", txHash.Hex())
+fmt.Printf("Transaction sent: %s\\n", txHash.Hex())
 
 // 6. Wait for receipt
 receipt, err := publicClient.WaitForTransactionReceipt(ctx, txHash)
-fmt.Printf("Status: %d\n", receipt.Status)
-```
-  </TabItem>
-  <TabItem label="Go - With JSON-RPC Wallet">
-```go
-// If your RPC endpoint manages the account (less common)
+fmt.Printf("Status: %d\\n", receipt.Status)`
+    },
+    {
+      title: "JSON-RPC Wallet",
+      language: "go",
+      code: `// If your RPC endpoint manages the account (less common)
 txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
     From:  senderAddress,
     To:    tx.To,
     Data:  tx.Data,
     Value: tx.Value,
     Gas:   tx.Gas,
-})
-```
-  </TabItem>
-</Tabs>
+})`
+    }
+  ]}
+/>
 
 ## Using Typed Contract Bindings
 
@@ -187,31 +193,34 @@ tx, err := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOpt
 
 If you need just the calldata without a full transaction:
 
-<Tabs>
-  <TabItem label="Go">
-```go
-import "github.com/ChefBingbong/viem-go/client"
+<CodeGroup 
+  client:load
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/client"
 
 data, err := client.EncodeFunctionData(client.EncodeFunctionDataOptions{
-    ABI: `[{
+    ABI: \`[{
         "name": "transfer",
         "type": "function",
         "inputs": [
             {"name": "to", "type": "address"},
             {"name": "amount", "type": "uint256"}
         ]
-    }]`,
+    }]\`,
     FunctionName: "transfer",
     Args: []any{recipient, amount},
 })
 
-fmt.Printf("Calldata: 0x%x\n", data)
-// Output: 0xa9059cbb000000000000000000000000...
-```
-  </TabItem>
-  <TabItem label="TypeScript (viem)">
-```typescript
-import { encodeFunctionData, parseAbi } from 'viem'
+fmt.Printf("Calldata: 0x%x\\n", data)
+// Output: 0xa9059cbb000000000000000000000000...`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { encodeFunctionData, parseAbi } from 'viem'
 
 const data = encodeFunctionData({
   abi: parseAbi(['function transfer(address to, uint256 amount)']),
@@ -219,10 +228,10 @@ const data = encodeFunctionData({
   args: [recipient, amount],
 })
 
-console.log('Calldata:', data)
-```
-  </TabItem>
-</Tabs>
+console.log('Calldata:', data)`
+    }
+  ]}
+/>
 
 ## Gas Estimation
 
