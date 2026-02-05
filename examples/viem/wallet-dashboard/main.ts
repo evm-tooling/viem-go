@@ -27,7 +27,7 @@ const DEMO_PRIVATE_KEY =
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
 function printHeader(title: string) {
-  console.log('\n' + '='.repeat(50))
+  console.log(`\n${'='.repeat(50)}`)
   console.log(`  ${title}`)
   console.log('='.repeat(50))
 }
