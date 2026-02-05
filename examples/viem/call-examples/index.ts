@@ -11,18 +11,18 @@
  */
 
 import {
+  type Address,
   createPublicClient,
+  decodeFunctionResult,
+  encodeFunctionData,
+  formatEther,
+  formatUnits,
+  type Hex,
   http,
   parseEther,
   parseGwei,
-  formatEther,
-  formatUnits,
-  encodeFunctionData,
-  decodeFunctionResult,
-  type Address,
-  type Hex,
 } from 'viem'
-import { mainnet, polygon } from 'viem/chains'
+import { polygon } from 'viem/chains'
 
 // Example addresses
 const USDC_ADDRESS: Address = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'
@@ -252,7 +252,7 @@ async function main() {
       maxPriorityFeePerGas: parseGwei('2'),
     })
     console.log(
-      `Call succeeded with maxFeePerGas=50 gwei, maxPriorityFeePerGas=2 gwei`,
+      `Call succeeded with maxFeePerGas=50 gwei, maxPriorityFeePerGas=2 gwei ${result.data}`,
     )
   } catch (error) {
     console.log(`Error: ${error}`)
@@ -268,7 +268,9 @@ async function main() {
       value,
       data: '0x', // Empty call with value
     })
-    console.log(`Simulated transfer of ${formatEther(value)} ETH would succeed`)
+    console.log(
+      `Simulated transfer of ${formatEther(value)} ETH would succeed ${result.data}`,
+    )
   } catch (error) {
     console.log(`Simulated transfer error: ${error}`)
   }
@@ -288,7 +290,7 @@ async function main() {
       ],
     })
     console.log(
-      'State override successful! Test address had balance overridden to 1000 ETH',
+      `State override successful! Test address had balance overridden to 1000 ETH ${result.data}`,
     )
     console.log('Simulated 100 ETH transfer succeeded')
   } catch (error) {
@@ -311,7 +313,7 @@ async function main() {
         time: 1700000000n,
       },
     })
-    console.log('Block override successful!')
+    console.log(`Block override successful! ${result.data}`)
     console.log('  Simulated gasLimit: 50000000')
     console.log('  Simulated baseFee: 1 gwei')
   } catch (error) {
@@ -337,7 +339,7 @@ async function main() {
         },
       ],
     })
-    console.log('Call with access list succeeded')
+    console.log(`Call with access list succeeded ${result.data}`)
     console.log(`  Pre-warmed contract: ${truncateAddress(USDC_ADDRESS)}`)
   } catch (error) {
     console.log(`Error: ${error}`)
@@ -384,7 +386,7 @@ async function main() {
         gasLimit: 100000000n,
       },
     })
-    console.log('Combined state + block override successful!')
+    console.log(`Combined state + block override successful! ${result.data}`)
   } catch (error) {
     console.log(`Combined override error: ${error}`)
   }
@@ -413,7 +415,7 @@ async function main() {
         },
       ],
     })
-    console.log('State override with storage slots succeeded')
+    console.log(`State override with storage slots succeeded ${result.data}`)
   } catch (error) {
     console.log(`Storage override error: ${error}`)
   }
@@ -430,7 +432,7 @@ async function main() {
       factory: factoryAddress,
       factoryData: '0x1234', // Factory deployment data
     })
-    console.log('Deployless factory call completed')
+    console.log(`Deployless factory call completed ${result.data}`)
   } catch (error) {
     // This will likely fail without proper factory setup, but demonstrates the API
     console.log(
@@ -448,7 +450,7 @@ async function main() {
       to: TEST_ADDRESS,
       data: '0x12345678', // Random selector
     })
-    console.log('  Call returned (empty contract)')
+    console.log(`  Call returned (empty contract) ${result.data}`)
   } catch (error) {
     console.log(`  Error: ${(error as Error).message?.slice(0, 60)}...`)
   }
