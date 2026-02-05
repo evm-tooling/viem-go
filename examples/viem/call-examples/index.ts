@@ -161,7 +161,9 @@ async function main() {
         functionName: 'decimals',
         data: result.data,
       })
-      console.log(`USDC Decimals: ${decimals} (called from ${truncateAddress(VITALIK_ADDRESS)})`)
+      console.log(
+        `USDC Decimals: ${decimals} (called from ${truncateAddress(VITALIK_ADDRESS)})`,
+      )
     }
   } catch (error) {
     console.log(`Error: ${error}`)
@@ -185,7 +187,9 @@ async function main() {
         functionName: 'totalSupply',
         data: result.data,
       })
-      console.log(`USDC Total Supply at block 18000000: ${formatUnits(supply, 6)} USDC`)
+      console.log(
+        `USDC Total Supply at block 18000000: ${formatUnits(supply, 6)} USDC`,
+      )
     }
   } catch (error) {
     console.log(`Error: ${error}`)
@@ -247,7 +251,9 @@ async function main() {
       maxFeePerGas: parseGwei('500'),
       maxPriorityFeePerGas: parseGwei('2'),
     })
-    console.log(`Call succeeded with maxFeePerGas=50 gwei, maxPriorityFeePerGas=2 gwei`)
+    console.log(
+      `Call succeeded with maxFeePerGas=50 gwei, maxPriorityFeePerGas=2 gwei`,
+    )
   } catch (error) {
     console.log(`Error: ${error}`)
   }
@@ -281,7 +287,9 @@ async function main() {
         },
       ],
     })
-    console.log('State override successful! Test address had balance overridden to 1000 ETH')
+    console.log(
+      'State override successful! Test address had balance overridden to 1000 ETH',
+    )
     console.log('Simulated 100 ETH transfer succeeded')
   } catch (error) {
     console.log(`Error with state override: ${error}`)
@@ -398,7 +406,8 @@ async function main() {
           stateDiff: [
             {
               slot: '0x0000000000000000000000000000000000000000000000000000000000000000',
-              value: '0x0000000000000000000000000000000000000000000000000000000000000001',
+              value:
+                '0x0000000000000000000000000000000000000000000000000000000000000001',
             },
           ],
         },
@@ -424,7 +433,9 @@ async function main() {
     console.log('Deployless factory call completed')
   } catch (error) {
     // This will likely fail without proper factory setup, but demonstrates the API
-    console.log(`Factory call (expected to need proper setup): ${(error as Error).message?.slice(0, 50)}...`)
+    console.log(
+      `Factory call (expected to need proper setup): ${(error as Error).message?.slice(0, 50)}...`,
+    )
   }
 
   // Example 16: Error Handling
