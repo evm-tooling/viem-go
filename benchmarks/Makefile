@@ -20,6 +20,7 @@ FORK_URL ?= https://eth.drpc.org
 # FORK_BLOCK ?=
 RPC_URL := http://127.0.0.1:$(ANVIL_PORT)
 GO_BENCH_COUNT ?= 5
+GO_BENCH_TIME ?= 10s
 
 # Export for child processes
 export ANVIL_PORT
@@ -102,7 +103,7 @@ _bench-sequential:
 # Run Go benchmarks only
 bench-go:
 	@echo "Running Go benchmarks against $(RPC_URL)..."
-	cd .. && go test -bench=. -benchmem -count=$(GO_BENCH_COUNT) ./benchmarks/go/... 2>&1 | tee benchmarks/results/go-results.txt
+	cd .. && go test -bench=. -benchmem -benchtime=$(GO_BENCH_TIME) -count=$(GO_BENCH_COUNT) ./benchmarks/go/... 2>&1 | tee benchmarks/results/go-results.txt
 
 # Run TypeScript benchmarks only
 bench-ts:

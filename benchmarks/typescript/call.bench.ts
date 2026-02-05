@@ -58,6 +58,14 @@ const balanceOfVitalikData = encodeFunctionData({
 // Log connection info
 console.log(`\n[viem-ts] RPC URL: ${rpcUrl}`)
 
+// Benchmark options - align with Go benchmark settings
+// Go uses -benchtime=10s, running until stable
+const benchOptions = {
+  time: 10000,          // Run for 10 seconds (matches Go's -benchtime=10s)
+  warmupTime: 1000,     // 1s warmup
+  warmupIterations: 10, // At least 10 warmup iterations
+}
+
 // Verify connection before running benchmarks - do a warmup call
 // This ensures Anvil is running and helps stabilize benchmark results
 const warmup = async () => {
@@ -95,7 +103,7 @@ describe('Call', () => {
       to: USDC_ADDRESS,
       data: NAME_SELECTOR,
     })
-  })
+  }, benchOptions)
 
   /**
    * BenchmarkCall_WithData - Call with encoded function parameters.
@@ -111,7 +119,7 @@ describe('Call', () => {
       to: USDC_ADDRESS,
       data: balanceOfVitalikData,
     })
-  })
+  }, benchOptions)
 
   /**
    * BenchmarkCall_WithAccount - Call with a specified sender address.
@@ -129,7 +137,7 @@ describe('Call', () => {
       to: USDC_ADDRESS,
       data: NAME_SELECTOR,
     })
-  })
+  }, benchOptions)
 
   /**
    * BenchmarkCall_Decimals - Reading the decimals of a token.
@@ -139,7 +147,7 @@ describe('Call', () => {
       to: USDC_ADDRESS,
       data: DECIMALS_SELECTOR,
     })
-  })
+  }, benchOptions)
 
   /**
    * BenchmarkCall_Symbol - Reading the symbol of a token.
@@ -149,7 +157,7 @@ describe('Call', () => {
       to: USDC_ADDRESS,
       data: SYMBOL_SELECTOR,
     })
-  })
+  }, benchOptions)
 
   /**
    * BenchmarkCall_BalanceOfMultiple - Multiple balanceOf calls with different addresses.
@@ -169,5 +177,5 @@ describe('Call', () => {
         args: [addr],
       }),
     })
-  })
+  }, benchOptions)
 })

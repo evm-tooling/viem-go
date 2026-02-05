@@ -26,12 +26,28 @@ interface TSBenchmark {
 
 interface ComparisonResult {
   benchmark: string
+  category: string
   goNsPerOp: number
   goOpsPerSec: number
   tsNsPerOp: number
   tsOpsPerSec: number
   winner: 'go' | 'ts' | 'tie'
   ratio: number // go/ts ratio (>1 means TS is faster)
+  speedup: number // how much faster the winner is (always >= 1)
+  speedupStr: string // "Go 1.5x faster" or "TS 1.2x faster"
+}
+
+interface OverallStats {
+  totalBenchmarks: number
+  goWins: number
+  tsWins: number
+  ties: number
+  avgGoNsPerOp: number
+  avgTsNsPerOp: number
+  avgRatio: number
+  overallWinner: 'go' | 'ts' | 'tie'
+  overallSpeedup: number
+  overallSummary: string
 }
 
 // Parse Go benchmark output
@@ -112,6 +128,15 @@ function mapBenchmarkName(goName: string): string {
   return mapping[goName] || goName
 }
 
+// Categorize benchmark by name
+function categorizeBenchmark(name: string): string {
+  if (name.includes('Basic') || name.includes('basic')) return 'Basic Calls'
+  if (name.includes('Data') || name.includes('data')) return 'With Parameters'
+  if (name.includes('Account') || name.includes('account')) return 'With Account'
+  if (name.includes('Multiple') || name.includes('multiple')) return 'Batch Operations'
+  return 'Other'
+}
+
 // Compare results
 function compareResults(
   goResults: GoBenchmark[],
@@ -136,19 +161,76 @@ function compareResults(
         winner = ratio > 1 ? 'ts' : 'go'
       }
 
+      // Calculate speedup (how much faster the winner is)
+      const speedup = ratio > 1 ? ratio : 1 / ratio
+      let speedupStr: string
+      if (winner === 'tie') {
+        speedupStr = 'Similar'
+      } else if (winner === 'go') {
+        speedupStr = `Go ${speedup.toFixed(2)}x faster`
+      } else {
+        speedupStr = `TS ${speedup.toFixed(2)}x faster`
+      }
+
+      const benchName = goBench.name.replace('Benchmark', '')
       comparisons.push({
-        benchmark: goBench.name.replace('Benchmark', ''),
+        benchmark: benchName,
+        category: categorizeBenchmark(benchName),
         goNsPerOp: goBench.nsPerOp,
         goOpsPerSec,
         tsNsPerOp,
         tsOpsPerSec,
         winner,
         ratio,
+        speedup,
+        speedupStr,
       })
     }
   }
 
   return comparisons
+}
+
+// Calculate overall statistics
+function calculateOverallStats(comparisons: ComparisonResult[]): OverallStats {
+  const goWins = comparisons.filter((c) => c.winner === 'go').length
+  const tsWins = comparisons.filter((c) => c.winner === 'ts').length
+  const ties = comparisons.filter((c) => c.winner === 'tie').length
+
+  const avgGoNsPerOp = comparisons.reduce((sum, c) => sum + c.goNsPerOp, 0) / comparisons.length
+  const avgTsNsPerOp = comparisons.reduce((sum, c) => sum + c.tsNsPerOp, 0) / comparisons.length
+  const avgRatio = avgGoNsPerOp / avgTsNsPerOp
+
+  let overallWinner: 'go' | 'ts' | 'tie'
+  if (Math.abs(avgRatio - 1) < 0.05) {
+    overallWinner = 'tie'
+  } else {
+    overallWinner = avgRatio > 1 ? 'ts' : 'go'
+  }
+
+  const overallSpeedup = avgRatio > 1 ? avgRatio : 1 / avgRatio
+
+  let overallSummary: string
+  if (overallWinner === 'tie') {
+    overallSummary = '🤝 Performance is similar between Go and TypeScript'
+  } else if (overallWinner === 'go') {
+    overallSummary = `🏆 Go is ${overallSpeedup.toFixed(2)}x faster overall`
+  } else {
+    overallSummary = `🏆 TypeScript is ${overallSpeedup.toFixed(2)}x faster overall`
+  }
+
+  return {
+    totalBenchmarks: comparisons.length,
+    goWins,
+    tsWins,
+    ties,
+    avgGoNsPerOp,
+    avgTsNsPerOp,
+    avgRatio,
+    overallWinner,
+    overallSpeedup,
+    overallSummary,
+  }
 }
 
 // Format number with commas
@@ -160,91 +242,140 @@ function formatNumber(n: number, decimals = 0): string {
 }
 
 // Generate console report
-function generateConsoleReport(comparisons: ComparisonResult[]): void {
-  console.log('\n' + '='.repeat(80))
+function generateConsoleReport(comparisons: ComparisonResult[], stats: OverallStats): void {
+  console.log('\n' + '='.repeat(90))
   console.log('  BENCHMARK COMPARISON: viem-go vs viem TypeScript')
-  console.log('='.repeat(80) + '\n')
+  console.log('='.repeat(90) + '\n')
 
-  // Header
+  // Overall Summary Box
+  console.log('┌' + '─'.repeat(88) + '┐')
+  console.log('│' + stats.overallSummary.padStart(45 + stats.overallSummary.length / 2).padEnd(88) + '│')
+  console.log('└' + '─'.repeat(88) + '┘')
+  console.log('')
+
+  // Detailed Results Table
+  console.log('DETAILED RESULTS')
+  console.log('─'.repeat(90))
   console.log(
-    '| Benchmark'.padEnd(30) +
-      '| Go (ns/op)'.padEnd(15) +
-      '| TS (ns/op)'.padEnd(15) +
-      '| Ratio'.padEnd(10) +
-      '| Winner |'
+    '| Benchmark'.padEnd(28) +
+      '| Go (ns/op)'.padEnd(14) +
+      '| TS (ns/op)'.padEnd(14) +
+      '| Go (ops/s)'.padEnd(12) +
+      '| TS (ops/s)'.padEnd(12) +
+      '| Result'.padEnd(20) + '|'
   )
-  console.log('|' + '-'.repeat(29) + '|' + '-'.repeat(14) + '|' + '-'.repeat(14) + '|' + '-'.repeat(9) + '|' + '-'.repeat(8) + '|')
+  console.log('|' + '-'.repeat(27) + '|' + '-'.repeat(13) + '|' + '-'.repeat(13) + '|' + '-'.repeat(11) + '|' + '-'.repeat(11) + '|' + '-'.repeat(19) + '|')
 
   for (const c of comparisons) {
-    const ratioStr = c.ratio.toFixed(2) + 'x'
-    const winnerStr = c.winner === 'go' ? 'Go' : c.winner === 'ts' ? 'TS' : 'Tie'
-
     console.log(
       '| ' +
-        c.benchmark.padEnd(28) +
+        c.benchmark.padEnd(26) +
         '| ' +
-        formatNumber(c.goNsPerOp, 0).padEnd(13) +
+        formatNumber(c.goNsPerOp, 0).padEnd(12) +
         '| ' +
-        formatNumber(c.tsNsPerOp, 0).padEnd(13) +
+        formatNumber(c.tsNsPerOp, 0).padEnd(12) +
         '| ' +
-        ratioStr.padEnd(8) +
+        formatNumber(c.goOpsPerSec, 0).padEnd(10) +
         '| ' +
-        winnerStr.padEnd(7) +
+        formatNumber(c.tsOpsPerSec, 0).padEnd(10) +
+        '| ' +
+        c.speedupStr.padEnd(18) +
         '|'
     )
   }
 
   console.log('')
 
-  // Summary
-  const goWins = comparisons.filter((c) => c.winner === 'go').length
-  const tsWins = comparisons.filter((c) => c.winner === 'ts').length
-  const ties = comparisons.filter((c) => c.winner === 'tie').length
+  // Category Breakdown
+  const categories = [...new Set(comparisons.map((c) => c.category))]
+  if (categories.length > 1) {
+    console.log('BY CATEGORY')
+    console.log('─'.repeat(50))
+    for (const category of categories) {
+      const catComparisons = comparisons.filter((c) => c.category === category)
+      const catStats = calculateOverallStats(catComparisons)
+      const winnerIcon = catStats.overallWinner === 'go' ? '🟢' : catStats.overallWinner === 'ts' ? '🔵' : '⚪'
+      console.log(`  ${winnerIcon} ${category}: ${catStats.overallWinner === 'tie' ? 'Similar' : catStats.overallWinner === 'go' ? `Go ${catStats.overallSpeedup.toFixed(2)}x faster` : `TS ${catStats.overallSpeedup.toFixed(2)}x faster`}`)
+    }
+    console.log('')
+  }
 
-  console.log('Summary:')
-  console.log(`  Go wins:  ${goWins}`)
-  console.log(`  TS wins:  ${tsWins}`)
-  console.log(`  Ties:     ${ties}`)
+  // Summary Statistics
+  console.log('SUMMARY')
+  console.log('─'.repeat(50))
+  console.log(`  Total benchmarks: ${stats.totalBenchmarks}`)
+  console.log(`  Go wins:          ${stats.goWins} (${((stats.goWins / stats.totalBenchmarks) * 100).toFixed(0)}%)`)
+  console.log(`  TS wins:          ${stats.tsWins} (${((stats.tsWins / stats.totalBenchmarks) * 100).toFixed(0)}%)`)
+  console.log(`  Ties:             ${stats.ties} (${((stats.ties / stats.totalBenchmarks) * 100).toFixed(0)}%)`)
+  console.log('')
+  console.log(`  Avg Go:           ${formatNumber(stats.avgGoNsPerOp, 0)} ns/op (${formatNumber(1_000_000_000 / stats.avgGoNsPerOp, 0)} ops/s)`)
+  console.log(`  Avg TS:           ${formatNumber(stats.avgTsNsPerOp, 0)} ns/op (${formatNumber(1_000_000_000 / stats.avgTsNsPerOp, 0)} ops/s)`)
   console.log('')
 
-  // Interpretation
-  console.log('Ratio interpretation:')
-  console.log('  > 1.0x = TypeScript is faster')
-  console.log('  < 1.0x = Go is faster')
-  console.log('  ≈ 1.0x = Similar performance')
+  // Legend
+  console.log('LEGEND')
+  console.log('─'.repeat(50))
+  console.log('  🟢 Go faster  |  🔵 TS faster  |  ⚪ Similar')
+  console.log('  ns/op = nanoseconds per operation (lower is better)')
+  console.log('  ops/s = operations per second (higher is better)')
   console.log('')
 }
 
 // Generate markdown report
-function generateMarkdownReport(comparisons: ComparisonResult[]): string {
+function generateMarkdownReport(comparisons: ComparisonResult[], stats: OverallStats): string {
   let md = '# Benchmark Comparison: viem-go vs viem TypeScript\n\n'
   md += `Generated: ${new Date().toISOString()}\n\n`
 
-  md += '## Results\n\n'
-  md += '| Benchmark | Go (ns/op) | TS (ns/op) | Ratio | Winner |\n'
-  md += '|-----------|------------|------------|-------|--------|\n'
-
-  for (const c of comparisons) {
-    const ratioStr = c.ratio.toFixed(2) + 'x'
-    const winnerStr = c.winner === 'go' ? '**Go**' : c.winner === 'ts' ? '**TS**' : 'Tie'
-
-    md += `| ${c.benchmark} | ${formatNumber(c.goNsPerOp, 0)} | ${formatNumber(c.tsNsPerOp, 0)} | ${ratioStr} | ${winnerStr} |\n`
+  // Overall Summary
+  md += '## Overall Summary\n\n'
+  if (stats.overallWinner === 'go') {
+    md += `**🏆 Go is ${stats.overallSpeedup.toFixed(2)}x faster overall**\n\n`
+  } else if (stats.overallWinner === 'ts') {
+    md += `**🏆 TypeScript is ${stats.overallSpeedup.toFixed(2)}x faster overall**\n\n`
+  } else {
+    md += `**🤝 Performance is similar between Go and TypeScript**\n\n`
   }
 
-  md += '\n## Summary\n\n'
+  md += `| Metric | Go | TypeScript |\n`
+  md += `|--------|----|-----------|\n`
+  md += `| Avg ns/op | ${formatNumber(stats.avgGoNsPerOp, 0)} | ${formatNumber(stats.avgTsNsPerOp, 0)} |\n`
+  md += `| Avg ops/s | ${formatNumber(1_000_000_000 / stats.avgGoNsPerOp, 0)} | ${formatNumber(1_000_000_000 / stats.avgTsNsPerOp, 0)} |\n`
+  md += `| Wins | ${stats.goWins}/${stats.totalBenchmarks} | ${stats.tsWins}/${stats.totalBenchmarks} |\n\n`
 
-  const goWins = comparisons.filter((c) => c.winner === 'go').length
-  const tsWins = comparisons.filter((c) => c.winner === 'ts').length
-  const ties = comparisons.filter((c) => c.winner === 'tie').length
+  // Detailed Results
+  md += '## Detailed Results\n\n'
+  md += '| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |\n'
+  md += '|-----------|------------|------------|------------|------------|--------|\n'
 
-  md += `- Go wins: ${goWins}\n`
-  md += `- TS wins: ${tsWins}\n`
-  md += `- Ties: ${ties}\n`
+  for (const c of comparisons) {
+    const resultIcon = c.winner === 'go' ? '🟢' : c.winner === 'ts' ? '🔵' : '⚪'
+    md += `| ${c.benchmark} | ${formatNumber(c.goNsPerOp, 0)} | ${formatNumber(c.tsNsPerOp, 0)} | ${formatNumber(c.goOpsPerSec, 0)} | ${formatNumber(c.tsOpsPerSec, 0)} | ${resultIcon} ${c.speedupStr} |\n`
+  }
+
+  // Category Breakdown
+  const categories = [...new Set(comparisons.map((c) => c.category))]
+  if (categories.length > 1) {
+    md += '\n## By Category\n\n'
+    for (const category of categories) {
+      const catComparisons = comparisons.filter((c) => c.category === category)
+      const catStats = calculateOverallStats(catComparisons)
+      const icon = catStats.overallWinner === 'go' ? '🟢' : catStats.overallWinner === 'ts' ? '🔵' : '⚪'
+      const result = catStats.overallWinner === 'tie' ? 'Similar' : catStats.overallWinner === 'go' ? `Go ${catStats.overallSpeedup.toFixed(2)}x faster` : `TS ${catStats.overallSpeedup.toFixed(2)}x faster`
+      md += `- ${icon} **${category}**: ${result}\n`
+    }
+  }
+
+  // Win Summary
+  md += '\n## Win Summary\n\n'
+  md += `- 🟢 Go wins: ${stats.goWins} (${((stats.goWins / stats.totalBenchmarks) * 100).toFixed(0)}%)\n`
+  md += `- 🔵 TS wins: ${stats.tsWins} (${((stats.tsWins / stats.totalBenchmarks) * 100).toFixed(0)}%)\n`
+  md += `- ⚪ Ties: ${stats.ties} (${((stats.ties / stats.totalBenchmarks) * 100).toFixed(0)}%)\n`
 
   md += '\n## Notes\n\n'
-  md += '- Ratio > 1.0x means TypeScript is faster\n'
-  md += '- Ratio < 1.0x means Go is faster\n'
-  md += '- Benchmarks run against the same Anvil instance for fair comparison\n'
+  md += '- Benchmarks run against the same Anvil instance (mainnet fork) for fair comparison\n'
+  md += '- ns/op = nanoseconds per operation (lower is better)\n'
+  md += '- ops/s = operations per second (higher is better)\n'
+  md += '- 🟢 = Go faster, 🔵 = TS faster, ⚪ = Similar (within 5%)\n'
 
   return md
 }
@@ -300,11 +431,14 @@ async function main() {
     process.exit(1)
   }
 
+  // Calculate overall statistics
+  const stats = calculateOverallStats(comparisons)
+
   // Generate reports
-  generateConsoleReport(comparisons)
+  generateConsoleReport(comparisons, stats)
 
   // Save markdown report
-  const mdReport = generateMarkdownReport(comparisons)
+  const mdReport = generateMarkdownReport(comparisons, stats)
   const reportPath = join(resultsDir, 'comparison.md')
   writeFileSync(reportPath, mdReport)
   console.log(`Markdown report saved to: ${reportPath}`)
