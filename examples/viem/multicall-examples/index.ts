@@ -152,7 +152,9 @@ async function main() {
         },
       ],
     })
-    console.log(`Vitalik's Polygon balances (${truncateAddress(VITALIK_ADDRESS)}):`)
+    console.log(
+      `Vitalik's Polygon balances (${truncateAddress(VITALIK_ADDRESS)}):`,
+    )
     const tokens = [
       { name: 'USDC', decimals: 6 },
       { name: 'WETH', decimals: 18 },
@@ -161,7 +163,9 @@ async function main() {
     results.forEach((result, i) => {
       if (result.status === 'success') {
         const balance = result.result as bigint
-        console.log(`  ${tokens[i].name}: ${formatUnits(balance, tokens[i].decimals)}`)
+        console.log(
+          `  ${tokens[i].name}: ${formatUnits(balance, tokens[i].decimals)}`,
+        )
       } else {
         console.log(`  ${tokens[i].name}: failed - ${result.error}`)
       }
@@ -185,7 +189,9 @@ async function main() {
       if (result.status === 'success') {
         console.log(`  Call ${i + 1}: success - ${result.result}`)
       } else {
-        console.log(`  Call ${i + 1}: failure - ${result.error?.message?.slice(0, 50)}...`)
+        console.log(
+          `  Call ${i + 1}: failure - ${result.error?.message?.slice(0, 50)}...`,
+        )
       }
     })
   } catch (error) {
@@ -242,7 +248,9 @@ async function main() {
     })
     if (results[0].status === 'success') {
       const supply = results[0].result as bigint
-      console.log(`USDC Total Supply at block 52000000: ${formatUnits(supply, 6)}`)
+      console.log(
+        `USDC Total Supply at block 52000000: ${formatUnits(supply, 6)}`,
+      )
     }
   } catch (error) {
     console.log(`Error: ${error}`)
