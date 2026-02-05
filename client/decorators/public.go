@@ -15,6 +15,7 @@ import (
 //	actions := decorators.PublicActions(client)
 func PublicActions(c *client.PublicClient) map[string]any {
 	return map[string]any{
+		// Read actions
 		"getBlockNumber":            c.GetBlockNumber,
 		"getChainId":                c.GetChainID,
 		"getGasPrice":               c.GetGasPrice,
@@ -37,5 +38,12 @@ func PublicActions(c *client.PublicClient) map[string]any {
 		"readContract":              c.ReadContract,
 		"simulateContract":          c.SimulateContract,
 		"prepareContractWrite":      c.PrepareContractWrite,
+
+		// Watch actions
+		"watchBlockNumber":         c.WatchBlockNumber,
+		"watchBlocks":              c.WatchBlocks,
+		"watchPendingTransactions": c.WatchPendingTransactions,
+		"watchEvent":               c.WatchEvent,
+		"watchContractEvent":       c.WatchContractEvent,
 	}
 }

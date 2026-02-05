@@ -10,6 +10,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
+	viemabi "github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/actions/public"
 	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/client/transport"
@@ -402,6 +403,114 @@ func (c *PublicClient) WaitForTransactionReceipt(ctx context.Context, hash commo
 			}
 		}
 	}
+}
+
+// ---- Watch Actions ----
+
+// TransportType returns the type of transport being used.
+// Implements the WatchClient interface.
+func (c *PublicClient) TransportType() string {
+	return c.transport.Config().Type
+}
+
+// Subscribe creates a WebSocket subscription.
+// Implements the WatchClient interface.
+// Returns ErrSubscriptionNotSupported if the transport doesn't support subscriptions.
+func (c *PublicClient) Subscribe(
+	params transport.SubscribeParams,
+	onData func(data json.RawMessage),
+	onError func(err error),
+) (*transport.Subscription, error) {
+	// Check if transport supports subscriptions
+	if wsTransport, ok := c.transport.(*transport.WebSocketTransport); ok {
+		return wsTransport.Subscribe(params, onData, onError)
+	}
+	return nil, public.ErrSubscriptionNotSupported
+}
+
+// WatchBlockNumber watches and returns incoming block numbers.
+// Returns a channel that receives block number events.
+// Close the context to stop watching.
+//
+// Example:
+//
+//	ctx, cancel := context.WithCancel(context.Background())
+//	defer cancel()
+//
+//	events := client.WatchBlockNumber(ctx, public.WatchBlockNumberParameters{
+//	    EmitOnBegin: true,
+//	})
+//
+//	for event := range events {
+//	    fmt.Printf("Block: %d\n", event.BlockNumber)
+//	}
+func (c *PublicClient) WatchBlockNumber(ctx context.Context, params public.WatchBlockNumberParameters) <-chan public.WatchBlockNumberEvent {
+	return public.WatchBlockNumber(ctx, c, params)
+}
+
+// WatchBlocks watches and returns incoming blocks.
+// Returns a channel that receives block events.
+// Close the context to stop watching.
+func (c *PublicClient) WatchBlocks(ctx context.Context, params public.WatchBlocksParameters) <-chan public.WatchBlocksEvent {
+	return public.WatchBlocks(ctx, c, params)
+}
+
+// WatchPendingTransactions watches and returns pending transaction hashes.
+// Returns a channel that receives pending transaction events.
+// Close the context to stop watching.
+func (c *PublicClient) WatchPendingTransactions(ctx context.Context, params public.WatchPendingTransactionsParameters) <-chan public.WatchPendingTransactionsEvent {
+	return public.WatchPendingTransactions(ctx, c, params)
+}
+
+// WatchEvent watches and returns emitted event logs.
+// Returns a channel that receives event log events.
+// Close the context to stop watching.
+func (c *PublicClient) WatchEvent(ctx context.Context, params public.WatchEventParameters) <-chan public.WatchEventEvent {
+	return public.WatchEvent(ctx, c, params)
+}
+
+// WatchContractEvent watches and returns emitted contract event logs with ABI decoding.
+// Returns a channel that receives decoded event log events.
+// Close the context to stop watching.
+//
+// Example:
+//
+//	ctx, cancel := context.WithCancel(context.Background())
+//	defer cancel()
+//
+//	events := client.WatchContractEvent(ctx, public.WatchContractEventParameters{
+//	    Address:   contractAddress,
+//	    ABI:       erc20ABI,
+//	    EventName: "Transfer",
+//	})
+//
+//	for event := range events {
+//	    for _, log := range event.Logs {
+//	        fmt.Printf("Transfer: %v\n", log.Args)
+//	    }
+//	}
+func (c *PublicClient) WatchContractEvent(ctx context.Context, params public.WatchContractEventParameters) <-chan public.WatchContractEventEvent {
+	return public.WatchContractEvent(ctx, c, params)
+}
+
+// ---- Contract Read/Write shortcuts that use ABI ----
+
+// ReadContractWithABI reads a contract function using an ABI.
+func (c *PublicClient) ReadContractWithABI(ctx context.Context, address common.Address, abi *viemabi.ABI, functionName string, args ...any) ([]any, error) {
+	data, err := abi.EncodeFunctionData(functionName, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := c.Call(ctx, CallRequest{
+		To:   address,
+		Data: data,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return abi.DecodeFunctionResult(functionName, result)
 }
 
 // ---- Helper methods ----

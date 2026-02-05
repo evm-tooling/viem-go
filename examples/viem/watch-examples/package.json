@@ -1,0 +1,22 @@
+{
+  "name": "watch-examples",
+  "version": "1.0.0",
+  "description": "viem watch action examples demonstrating real-time blockchain monitoring",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "watch-block-number": "npx ts-node index.ts watch-block-number",
+    "watch-blocks": "npx ts-node index.ts watch-blocks",
+    "watch-pending-tx": "npx ts-node index.ts watch-pending-tx",
+    "watch-event": "npx ts-node index.ts watch-event",
+    "watch-contract-event": "npx ts-node index.ts watch-contract-event",
+    "all": "npx ts-node index.ts all"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5"
+  }
+}
