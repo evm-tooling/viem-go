@@ -1487,3 +1487,25 @@ func TestFillTransaction_InvalidBaseFeeMultiplier(t *testing.T) {
 	_, ok := err.(*public.BaseFeeScalarError)
 	assert.True(t, ok, "expected BaseFeeScalarError")
 }
+
+func TestGetTransaction_Count(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_getTransactionCount" {
+			return 2
+		}
+		return 0
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	addr := common.HexToAddress("0x1234567890123456789012345678901234567890")
+	balance, err := public.GetTransactionCount(ctx, client, public.GetTransactionCountParameters{
+		Address: addr,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, balance)
+	assert.Equal(t, 2,  balance)
+}
