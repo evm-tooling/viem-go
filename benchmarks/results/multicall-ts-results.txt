@@ -1,0 +1,55 @@
+$ vitest bench --run multicall.bench.ts
+Benchmarking is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+
+ RUN  v1.6.1 /Users/evanmcgrane/Documents/viem-go/benchmarks/typescript
+
+stdout | multicall.bench.ts:48:9
+
+[viem-ts] Multicall RPC URL: http://127.0.0.1:8545
+
+stdout | warmup (/Users/evanmcgrane/Documents/viem-go/benchmarks/typescript/multicall.bench.ts:66:13)
+[viem-ts] Connected to Anvil, block number: 24392103
+
+stdout | warmup (/Users/evanmcgrane/Documents/viem-go/benchmarks/typescript/multicall.bench.ts:73:13)
+[viem-ts] Multicall warmup complete, starting benchmarks...
+
+ ✓ multicall.bench.ts > Multicall 34865ms
+     name                                               hz      min      max     mean      p75      p99     p995     p999      rme  samples
+   · viem-ts: multicall (basic)                   2,194.62   0.3120   6.1663   0.4557   0.4719   1.0488   1.4089   3.3447   ±1.40%     4390
+   · viem-ts: multicall (with args)               2,583.09   0.3013   6.5172   0.3871   0.3930   0.9562   1.0588   1.6540   ±1.04%     5167   fastest
+   · viem-ts: multicall (multi-contract)          2,163.27   0.3692   6.3601   0.4623   0.4611   0.9410   1.0002   1.7158   ±1.11%     4327
+   · viem-ts: multicall (10 calls)                1,799.49   0.4667   5.7686   0.5557   0.5560   0.9282   0.9696   1.5844   ±0.83%     3599
+   · viem-ts: multicall (30 calls)                  987.79   0.9140   5.0970   1.0124   1.0183   1.3561   1.5340   4.8014   ±0.80%     1976
+   · viem-ts: multicall (deployless)              1,560.98   0.5015   158.16   0.6406   0.5870   0.9566   1.1769   3.9555  ±15.46%     3122
+   · viem-ts: multicall (token metadata)          2,329.64   0.3593   5.3330   0.4293   0.4265   0.8495   0.8867   2.2000   ±0.90%     4660
+   · viem-ts: multicall (50 calls)                  690.38   1.3517   5.2830   1.4485   1.4578   1.8401   2.2325   4.5747   ±0.65%     1381
+   · viem-ts: multicall (100 calls)                 371.20   2.4561  15.1395   2.6940   2.6937   3.9135   5.5410  15.1395   ±2.02%      743
+   · viem-ts: multicall (200 calls)                 203.74   4.6216   9.3776   4.9083   5.0422   5.8008   6.8681   9.3776   ±0.76%      408
+   · viem-ts: multicall (500 calls)                83.0173  11.5916  17.4010  12.0457  12.0007  17.1482  17.4010  17.4010   ±0.89%      167
+   · viem-ts: multicall (100 mixed contracts)       389.29   2.4208   8.2901   2.5688   2.5790   3.4316   5.1154   8.2901   ±0.91%      779
+   · viem-ts: multicall (1000 calls)               41.1715  23.5978  29.9210  24.2887  24.1630  29.9210  29.9210  29.9210   ±0.98%       83
+   · viem-ts: multicall (10000 calls single RPC)    3.0960   223.26   771.40   323.00   418.82   771.40   771.40   771.40  ±38.99%       10
+   · viem-ts: multicall (10000 calls chunked)       4.6616   204.14   230.23   214.52   217.23   230.23   230.23   230.23   ±2.81%       10
+   · viem-ts: multicall (10000 calls aggressive)    2.9285   226.63   903.09   341.47   323.77   903.09   903.09   903.09  ±44.73%       10   slowest
+
+
+ BENCH  Summary
+
+  viem-ts: multicall (with args) - multicall.bench.ts > Multicall
+    1.11x faster than viem-ts: multicall (token metadata)
+    1.18x faster than viem-ts: multicall (basic)
+    1.19x faster than viem-ts: multicall (multi-contract)
+    1.44x faster than viem-ts: multicall (10 calls)
+    1.65x faster than viem-ts: multicall (deployless)
+    2.62x faster than viem-ts: multicall (30 calls)
+    3.74x faster than viem-ts: multicall (50 calls)
+    6.64x faster than viem-ts: multicall (100 mixed contracts)
+    6.96x faster than viem-ts: multicall (100 calls)
+    12.68x faster than viem-ts: multicall (200 calls)
+    31.12x faster than viem-ts: multicall (500 calls)
+    62.74x faster than viem-ts: multicall (1000 calls)
+    554.13x faster than viem-ts: multicall (10000 calls chunked)
+    834.33x faster than viem-ts: multicall (10000 calls single RPC)
+    882.05x faster than viem-ts: multicall (10000 calls aggressive)
+

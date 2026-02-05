@@ -7,7 +7,9 @@ package {{.PackageName}}
 import (
 	"context"
 	"math/big"
+	"sync"
 
+	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/contract"
 	"github.com/ChefBingbong/viem-go/types"
@@ -19,10 +21,40 @@ var (
 	_ = big.NewInt
 	_ = common.Address{}
 	_ types.Transaction
+	_ sync.Once
+	_ *abi.ABI
 )
 
-// ContractABI is the ABI of the {{.ContractName}} contract.
+// ContractABI is the raw JSON ABI of the {{.ContractName}} contract.
 var ContractABI = ` + "`" + `{{.ABIJSON}}` + "`" + `
+
+// parsedABI holds the parsed ABI (lazily initialized).
+var (
+	parsedABI     *abi.ABI
+	parsedABIOnce sync.Once
+	parsedABIErr  error
+)
+
+// ParsedABI returns the pre-parsed ABI for the {{.ContractName}} contract.
+// This is useful for efficient multicall operations where you want to avoid
+// re-parsing the ABI JSON on every call.
+// The ABI is parsed once and cached for subsequent calls.
+func ParsedABI() (*abi.ABI, error) {
+	parsedABIOnce.Do(func() {
+		parsedABI, parsedABIErr = abi.Parse([]byte(ContractABI))
+	})
+	return parsedABI, parsedABIErr
+}
+
+// MustParsedABI returns the pre-parsed ABI, panicking on error.
+// Use this when you're confident the ABI is valid (e.g., in init or tests).
+func MustParsedABI() *abi.ABI {
+	parsed, err := ParsedABI()
+	if err != nil {
+		panic("failed to parse {{.ContractName}} ABI: " + err.Error())
+	}
+	return parsed
+}
 
 // ============================================================================
 // Typed Method Descriptors
@@ -76,6 +108,23 @@ func (c *{{.ContractName}}) Address() common.Address {
 // Contract returns the underlying contract instance.
 func (c *{{.ContractName}}) Contract() *contract.Contract {
 	return c.contract
+}
+
+// ABI returns the raw JSON ABI string.
+func (c *{{.ContractName}}) ABI() string {
+	return ContractABI
+}
+
+// ABIBytes returns the raw JSON ABI as bytes.
+// This is the format expected by multicall and other ABI-consuming functions.
+func (c *{{.ContractName}}) ABIBytes() []byte {
+	return []byte(ContractABI)
+}
+
+// ParsedABI returns the pre-parsed ABI for efficient reuse.
+// Useful for multicall operations to avoid re-parsing the ABI.
+func (c *{{.ContractName}}) ParsedABI() (*abi.ABI, error) {
+	return ParsedABI()
 }
 
 {{range .Functions}}

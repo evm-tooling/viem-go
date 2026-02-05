@@ -1,38 +1,78 @@
 Benchmark client connected to: http://127.0.0.1:8545
-Current block number: 24387466
+Current block number: 24391152
 goos: darwin
 goarch: arm64
 pkg: github.com/ChefBingbong/viem-go/benchmarks/go
 cpu: Apple M4 Pro
-BenchmarkCall_Basic-14                	   82699	    154375 ns/op	    8802 B/op	     106 allocs/op
-BenchmarkCall_Basic-14                	   82713	    142532 ns/op	    8802 B/op	     106 allocs/op
-BenchmarkCall_Basic-14                	   84240	    142017 ns/op	    8828 B/op	     106 allocs/op
-BenchmarkCall_Basic-14                	   83275	    142123 ns/op	    8820 B/op	     106 allocs/op
-BenchmarkCall_Basic-14                	   83695	    141330 ns/op	    8803 B/op	     106 allocs/op
-BenchmarkCall_WithData-14             	   84424	    139134 ns/op	    8696 B/op	     107 allocs/op
-BenchmarkCall_WithData-14             	   86287	    138392 ns/op	    8692 B/op	     107 allocs/op
-BenchmarkCall_WithData-14             	   84202	    138059 ns/op	    8705 B/op	     107 allocs/op
-BenchmarkCall_WithData-14             	   85531	    142945 ns/op	    8699 B/op	     107 allocs/op
-BenchmarkCall_WithData-14             	   86050	    139468 ns/op	    8702 B/op	     107 allocs/op
-BenchmarkCall_WithAccount-14          	   81660	    145126 ns/op	    9134 B/op	     112 allocs/op
-BenchmarkCall_WithAccount-14          	   83517	    144207 ns/op	    9134 B/op	     112 allocs/op
-BenchmarkCall_WithAccount-14          	   80983	    143599 ns/op	    9117 B/op	     112 allocs/op
-BenchmarkCall_WithAccount-14          	   82537	    153601 ns/op	    9118 B/op	     112 allocs/op
-BenchmarkCall_WithAccount-14          	   82034	    144631 ns/op	    9146 B/op	     112 allocs/op
-BenchmarkCall_Decimals-14             	   86478	    138271 ns/op	    8482 B/op	     106 allocs/op
-BenchmarkCall_Decimals-14             	   86492	    138338 ns/op	    8487 B/op	     106 allocs/op
-BenchmarkCall_Decimals-14             	   86307	    138790 ns/op	    8470 B/op	     106 allocs/op
-BenchmarkCall_Decimals-14             	   86031	    136389 ns/op	    8492 B/op	     106 allocs/op
-BenchmarkCall_Decimals-14             	   83518	    139792 ns/op	    8476 B/op	     106 allocs/op
-BenchmarkCall_Symbol-14               	   83817	    141822 ns/op	    8829 B/op	     106 allocs/op
-BenchmarkCall_Symbol-14               	   79009	    142393 ns/op	    8807 B/op	     106 allocs/op
-BenchmarkCall_Symbol-14               	   83898	    142481 ns/op	    8826 B/op	     106 allocs/op
-BenchmarkCall_Symbol-14               	   84195	    146772 ns/op	    8819 B/op	     106 allocs/op
-BenchmarkCall_Symbol-14               	   83396	    143502 ns/op	    8811 B/op	     106 allocs/op
-BenchmarkCall_BalanceOfMultiple-14    	   87769	    138520 ns/op	    8706 B/op	     107 allocs/op
-BenchmarkCall_BalanceOfMultiple-14    	   86128	    138658 ns/op	    8698 B/op	     107 allocs/op
-BenchmarkCall_BalanceOfMultiple-14    	   86138	    138659 ns/op	    8704 B/op	     107 allocs/op
-BenchmarkCall_BalanceOfMultiple-14    	   85762	    138504 ns/op	    8705 B/op	     107 allocs/op
-BenchmarkCall_BalanceOfMultiple-14    	   84705	    138697 ns/op	    8703 B/op	     107 allocs/op
+BenchmarkCall_Basic-14                   	   75664	    155413 ns/op	    8795 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                   	   79653	    165052 ns/op	    8808 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                   	   80733	    167995 ns/op	    8805 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                   	   75972	    155179 ns/op	    8810 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                   	   79450	    164573 ns/op	    8815 B/op	     106 allocs/op
+BenchmarkCall_WithData-14                	   78672	    155350 ns/op	    8697 B/op	     107 allocs/op
+BenchmarkCall_WithData-14                	   73906	    175161 ns/op	    8675 B/op	     107 allocs/op
+BenchmarkCall_WithData-14                	   69706	    152108 ns/op	    8679 B/op	     107 allocs/op
+BenchmarkCall_WithData-14                	   80162	    171290 ns/op	    8676 B/op	     107 allocs/op
+BenchmarkCall_WithData-14                	   80850	    148793 ns/op	    8681 B/op	     107 allocs/op
+BenchmarkCall_WithAccount-14             	   71644	    153954 ns/op	    9137 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14             	   77877	    155034 ns/op	    9142 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14             	   79052	    173141 ns/op	    9110 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14             	   75604	    155549 ns/op	    9128 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14             	   74379	    158752 ns/op	    9139 B/op	     112 allocs/op
+BenchmarkCall_Decimals-14                	   72973	    177428 ns/op	    8453 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14                	   79552	    183648 ns/op	    8479 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14                	   65910	    156643 ns/op	    8481 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14                	   74406	    181777 ns/op	    8477 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14                	   83546	    141277 ns/op	    8498 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14                  	   82071	    144042 ns/op	    8802 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14                  	   80380	    158880 ns/op	    8830 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14                  	   67375	    177846 ns/op	    8819 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14                  	   82046	    147443 ns/op	    8807 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14                  	   47103	    226148 ns/op	    8767 B/op	     106 allocs/op
+BenchmarkCall_BalanceOfMultiple-14       	   72888	    145611 ns/op	    8688 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14       	   84946	    139128 ns/op	    8713 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14       	   85656	    138889 ns/op	    8694 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14       	   86642	    143384 ns/op	    8705 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14       	   84546	    138884 ns/op	    8704 B/op	     107 allocs/op
+BenchmarkMulticall_Basic-14              	  149666	     79525 ns/op	   55351 B/op	     641 allocs/op
+BenchmarkMulticall_Basic-14              	  150909	     79463 ns/op	   55347 B/op	     641 allocs/op
+BenchmarkMulticall_Basic-14              	  149587	     80539 ns/op	   55435 B/op	     641 allocs/op
+BenchmarkMulticall_Basic-14              	  145978	     90260 ns/op	   55464 B/op	     641 allocs/op
+BenchmarkMulticall_Basic-14              	  146980	     82162 ns/op	   55514 B/op	     641 allocs/op
+BenchmarkMulticall_WithArgs-14           	  139539	     81471 ns/op	   56092 B/op	     656 allocs/op
+BenchmarkMulticall_WithArgs-14           	  147984	     81197 ns/op	   56059 B/op	     656 allocs/op
+BenchmarkMulticall_WithArgs-14           	  146646	     82106 ns/op	   56049 B/op	     656 allocs/op
+BenchmarkMulticall_WithArgs-14           	  147147	     93663 ns/op	   56033 B/op	     656 allocs/op
+BenchmarkMulticall_WithArgs-14           	  144451	     82049 ns/op	   56060 B/op	     656 allocs/op
+BenchmarkMulticall_MultiContract-14      	  115262	    105056 ns/op	   72303 B/op	     837 allocs/op
+BenchmarkMulticall_MultiContract-14      	  112770	    113872 ns/op	   72372 B/op	     837 allocs/op
+BenchmarkMulticall_MultiContract-14      	  113080	    123861 ns/op	   72340 B/op	     837 allocs/op
+BenchmarkMulticall_MultiContract-14      	  113396	    104902 ns/op	   72354 B/op	     837 allocs/op
+BenchmarkMulticall_MultiContract-14      	  112964	    103751 ns/op	   72262 B/op	     837 allocs/op
+BenchmarkMulticall_10Calls-14            	   48996	    243439 ns/op	  173581 B/op	    1997 allocs/op
+BenchmarkMulticall_10Calls-14            	   49327	    245016 ns/op	  173583 B/op	    1997 allocs/op
+BenchmarkMulticall_10Calls-14            	   49272	    243733 ns/op	  173522 B/op	    1997 allocs/op
+BenchmarkMulticall_10Calls-14            	   49060	    243627 ns/op	  173518 B/op	    1997 allocs/op
+BenchmarkMulticall_10Calls-14            	   47232	    272166 ns/op	  173705 B/op	    1997 allocs/op
+BenchmarkMulticall_30Calls-14            	   15622	    769597 ns/op	  536312 B/op	    5902 allocs/op
+BenchmarkMulticall_30Calls-14            	   15674	    769688 ns/op	  537491 B/op	    5903 allocs/op
+BenchmarkMulticall_30Calls-14            	   15310	    833296 ns/op	  538192 B/op	    5903 allocs/op
+BenchmarkMulticall_30Calls-14            	   15198	    828576 ns/op	  537003 B/op	    5902 allocs/op
+BenchmarkMulticall_30Calls-14            	   15144	   2495194 ns/op	  534680 B/op	    5902 allocs/op
+BenchmarkMulticall_ChunkedParallel-14    	   22020	    563068 ns/op	  370739 B/op	    4066 allocs/op
+BenchmarkMulticall_ChunkedParallel-14    	   22803	    520211 ns/op	  366875 B/op	    4064 allocs/op
+BenchmarkMulticall_ChunkedParallel-14    	   22686	    552542 ns/op	  367687 B/op	    4065 allocs/op
+BenchmarkMulticall_ChunkedParallel-14    	   22234	    526846 ns/op	  367225 B/op	    4064 allocs/op
+BenchmarkMulticall_ChunkedParallel-14    	   22897	    529303 ns/op	  368717 B/op	    4065 allocs/op
+BenchmarkMulticall_Deployless-14         	  140432	     84016 ns/op	   56217 B/op	     641 allocs/op
+BenchmarkMulticall_Deployless-14         	  144326	     83462 ns/op	   56101 B/op	     641 allocs/op
+BenchmarkMulticall_Deployless-14         	  145010	     83626 ns/op	   56011 B/op	     641 allocs/op
+BenchmarkMulticall_Deployless-14         	  143270	     87646 ns/op	   55988 B/op	     641 allocs/op
+BenchmarkMulticall_Deployless-14         	  143857	     82910 ns/op	   55975 B/op	     641 allocs/op
+BenchmarkMulticall_TokenMetadata-14      	  112342	    106116 ns/op	   72494 B/op	     827 allocs/op
+BenchmarkMulticall_TokenMetadata-14      	  111696	    106266 ns/op	   72453 B/op	     827 allocs/op
+BenchmarkMulticall_TokenMetadata-14      	  113636	    107969 ns/op	   72423 B/op	     827 allocs/op
+BenchmarkMulticall_TokenMetadata-14      	  111331	    106300 ns/op	   72329 B/op	     827 allocs/op
+BenchmarkMulticall_TokenMetadata-14      	  113005	    108342 ns/op	   72327 B/op	     827 allocs/op
 PASS
-ok  	github.com/ChefBingbong/viem-go/benchmarks/go	425.788s
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	1088.049s

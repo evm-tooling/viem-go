@@ -1,0 +1,17 @@
+{
+  "name": "viem-multicall-examples",
+  "version": "1.0.0",
+  "description": "Comprehensive examples demonstrating viem multicall action features",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "dev": "bun --watch run index.ts"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

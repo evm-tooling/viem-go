@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "bench": "vitest bench --run",
-    "bench:json": "vitest bench --reporter=json --outputFile=../results/ts-results.json"
+    "bench:json": "vitest bench --reporter=json --outputFile=../results/ts-results.json",
+    "bench:call": "vitest bench --run call.bench.ts",
+    "bench:multicall": "vitest bench --run multicall.bench.ts"
   },
   "dependencies": {
     "viem": "^2.21.0"

@@ -12,7 +12,7 @@
 #   make clean          - Clean results directory
 #   make anvil          - Start Anvil manually (for development)
 
-.PHONY: bench bench-go bench-ts bench-all compare install clean anvil anvil-stop setup help
+.PHONY: bench bench-go bench-ts bench-go-standalone bench-ts-standalone bench-single bench-full bench-all compare install clean anvil anvil-stop setup help
 
 # Configuration
 ANVIL_PORT ?= 8545
@@ -33,20 +33,29 @@ help:
 	@echo "Benchmark Suite for viem-go vs viem TypeScript"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make bench          Run all benchmarks with shared Anvil"
-	@echo "  make bench-go       Run only Go benchmarks"
-	@echo "  make bench-ts       Run only TypeScript benchmarks"
-	@echo "  make compare        Generate comparison report"
-	@echo "  make install        Install TypeScript dependencies"
-	@echo "  make clean          Clean results directory"
-	@echo "  make anvil          Start Anvil manually"
-	@echo "  make anvil-stop     Stop running Anvil instance"
+	@echo "  make bench                    Run all benchmarks with shared Anvil"
+	@echo "  make bench-single BENCH=name  Run single benchmark comparison (e.g., BENCH=call)"
+	@echo "  make bench-full               Run full suite with comprehensive report"
+	@echo "  make bench-go                 Run only Go benchmarks (requires running Anvil)"
+	@echo "  make bench-ts                 Run only TypeScript benchmarks (requires running Anvil)"
+	@echo "  make bench-go-standalone      Run Go benchmarks with own Anvil lifecycle"
+	@echo "  make bench-ts-standalone      Run TypeScript benchmarks with own Anvil lifecycle"
+	@echo "  make compare                  Generate comparison report"
+	@echo "  make install                  Install TypeScript dependencies"
+	@echo "  make clean                    Clean results directory"
+	@echo "  make anvil                    Start Anvil manually"
+	@echo "  make anvil-stop               Stop running Anvil instance"
+	@echo ""
+	@echo "Single Benchmark Examples:"
+	@echo "  make bench-single BENCH=call      # Compare call benchmarks"
+	@echo "  make bench-single BENCH=multicall # Compare multicall benchmarks"
 	@echo ""
 	@echo "Configuration (via environment):"
 	@echo "  ANVIL_PORT=$(ANVIL_PORT)"
 	@echo "  FORK_URL=$(FORK_URL)"
 	@echo "  FORK_BLOCK=$(if $(FORK_BLOCK),$(FORK_BLOCK),latest)"
 	@echo "  GO_BENCH_COUNT=$(GO_BENCH_COUNT)"
+	@echo "  GO_BENCH_TIME=$(GO_BENCH_TIME)"
 
 # Setup: ensure results directory exists and dependencies are installed
 setup: results/.gitkeep
@@ -110,6 +119,38 @@ bench-ts:
 	@echo "Running TypeScript benchmarks against $(RPC_URL)..."
 	cd typescript && npm run bench 2>&1 | tee ../results/ts-results.txt
 
+# Run Go benchmarks with standalone Anvil lifecycle
+bench-go-standalone:
+	@echo "Running standalone Go benchmarks..."
+	./scripts/bench-go.sh
+
+# Run TypeScript benchmarks with standalone Anvil lifecycle
+bench-ts-standalone:
+	@echo "Running standalone TypeScript benchmarks..."
+	./scripts/bench-ts.sh
+
+# Run a single benchmark comparison (Go vs TypeScript)
+# Usage: make bench-single BENCH=call
+bench-single:
+ifndef BENCH
+	@echo "Error: BENCH variable is required"
+	@echo "Usage: make bench-single BENCH=<name>"
+	@echo "Examples:"
+	@echo "  make bench-single BENCH=call"
+	@echo "  make bench-single BENCH=multicall"
+	@echo ""
+	@echo "Available benchmarks:"
+	@./scripts/bench-single.sh --list | grep -E "^\s+-"
+	@exit 1
+endif
+	@echo "Running single benchmark comparison: $(BENCH)"
+	./scripts/bench-single.sh --bench $(BENCH)
+
+# Run full benchmark suite with comprehensive report
+bench-full:
+	@echo "Running full benchmark suite..."
+	./scripts/bench-full.sh
+
 # Generate comparison report
 compare:
 	@echo "Generating comparison report..."
@@ -139,7 +180,7 @@ anvil-stop:
 # Clean results
 clean:
 	@echo "Cleaning results..."
-	rm -rf results/*.txt results/*.json
+	rm -rf results/*.txt results/*.json results/*.md
 	@echo "Done."
 
 # Clean everything including node_modules
