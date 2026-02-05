@@ -216,13 +216,13 @@ func main() {
 
 	// Example 10: Call with Block Override
 	printSection("11. Call with Block Override")
-	overrideGasLimit := uint64(50000000)       // 50M gas limit
-	overrideBaseFee := mustParseGwei("1")      // 1 gwei base fee
-	overrideTimestamp := uint64(1700000000)    // Fixed timestamp
+	overrideGasLimit := uint64(50000000)    // 50M gas limit
+	overrideBaseFee := mustParseGwei("1")   // 1 gwei base fee
+	overrideTimestamp := uint64(1700000000) // Fixed timestamp
 	blockOverrides := &types.BlockOverrides{
-		GasLimit:     &overrideGasLimit,
+		GasLimit:      &overrideGasLimit,
 		BaseFeePerGas: overrideBaseFee,
-		Time:         &overrideTimestamp,
+		Time:          &overrideTimestamp,
 	}
 	result, err = public.Call(ctx, publicClient, public.CallParameters{
 		To:             &usdcAddress,
@@ -292,7 +292,7 @@ func main() {
 	// client.EncodeFunctionData()
 	// Encode balanceOf(testAddress) - selector + padded address
 	combinedBalanceOfData, err := client.EncodeFunctionData(client.EncodeFunctionDataOptions{
-		ABI:         erc20.ContractABI,
+		ABI:          erc20.ContractABI,
 		FunctionName: "balanceOf",
 		Args:         []any{testAddress},
 	})

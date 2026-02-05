@@ -16,8 +16,8 @@ import (
 type ReplacementReason string
 
 const (
-	// ReplacementReasonCancelled indicates the transaction was cancelled (value === 0, sent to self).
-	ReplacementReasonCancelled ReplacementReason = "cancelled"
+	// ReplacementReasonCancelled indicates the transaction was canceled (value === 0, sent to self).
+	ReplacementReasonCancelled ReplacementReason = "canceled"
 	// ReplacementReasonReplaced indicates the transaction was replaced with a different transaction.
 	ReplacementReasonReplaced ReplacementReason = "replaced"
 	// ReplacementReasonRepriced indicates the transaction was repriced (same tx, different gas).
@@ -89,7 +89,7 @@ func (e *WaitForTransactionReceiptTimeoutError) Error() string {
 //
 // There are 3 types of transaction replacement reasons:
 //   - repriced: The gas price has been modified (e.g., different maxFeePerGas)
-//   - cancelled: The transaction has been cancelled (e.g., value === 0, sent to self)
+//   - canceled: The transaction has been canceled (e.g., value === 0, sent to self)
 //   - replaced: The transaction has been replaced (e.g., different value or data)
 //
 // JSON-RPC Methods:
@@ -349,7 +349,7 @@ func determineReplacementReason(original, replacement *TransactionResponse) Repl
 		return ReplacementReasonRepriced
 	}
 
-	// Sent to self with zero value means cancelled
+	// Sent to self with zero value means canceled
 	zeroValue := replacement.Value == nil || replacement.Value.Cmp(big.NewInt(0)) == 0
 	sentToSelf := replacement.To != nil && replacement.From == *replacement.To
 

@@ -79,20 +79,20 @@ type FillTransactionReturnType struct {
 
 // FilledTransaction represents a transaction with all fields filled.
 type FilledTransaction struct {
-	From                 common.Address  `json:"from"`
-	To                   *common.Address `json:"to,omitempty"`
-	Data                 []byte          `json:"data,omitempty"`
-	Value                *big.Int        `json:"value,omitempty"`
-	Nonce                uint64          `json:"nonce"`
-	Gas                  uint64          `json:"gas"`
-	GasPrice             *big.Int        `json:"gasPrice,omitempty"`
-	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
-	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
-	MaxFeePerBlobGas     *big.Int        `json:"maxFeePerBlobGas,omitempty"`
-	ChainID              *big.Int        `json:"chainId,omitempty"`
-	Type                 uint8           `json:"type"`
-	AccessList           types.AccessList      `json:"accessList,omitempty"`
-	BlobVersionedHashes  []common.Hash         `json:"blobVersionedHashes,omitempty"`
+	From                 common.Address   `json:"from"`
+	To                   *common.Address  `json:"to,omitempty"`
+	Data                 []byte           `json:"data,omitempty"`
+	Value                *big.Int         `json:"value,omitempty"`
+	Nonce                uint64           `json:"nonce"`
+	Gas                  uint64           `json:"gas"`
+	GasPrice             *big.Int         `json:"gasPrice,omitempty"`
+	MaxFeePerGas         *big.Int         `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *big.Int         `json:"maxPriorityFeePerGas,omitempty"`
+	MaxFeePerBlobGas     *big.Int         `json:"maxFeePerBlobGas,omitempty"`
+	ChainID              *big.Int         `json:"chainId,omitempty"`
+	Type                 uint8            `json:"type"`
+	AccessList           types.AccessList `json:"accessList,omitempty"`
+	BlobVersionedHashes  []common.Hash    `json:"blobVersionedHashes,omitempty"`
 }
 
 // fillTransactionRequest is the internal request format for eth_fillTransaction.
@@ -258,21 +258,21 @@ func FillTransaction(ctx context.Context, client Client, params FillTransactionP
 // parseFilledTransaction parses a filled transaction from JSON.
 func parseFilledTransaction(data json.RawMessage) (*FilledTransaction, error) {
 	type txJSON struct {
-		From                 common.Address  `json:"from"`
-		To                   *common.Address `json:"to"`
-		Input                string          `json:"input"`
-		Data                 string          `json:"data"`
-		Value                *hexutil.Big    `json:"value"`
-		Nonce                hexutil.Uint64  `json:"nonce"`
-		Gas                  hexutil.Uint64  `json:"gas"`
-		GasPrice             *hexutil.Big    `json:"gasPrice"`
-		MaxFeePerGas         *hexutil.Big    `json:"maxFeePerGas"`
-		MaxPriorityFeePerGas *hexutil.Big    `json:"maxPriorityFeePerGas"`
-		MaxFeePerBlobGas     *hexutil.Big    `json:"maxFeePerBlobGas"`
-		ChainID              *hexutil.Big    `json:"chainId"`
-		Type                 hexutil.Uint64  `json:"type"`
-		AccessList           types.AccessList      `json:"accessList"`
-		BlobVersionedHashes  []common.Hash         `json:"blobVersionedHashes"`
+		From                 common.Address   `json:"from"`
+		To                   *common.Address  `json:"to"`
+		Input                string           `json:"input"`
+		Data                 string           `json:"data"`
+		Value                *hexutil.Big     `json:"value"`
+		Nonce                hexutil.Uint64   `json:"nonce"`
+		Gas                  hexutil.Uint64   `json:"gas"`
+		GasPrice             *hexutil.Big     `json:"gasPrice"`
+		MaxFeePerGas         *hexutil.Big     `json:"maxFeePerGas"`
+		MaxPriorityFeePerGas *hexutil.Big     `json:"maxPriorityFeePerGas"`
+		MaxFeePerBlobGas     *hexutil.Big     `json:"maxFeePerBlobGas"`
+		ChainID              *hexutil.Big     `json:"chainId"`
+		Type                 hexutil.Uint64   `json:"type"`
+		AccessList           types.AccessList `json:"accessList"`
+		BlobVersionedHashes  []common.Hash    `json:"blobVersionedHashes"`
 	}
 
 	var raw txJSON

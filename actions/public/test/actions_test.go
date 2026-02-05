@@ -952,3 +952,538 @@ func TestGetTransaction_InvalidParams(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid parameters")
 }
+
+// ============================================================================
+// GetBlockNumber Tests
+// ============================================================================
+
+func TestGetBlockNumber_Basic(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_blockNumber" {
+			return "0x10" // Block 16
+		}
+		return "0x0"
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	client.uid = "test-get-block-number-basic"
+	client.cacheTime = 0 // Disable caching for this test
+	ctx := context.Background()
+
+	blockNumber, err := public.GetBlockNumber(ctx, client, public.GetBlockNumberParameters{})
+
+	require.NoError(t, err)
+	assert.Equal(t, uint64(16), blockNumber)
+}
+
+func TestGetBlockNumber_LargeNumber(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_blockNumber" {
+			return "0x1234567" // Large block number
+		}
+		return "0x0"
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	client.uid = "test-get-block-number-large"
+	client.cacheTime = 0 // Disable caching for this test
+	ctx := context.Background()
+
+	blockNumber, err := public.GetBlockNumber(ctx, client, public.GetBlockNumberParameters{})
+
+	require.NoError(t, err)
+	assert.Equal(t, uint64(0x1234567), blockNumber)
+}
+
+func TestGetBlockNumber_WithCaching(t *testing.T) {
+	callCount := 0
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_blockNumber" {
+			callCount++
+			return "0x10"
+		}
+		return "0x0"
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	client.uid = "test-get-block-number-caching"
+	client.cacheTime = 10 * time.Second // Enable caching
+	ctx := context.Background()
+
+	// First call
+	_, err := public.GetBlockNumber(ctx, client, public.GetBlockNumberParameters{})
+	require.NoError(t, err)
+
+	// Second call should use cache
+	_, err = public.GetBlockNumber(ctx, client, public.GetBlockNumberParameters{})
+	require.NoError(t, err)
+
+	// Only one RPC call should have been made due to caching
+	assert.Equal(t, 1, callCount)
+}
+
+// ============================================================================
+// GetTransactionReceipt Tests
+// ============================================================================
+
+func TestGetTransactionReceipt_Basic(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_getTransactionReceipt" {
+			return map[string]any{
+				"transactionHash":   "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"transactionIndex":  "0x1",
+				"blockHash":         "0x1234567890123456789012345678901234567890123456789012345678901234",
+				"blockNumber":       "0x10",
+				"from":              "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"to":                "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				"cumulativeGasUsed": "0x5208",
+				"gasUsed":           "0x5208",
+				"contractAddress":   nil,
+				"logs":              []any{},
+				"status":            "0x1",
+				"logsBloom":         "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				"effectiveGasPrice": "0x3b9aca00",
+				"type":              "0x2",
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	receipt, err := public.GetTransactionReceipt(ctx, client, public.GetTransactionReceiptParameters{
+		Hash: hash,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, receipt)
+	assert.Equal(t, hash, receipt.TransactionHash)
+	assert.Equal(t, uint64(16), receipt.BlockNumber)
+	assert.Equal(t, uint64(1), receipt.Status) // Success
+	assert.True(t, receipt.IsSuccess())
+	assert.False(t, receipt.IsFailed())
+}
+
+func TestGetTransactionReceipt_Failed(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_getTransactionReceipt" {
+			return map[string]any{
+				"transactionHash":   "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"transactionIndex":  "0x1",
+				"blockHash":         "0x1234567890123456789012345678901234567890123456789012345678901234",
+				"blockNumber":       "0x10",
+				"from":              "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"to":                "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				"cumulativeGasUsed": "0x5208",
+				"gasUsed":           "0x5208",
+				"contractAddress":   nil,
+				"logs":              []any{},
+				"status":            "0x0", // Failed
+				"logsBloom":         "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				"effectiveGasPrice": "0x3b9aca00",
+				"type":              "0x2",
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	receipt, err := public.GetTransactionReceipt(ctx, client, public.GetTransactionReceiptParameters{
+		Hash: hash,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, receipt)
+	assert.Equal(t, uint64(0), receipt.Status) // Failed
+	assert.False(t, receipt.IsSuccess())
+	assert.True(t, receipt.IsFailed())
+}
+
+func TestGetTransactionReceipt_NotFound(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xdeadbeef1234567890abcdef1234567890abcdef1234567890abcdef12345678")
+	_, err := public.GetTransactionReceipt(ctx, client, public.GetTransactionReceiptParameters{
+		Hash: hash,
+	})
+
+	require.Error(t, err)
+	_, ok := err.(*public.TransactionReceiptNotFoundError)
+	assert.True(t, ok, "expected TransactionReceiptNotFoundError")
+}
+
+func TestGetTransactionReceipt_WithContractAddress(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_getTransactionReceipt" {
+			return map[string]any{
+				"transactionHash":   "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"transactionIndex":  "0x0",
+				"blockHash":         "0x1234567890123456789012345678901234567890123456789012345678901234",
+				"blockNumber":       "0x10",
+				"from":              "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"to":                nil, // Contract creation
+				"cumulativeGasUsed": "0x100000",
+				"gasUsed":           "0x100000",
+				"contractAddress":   "0xcccccccccccccccccccccccccccccccccccccccc", // Newly deployed contract
+				"logs":              []any{},
+				"status":            "0x1",
+				"logsBloom":         "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				"effectiveGasPrice": "0x3b9aca00",
+				"type":              "0x2",
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	receipt, err := public.GetTransactionReceipt(ctx, client, public.GetTransactionReceiptParameters{
+		Hash: hash,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, receipt)
+	assert.Nil(t, receipt.To)
+	assert.NotNil(t, receipt.ContractAddress)
+	assert.Equal(t, common.HexToAddress("0xcccccccccccccccccccccccccccccccccccccccc"), *receipt.ContractAddress)
+}
+
+// ============================================================================
+// GetTransactionConfirmations Tests
+// ============================================================================
+
+func TestGetTransactionConfirmations_ByHash(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		switch method {
+		case "eth_blockNumber":
+			return "0x14" // Block 20
+		case "eth_getTransactionByHash":
+			return map[string]any{
+				"blockHash":        "0x1234567890123456789012345678901234567890123456789012345678901234",
+				"blockNumber":      "0x10", // Block 16
+				"from":             "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"gas":              "0x5208",
+				"gasPrice":         "0x3b9aca00",
+				"hash":             "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"input":            "0x",
+				"nonce":            "0x1",
+				"to":               "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				"transactionIndex": "0x0",
+				"value":            "0xde0b6b3a7640000",
+				"type":             "0x0",
+				"v":                "0x1c",
+				"r":                "0x1234",
+				"s":                "0x5678",
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	client.uid = "test-confirmations-by-hash"
+	client.cacheTime = 0 // Disable caching
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	confirmations, err := public.GetTransactionConfirmations(ctx, client, public.GetTransactionConfirmationsParameters{
+		Hash: &hash,
+	})
+
+	require.NoError(t, err)
+	// currentBlock(20) - txBlock(16) + 1 = 5 confirmations
+	assert.Equal(t, uint64(5), confirmations)
+}
+
+func TestGetTransactionConfirmations_ByReceipt(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_blockNumber" {
+			return "0x14" // Block 20
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	client.uid = "test-confirmations-by-receipt"
+	client.cacheTime = 0 // Disable caching
+	ctx := context.Background()
+
+	// Create a mock receipt
+	receipt := &types.Receipt{
+		BlockNumber: 16,
+	}
+
+	confirmations, err := public.GetTransactionConfirmations(ctx, client, public.GetTransactionConfirmationsParameters{
+		TransactionReceipt: receipt,
+	})
+
+	require.NoError(t, err)
+	// currentBlock(20) - txBlock(16) + 1 = 5 confirmations
+	assert.Equal(t, uint64(5), confirmations)
+}
+
+func TestGetTransactionConfirmations_Pending(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		switch method {
+		case "eth_blockNumber":
+			return "0x14" // Block 20
+		case "eth_getTransactionByHash":
+			return map[string]any{
+				"blockHash":        nil, // Pending
+				"blockNumber":      nil, // Pending
+				"from":             "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"gas":              "0x5208",
+				"gasPrice":         "0x3b9aca00",
+				"hash":             "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"input":            "0x",
+				"nonce":            "0x1",
+				"to":               "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				"transactionIndex": nil,
+				"value":            "0xde0b6b3a7640000",
+				"type":             "0x0",
+				"v":                "0x1c",
+				"r":                "0x1234",
+				"s":                "0x5678",
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	confirmations, err := public.GetTransactionConfirmations(ctx, client, public.GetTransactionConfirmationsParameters{
+		Hash: &hash,
+	})
+
+	require.NoError(t, err)
+	// Pending transaction has 0 confirmations
+	assert.Equal(t, uint64(0), confirmations)
+}
+
+// ============================================================================
+// WaitForTransactionReceipt Tests
+// ============================================================================
+
+func TestWaitForTransactionReceipt_Immediate(t *testing.T) {
+	// Transaction is already mined
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_getTransactionReceipt" {
+			return map[string]any{
+				"transactionHash":   "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"transactionIndex":  "0x0",
+				"blockHash":         "0x1234567890123456789012345678901234567890123456789012345678901234",
+				"blockNumber":       "0x10",
+				"from":              "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"to":                "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				"cumulativeGasUsed": "0x5208",
+				"gasUsed":           "0x5208",
+				"contractAddress":   nil,
+				"logs":              []any{},
+				"status":            "0x1",
+				"logsBloom":         "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				"effectiveGasPrice": "0x3b9aca00",
+				"type":              "0x2",
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	receipt, err := public.WaitForTransactionReceipt(ctx, client, public.WaitForTransactionReceiptParameters{
+		Hash:    hash,
+		Timeout: 5 * time.Second,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, receipt)
+	assert.Equal(t, hash, receipt.TransactionHash)
+}
+
+func TestWaitForTransactionReceipt_Timeout(t *testing.T) {
+	// Transaction never gets mined
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_getTransactionReceipt" {
+			return nil // Not found
+		}
+		if method == "eth_blockNumber" {
+			return "0x10"
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	client.uid = "test-wait-timeout"
+	client.cacheTime = 0 // Disable caching
+	ctx := context.Background()
+
+	hash := common.HexToHash("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+	checkReplacement := false // Disable replacement check for faster test
+	_, err := public.WaitForTransactionReceipt(ctx, client, public.WaitForTransactionReceiptParameters{
+		Hash:             hash,
+		Timeout:          300 * time.Millisecond,
+		PollingInterval:  50 * time.Millisecond,
+		CheckReplacement: &checkReplacement,
+	})
+
+	require.Error(t, err)
+	_, ok := err.(*public.WaitForTransactionReceiptTimeoutError)
+	assert.True(t, ok, "expected WaitForTransactionReceiptTimeoutError")
+}
+
+// ============================================================================
+// FillTransaction Tests
+// ============================================================================
+
+func TestFillTransaction_Basic(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_fillTransaction" {
+			return map[string]any{
+				"raw": "0xf86c808504a817c80082520894bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb880de0b6b3a76400008025a0abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890a0abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"tx": map[string]any{
+					"from":                 "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+					"to":                   "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+					"input":                "0x",
+					"value":                "0xde0b6b3a7640000",
+					"nonce":                "0x5",
+					"gas":                  "0x5208",
+					"maxFeePerGas":         "0x4a817c800",
+					"maxPriorityFeePerGas": "0x77359400",
+					"chainId":              "0x1",
+					"type":                 "0x2",
+				},
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	from := common.HexToAddress("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+	to := common.HexToAddress("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+	value := big.NewInt(1000000000000000000) // 1 ETH
+
+	result, err := public.FillTransaction(ctx, client, public.FillTransactionParameters{
+		Account: &from,
+		To:      &to,
+		Value:   value,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.NotNil(t, result.Raw)
+	assert.NotNil(t, result.Transaction)
+	assert.Equal(t, from, result.Transaction.From)
+	assert.Equal(t, uint64(5), result.Transaction.Nonce)
+	assert.Equal(t, uint64(21000), result.Transaction.Gas)
+}
+
+func TestFillTransaction_PreservesSuppliedValues(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_fillTransaction" {
+			return map[string]any{
+				"raw": "0xf86c808504a817c80082520894bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb880de0b6b3a76400008025a0abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890a0abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+				"tx": map[string]any{
+					"from":                 "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+					"to":                   "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+					"input":                "0x",
+					"value":                "0xde0b6b3a7640000",
+					"nonce":                "0x5",
+					"gas":                  "0x5208",
+					"maxFeePerGas":         "0x4a817c800",
+					"maxPriorityFeePerGas": "0x77359400",
+					"chainId":              "0x1",
+					"type":                 "0x2",
+				},
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	from := common.HexToAddress("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+	to := common.HexToAddress("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+	suppliedGas := uint64(50000)
+	suppliedNonce := uint64(10)
+
+	result, err := public.FillTransaction(ctx, client, public.FillTransactionParameters{
+		Account: &from,
+		To:      &to,
+		Gas:     &suppliedGas,
+		Nonce:   &suppliedNonce,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, result)
+	// Supplied values should be preserved
+	assert.Equal(t, suppliedGas, result.Transaction.Gas)
+	assert.Equal(t, suppliedNonce, result.Transaction.Nonce)
+}
+
+func TestFillTransaction_InvalidBaseFeeMultiplier(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_fillTransaction" {
+			return map[string]any{
+				"raw": "0xf86c",
+				"tx": map[string]any{
+					"from":  "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+					"to":    "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+					"nonce": "0x0",
+					"gas":   "0x5208",
+					"type":  "0x0",
+				},
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	from := common.HexToAddress("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+	to := common.HexToAddress("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+	invalidMultiplier := 0.5 // Less than 1
+
+	_, err := public.FillTransaction(ctx, client, public.FillTransactionParameters{
+		Account:           &from,
+		To:                &to,
+		BaseFeeMultiplier: &invalidMultiplier,
+	})
+
+	require.Error(t, err)
+	_, ok := err.(*public.BaseFeeScalarError)
+	assert.True(t, ok, "expected BaseFeeScalarError")
+}

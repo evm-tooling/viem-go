@@ -23,8 +23,8 @@ type GetBlockNumberReturnType = uint64
 
 // blockNumberCache is a simple cache for block numbers.
 var (
-	blockNumberCacheMu    sync.RWMutex
-	blockNumberCacheData  = make(map[string]cachedBlockNumber)
+	blockNumberCacheMu   sync.RWMutex
+	blockNumberCacheData = make(map[string]cachedBlockNumber)
 )
 
 type cachedBlockNumber struct {
