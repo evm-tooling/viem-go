@@ -18,4 +18,6 @@ BenchmarkMulticall_MixedContracts_100-14               	    1311	   1770695 ns/o
 BenchmarkMulticall_1000Calls-14                        	     139	  17428512 ns/op	10849474 B/op	   59934 allocs/op
 BenchmarkMulticall_10000Calls_SingleRPC-14             	      14	 161951934 ns/op	104346312 B/op	  597863 allocs/op
 BenchmarkMulticall_10000Calls_Chunked-14               	      67	  34089674 ns/op	98664786 B/op	  563904 allocs/op
-BenchmarkMulticall_10000Calls_AggressiveChunking-14    	
+BenchmarkMulticall_10000Calls_AggressiveChunking-14    	      39	  93477135 ns/op	106237924 B/op	  601258 allocs/op
+PASS
+ok  	command-line-arguments	57.088s
