@@ -1,0 +1,19 @@
+{
+  "name": "viem-benchmarks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cross-language benchmarks for viem TypeScript",
+  "type": "module",
+  "scripts": {
+    "bench": "vitest bench --run",
+    "bench:json": "vitest bench --reporter=json --outputFile=../results/ts-results.json"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

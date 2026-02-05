@@ -100,9 +100,15 @@ func doTestCover() {
 	fmt.Println("==> Tests passed!")
 }
 
-// doBuild builds all packages.
+// doBuild builds all packages (excluding benchmarks).
 func doBuild() {
 	fmt.Println("==> Building...")
-	mustRun("go", "build", "./...")
+	// Exclude benchmarks directory from build
+	cmd := exec.Command("sh", "-c", "go build $(go list ./... | grep -v '/benchmarks/')")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("build failed: %v", err)
+	}
 	fmt.Println("==> Build passed!")
 }

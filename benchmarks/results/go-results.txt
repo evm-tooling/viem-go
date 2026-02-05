@@ -1,0 +1,38 @@
+Benchmark client connected to: http://127.0.0.1:8545
+Current block number: 24387287
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkCall_Basic-14                	       1	1425588875 ns/op	   63760 B/op	     282 allocs/op
+BenchmarkCall_Basic-14                	    8299	    141127 ns/op	    8776 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                	    8010	    142534 ns/op	    8823 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                	    7910	    141448 ns/op	    8827 B/op	     106 allocs/op
+BenchmarkCall_Basic-14                	    8072	    142666 ns/op	    8850 B/op	     106 allocs/op
+BenchmarkCall_WithData-14             	    8314	    138816 ns/op	    8686 B/op	     107 allocs/op
+BenchmarkCall_WithData-14             	    7948	    137307 ns/op	    8669 B/op	     107 allocs/op
+BenchmarkCall_WithData-14             	    8818	    137936 ns/op	    8706 B/op	     107 allocs/op
+BenchmarkCall_WithData-14             	    8434	    137105 ns/op	    8684 B/op	     107 allocs/op
+BenchmarkCall_WithData-14             	    8664	    137494 ns/op	    8715 B/op	     107 allocs/op
+BenchmarkCall_WithAccount-14          	    7471	    142945 ns/op	    9136 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14          	    8282	    142907 ns/op	    9145 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14          	    8214	    142193 ns/op	    9200 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14          	    7694	    142806 ns/op	    9154 B/op	     112 allocs/op
+BenchmarkCall_WithAccount-14          	    8247	    142568 ns/op	    9182 B/op	     112 allocs/op
+BenchmarkCall_Decimals-14             	    8024	    137613 ns/op	    8450 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14             	    8406	    136691 ns/op	    8447 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14             	    8691	    137650 ns/op	    8429 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14             	    8499	    137653 ns/op	    8511 B/op	     106 allocs/op
+BenchmarkCall_Decimals-14             	    8644	    137998 ns/op	    8512 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14               	    8439	    175820 ns/op	    8803 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14               	    8112	    144562 ns/op	    8825 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14               	    8542	    140642 ns/op	    8785 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14               	    8012	    141426 ns/op	    8807 B/op	     106 allocs/op
+BenchmarkCall_Symbol-14               	    8097	    140212 ns/op	    8809 B/op	     106 allocs/op
+BenchmarkCall_BalanceOfMultiple-14    	    7500	    139714 ns/op	    8717 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14    	    8740	    139675 ns/op	    8737 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14    	    8599	    137496 ns/op	    8763 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14    	    8352	    137629 ns/op	    8677 B/op	     107 allocs/op
+BenchmarkCall_BalanceOfMultiple-14    	    8534	    138143 ns/op	    8642 B/op	     107 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	42.295s
