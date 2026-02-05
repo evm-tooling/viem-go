@@ -25,7 +25,6 @@ type GetTransactionCountParameters struct {
 // It represents the tx count in wei.
 type GetTransactionCountReturnType = uint64
 
-
 func GetTransactionCount(ctx context.Context, client Client, params GetTransactionCountParameters) (GetTransactionCountReturnType, error) {
 	// Determine block tag
 	blockTag := resolveBlockTag(client, params.BlockNumber, params.BlockTag)
