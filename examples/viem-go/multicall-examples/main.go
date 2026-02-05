@@ -1,11 +1,3 @@
-// Multicall Examples - viem-go
-//
-// Comprehensive examples demonstrating the Multicall action features:
-// - Basic multicall batching
-// - Multiple contract calls in parallel
-// - Error handling with allowFailure
-// - Deployless multicall
-// - Concurrent chunk execution
 package main
 
 import (
@@ -16,7 +8,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/ChefBingbong/viem-go/_typed/templates/erc200"
+	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/actions/public"
 	"github.com/ChefBingbong/viem-go/chain/definitions"
 	"github.com/ChefBingbong/viem-go/client"
@@ -71,17 +63,17 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 			{
 				Address:      wethAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 			{
 				Address:      wmaticAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 		},
@@ -106,22 +98,22 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "symbol",
 			},
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "decimals",
 			},
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "totalSupply",
 			},
 		},
@@ -153,19 +145,19 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "balanceOf",
 				Args:         []any{vitalikAddress},
 			},
 			{
 				Address:      wethAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "balanceOf",
 				Args:         []any{vitalikAddress},
 			},
 			{
 				Address:      wmaticAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "balanceOf",
 				Args:         []any{vitalikAddress},
 			},
@@ -202,17 +194,17 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 			{
 				Address:      invalidAddress, // This will fail
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 			{
 				Address:      wethAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 		},
@@ -238,12 +230,12 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 			{
 				Address:      invalidAddress, // This will cause the entire multicall to fail
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "name",
 			},
 		},
@@ -262,7 +254,7 @@ func main() {
 	for i := 0; i < 30; i++ {
 		manyContracts = append(manyContracts, public.MulticallContract{
 			Address:      addresses[i%3],
-			ABI:          erc200.MustParsedABI(),
+			ABI:          abi.MustParse(erc20ABI),
 			FunctionName: "balanceOf",
 			Args:         []any{vitalikAddress},
 		})
@@ -295,7 +287,7 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "totalSupply",
 			},
 		},
@@ -317,12 +309,12 @@ func main() {
 		Contracts: []public.MulticallContract{
 			{
 				Address:      usdcAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "symbol",
 			},
 			{
 				Address:      wethAddress,
-				ABI:          erc200.MustParsedABI(),
+				ABI:          abi.MustParse(erc20ABI),
 				FunctionName: "symbol",
 			},
 		},
@@ -343,14 +335,14 @@ func main() {
 	results, err = public.Multicall(ctx, publicClient, public.MulticallParameters{
 		Contracts: []public.MulticallContract{
 			// USDC metadata
-			{Address: usdcAddress, ABI: erc200.MustParsedABI(), FunctionName: "name"},
-			{Address: usdcAddress, ABI: erc200.MustParsedABI(), FunctionName: "decimals"},
+			{Address: usdcAddress, ABI: abi.MustParse(erc20ABI), FunctionName: "name"},
+			{Address: usdcAddress, ABI: abi.MustParse(erc20ABI), FunctionName: "decimals"},
 			// WETH metadata
-			{Address: wethAddress, ABI: erc200.MustParsedABI(), FunctionName: "name"},
-			{Address: wethAddress, ABI: erc200.MustParsedABI(), FunctionName: "decimals"},
+			{Address: wethAddress, ABI: abi.MustParse(erc20ABI), FunctionName: "name"},
+			{Address: wethAddress, ABI: abi.MustParse(erc20ABI), FunctionName: "decimals"},
 			// WMATIC metadata
-			{Address: wmaticAddress, ABI: erc200.MustParsedABI(), FunctionName: "name"},
-			{Address: wmaticAddress, ABI: erc200.MustParsedABI(), FunctionName: "decimals"},
+			{Address: wmaticAddress, ABI: abi.MustParse(erc20ABI), FunctionName: "name"},
+			{Address: wmaticAddress, ABI: abi.MustParse(erc20ABI), FunctionName: "decimals"},
 		},
 	})
 	if err != nil {
