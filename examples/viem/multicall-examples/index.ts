@@ -164,10 +164,10 @@ async function main() {
       if (result.status === 'success') {
         const balance = result.result as bigint
         console.log(
-          `  ${tokens[i].name}: ${formatUnits(balance, tokens[i].decimals)}`,
+          `  ${tokens[i]?.name}: ${formatUnits(balance, tokens[i]?.decimals!)}`,
         )
       } else {
-        console.log(`  ${tokens[i].name}: failed - ${result.error}`)
+        console.log(`  ${tokens[i]?.name}: failed - ${result.error}`)
       }
     })
   } catch (error) {
@@ -217,9 +217,9 @@ async function main() {
   // Example 6: Large Multicall with Batching
   printSection('7. Large Multicall with Automatic Batching')
   try {
-    const addresses = [USDC_ADDRESS, WETH_ADDRESS, WMATIC_ADDRESS]
+    const addresses = [USDC_ADDRESS, WETH_ADDRESS, WMATIC_ADDRESS] as Address[]
     const contracts = Array.from({ length: 30 }, (_, i) => ({
-      address: addresses[i % 3],
+      address: addresses[i % 3] as Address,
       abi: erc20Abi,
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
@@ -292,9 +292,9 @@ async function main() {
     console.log('Multi-contract metadata in single RPC call:')
     for (let i = 0; i < 6; i += 2) {
       const name =
-        results[i].status === 'success' ? results[i].result : 'unknown'
+        results[i]?.status === 'success' ? results[i]?.result : 'unknown'
       const decimals =
-        results[i + 1].status === 'success' ? results[i + 1].result : '?'
+        results[i + 1]?.status === 'success' ? results[i + 1]?.result : '?'
       console.log(`  ${name}: ${decimals} decimals`)
     }
   } catch (error) {
