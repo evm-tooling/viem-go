@@ -51,7 +51,7 @@ check-ts:
 # ============================================================================
 
 # Pre-commit check: verifies formatting and linting for both Go and TypeScript
-oncommit: fmt lint lint-ts
+oncommit: fmt lint fmt-ts lint-ts check-ts
 	@echo "==> All pre-commit checks passed!"
 
 # Full check for both Go and TypeScript

@@ -48,11 +48,10 @@ function truncateHash(hash: string): string {
   return `${hash.slice(0, 18)}...${hash.slice(-4)}`
 }
 
-// Utility to run with timeout
 function runWithTimeout<T>(
   fn: (signal: AbortSignal) => Promise<T>,
   timeoutMs: number,
-): Promise<T | undefined> {
+): Promise<T | void> {
   return new Promise((resolve) => {
     const controller = new AbortController()
     const timeout = setTimeout(() => {
@@ -198,7 +197,8 @@ async function watchPendingTransactionsExample(signal: AbortSignal) {
     onTransactions: (hashes) => {
       console.log(`Received ${hashes.length} pending transaction(s):`)
       for (let i = 0; i < Math.min(5, hashes.length); i++) {
-        console.log(`  - ${truncateHash(hashes[i])}`)
+        if (!hashes[i]) continue
+        console.log(`  - ${truncateHash(hashes[i] as string)}`)
       }
       if (hashes.length > 5) {
         console.log(`  ... and ${hashes.length - 5} more`)
@@ -332,6 +332,7 @@ async function watchContractEventExample(signal: AbortSignal) {
       console.log(`Received ${logs.length} decoded Transfer event(s):`)
       for (let i = 0; i < Math.min(3, logs.length); i++) {
         const log = logs[i]
+        if (!log) continue
         console.log(`  Block ${log.blockNumber}:`)
         console.log(`    Event: ${log.eventName}`)
         if (log.args) {
