@@ -1696,6 +1696,99 @@ func TestGetProof_Basic(t *testing.T) {
 	assert.Equal(t, big.NewInt(0x2a).String(), proof.StorageProof[0].Value.String())
 }
 
+// ============================================================================
+// GetChainID & GetGasPrice Tests
+// ============================================================================
+
+func TestGetChainID_Basic(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_chainId" {
+			return "0x1" // mainnet
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	chainID, err := public.GetChainID(ctx, client)
+
+	require.NoError(t, err)
+	assert.Equal(t, uint64(1), chainID)
+}
+
+func TestGetGasPrice_Basic(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_gasPrice" {
+			// 20 gwei
+			return "0x4a817c800"
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	gasPrice, err := public.GetGasPrice(ctx, client)
+
+	require.NoError(t, err)
+	require.NotNil(t, gasPrice)
+	expected := big.NewInt(0)
+	expected.SetString("20000000000", 10)
+	assert.Equal(t, 0, gasPrice.Cmp(expected))
+}
+
+// ============================================================================
+// GetFeeHistory Tests
+// ============================================================================
+
+func TestGetFeeHistory_Basic(t *testing.T) {
+	server := createTestServer(t, func(method string, params []any) any {
+		if method == "eth_feeHistory" {
+			return map[string]any{
+				"baseFeePerGas": []any{"0x1", "0x2"},
+				"gasUsedRatio":  []any{0.5, 0.6},
+				"oldestBlock":   "0x10",
+				"reward": [][]any{
+					{"0x3", "0x4"},
+					{"0x5", "0x6"},
+				},
+			}
+		}
+		return nil
+	})
+	defer server.Close()
+
+	client := createMockClient(t, server.URL)
+	ctx := context.Background()
+
+	history, err := public.GetFeeHistory(ctx, client, public.GetFeeHistoryParameters{
+		BlockCount:        2,
+		RewardPercentiles: []float64{25, 75},
+	})
+
+	require.NoError(t, err)
+	assert.Len(t, history.BaseFeePerGas, 2)
+	assert.Equal(t, "1", history.BaseFeePerGas[0].String())
+	assert.Equal(t, "2", history.BaseFeePerGas[1].String())
+
+	require.NotNil(t, history.OldestBlock)
+	assert.Equal(t, "16", history.OldestBlock.String())
+
+	assert.Len(t, history.GasUsedRatio, 2)
+	assert.InDelta(t, 0.5, history.GasUsedRatio[0], 1e-9)
+	assert.InDelta(t, 0.6, history.GasUsedRatio[1], 1e-9)
+
+	require.Len(t, history.Reward, 2)
+	require.Len(t, history.Reward[0], 2)
+	assert.Equal(t, "3", history.Reward[0][0].String())
+	assert.Equal(t, "4", history.Reward[0][1].String())
+	assert.Equal(t, "5", history.Reward[1][0].String())
+	assert.Equal(t, "6", history.Reward[1][1].String())
+}
+
 func TestGetTransaction_Count(t *testing.T) {
 	server := createTestServer(t, func(method string, params []any) any {
 		if method == "eth_getTransactionCount" {
