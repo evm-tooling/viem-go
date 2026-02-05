@@ -1,4 +1,8 @@
-.PHONY: fmt lint test test-cover verify check release bench
+.PHONY: fmt lint test test-cover verify check release bench fmt-ts lint-ts check-ts oncommit
+
+# ============================================================================
+# Go targets
+# ============================================================================
 
 fmt:
 	gofmt -w $$(find . -name '*.go' -not -path './benchmarks/*')
@@ -17,6 +21,42 @@ test-cover:
 	go test -v -race -coverprofile=coverage.out $$(go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./... | grep -v '/benchmarks/')
 
 check: fmt lint test
+
+# ============================================================================
+# TypeScript targets (examples/viem workspace)
+# ============================================================================
+
+# Format TypeScript files using Biome
+fmt-ts:
+	@echo "==> Formatting TypeScript files..."
+	@cd examples/viem && bun run format
+
+# Lint TypeScript files using Biome
+lint-ts:
+	@echo "==> Linting TypeScript files..."
+	@cd examples/viem && bun run lint
+
+# Fix TypeScript lint issues using Biome
+lint-ts-fix:
+	@echo "==> Fixing TypeScript lint issues..."
+	@cd examples/viem && bun run lint:fix
+
+# Check TypeScript types
+check-ts:
+	@echo "==> Checking TypeScript types..."
+	@cd examples/viem && bun run check
+
+# ============================================================================
+# Combined targets
+# ============================================================================
+
+# Pre-commit check: verifies formatting and linting for both Go and TypeScript
+oncommit: fmt lint lint-ts
+	@echo "==> All pre-commit checks passed!"
+
+# Full check for both Go and TypeScript
+check-all: check check-ts lint-ts
+	@echo "==> All checks passed!"
 
 # Release workflow: creates tag, drafts prerelease, and opens PR to production
 # Usage: make release VERSION=v0.0.4

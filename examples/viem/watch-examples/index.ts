@@ -52,7 +52,7 @@ function truncateHash(hash: string): string {
 function runWithTimeout<T>(
   fn: (signal: AbortSignal) => Promise<T>,
   timeoutMs: number,
-): Promise<T | void> {
+): Promise<T | undefined> {
   return new Promise((resolve) => {
     const controller = new AbortController()
     const timeout = setTimeout(() => {
