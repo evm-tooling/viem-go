@@ -18,11 +18,11 @@ type AddChainParameters struct {
 
 // addEthereumChainParams is the internal request format for wallet_addEthereumChain.
 type addEthereumChainParams struct {
-	ChainID           string                     `json:"chainId"`
-	ChainName         string                     `json:"chainName"`
-	NativeCurrency    chain.ChainNativeCurrency  `json:"nativeCurrency"`
-	RpcUrls           []string                   `json:"rpcUrls"`
-	BlockExplorerUrls []string                   `json:"blockExplorerUrls,omitempty"`
+	ChainID           string                    `json:"chainId"`
+	ChainName         string                    `json:"chainName"`
+	NativeCurrency    chain.ChainNativeCurrency `json:"nativeCurrency"`
+	RpcUrls           []string                  `json:"rpcUrls"`
+	BlockExplorerUrls []string                  `json:"blockExplorerUrls,omitempty"`
 }
 
 // AddChain adds an EVM chain to the wallet.
