@@ -44,8 +44,8 @@ func (a *mockLocalAccount) IsLocal()                {}
 
 // mockSignableAccount implements wallet.SignableAccount for local message signing.
 type mockSignableAccount struct {
-	address   common.Address
-	signFn    func(msg signature.SignableMessage) (string, error)
+	address common.Address
+	signFn  func(msg signature.SignableMessage) (string, error)
 }
 
 func (a *mockSignableAccount) Address() common.Address { return a.address }
@@ -468,14 +468,14 @@ func TestSendTransaction_LocalAccount(t *testing.T) {
 			return "0x0"
 		case "eth_getBlockByNumber":
 			return map[string]any{
-				"number":      "0x10",
+				"number":        "0x10",
 				"baseFeePerGas": "0x3b9aca00",
-				"gasLimit":    "0x1c9c380",
-				"gasUsed":     "0x0",
-				"timestamp":   "0x60000000",
-				"hash":        "0x1234567890123456789012345678901234567890123456789012345678901234",
-				"parentHash":  "0x0000000000000000000000000000000000000000000000000000000000000000",
-				"transactions": []string{},
+				"gasLimit":      "0x1c9c380",
+				"gasUsed":       "0x0",
+				"timestamp":     "0x60000000",
+				"hash":          "0x1234567890123456789012345678901234567890123456789012345678901234",
+				"parentHash":    "0x0000000000000000000000000000000000000000000000000000000000000000",
+				"transactions":  []string{},
 			}
 		case "eth_maxPriorityFeePerGas":
 			return "0x3b9aca00" // 1 gwei
@@ -1666,11 +1666,11 @@ func TestGetCallsStatus_Default(t *testing.T) {
 	server := createTestServer(t, func(method string, params []any) any {
 		if method == "wallet_getCallsStatus" {
 			return map[string]any{
-				"atomic":     true,
-				"chainId":    "0x1",
-				"status":     float64(200),
-				"version":    "2.0.0",
-				"receipts":   []any{},
+				"atomic":   true,
+				"chainId":  "0x1",
+				"status":   float64(200),
+				"version":  "2.0.0",
+				"receipts": []any{},
 			}
 		}
 		return nil

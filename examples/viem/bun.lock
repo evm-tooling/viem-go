@@ -27,6 +27,28 @@
         "typescript": "^5.0.0",
       },
     },
+    "multicall-examples": {
+      "name": "viem-multicall-examples",
+      "version": "1.0.0",
+      "dependencies": {
+        "viem": "^2.21.0",
+      },
+      "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0",
+      },
+    },
+    "wallet-actions-examples": {
+      "name": "viem-wallet-actions-examples",
+      "version": "1.0.0",
+      "dependencies": {
+        "viem": "^2.21.0",
+      },
+      "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0",
+      },
+    },
     "wallet-dashboard": {
       "name": "wallet-dashboard",
       "version": "1.0.0",
@@ -106,6 +128,10 @@
     "viem": ["viem@2.45.1", "", { "dependencies": { "@noble/curves": "1.9.1", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0", "abitype": "1.2.3", "isows": "1.0.7", "ox": "0.11.3", "ws": "8.18.3" }, "peerDependencies": { "typescript": ">=5.0.4" }, "optionalPeers": ["typescript"] }, "sha512-LN6Pp7vSfv50LgwhkfSbIXftAM5J89lP9x8TeDa8QM7o41IxlHrDh0F9X+FfnCWtsz11pEVV5sn+yBUoOHNqYA=="],
 
     "viem-call-examples": ["viem-call-examples@workspace:call-examples"],
+
+    "viem-multicall-examples": ["viem-multicall-examples@workspace:multicall-examples"],
+
+    "viem-wallet-actions-examples": ["viem-wallet-actions-examples@workspace:wallet-actions-examples"],
 
     "wallet-dashboard": ["wallet-dashboard@workspace:wallet-dashboard"],
 

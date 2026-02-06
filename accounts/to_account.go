@@ -67,7 +67,7 @@ func ToAccount(source CustomSource) (*LocalAccount, error) {
 	}
 
 	return &LocalAccount{
-		Address:           source.Address,
+		Addr:              source.Address,
 		Source:            AccountSourceCustom,
 		Type:              AccountTypeLocal,
 		sign:              source.Sign,
@@ -121,7 +121,7 @@ func createLocalAccount(
 	signAuthorization SignAuthorizationFunc,
 ) *LocalAccount {
 	return &LocalAccount{
-		Address:           address,
+		Addr:              address,
 		PublicKey:         publicKey,
 		Source:            source,
 		Type:              AccountTypeLocal,

@@ -1,0 +1,17 @@
+{
+  "name": "viem-wallet-actions-examples",
+  "version": "1.0.0",
+  "description": "Comprehensive examples demonstrating viem wallet action features",
+  "type": "module",
+  "scripts": {
+    "start": "bun run main.ts",
+    "dev": "bun --watch run main.ts"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
