@@ -143,6 +143,45 @@ func SignTransaction(ctx context.Context, client Client, params SignTransactionP
 	return hexResult, nil
 }
 
+// PreparedToSignParams converts a PrepareTransactionRequestReturnType (from PrepareTransactionRequest)
+// into SignTransactionParameters. This bridges the two types so you can do:
+//
+//	prepared, _ := wallet.PrepareTransactionRequest(ctx, client, ...)
+//	signed, _ := wallet.SignTransaction(ctx, client, wallet.PreparedToSignParams(prepared))
+func PreparedToSignParams(p *PrepareTransactionRequestParameters) SignTransactionParameters {
+	params := SignTransactionParameters{
+		To:                   p.To,
+		Value:                p.Value,
+		Data:                 p.Data,
+		Gas:                  p.Gas,
+		GasPrice:             p.GasPrice,
+		MaxFeePerGas:         p.MaxFeePerGas,
+		MaxPriorityFeePerGas: p.MaxPriorityFeePerGas,
+		MaxFeePerBlobGas:     p.MaxFeePerBlobGas,
+		BlobVersionedHashes:  p.BlobVersionedHashes,
+		Blobs:                p.Blobs,
+		Nonce:                p.Nonce,
+		Type:                 p.Type,
+	}
+
+	if len(p.AccessList) > 0 {
+		al := make(transaction.AccessList, len(p.AccessList))
+		for i, item := range p.AccessList {
+			al[i] = transaction.AccessListItem{
+				Address:     item.Address,
+				StorageKeys: item.StorageKeys,
+			}
+		}
+		params.AccessList = al
+	}
+
+	if len(p.AuthorizationList) > 0 {
+		params.AuthorizationList = p.AuthorizationList
+	}
+
+	return params
+}
+
 // paramsToTransaction converts SignTransactionParameters to a transaction.Transaction for local signing.
 func paramsToTransaction(params SignTransactionParameters, chainID int) *transaction.Transaction {
 	tx := &transaction.Transaction{

@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/ChefBingbong/viem-go/types"
 	"github.com/ChefBingbong/viem-go/utils/signature"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
@@ -48,8 +50,10 @@ type SignHashFunc func(hash string) (string, error)
 type SignAuthorizationFunc func(auth AuthorizationRequest) (*SignedAuthorization, error)
 
 // LocalAccount represents a local account with signing capabilities.
+// It satisfies client.Account, wallet.Account, wallet.LocalAccount, and all
+// wallet signing interfaces (SignableAccount, TransactionSignableAccount, etc.).
 type LocalAccount struct {
-	Address   string        `json:"address"`
+	Addr      string        `json:"address"`
 	PublicKey string        `json:"publicKey"`
 	Source    AccountSource `json:"source"`
 	Type      AccountType   `json:"type"`
@@ -62,8 +66,16 @@ type LocalAccount struct {
 	signAuthorization SignAuthorizationFunc
 }
 
-// GetAddress returns the account's address.
-func (a *LocalAccount) GetAddress() string { return a.Address }
+// GetAddress returns the account's address as a string.
+func (a *LocalAccount) GetAddress() string { return a.Addr }
+
+// Address returns the account's address as common.Address.
+// This satisfies the client.Account and wallet.Account interfaces.
+func (a *LocalAccount) Address() common.Address { return common.HexToAddress(a.Addr) }
+
+// IsLocal is a marker method indicating this is a locally-managed account.
+// This satisfies the wallet.LocalAccount interface.
+func (a *LocalAccount) IsLocal() {}
 
 // GetType returns the account type.
 func (a *LocalAccount) GetType() AccountType { return a.Type }

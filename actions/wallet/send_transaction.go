@@ -5,14 +5,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/ChefBingbong/viem-go/actions/public"
 	viemchain "github.com/ChefBingbong/viem-go/chain"
+	"github.com/ChefBingbong/viem-go/utils"
+	"github.com/ChefBingbong/viem-go/utils/authorization"
 	"github.com/ChefBingbong/viem-go/utils/data"
 	"github.com/ChefBingbong/viem-go/utils/encoding"
 	"github.com/ChefBingbong/viem-go/utils/formatters"
+	"github.com/ChefBingbong/viem-go/utils/signature"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
 )
+
+// supportsWalletNamespace is an LRU cache keyed by client.UID() that tracks
+// whether a given transport supports `wallet_sendTransaction` over the standard
+// `eth_sendTransaction`. This mirrors viem's `supportsWalletNamespace` LruMap.
+var supportsWalletNamespace = utils.NewLruMap[bool](128)
 
 // SendTransactionParameters contains the parameters for the SendTransaction action.
 // This mirrors viem's SendTransactionParameters type.
@@ -109,26 +118,39 @@ func SendTransaction(ctx context.Context, client Client, params SendTransactionP
 		return "", err
 	}
 
+	// Resolve `to` — infer from authorizationList if not provided.
+	// Mirrors viem's: if no `to` and authorizationList present, recover address from first auth.
+	to := params.To
+	if to == "" && len(params.AuthorizationList) > 0 {
+		recovered, recoverErr := recoverAuthorizationAddr(params.AuthorizationList[0])
+		if recoverErr != nil {
+			return "", fmt.Errorf("`to` is required. Could not infer from `authorizationList`: %w", recoverErr)
+		}
+		to = recovered
+	}
+
 	// Check if this is a local account that can sign transactions
 	signable, isLocal := account.(TransactionSignableAccount)
 
 	if !isLocal {
 		// ---- JSON-RPC Account path (eth_sendTransaction) ----
-		return sendTransactionViaRPC(ctx, client, account, params, txData)
+		return sendTransactionViaRPC(ctx, client, account, params, txData, to)
 	}
 
 	// ---- Local Account path (prepare + sign + sendRawTransaction) ----
-	return sendTransactionViaLocalSign(ctx, client, account, signable, params, txData)
+	return sendTransactionViaLocalSign(ctx, client, account, signable, params, txData, to)
 }
 
 // sendTransactionViaRPC handles the JSON-RPC account path using eth_sendTransaction.
-// This mirrors viem's `account?.type === 'json-rpc'` branch.
+// This mirrors viem's `account?.type === 'json-rpc'` branch, including the
+// wallet_sendTransaction namespace fallback with LRU caching.
 func sendTransactionViaRPC(
 	ctx context.Context,
 	client Client,
 	account Account,
 	params SendTransactionParameters,
 	txData string,
+	to string,
 ) (string, error) {
 	// Resolve chain
 	ch := params.Chain
@@ -161,7 +183,7 @@ func sendTransactionViaRPC(
 	txRequest := formatters.TransactionRequest{
 		Data:                 txData,
 		From:                 account.Address().Hex(),
-		To:                   params.To,
+		To:                   to,
 		Value:                params.Value,
 		Gas:                  params.Gas,
 		GasPrice:             params.GasPrice,
@@ -212,18 +234,10 @@ func sendTransactionViaRPC(
 		rpcReq.ChainID = encoding.NumberToHex(new(big.Int).SetUint64(*chainID))
 	}
 
-	// Send via eth_sendTransaction
-	resp, err := client.Request(ctx, "eth_sendTransaction", rpcReq)
-	if err != nil {
-		return "", fmt.Errorf("eth_sendTransaction failed: %w", err)
-	}
-
-	var hash string
-	if unmarshalErr := json.Unmarshal(resp.Result, &hash); unmarshalErr != nil {
-		return "", fmt.Errorf("failed to unmarshal transaction hash: %w", unmarshalErr)
-	}
-
-	return hash, nil
+	// Send with wallet_sendTransaction namespace fallback.
+	// Mirrors viem's: try eth_sendTransaction first, on certain RPC errors
+	// retry with wallet_sendTransaction, cache the result per client.UID().
+	return sendWithNamespaceFallback(ctx, client, rpcReq)
 }
 
 // sendTransactionViaLocalSign handles the local account path: prepare + sign + sendRawTransaction.
@@ -235,6 +249,7 @@ func sendTransactionViaLocalSign(
 	signable TransactionSignableAccount,
 	params SendTransactionParameters,
 	txData string,
+	to string,
 ) (string, error) {
 	// Resolve chain
 	ch := params.Chain
@@ -259,7 +274,7 @@ func sendTransactionViaLocalSign(
 		MaxFeePerGas:         params.MaxFeePerGas,
 		MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
 		Nonce:                params.Nonce,
-		To:                   params.To,
+		To:                   to,
 		Type:                 params.Type,
 		Value:                params.Value,
 	}
@@ -284,6 +299,117 @@ func sendTransactionViaLocalSign(
 	return SendRawTransaction(ctx, client, SendRawTransactionParameters{
 		SerializedTransaction: serializedTx,
 	})
+}
+
+// sendWithNamespaceFallback sends a transaction via eth_sendTransaction, falling back
+// to wallet_sendTransaction if the transport doesn't support eth_sendTransaction.
+// Caches the result per client.UID() in the supportsWalletNamespace LRU.
+//
+// This mirrors viem's namespace fallback logic in sendTransaction.ts lines 256-308.
+func sendWithNamespaceFallback(ctx context.Context, client Client, rpcReq any) (string, error) {
+	uid := client.UID()
+
+	// Check LRU cache for known wallet namespace support
+	isWalletSupported, hasCachedValue := supportsWalletNamespace.Get(uid)
+
+	// Determine the primary method to try
+	method := "eth_sendTransaction"
+	if hasCachedValue && isWalletSupported {
+		method = "wallet_sendTransaction"
+	}
+
+	// Try the primary method
+	resp, err := client.Request(ctx, method, rpcReq)
+	if err == nil {
+		var hash string
+		if unmarshalErr := json.Unmarshal(resp.Result, &hash); unmarshalErr != nil {
+			return "", fmt.Errorf("failed to unmarshal transaction hash: %w", unmarshalErr)
+		}
+		return hash, nil
+	}
+
+	// If we already know wallet namespace is NOT supported, don't retry
+	if hasCachedValue && !isWalletSupported {
+		return "", fmt.Errorf("%s failed: %w", method, err)
+	}
+
+	// Check if the error is a type that warrants trying the wallet_ namespace
+	// Mirrors viem's: InvalidInputRpcError, InvalidParamsRpcError, MethodNotFoundRpcError, MethodNotSupportedRpcError
+	originalErr := err
+	if !isNamespaceFallbackError(err) {
+		return "", fmt.Errorf("%s failed: %w", method, err)
+	}
+
+	// Attempt wallet_sendTransaction as fallback
+	walletResp, walletErr := client.Request(ctx, "wallet_sendTransaction", rpcReq)
+	if walletErr == nil {
+		// wallet_sendTransaction succeeded — cache for future calls
+		supportsWalletNamespace.Set(uid, true)
+
+		var hash string
+		if unmarshalErr := json.Unmarshal(walletResp.Result, &hash); unmarshalErr != nil {
+			return "", fmt.Errorf("failed to unmarshal transaction hash: %w", unmarshalErr)
+		}
+		return hash, nil
+	}
+
+	// wallet_sendTransaction also failed — check if it's MethodNotFound/NotSupported/NotImplemented
+	walletErrStr := strings.ToLower(walletErr.Error())
+	if strings.Contains(walletErrStr, "method not found") ||
+		strings.Contains(walletErrStr, "method not supported") ||
+		strings.Contains(walletErrStr, "not implemented") {
+		// The wallet namespace is confirmed not supported; cache and throw the original error
+		supportsWalletNamespace.Set(uid, false)
+		return "", fmt.Errorf("eth_sendTransaction failed: %w", originalErr)
+	}
+
+	// Different wallet_sendTransaction error — throw it
+	return "", fmt.Errorf("wallet_sendTransaction failed: %w", walletErr)
+}
+
+// isNamespaceFallbackError checks if an error should trigger a wallet_ namespace fallback.
+// Mirrors viem's check for InvalidInputRpcError, InvalidParamsRpcError,
+// MethodNotFoundRpcError, MethodNotSupportedRpcError.
+// Also covers "not implemented" which some RPC providers (e.g. Polygon public RPC) return.
+func isNamespaceFallbackError(err error) bool {
+	if err == nil {
+		return false
+	}
+	lower := strings.ToLower(err.Error())
+	return strings.Contains(lower, "invalid input") ||
+		strings.Contains(lower, "invalid params") ||
+		strings.Contains(lower, "method not found") ||
+		strings.Contains(lower, "method not supported") ||
+		strings.Contains(lower, "not implemented")
+}
+
+// recoverAuthorizationAddr recovers the signer address from a signed EIP-7702 authorization.
+// Mirrors viem's recoverAuthorizationAddress utility.
+func recoverAuthorizationAddr(auth transaction.SignedAuthorization) (string, error) {
+	// Hash the authorization
+	authHash, err := authorization.HashAuthorizationHex(authorization.AuthorizationRequest{
+		Address: auth.Address,
+		ChainId: auth.ChainId,
+		Nonce:   auth.Nonce,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to hash authorization: %w", err)
+	}
+
+	// Build compact signature hex: r + s + yParity
+	yParityHex := "0x00"
+	if auth.YParity == 1 {
+		yParityHex = "0x01"
+	}
+	sig := data.ConcatHex(auth.R, auth.S, yParityHex)
+
+	// Recover the address
+	addr, recoverErr := signature.RecoverAddress(authHash, sig)
+	if recoverErr != nil {
+		return "", fmt.Errorf("failed to recover authorization address: %w", recoverErr)
+	}
+
+	return addr, nil
 }
 
 // preparedParamsToTransaction converts PrepareTransactionRequestParameters to a transaction.Transaction.

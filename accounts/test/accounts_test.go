@@ -219,7 +219,7 @@ var _ = Describe("Accounts", func() {
 				},
 			})
 			Expect(err).NotTo(HaveOccurred())
-			Expect(account.Address).To(Equal(testAddress))
+			Expect(account.Addr).To(Equal(testAddress))
 			Expect(account.Type).To(Equal(accounts.AccountTypeLocal))
 			Expect(account.Source).To(Equal(accounts.AccountSourceCustom))
 		})

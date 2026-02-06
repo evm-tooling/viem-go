@@ -2,15 +2,15 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 	"math/big"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-
+	"github.com/ChefBingbong/viem-go/actions/wallet"
 	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/client/transport"
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/address"
+	"github.com/ChefBingbong/viem-go/utils/signature"
 )
 
 // WalletClientConfig contains configuration for creating a wallet client.
@@ -33,8 +33,11 @@ type WalletClientConfig struct {
 }
 
 // WalletClient is a client with wallet (write) actions.
-// It wraps BaseClient and provides typed methods for wallet JSON-RPC calls.
-// This mirrors viem's createWalletClient.
+// It wraps BaseClient and delegates to the standalone action functions
+// in actions/wallet, mirroring viem's createWalletClient.
+//
+// WalletClient implements wallet.Client so the standalone action functions
+// can be used with it directly.
 type WalletClient struct {
 	*BaseClient
 }
@@ -81,188 +84,242 @@ func CreateWalletClient(config WalletClientConfig) (*WalletClient, error) {
 	return &WalletClient{BaseClient: base}, nil
 }
 
-// ---- Wallet Actions (Write Methods) ----
+// ---------------------------------------------------------------------------
+// wallet.Client interface implementation
+// ---------------------------------------------------------------------------
 
-// SendRawTransaction sends a signed raw transaction.
-func (c *WalletClient) SendRawTransaction(ctx context.Context, signedTx []byte) (common.Hash, error) {
-	hexTx := "0x" + common.Bytes2Hex(signedTx)
-
-	resp, err := c.Request(ctx, "eth_sendRawTransaction", hexTx)
-	if err != nil {
-		return common.Hash{}, err
+// Account returns the account as a wallet.Account.
+// This bridges client.Account -> wallet.Account so WalletClient satisfies wallet.Client.
+func (c *WalletClient) Account() wallet.Account {
+	acct := c.BaseClient.Account()
+	if acct == nil {
+		return nil
 	}
-
-	var hashHex string
-	if err := json.Unmarshal(resp.Result, &hashHex); err != nil {
-		return common.Hash{}, err
+	// client.Account and wallet.Account are structurally identical —
+	// any concrete type satisfying client.Account also satisfies wallet.Account.
+	if wa, ok := acct.(wallet.Account); ok {
+		return wa
 	}
-
-	return common.HexToHash(hashHex), nil
+	return nil
 }
 
-// SendTransaction sends a transaction using eth_sendTransaction.
-// Requires the node to manage the account (e.g., via personal_unlockAccount).
-func (c *WalletClient) SendTransaction(ctx context.Context, tx types.Transaction) (common.Hash, error) {
-	resp, err := c.Request(ctx, "eth_sendTransaction", tx)
-	if err != nil {
-		return common.Hash{}, err
-	}
+// ---------------------------------------------------------------------------
+// Wallet Actions — Signing
+// ---------------------------------------------------------------------------
 
-	var hashHex string
-	if err := json.Unmarshal(resp.Result, &hashHex); err != nil {
-		return common.Hash{}, err
-	}
-
-	return common.HexToHash(hashHex), nil
+// SignMessage calculates an Ethereum-specific EIP-191 signature.
+// Delegates to wallet.SignMessage.
+func (c *WalletClient) SignMessage(ctx context.Context, params wallet.SignMessageParameters) (string, error) {
+	return wallet.SignMessage(ctx, c, params)
 }
 
-// SignMessage signs a message using eth_sign.
-func (c *WalletClient) SignMessage(ctx context.Context, address common.Address, message []byte) ([]byte, error) {
-	hexMessage := "0x" + common.Bytes2Hex(message)
-
-	resp, err := c.Request(ctx, "eth_sign", address.Hex(), hexMessage)
-	if err != nil {
-		return nil, err
-	}
-
-	var hexSig string
-	if err := json.Unmarshal(resp.Result, &hexSig); err != nil {
-		return nil, err
-	}
-
-	return parseHexBytes(hexSig)
+// SignTypedData signs EIP-712 typed structured data.
+// Delegates to wallet.SignTypedData.
+func (c *WalletClient) SignTypedData(ctx context.Context, params wallet.SignTypedDataParameters) (string, error) {
+	return wallet.SignTypedData(ctx, c, params)
 }
 
-// SignTypedData signs typed data using eth_signTypedData_v4.
-func (c *WalletClient) SignTypedData(ctx context.Context, address common.Address, typedData any) ([]byte, error) {
-	resp, err := c.Request(ctx, "eth_signTypedData_v4", address.Hex(), typedData)
-	if err != nil {
-		return nil, err
-	}
-
-	var hexSig string
-	if err := json.Unmarshal(resp.Result, &hexSig); err != nil {
-		return nil, err
-	}
-
-	return parseHexBytes(hexSig)
+// SignTransaction signs a transaction without broadcasting.
+// Delegates to wallet.SignTransaction.
+func (c *WalletClient) SignTransaction(ctx context.Context, params wallet.SignTransactionParameters) (string, error) {
+	return wallet.SignTransaction(ctx, c, params)
 }
 
-// GetAccounts returns the accounts managed by the wallet.
-func (c *WalletClient) GetAccounts(ctx context.Context) ([]common.Address, error) {
-	resp, err := c.Request(ctx, "eth_accounts")
-	if err != nil {
-		return nil, err
-	}
-
-	var hexAddresses []string
-	if err := json.Unmarshal(resp.Result, &hexAddresses); err != nil {
-		return nil, err
-	}
-
-	addresses := make([]common.Address, len(hexAddresses))
-	for i, hex := range hexAddresses {
-		addresses[i] = common.HexToAddress(hex)
-	}
-
-	return addresses, nil
+// SignPreparedTransaction converts a prepared transaction request into signing
+// parameters, then signs it. This is a convenience method that bridges
+// PrepareTransactionRequest -> SignTransaction in a single call.
+//
+// Example:
+//
+//	prepared, _ := client.PrepareTransactionRequest(ctx, wallet.PrepareTransactionRequestParameters{
+//	    To: "0x...", Value: big.NewInt(1000),
+//	})
+//	signed, _ := client.SignPreparedTransaction(ctx, prepared)
+func (c *WalletClient) SignPreparedTransaction(ctx context.Context, prepared wallet.PrepareTransactionRequestReturnType) (string, error) {
+	return wallet.SignTransaction(ctx, c, wallet.PreparedToSignParams(prepared))
 }
 
-// RequestAccounts requests accounts using eth_requestAccounts.
-func (c *WalletClient) RequestAccounts(ctx context.Context) ([]common.Address, error) {
-	resp, err := c.Request(ctx, "eth_requestAccounts")
-	if err != nil {
-		return nil, err
-	}
-
-	var hexAddresses []string
-	if err := json.Unmarshal(resp.Result, &hexAddresses); err != nil {
-		return nil, err
-	}
-
-	addresses := make([]common.Address, len(hexAddresses))
-	for i, hex := range hexAddresses {
-		addresses[i] = common.HexToAddress(hex)
-	}
-
-	return addresses, nil
+// SignAuthorization signs an EIP-7702 authorization.
+// Delegates to wallet.SignAuthorization.
+func (c *WalletClient) SignAuthorization(ctx context.Context, params wallet.SignAuthorizationParameters) (*types.SignedAuthorization, error) {
+	return wallet.SignAuthorization(ctx, c, params)
 }
 
-// SwitchChain switches to a different chain using wallet_switchEthereumChain.
-func (c *WalletClient) SwitchChain(ctx context.Context, chainID *big.Int) error {
-	params := map[string]string{
-		"chainId": "0x" + chainID.Text(16),
-	}
-
-	_, err := c.Request(ctx, "wallet_switchEthereumChain", params)
-	return err
+// PrepareAuthorization prepares an EIP-7702 authorization for signing.
+// Delegates to wallet.PrepareAuthorization.
+func (c *WalletClient) PrepareAuthorization(ctx context.Context, params wallet.PrepareAuthorizationParameters) (wallet.PrepareAuthorizationReturnType, error) {
+	return wallet.PrepareAuthorization(ctx, c, params)
 }
 
-// AddChain adds a chain using wallet_addEthereumChain.
-func (c *WalletClient) AddChain(ctx context.Context, ch *chain.Chain) error {
-	params := map[string]any{
-		"chainId":   "0x" + big.NewInt(ch.ID).Text(16),
-		"chainName": ch.Name,
-	}
+// ---------------------------------------------------------------------------
+// Wallet Actions — Transactions
+// ---------------------------------------------------------------------------
 
-	params["nativeCurrency"] = map[string]any{
-		"name":     ch.NativeCurrency.Name,
-		"symbol":   ch.NativeCurrency.Symbol,
-		"decimals": ch.NativeCurrency.Decimals,
-	}
-
-	if urls, ok := ch.RpcUrls["default"]; ok && len(urls.HTTP) > 0 {
-		params["rpcUrls"] = urls.HTTP
-	}
-
-	_, err := c.Request(ctx, "wallet_addEthereumChain", params)
-	return err
+// SendTransaction creates, signs, and sends a new transaction.
+// Delegates to wallet.SendTransaction.
+func (c *WalletClient) SendTransaction(ctx context.Context, params wallet.SendTransactionParameters) (string, error) {
+	return wallet.SendTransaction(ctx, c, params)
 }
 
-// WatchAsset adds a token to the wallet's asset list using wallet_watchAsset.
-func (c *WalletClient) WatchAsset(ctx context.Context, tokenType string, address common.Address, symbol string, decimals uint8, image string) (bool, error) {
-	params := map[string]any{
-		"type": tokenType,
-		"options": map[string]any{
-			"address":  address.Hex(),
-			"symbol":   symbol,
-			"decimals": decimals,
-		},
-	}
-
-	if image != "" {
-		params["options"].(map[string]any)["image"] = image
-	}
-
-	resp, err := c.Request(ctx, "wallet_watchAsset", params)
-	if err != nil {
-		return false, err
-	}
-
-	var success bool
-	if err := json.Unmarshal(resp.Result, &success); err != nil {
-		return false, err
-	}
-
-	return success, nil
+// SendTransactionSync sends a transaction and waits for the receipt.
+// Delegates to wallet.SendTransactionSync.
+func (c *WalletClient) SendTransactionSync(ctx context.Context, params wallet.SendTransactionSyncParameters) (wallet.SendTransactionSyncReturnType, error) {
+	return wallet.SendTransactionSync(ctx, c, params)
 }
 
-// GetPermissions returns the wallet's permissions using wallet_getPermissions.
-func (c *WalletClient) GetPermissions(ctx context.Context) (json.RawMessage, error) {
-	resp, err := c.Request(ctx, "wallet_getPermissions")
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.Result, nil
+// SendRawTransaction sends a signed serialized transaction.
+// Delegates to wallet.SendRawTransaction.
+func (c *WalletClient) SendRawTransaction(ctx context.Context, params wallet.SendRawTransactionParameters) (string, error) {
+	return wallet.SendRawTransaction(ctx, c, params)
 }
 
-// RequestPermissions requests permissions using wallet_requestPermissions.
-func (c *WalletClient) RequestPermissions(ctx context.Context, permissions []map[string]any) (json.RawMessage, error) {
-	resp, err := c.Request(ctx, "wallet_requestPermissions", permissions)
-	if err != nil {
-		return nil, err
-	}
+// SendRawTransactionSync sends a signed transaction and waits for the receipt.
+// Delegates to wallet.SendRawTransactionSync.
+func (c *WalletClient) SendRawTransactionSync(ctx context.Context, params wallet.SendRawTransactionSyncParameters) (wallet.SendRawTransactionSyncReturnType, error) {
+	return wallet.SendRawTransactionSync(ctx, c, params)
+}
 
-	return resp.Result, nil
+// PrepareTransactionRequest fills in missing transaction fields (nonce, gas, fees, type, chainId).
+// Delegates to wallet.PrepareTransactionRequest.
+func (c *WalletClient) PrepareTransactionRequest(ctx context.Context, params wallet.PrepareTransactionRequestParameters) (wallet.PrepareTransactionRequestReturnType, error) {
+	return wallet.PrepareTransactionRequest(ctx, c, params)
+}
+
+// ---------------------------------------------------------------------------
+// Wallet Actions — Contracts
+// ---------------------------------------------------------------------------
+
+// WriteContract executes a write function on a contract.
+// Delegates to wallet.WriteContract.
+func (c *WalletClient) WriteContract(ctx context.Context, params wallet.WriteContractParameters) (string, error) {
+	return wallet.WriteContract(ctx, c, params)
+}
+
+// WriteContractSync executes a contract write and waits for the receipt.
+// Delegates to wallet.WriteContractSync.
+func (c *WalletClient) WriteContractSync(ctx context.Context, params wallet.WriteContractSyncParameters) (wallet.WriteContractSyncReturnType, error) {
+	return wallet.WriteContractSync(ctx, c, params)
+}
+
+// DeployContract deploys a contract to the network.
+// Delegates to wallet.DeployContract.
+func (c *WalletClient) DeployContract(ctx context.Context, params wallet.DeployContractParameters) (string, error) {
+	return wallet.DeployContract(ctx, c, params)
+}
+
+// ---------------------------------------------------------------------------
+// Wallet Actions — Account Management
+// ---------------------------------------------------------------------------
+
+// GetAddresses returns a list of account addresses owned by the wallet.
+// Delegates to wallet.GetAddresses.
+func (c *WalletClient) GetAddresses(ctx context.Context) ([]address.Address, error) {
+	return wallet.GetAddresses(ctx, c)
+}
+
+// RequestAddresses requests a list of accounts managed by the wallet.
+// Delegates to wallet.RequestAddresses.
+func (c *WalletClient) RequestAddresses(ctx context.Context) ([]address.Address, error) {
+	return wallet.RequestAddresses(ctx, c)
+}
+
+// AddChain adds an EVM chain to the wallet.
+// Delegates to wallet.AddChain.
+func (c *WalletClient) AddChain(ctx context.Context, params wallet.AddChainParameters) error {
+	return wallet.AddChain(ctx, c, params)
+}
+
+// SwitchChain switches the target chain in the wallet.
+// Delegates to wallet.SwitchChain.
+func (c *WalletClient) SwitchChain(ctx context.Context, params wallet.SwitchChainParameters) error {
+	return wallet.SwitchChain(ctx, c, params)
+}
+
+// ---------------------------------------------------------------------------
+// Wallet Actions — Permissions & Assets
+// ---------------------------------------------------------------------------
+
+// GetPermissions gets the wallet's current permissions.
+// Delegates to wallet.GetPermissions.
+func (c *WalletClient) GetPermissions(ctx context.Context) ([]wallet.WalletPermission, error) {
+	return wallet.GetPermissions(ctx, c)
+}
+
+// RequestPermissions requests permissions for the wallet.
+// Delegates to wallet.RequestPermissions.
+func (c *WalletClient) RequestPermissions(ctx context.Context, permissions wallet.RequestPermissionsParameters) ([]wallet.WalletPermission, error) {
+	return wallet.RequestPermissions(ctx, c, permissions)
+}
+
+// WatchAsset requests that the wallet tracks a specified token.
+// Delegates to wallet.WatchAsset.
+func (c *WalletClient) WatchAsset(ctx context.Context, params wallet.WatchAssetParameters) (bool, error) {
+	return wallet.WatchAsset(ctx, c, params)
+}
+
+// ---------------------------------------------------------------------------
+// Wallet Actions — EIP-5792 Batch Calls
+// ---------------------------------------------------------------------------
+
+// GetCapabilities extracts capabilities that a connected wallet supports.
+// Delegates to wallet.GetCapabilities.
+func (c *WalletClient) GetCapabilities(ctx context.Context, params wallet.GetCapabilitiesParameters) (wallet.GetCapabilitiesReturnType, error) {
+	return wallet.GetCapabilities(ctx, c, params)
+}
+
+// SendCalls sends a batch of calls via wallet_sendCalls (EIP-5792).
+// Delegates to wallet.SendCalls.
+func (c *WalletClient) SendCalls(ctx context.Context, params wallet.SendCallsParameters) (*wallet.SendCallsReturnType, error) {
+	return wallet.SendCalls(ctx, c, params)
+}
+
+// SendCallsSync sends a batch of calls and waits for inclusion.
+// Delegates to wallet.SendCallsSync.
+func (c *WalletClient) SendCallsSync(ctx context.Context, params wallet.SendCallsSyncParameters) (wallet.SendCallsSyncReturnType, error) {
+	return wallet.SendCallsSync(ctx, c, params)
+}
+
+// GetCallsStatus returns the status of a call batch.
+// Delegates to wallet.GetCallsStatus.
+func (c *WalletClient) GetCallsStatus(ctx context.Context, params wallet.GetCallsStatusParameters) (*wallet.GetCallsStatusReturnType, error) {
+	return wallet.GetCallsStatus(ctx, c, params)
+}
+
+// WaitForCallsStatus waits for a call batch to be confirmed.
+// Delegates to wallet.WaitForCallsStatus.
+func (c *WalletClient) WaitForCallsStatus(ctx context.Context, params wallet.WaitForCallsStatusParameters) (wallet.WaitForCallsStatusReturnType, error) {
+	return wallet.WaitForCallsStatus(ctx, c, params)
+}
+
+// ShowCallsStatus requests the wallet to show call batch status.
+// Delegates to wallet.ShowCallsStatus.
+func (c *WalletClient) ShowCallsStatus(ctx context.Context, params wallet.ShowCallsStatusParameters) error {
+	return wallet.ShowCallsStatus(ctx, c, params)
+}
+
+// ---------------------------------------------------------------------------
+// Deprecated / backward-compat helpers
+// ---------------------------------------------------------------------------
+
+// SignMessageRaw signs a message using personal_sign RPC (JSON-RPC account path).
+// Deprecated: Use SignMessage with a SignMessageParameters instead.
+func (c *WalletClient) SignMessageRaw(ctx context.Context, params wallet.SignMessageParameters) (string, error) {
+	return wallet.SignMessage(ctx, c, params)
+}
+
+// SignTypedDataRaw signs typed data using eth_signTypedData_v4 RPC.
+// Deprecated: Use SignTypedData with SignTypedDataParameters instead.
+func (c *WalletClient) SignTypedDataRaw(ctx context.Context, domain signature.TypedDataDomain, types map[string][]signature.TypedDataField, primaryType string, message map[string]any) (string, error) {
+	return wallet.SignTypedData(ctx, c, wallet.SignTypedDataParameters{
+		Domain:      domain,
+		Types:       types,
+		PrimaryType: primaryType,
+		Message:     message,
+	})
+}
+
+// SwitchChainByID switches chain by numeric ID.
+// Deprecated: Use SwitchChain with SwitchChainParameters instead.
+func (c *WalletClient) SwitchChainByID(ctx context.Context, chainID *big.Int) error {
+	return wallet.SwitchChain(ctx, c, wallet.SwitchChainParameters{ID: chainID.Int64()})
 }

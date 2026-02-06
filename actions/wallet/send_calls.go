@@ -122,6 +122,21 @@ func SendCalls(ctx context.Context, client Client, params SendCallsParameters) (
 		return nil, fmt.Errorf("chain is required for wallet_sendCalls")
 	}
 
+	// Propagate client.DataSuffix() to capabilities if not already set.
+	// Mirrors viem's: if (client.dataSuffix && !parameters.capabilities?.dataSuffix) { ... }
+	capabilities := params.Capabilities
+	if clientSuffix := client.DataSuffix(); len(clientSuffix) > 0 {
+		if capabilities == nil {
+			capabilities = make(map[string]any)
+		}
+		if _, hasDataSuffix := capabilities["dataSuffix"]; !hasDataSuffix {
+			capabilities["dataSuffix"] = map[string]any{
+				"value":    encoding.BytesToHex(clientSuffix),
+				"optional": true,
+			}
+		}
+	}
+
 	// Encode calls (mirrors viem's calls.map encoding)
 	rpcCalls := make([]sendCallsRpcCall, len(params.Calls))
 	for i, call := range params.Calls {
@@ -159,7 +174,7 @@ func SendCalls(ctx context.Context, client Client, params SendCallsParameters) (
 	rpcParams := sendCallsRpcParams{
 		AtomicRequired: params.ForceAtomic,
 		Calls:          rpcCalls,
-		Capabilities:   params.Capabilities,
+		Capabilities:   capabilities,
 		ChainID:        encoding.NumberToHex(big.NewInt(ch.ID)),
 		ID:             params.ID,
 		Version:        version,

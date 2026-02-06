@@ -48,7 +48,7 @@ func main() {
 	printSection("1. Creating Public Client")
 	publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
 		Chain:     &definitions.Polygon,
-		Transport: transport.HTTP("https://rough-purple-market.matic.quiknode.pro/c1a568726a34041d3c5d58603f5981951e6a8503"),
+		Transport: transport.HTTP("https://polygon-rpc.com"),
 	})
 	if err != nil {
 		fmt.Printf("Error creating client: %v\n", err)

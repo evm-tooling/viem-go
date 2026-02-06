@@ -77,9 +77,7 @@ async function watchBlockNumberExample(signal: AbortSignal) {
 
   const client = createPublicClient({
     chain: polygon,
-    transport: http(
-      'https://rough-purple-market.matic.quiknode.pro/c1a568726a34041d3c5d58603f5981951e6a8503',
-    ),
+    transport: http('https://polygon-rpc.com'),
   })
 
   let count = 0

@@ -125,20 +125,31 @@ func SendTransactionSync(ctx context.Context, client Client, params SendTransact
 		return nil, err
 	}
 
+	// Resolve `to` — infer from authorizationList if not provided.
+	// Mirrors viem's: if no `to` and authorizationList present, recover address from first auth.
+	to := params.To
+	if to == "" && len(params.AuthorizationList) > 0 {
+		recovered, recoverErr := recoverAuthorizationAddr(params.AuthorizationList[0])
+		if recoverErr != nil {
+			return nil, fmt.Errorf("`to` is required. Could not infer from `authorizationList`: %w", recoverErr)
+		}
+		to = recovered
+	}
+
 	// Check if this is a local account that can sign transactions
 	signable, isLocal := account.(TransactionSignableAccount)
 
 	if !isLocal {
 		// ---- JSON-RPC Account path ----
-		return sendTransactionSyncViaRPC(ctx, client, account, params, txData, timeout)
+		return sendTransactionSyncViaRPC(ctx, client, account, params, txData, timeout, to)
 	}
 
 	// ---- Local Account path ----
-	return sendTransactionSyncViaLocalSign(ctx, client, account, signable, params, txData, timeout)
+	return sendTransactionSyncViaLocalSign(ctx, client, account, signable, params, txData, timeout, to)
 }
 
 // sendTransactionSyncViaRPC handles the JSON-RPC account path:
-// eth_sendTransaction -> waitForTransactionReceipt.
+// eth_sendTransaction (with wallet_ namespace fallback) -> waitForTransactionReceipt.
 func sendTransactionSyncViaRPC(
 	ctx context.Context,
 	client Client,
@@ -146,6 +157,7 @@ func sendTransactionSyncViaRPC(
 	params SendTransactionSyncParameters,
 	txData string,
 	timeout time.Duration,
+	to string,
 ) (*formatters.TransactionReceipt, error) {
 	// Resolve chain
 	ch := params.Chain
@@ -178,7 +190,7 @@ func sendTransactionSyncViaRPC(
 	txRequest := formatters.TransactionRequest{
 		Data:                 txData,
 		From:                 account.Address().Hex(),
-		To:                   params.To,
+		To:                   to,
 		Value:                params.Value,
 		Gas:                  params.Gas,
 		GasPrice:             params.GasPrice,
@@ -228,15 +240,11 @@ func sendTransactionSyncViaRPC(
 		rpcReq.ChainID = encoding.NumberToHex(new(big.Int).SetUint64(*chainID))
 	}
 
-	// Send via eth_sendTransaction
-	resp, err := client.Request(ctx, "eth_sendTransaction", rpcReq)
+	// Send with wallet_sendTransaction namespace fallback.
+	// Uses the same LRU cache as sendTransaction (shared supportsWalletNamespace).
+	hash, err := sendWithNamespaceFallback(ctx, client, rpcReq)
 	if err != nil {
-		return nil, fmt.Errorf("eth_sendTransaction failed: %w", err)
-	}
-
-	var hash string
-	if unmarshalErr := json.Unmarshal(resp.Result, &hash); unmarshalErr != nil {
-		return nil, fmt.Errorf("failed to unmarshal transaction hash: %w", unmarshalErr)
+		return nil, err
 	}
 
 	// Wait for the transaction receipt
@@ -282,6 +290,7 @@ func sendTransactionSyncViaLocalSign(
 	params SendTransactionSyncParameters,
 	txData string,
 	timeout time.Duration,
+	to string,
 ) (*formatters.TransactionReceipt, error) {
 	// Resolve chain
 	ch := params.Chain
@@ -305,7 +314,7 @@ func sendTransactionSyncViaLocalSign(
 		MaxFeePerGas:         params.MaxFeePerGas,
 		MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
 		Nonce:                params.Nonce,
-		To:                   params.To,
+		To:                   to,
 		Type:                 params.Type,
 		Value:                params.Value,
 	}

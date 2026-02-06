@@ -128,7 +128,7 @@ func main() {
 		fmt.Printf("Error creating account: %v\n", err)
 		return
 	}
-	fmt.Printf("Demo Account Address: %s\n", account.Address)
+	fmt.Printf("Demo Account Address: %s\n", account.GetAddress())
 
 	message := "Hello from Wallet Dashboard!"
 	fmt.Printf("Message: \"%s\"\n", message)
@@ -147,7 +147,7 @@ func main() {
 	fmt.Printf("Signature: %s\n", sigDisplay)
 
 	// Verify the signature
-	isValid, err := signature.VerifyMessage(account.Address, signature.NewSignableMessage(message), sig)
+	isValid, err := signature.VerifyMessage(account.GetAddress(), signature.NewSignableMessage(message), sig)
 	if err != nil {
 		fmt.Printf("Error verifying signature: %v\n", err)
 	} else {
@@ -188,7 +188,7 @@ func main() {
 	fmt.Printf("  Block: #%d\n", blockNumber)
 	fmt.Printf("  Gas Price: %s Gwei\n", unit.FormatGwei(gasPrice))
 
-	accountDisplay := account.Address
+	accountDisplay := account.GetAddress()
 	if len(accountDisplay) > 10 {
 		accountDisplay = accountDisplay[:10] + "..."
 	}

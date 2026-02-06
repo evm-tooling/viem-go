@@ -51,7 +51,7 @@ func main() {
 
 	// Create a public client
 	// Using Ankr public RPC for demonstration
-	rpcURL := "https://rough-purple-market.matic.quiknode.pro/c1a568726a34041d3c5d58603f5981951e6a8503"
+	rpcURL := "https://polygon-rpc.com"
 	if envURL := os.Getenv("RPC_URL"); envURL != "" {
 		rpcURL = envURL
 	}
