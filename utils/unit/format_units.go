@@ -23,16 +23,24 @@ func FormatUnits(value *big.Int, decimals int) string {
 		return "0"
 	}
 
-	display := value.String()
+	negative := value.Sign() < 0
 
-	negative := strings.HasPrefix(display, "-")
+	// Get absolute string representation without allocating a new big.Int for Abs
+	display := value.String()
 	if negative {
-		display = display[1:]
+		display = display[1:] // strip the "-"
 	}
 
 	// Pad with leading zeros if necessary
-	for len(display) < decimals {
-		display = "0" + display
+	if pad := decimals - len(display); pad > 0 {
+		display = strings.Repeat("0", pad) + display
+	}
+
+	if decimals == 0 {
+		if negative {
+			return "-" + display
+		}
+		return display
 	}
 
 	// Split into integer and fraction parts
@@ -43,22 +51,26 @@ func FormatUnits(value *big.Int, decimals int) string {
 	// Remove trailing zeros from fraction
 	fraction = strings.TrimRight(fraction, "0")
 
-	// Build result
 	if integer == "" {
 		integer = "0"
 	}
 
-	result := ""
+	// Build result with a single allocation using strings.Builder
+	// Max size: "-" + integer + "." + fraction
+	var b strings.Builder
+	b.Grow(1 + len(integer) + 1 + len(fraction))
+
 	if negative {
-		result = "-"
+		b.WriteByte('-')
 	}
-	result += integer
+	b.WriteString(integer)
 
 	if fraction != "" {
-		result += "." + fraction
+		b.WriteByte('.')
+		b.WriteString(fraction)
 	}
 
-	return result
+	return b.String()
 }
 
 // FormatUnitsInt64 is a convenience function that takes an int64 value.

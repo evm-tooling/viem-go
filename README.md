@@ -27,7 +27,7 @@ viem-go gives you three tiers of contract interaction -- raw `ReadContract` for 
 
 ## Performance
 
-viem-go outperforms the TypeScript viem library across every benchmark, winning all 22 tests. The performance advantage comes from Go's compiled nature, efficient memory management, and true parallelism via goroutines -- particularly visible in multicall batching where Go can fan out concurrent RPC requests across OS threads.
+viem-go outperforms the TypeScript viem library across 59 benchmarks spanning 9 test suites -- winning 54 of them (92%). The benchmarks cover both network-bound RPC operations and pure CPU-bound utilities, giving a complete picture of where Go's advantages lie.
 
 ![Summary](benchmarks/results/charts/summary.svg)
 
@@ -41,11 +41,32 @@ viem-go outperforms the TypeScript viem library across every benchmark, winning 
 
 **Key takeaways:**
 
-- **Call actions:** Go is **80-100x faster** for standard contract reads. The TypeScript benchmarks hit ~18ms per call due to Node.js event loop overhead, while Go averages ~0.19ms with direct HTTP transport and zero GC pressure on small allocations.
-- **Multicall batching:** Go is **1.6-6.4x faster** across batch sizes. The gap widens as batch size increases because Go can encode/decode ABI data and fan out chunked RPC requests in parallel goroutines, while TypeScript is limited to a single thread.
-- **Extreme stress (10K calls):** Go's chunked multicall strategy completes 10,000 batched calls in ~33ms vs TypeScript's ~211ms -- a **6.4x improvement** -- because Go splits the batch across goroutines and reassembles results concurrently.
+- **ABI encoding/decoding:** Go is **10-26x faster**. `encodeFunctionData` runs in ~300ns in Go vs ~8us in TypeScript. This matters at scale -- indexers and bots encoding thousands of calls per second see a direct throughput improvement.
+- **Hashing (keccak256, sha256):** Go is **9-21x faster**. Go's native `crypto/sha3` and `crypto/sha256` implementations outperform the JS WASM/native bindings. The gap widens with larger inputs (16.7x for 1KB keccak256).
+- **Signature recovery/verification:** Go is **63-85x faster**. ECDSA operations are computationally heavy and Go's secp256k1 implementation (via go-ethereum) dominates -- `recoverMessageAddress` completes in ~27us vs ~2.3ms in TypeScript.
+- **Event log decoding:** Go is **26x faster**. Decoding 100 Transfer events takes ~39us in Go vs ~998us in TypeScript -- critical for indexers processing blocks of logs.
+- **ENS (namehash, normalize):** Go is **3-14x faster**. Recursive keccak hashing in `namehash` and Unicode normalization in `normalize` both benefit from Go's efficient string and hash handling.
+- **Call actions:** Go is **95-99x faster** for standard contract reads (`eth_call`). Go averages ~0.19ms per call vs ~18ms in TypeScript due to Node.js event loop overhead.
+- **Multicall batching:** Go is **1.6-5.6x faster** across batch sizes, widening as batch size grows because Go fans out chunked RPC requests in parallel goroutines.
+- **Unit parsing:** Go is **1.5-2.8x faster** for common operations like `parseEther("1.5")` and `parseGwei("20.5")`, using a zero-regex validator and `uint64` fast path that avoids `big.Int` overhead for values that fit in 64 bits. TypeScript still wins on very large decimal strings where V8's native `BigInt` construction is hard to beat.
 
-> Benchmarks run on Apple M4 Pro against a shared Anvil instance (mainnet fork). Both libraries use the same RPC endpoint. See [`benchmarks/`](benchmarks/) for full methodology.
+> 59 benchmarks across 9 suites on Apple M4 Pro against a shared Anvil instance (mainnet fork). Go wins all 9 suites. See [`benchmarks/`](benchmarks/) for full methodology.
+
+### Real-World Comparison: UniswapV2 Pool Extractor
+
+To see how these library-level benchmarks translate into a real application, check out [**viem-go-extractor-demo**](https://github.com/ChefBingbong/viem-go-extractor-demo) -- identical UniswapV2 pool extractors built in both Go (viem-go) and TypeScript (viem + Bun).
+
+Both extractors do the same work: sync 60,000+ pool pairs from on-chain UniswapV2 factories via multicall, decode Sync events from block logs, resolve ERC-20 token metadata, and serve the pool state over an HTTP API. The results show where each language shines:
+
+| Dimension | Winner | Key Finding |
+|---|---|---|
+| **Multicall (200 contracts)** | Go | **3.5x faster** -- Go's encoding scales linearly while TS shows quadratic-ish overhead |
+| **Event decoding** | Go | **9-11x faster** -- compiled byte slicing vs full ABI schema resolution |
+| **Factory sync (end-to-end)** | Go | **1.2-2.2x faster** -- compounds across 60K+ pools |
+| **JSON serialization** | TypeScript | **1.7-2.3x faster** -- Bun's Zig-optimized `JSON.stringify` |
+| **HTTP API under load** | TypeScript | **5-7x lower latency** -- Bun's async I/O model handles 200 concurrent users efficiently |
+
+**The takeaway:** Go (viem-go) is the better choice for the **data pipeline** -- fetching, decoding, and processing on-chain data. TypeScript (viem) is the better choice for the **API layer** -- serving that data to clients. In a production architecture, the optimal design is a Go-based indexer feeding data into a TypeScript API server.
 
 ## Installation
 
