@@ -9,25 +9,126 @@ Go Interface for Ethereum -- inspired by [viem](https://viem.sh)
 
 ## Why viem-go?
 
-If you've worked with Ethereum in Go, you know the pain. [go-ethereum](https://github.com/ethereum/go-ethereum) (ethclient) is powerful but its contract interaction story is rough -- `abigen` generates thousands of lines of boilerplate, there's no built-in multicall, and even simple reads require wiring together low-level primitives. On the other side, [viem](https://github.com/wevm/viem) in TypeScript nails the developer experience but you're stuck in a single-threaded runtime.
+If you've used [viem](https://github.com/wevm/viem) in TypeScript, you already know the API. viem-go brings that same developer experience into Go -- the same function names, the same structure, the same "it just works" feeling -- but compiled, concurrent, and faster.
 
-**viem-go sits in the middle.** It brings viem's clean, composable API design into Go -- giving you the ergonomics of a modern Ethereum library backed by Go's concurrency, type safety, and raw speed. You get the simplicity of `readContract` and `multicall` without the ceremony of `abigen`, `bind.NewBoundContract`, and manual ABI packing that go-ethereum demands.
+If you've used [go-ethereum](https://github.com/ethereum/go-ethereum) directly, you know the pain. Reading a token balance requires generating bindings with `abigen`, wiring up `ethclient.Dial`, manually constructing `bind.CallOpts`, and decoding `*big.Int` returns through generated wrapper types. There's no built-in multicall. There's no `parseEther`. Even simple things feel like plumbing.
 
-### The Complexity Problem
+**viem-go fixes this.** Same power as go-ethereum under the hood, but with a developer-facing API that mirrors viem's simplicity.
 
-Here's what reading an ERC20 balance looks like across the three approaches:
+## Installation
 
-| | Lines of setup | ABI handling | Type safety | Multicall |
-|---|---|---|---|---|
-| **go-ethereum** | ~15-20 | `abigen` codegen or manual ABI packing | Codegen only | Manual |
-| **viem (TS)** | ~5 | Inline with `parseAbi` | Runtime | Built-in |
-| **viem-go** | ~5 | Inline JSON, typed templates, or codegen | Compile-time generics | Built-in |
+```bash
+go get github.com/ChefBingbong/viem-go
+```
 
-viem-go gives you three tiers of contract interaction -- raw `ReadContract` for quick scripts, typed `Fn`/`Call` generics for production code, and full codegen via `viemgen` for large projects -- all without ever touching `abigen`.
+## API Similarity: viem vs viem-go
+
+The APIs are designed to look and feel the same. If you can read viem code, you can read viem-go code.
+
+### Creating a Client
+
+**viem (TypeScript)**
+```typescript
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+})
+
+const blockNumber = await client.getBlockNumber()
+```
+
+**viem-go**
+```go
+c, _ := client.NewClient("https://eth.llamarpc.com")
+defer c.Close()
+
+blockNumber, _ := c.GetBlockNumber(context.Background())
+```
+
+### Reading a Contract
+
+**viem (TypeScript)**
+```typescript
+const balance = await client.readContract({
+  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  abi: parseAbi(['function balanceOf(address) view returns (uint256)']),
+  functionName: 'balanceOf',
+  args: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
+})
+```
+
+**viem-go**
+```go
+usdc := erc20.MustNew(common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), c)
+
+balance, _ := usdc.BalanceOf(ctx, common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"))
+```
+
+### Parsing Units
+
+**viem (TypeScript)**
+```typescript
+import { parseEther, formatEther, parseGwei } from 'viem'
+
+const wei = parseEther('1.5')        // 1500000000000000000n
+const eth = formatEther(wei)         // "1.5"
+const gasPrice = parseGwei('20.5')   // 20500000000n
+```
+
+**viem-go**
+```go
+import "github.com/ChefBingbong/viem-go/utils/unit"
+
+wei, _ := unit.ParseEther("1.5")        // *big.Int: 1500000000000000000
+eth := unit.FormatEther(wei)            // "1.5"
+gasPrice, _ := unit.ParseGwei("20.5")   // *big.Int: 20500000000
+```
+
+### Hashing and Signatures
+
+**viem (TypeScript)**
+```typescript
+import { keccak256, hashMessage, verifyMessage } from 'viem'
+
+const hash = keccak256('0x68656c6c6f')
+const msgHash = hashMessage('hello world')
+const valid = await verifyMessage({ address, message: 'hello', signature: sig })
+```
+
+**viem-go**
+```go
+import (
+    "github.com/ChefBingbong/viem-go/utils/hash"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+)
+
+h := hash.Keccak256([]byte("hello"))
+msgHash := signature.HashMessage(signature.NewSignableMessage("hello world"))
+valid, _ := signature.VerifyMessage(address, signature.NewSignableMessage("hello"), sig)
+```
+
+## What's Wrong with go-ethereum?
+
+Nothing -- for building Ethereum nodes. But for application developers, the DX gap between go-ethereum and a modern library like viem is enormous:
+
+| Task | go-ethereum | viem-go |
+|---|---|---|
+| Read a token balance | `abigen` + generated binding + `CallOpts` + type assertion | `erc20.MustNew(addr, c).BalanceOf(ctx, owner)` |
+| Multicall 100 contracts | Not supported -- manual batching | `public.Multicall(ctx, c, params)` with auto-chunking |
+| Parse "1.5" ETH to wei | `new(big.Int).Mul(...)` manually or `params.Ether(...)` | `unit.ParseEther("1.5")` |
+| Checksum an address | Import `common`, convert, re-convert | `address.GetAddress("0x...")` |
+| Hash a message for signing | `accounts.TextHash([]byte(...))` | `signature.HashMessage(msg)` |
+| Decode event logs | Manual topic parsing + `abi.Unpack` | `abi.DecodeEventLog(topics, data)` |
+| Generate contract bindings | `abigen` CLI + Solidity compiler | `viemgen --pkg mytoken` from ABI JSON |
+
+viem-go doesn't replace go-ethereum -- it builds on top of it. The `crypto`, `common`, and `accounts/abi` packages are used under the hood. viem-go just gives you a humane interface on top.
 
 ## Performance
 
-viem-go outperforms the TypeScript viem library across 59 benchmarks spanning 9 test suites -- winning 54 of them (92%). The benchmarks cover both network-bound RPC operations and pure CPU-bound utilities, giving a complete picture of where Go's advantages lie.
+viem-go doesn't just match viem's API -- it outperforms it. Across 59 benchmarks spanning 9 test suites, Go wins 54 of them (92%) and wins all 9 suites.
 
 ![Summary](benchmarks/results/charts/summary.svg)
 
@@ -41,14 +142,14 @@ viem-go outperforms the TypeScript viem library across 59 benchmarks spanning 9 
 
 **Key takeaways:**
 
-- **ABI encoding/decoding:** Go is **10-26x faster**. `encodeFunctionData` runs in ~300ns in Go vs ~8us in TypeScript. This matters at scale -- indexers and bots encoding thousands of calls per second see a direct throughput improvement.
-- **Hashing (keccak256, sha256):** Go is **9-21x faster**. Go's native `crypto/sha3` and `crypto/sha256` implementations outperform the JS WASM/native bindings. The gap widens with larger inputs (16.7x for 1KB keccak256).
-- **Signature recovery/verification:** Go is **63-85x faster**. ECDSA operations are computationally heavy and Go's secp256k1 implementation (via go-ethereum) dominates -- `recoverMessageAddress` completes in ~27us vs ~2.3ms in TypeScript.
-- **Event log decoding:** Go is **26x faster**. Decoding 100 Transfer events takes ~39us in Go vs ~998us in TypeScript -- critical for indexers processing blocks of logs.
-- **ENS (namehash, normalize):** Go is **3-14x faster**. Recursive keccak hashing in `namehash` and Unicode normalization in `normalize` both benefit from Go's efficient string and hash handling.
-- **Call actions:** Go is **95-99x faster** for standard contract reads (`eth_call`). Go averages ~0.19ms per call vs ~18ms in TypeScript due to Node.js event loop overhead.
-- **Multicall batching:** Go is **1.6-5.6x faster** across batch sizes, widening as batch size grows because Go fans out chunked RPC requests in parallel goroutines.
-- **Unit parsing:** Go is **1.5-2.8x faster** for common operations like `parseEther("1.5")` and `parseGwei("20.5")`, using a zero-regex validator and `uint64` fast path that avoids `big.Int` overhead for values that fit in 64 bits. TypeScript still wins on very large decimal strings where V8's native `BigInt` construction is hard to beat.
+- **ABI encoding/decoding:** Go is **10-38x faster**. `encodeFunctionData` runs in ~200ns in Go vs ~8us in TypeScript.
+- **Hashing (keccak256, sha256):** Go is **9-20x faster**. Native `crypto/sha3` and `crypto/sha256` dominate.
+- **Signature recovery/verification:** Go is **63-87x faster**. `recoverMessageAddress` completes in ~27us vs ~2.3ms.
+- **Event log decoding:** Go is **27x faster**. Decoding 100 Transfer events: ~37us vs ~998us.
+- **ENS (namehash, normalize):** Go is **3-14x faster**. Recursive keccak hashing and Unicode normalization.
+- **Call actions:** Go is **88-99x faster** for `eth_call`. ~0.19ms vs ~18ms per call.
+- **Multicall batching:** Go is **1.5-5.9x faster**, widening as batch size grows via goroutine fan-out.
+- **Unit parsing:** Go is **1.5-2.8x faster** for common operations like `parseEther("1.5")` and `parseGwei("20.5")`.
 
 > 59 benchmarks across 9 suites on Apple M4 Pro against a shared Anvil instance (mainnet fork). Go wins all 9 suites. See [`benchmarks/`](benchmarks/) for full methodology.
 
@@ -68,103 +169,15 @@ Both extractors do the same work: sync 60,000+ pool pairs from on-chain UniswapV
 
 **The takeaway:** Go (viem-go) is the better choice for the **data pipeline** -- fetching, decoding, and processing on-chain data. TypeScript (viem) is the better choice for the **API layer** -- serving that data to clients. In a production architecture, the optimal design is a Go-based indexer feeding data into a TypeScript API server.
 
-## Installation
-
-```bash
-go get github.com/ChefBingbong/viem-go
-```
-
-## Quick Start
-
-**Creating a client and reading a contract:**
-
-```go
-import (
-    "context"
-    "github.com/ethereum/go-ethereum/common"
-    "github.com/ChefBingbong/viem-go/client"
-    "github.com/ChefBingbong/viem-go/contracts/erc20"
-)
-
-c, _ := client.NewClient("https://eth.llamarpc.com")
-defer c.Close()
-
-// Simple typed binding
-usdc := erc20.MustNew(
-    common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), c,
-)
-
-name, _ := usdc.Name(context.Background())        // "USD Coin"
-balance, _ := usdc.BalanceOf(context.Background(), 
-    common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
-)
-```
-
-**Side-by-side with viem (TypeScript):**
-
-```typescript
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
-
-const client = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-})
-
-const balance = await client.readContract({
-  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  abi: parseAbi(['function balanceOf(address) view returns (uint256)']),
-  functionName: 'balanceOf',
-  args: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
-})
-```
-
-```go
-import (
-    "context"
-    "github.com/ethereum/go-ethereum/common"
-    "github.com/ChefBingbong/viem-go/contracts/erc20"
-    "github.com/ChefBingbong/viem-go/client"
-)
-
-c, _ := client.NewClient("https://eth.llamarpc.com")
-usdc := erc20.MustNew(common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), c)
-
-balance, _ := usdc.BalanceOf(ctx, common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"))
-```
-
-**Parsing units:**
-
-```typescript
-import { parseEther, formatEther } from 'viem'
-
-const wei = parseEther('1.5')   // 1500000000000000000n
-const eth = formatEther(wei)    // "1.5"
-```
-
-```go
-import "github.com/ChefBingbong/viem-go/utils/unit"
-
-wei, _ := unit.ParseEther("1.5")    // *big.Int: 1500000000000000000
-eth := unit.FormatEther(wei)        // "1.5"
-```
-
 ## Typed Contract Templates
 
 One of viem-go's unique features is its **typed contract template system** -- something that has no equivalent in either viem (TypeScript) or go-ethereum.
 
-### The Problem
-
-In TypeScript, viem uses runtime ABI parsing and infers types dynamically. That works because TypeScript has powerful type inference from string literals. Go doesn't have that -- so you're normally stuck choosing between:
-
-1. **go-ethereum's `abigen`** -- generates huge files of boilerplate, tightly coupled to geth's internal types, hard to customize.
-2. **Raw `[]any` returns** -- call a function, get back `interface{}`, cast everything manually, pray you got the types right.
-
-### The Solution: `Fn` Generics + `viemgen`
+In TypeScript, viem infers types dynamically from ABI string literals at compile time. Go can't do that. So you're normally stuck with either go-ethereum's `abigen` (thousands of lines of generated boilerplate) or raw `[]any` returns where you cast everything manually.
 
 viem-go solves this with two complementary approaches:
 
-#### 1. Typed Function Descriptors (Zero Codegen)
+### 1. Typed Function Descriptors (Zero Codegen)
 
 Define your contract methods as typed descriptors using Go generics. The compiler enforces both argument types and return types at build time:
 
@@ -187,9 +200,9 @@ balance, err := contract.Call1(token, ctx, BalanceOf, ownerAddr)
 allowance, err := contract.Call2(token, ctx, Allowance, owner, spender)
 ```
 
-The `Fn`, `Fn1`, `Fn2`, `Fn3`, and `Fn4` types encode the argument count and types into the Go type system. `Call1` expects exactly one argument of the type specified in `Fn1` -- pass the wrong type and it's a compile error, not a runtime panic.
+`Fn`, `Fn1`, `Fn2`, `Fn3`, and `Fn4` encode the argument count and types into the Go type system. `Call1` expects exactly one argument of the type specified in `Fn1` -- pass the wrong type and it's a compile error, not a runtime panic.
 
-#### 2. `viemgen` Code Generator
+### 2. `viemgen` Code Generator
 
 For larger projects, the `viemgen` CLI generates complete typed bindings from an ABI JSON file:
 
@@ -213,7 +226,7 @@ This produces a Go package with:
 
 The generated code uses the same `Fn`/`Call` pattern under the hood, so it composes naturally with multicall and other viem-go features.
 
-#### Built-in ERC Standards
+### Built-in ERC Standards
 
 Common token standards ship out of the box:
 
