@@ -1,0 +1,23 @@
+Benchmark client connected to: http://127.0.0.1:8545
+Current block number: 24402569
+goos: darwin
+goarch: arm64
+cpu: Apple M4 Pro
+BenchmarkMulticall_Basic-14                            	   11384	    207937 ns/op	   30878 B/op	     291 allocs/op
+BenchmarkMulticall_WithArgs-14                         	   10464	    212253 ns/op	   31761 B/op	     295 allocs/op
+BenchmarkMulticall_MultiContract-14                    	    8697	    293359 ns/op	   41295 B/op	     351 allocs/op
+BenchmarkMulticall_10Calls-14                          	    8947	    279306 ns/op	   91517 B/op	     666 allocs/op
+BenchmarkMulticall_30Calls-14                          	    4660	    570403 ns/op	  278335 B/op	    1697 allocs/op
+BenchmarkMulticall_Deployless-14                       	    6010	    392310 ns/op	  137295 B/op	     328 allocs/op
+BenchmarkMulticall_TokenMetadata-14                    	   10190	    232237 ns/op	   38989 B/op	     338 allocs/op
+BenchmarkMulticall_50Calls-14                          	    3070	    785560 ns/op	  462065 B/op	    2723 allocs/op
+BenchmarkMulticall_100Calls-14                         	    1587	   1356091 ns/op	  958769 B/op	    5286 allocs/op
+BenchmarkMulticall_200Calls-14                         	     948	   2483017 ns/op	 1785029 B/op	   10396 allocs/op
+BenchmarkMulticall_500Calls-14                         	     658	   3859493 ns/op	 4787002 B/op	   26085 allocs/op
+BenchmarkMulticall_MixedContracts_100-14               	    1719	   1390738 ns/op	  968977 B/op	    5286 allocs/op
+BenchmarkMulticall_1000Calls-14                        	     439	   5939041 ns/op	 9633205 B/op	   52074 allocs/op
+BenchmarkMulticall_10000Calls_SingleRPC-14             	      19	 126200298 ns/op	92620048 B/op	  518491 allocs/op
+BenchmarkMulticall_10000Calls_Chunked-14               	      88	  29002749 ns/op	91898034 B/op	  519369 allocs/op
+BenchmarkMulticall_10000Calls_AggressiveChunking-14    	      68	  37552933 ns/op	91583104 B/op	  519377 allocs/op
+PASS
+ok  	command-line-arguments	48.270s
