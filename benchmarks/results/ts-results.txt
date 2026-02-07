@@ -7,61 +7,65 @@ Breaking changes might not follow SemVer, please pin Vitest's version when using
 
  RUN  v1.6.1 /Users/evanmcgrane/Documents/viem-go/benchmarks/typescript
 
-stdout | multicall.bench.ts:45:9
+stdout | multicall.bench.ts:49:9
 
 [viem-ts] Multicall RPC URL: http://127.0.0.1:8545
 
-stdout | warmup (/Users/evanmcgrane/Documents/viem-go/benchmarks/typescript/multicall.bench.ts:58:13)
-[viem-ts] Connected to Anvil, block number: 24391152
-
-stdout | warmup (/Users/evanmcgrane/Documents/viem-go/benchmarks/typescript/multicall.bench.ts:65:13)
-[viem-ts] Multicall warmup complete, starting benchmarks...
-
- ✓ multicall.bench.ts > Multicall 88107ms
-     name                                         hz     min      max    mean     p75     p99    p995    p999     rme  samples
-   · viem-ts: multicall (basic)             2,150.10  0.2885  11.7953  0.4651  0.4945  1.0633  1.2320  1.9964  ±0.55%    21501
-   · viem-ts: multicall (with args)         2,616.69  0.2782   6.0058  0.3822  0.3928  0.9404  0.9927  1.3825  ±0.46%    26167   fastest
-   · viem-ts: multicall (multi-contract)    1,864.23  0.3404  58.9324  0.5364  0.5222  1.3942  1.8259  5.1843  ±1.94%    18643
-   · viem-ts: multicall (10 calls)          1,888.33  0.4488   5.0824  0.5296  0.5298  0.8622  0.9131  1.3442  ±0.30%    18884
-   · viem-ts: multicall (30 calls)            936.09  0.9430   6.3086  1.0683  1.0634  1.5150  1.6927  5.1077  ±0.37%     9361   slowest
-   · viem-ts: multicall (chunked parallel)  1,021.39  0.8617   6.6905  0.9791  0.9656  1.4366  1.5893  4.5850  ±0.42%    10214
-   · viem-ts: multicall (deployless)        1,746.93  0.4697   4.5950  0.5724  0.5724  0.9220  0.9787  1.6560  ±0.29%    17470
-   · viem-ts: multicall (token metadata)    2,350.32  0.3220  28.3342  0.4255  0.4226  0.8828  0.9842  2.0677  ±0.82%    23504
-stdout | call.bench.ts:59:9
+ ✓ multicall.bench.ts > Multicall 32486ms
+     name                                               hz      min      max     mean      p75      p99     p995     p999      rme  samples
+   · viem-ts: multicall (basic)                   2,019.04   0.3503  34.7337   0.4953   0.4983   1.1156   1.3083   2.9505   ±3.53%     4039
+   · viem-ts: multicall (with args)                 803.99   0.3677  97.8825   1.2438   0.4925  17.5049  31.2535  69.8213  ±18.96%     1621
+   · viem-ts: multicall (multi-contract)          1,808.26   0.3745  18.9842   0.5530   0.5442   1.9117   2.6673   7.0962   ±3.03%     3617
+   · viem-ts: multicall (10 calls)                1,846.08   0.4623   5.9576   0.5417   0.5392   0.9053   0.9575   1.6294   ±0.87%     3693
+   · viem-ts: multicall (30 calls)                  962.92   0.9177  15.0168   1.0385   1.0124   1.5079   4.9969  11.7210   ±2.48%     1926
+   · viem-ts: multicall (deployless)              1,618.29   0.4942   109.23   0.6179   0.5842   0.9125   0.9709   3.3787  ±10.67%     3237
+   · viem-ts: multicall (token metadata)          2,349.74   0.3556   4.4825   0.4256   0.4291   0.8367   0.8841   1.0965   ±0.63%     4700   fastest
+   · viem-ts: multicall (50 calls)                  699.89   1.3295   5.5076   1.4288   1.4466   1.6573   1.8257   2.3064   ±0.47%     1400
+   · viem-ts: multicall (100 calls)                 395.48   2.4240   5.8491   2.5286   2.5564   2.8295   3.2883   5.8491   ±0.42%      791
+   · viem-ts: multicall (200 calls)                 192.20   4.6172  37.4594   5.2030   5.0653  14.1060  33.5405  37.4594   ±4.59%      385
+   · viem-ts: multicall (500 calls)                93.9164  10.3352  14.3810  10.6478  10.6668  14.1837  14.3810  14.3810   ±0.59%      188
+   · viem-ts: multicall (100 mixed contracts)       390.99   2.4158   5.5268   2.5576   2.5906   2.9640   3.5574   5.5268   ±0.51%      782
+   · viem-ts: multicall (1000 calls)               48.4026  19.9861  26.4308  20.6601  20.5542  26.4308  26.4308  26.4308   ±1.02%       97
+   · viem-ts: multicall (10000 calls single RPC)    4.6157   204.58   261.37   216.65   223.78   261.37   261.37   261.37   ±5.90%       10   slowest
+   · viem-ts: multicall (10000 calls chunked)       4.7409   205.64   217.94   210.93   217.00   217.94   217.94   217.94   ±1.73%       10
+   · viem-ts: multicall (10000 calls aggressive)    4.7348   203.06   226.07   211.20   224.36   226.07   226.07   226.07   ±3.28%       10
+stdout | call.bench.ts:60:9
 
 [viem-ts] RPC URL: http://127.0.0.1:8545
 
-stdout | warmup (/Users/evanmcgrane/Documents/viem-go/benchmarks/typescript/call.bench.ts:74:13)
-[viem-ts] Connected to Anvil, block number: 24391152
-
-stdout | warmup (/Users/evanmcgrane/Documents/viem-go/benchmarks/typescript/call.bench.ts:80:13)
-[viem-ts] Warmup complete, starting benchmarks...
-
- ✓ call.bench.ts > Call 66169ms
-     name                                      hz     min      max    mean     p75     p99    p995    p999     rme  samples
-   · viem-ts: call (basic)               4,402.19  0.1625  11.2616  0.2272  0.2248  0.9447  1.0582  1.8061  ±0.68%    44023
-   · viem-ts: call (with data)           4,566.41  0.1583   6.4310  0.2190  0.2184  0.8961  0.9992  1.3875  ±0.58%    45665
-   · viem-ts: call (with account)        4,551.68  0.1649   8.9146  0.2197  0.2153  0.8849  0.9942  1.3310  ±0.58%    45517
-   · viem-ts: call (decimals)            4,625.27  0.1612  11.4094  0.2162  0.2118  0.8838  0.9942  1.3777  ±0.61%    46253   fastest
-   · viem-ts: call (symbol)              4,615.97  0.1551   9.3124  0.2166  0.2122  0.9013  1.0191  1.4262  ±0.62%    46160
-   · viem-ts: call (balanceOf multiple)  3,620.33  0.1706  41.4629  0.2762  0.2398  1.1658  1.9612  7.0906  ±2.14%    36205   slowest
+ ✓ call.bench.ts > Call 12082ms
+     name                                      hz      min      max     mean      p75      p99     p995     p999     rme  samples
+   · viem-ts: call (basic)                54.6152  16.0031  40.9882  18.3099  18.3454  20.2035  40.9882  40.9882  ±2.36%      110
+   · viem-ts: call (with data)            53.7298  16.7513  20.9038  18.6116  19.3208  20.0610  20.9038  20.9038  ±0.84%      108   slowest
+   · viem-ts: call (with account)        3,846.55   0.1849   5.3775   0.2600   0.2581   0.9840   1.0911   1.5560  ±1.14%     7694   fastest
+   · viem-ts: call (decimals)             54.5632  16.6972  21.3810  18.3274  18.9115  20.3792  21.3810  21.3810  ±0.81%      110
+   · viem-ts: call (symbol)               54.3197  16.9096  21.8814  18.4095  19.0152  21.7717  21.8814  21.8814  ±0.88%      109
+   · viem-ts: call (balanceOf multiple)   55.0388  16.5429  19.6621  18.1690  18.5552  19.6508  19.6621  19.6621  ±0.69%      111
 
 
  BENCH  Summary
 
-  viem-ts: call (decimals) - call.bench.ts > Call
-    1.00x faster than viem-ts: call (symbol)
-    1.01x faster than viem-ts: call (with data)
-    1.02x faster than viem-ts: call (with account)
-    1.05x faster than viem-ts: call (basic)
-    1.28x faster than viem-ts: call (balanceOf multiple)
+  viem-ts: call (with account) - call.bench.ts > Call
+    69.89x faster than viem-ts: call (balanceOf multiple)
+    70.43x faster than viem-ts: call (basic)
+    70.50x faster than viem-ts: call (decimals)
+    70.81x faster than viem-ts: call (symbol)
+    71.59x faster than viem-ts: call (with data)
 
-  viem-ts: multicall (with args) - multicall.bench.ts > Multicall
-    1.11x faster than viem-ts: multicall (token metadata)
-    1.22x faster than viem-ts: multicall (basic)
-    1.39x faster than viem-ts: multicall (10 calls)
-    1.40x faster than viem-ts: multicall (multi-contract)
-    1.50x faster than viem-ts: multicall (deployless)
-    2.56x faster than viem-ts: multicall (chunked parallel)
-    2.80x faster than viem-ts: multicall (30 calls)
+  viem-ts: multicall (token metadata) - multicall.bench.ts > Multicall
+    1.16x faster than viem-ts: multicall (basic)
+    1.27x faster than viem-ts: multicall (10 calls)
+    1.30x faster than viem-ts: multicall (multi-contract)
+    1.45x faster than viem-ts: multicall (deployless)
+    2.44x faster than viem-ts: multicall (30 calls)
+    2.92x faster than viem-ts: multicall (with args)
+    3.36x faster than viem-ts: multicall (50 calls)
+    5.94x faster than viem-ts: multicall (100 calls)
+    6.01x faster than viem-ts: multicall (100 mixed contracts)
+    12.23x faster than viem-ts: multicall (200 calls)
+    25.02x faster than viem-ts: multicall (500 calls)
+    48.55x faster than viem-ts: multicall (1000 calls)
+    495.63x faster than viem-ts: multicall (10000 calls chunked)
+    496.27x faster than viem-ts: multicall (10000 calls aggressive)
+    509.08x faster than viem-ts: multicall (10000 calls single RPC)
 

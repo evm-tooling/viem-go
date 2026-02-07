@@ -19,8 +19,8 @@ ANVIL_PORT ?= 8545
 FORK_URL ?= https://eth.drpc.org
 # FORK_BLOCK ?=
 RPC_URL := http://127.0.0.1:$(ANVIL_PORT)
-GO_BENCH_COUNT ?= 5
-GO_BENCH_TIME ?= 10s
+GO_BENCH_COUNT ?= 1
+GO_BENCH_TIME ?= 2s
 
 # Export for child processes
 export ANVIL_PORT

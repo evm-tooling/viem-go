@@ -11,6 +11,6 @@
     "declaration": true,
     "noEmit": true
   },
-  "include": ["*.ts", "*.bench.ts"],
+  "include": ["*.ts", "*.bench.ts", "../compare.ts"],
   "exclude": ["node_modules"]
 }

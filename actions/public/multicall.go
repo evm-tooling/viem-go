@@ -204,6 +204,10 @@ func getNumWorkers(numJobs int) int {
 // Multicall batches multiple contract function calls into a single RPC call
 // using the multicall3 contract.
 //
+// When the client has Batch.Multicall configured, concurrent Multicall() calls
+// within the Wait window are automatically aggregated into a single larger
+// multicall RPC call. This mirrors viem's `batch: { multicall: { ... } }` behavior.
+//
 // This is equivalent to viem's `multicall` action.
 //
 // Example:
@@ -224,6 +228,39 @@ func getNumWorkers(numJobs int) int {
 //	    },
 //	})
 func Multicall(ctx context.Context, client Client, params MulticallParameters) (MulticallReturnType, error) {
+	// Check if client has multicall batch aggregation enabled
+	if batch := client.Batch(); batch != nil && batch.Multicall != nil {
+		batcher := getMulticallBatcher(client, batch.Multicall)
+		if batcher != nil {
+			return batcher.Schedule(ctx, params)
+		}
+	}
+
+	return multicallDirect(ctx, client, params)
+}
+
+// MulticallConcurrent is like Multicall but optimized for fan-out patterns where
+// many goroutines call it simultaneously. When the client has Batch.Multicall
+// configured, all concurrent calls within the wait window are merged into a single
+// large aggregate3 RPC call.
+//
+// Use this instead of Multicall when you know multiple goroutines will call it
+// concurrently (e.g., resolving N tokens in parallel).
+func MulticallConcurrent(ctx context.Context, client Client, params MulticallParameters) (MulticallReturnType, error) {
+	if batch := client.Batch(); batch != nil && batch.Multicall != nil {
+		batcher := getMulticallBatcher(client, batch.Multicall)
+		if batcher != nil {
+			return batcher.ScheduleConcurrent(ctx, params)
+		}
+	}
+
+	return multicallDirect(ctx, client, params)
+}
+
+// multicallDirect is the actual multicall implementation that executes immediately
+// without batching. This is called directly by Multicall when batching is not
+// enabled, and by the MulticallBatcher when flushing a batch.
+func multicallDirect(ctx context.Context, client Client, params MulticallParameters) (MulticallReturnType, error) {
 	// Set defaults
 	allowFailure := true
 	if params.AllowFailure != nil {
@@ -232,12 +269,12 @@ func Multicall(ctx context.Context, client Client, params MulticallParameters) (
 
 	batchSize := params.BatchSize
 	if batchSize <= 0 {
-		batchSize = 2048
+		batchSize = 8192
 	}
 
 	maxConcurrent := params.MaxConcurrentChunks
 	if maxConcurrent <= 0 {
-		maxConcurrent = 5
+		maxConcurrent = 10
 	}
 
 	// Resolve multicall address

@@ -392,6 +392,9 @@ func scheduleMulticall(ctx context.Context, client Client, req callRequest, bloc
 	target := common.HexToAddress(req.To)
 	callData := common.FromHex(req.Data)
 
+	calls := make([]Call3, 1)
+	calls = append(calls, Call3{target, true, callData})
+
 	// Encode a single Call3 struct: (address, bool, bytes)
 	callEncoded, err := abi.EncodeAbiParameters(
 		[]abi.AbiParam{
@@ -404,11 +407,7 @@ func scheduleMulticall(ctx context.Context, client Client, req callRequest, bloc
 				},
 			},
 		},
-		[]any{
-			[]any{
-				[]any{target, true, callData},
-			},
-		},
+		[]any{calls},
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode multicall args: %w", err)
@@ -451,43 +450,13 @@ func scheduleMulticall(ctx context.Context, client Client, req callRequest, bloc
 	// Decode multicall result
 	// aggregate3 returns: (bool success, bytes returnData)[]
 	resultData := common.FromHex(hexResult)
-	decoded, decodeErr := abi.DecodeAbiParameters(
-		[]abi.AbiParam{
-			{
-				Type: "tuple[]",
-				Components: []abi.AbiParam{
-					{Name: "success", Type: "bool"},
-					{Name: "returnData", Type: "bytes"},
-				},
-			},
-		},
-		resultData,
-	)
+	decodedResults, decodeErr := decodeAggregate3Result(resultData)
 	if decodeErr != nil {
 		return nil, fmt.Errorf("failed to decode multicall result: %w", decodeErr)
 	}
 
-	// Extract result for our call (first one)
-	if len(decoded) > 0 {
-		if results, ok := decoded[0].([]any); ok && len(results) > 0 {
-			if tuple, ok := results[0].([]any); ok && len(tuple) >= 2 {
-				success, _ := tuple[0].(bool)
-				returnData, _ := tuple[1].([]byte)
-
-				if !success {
-					return nil, &RawContractError{Data: returnData}
-				}
-
-				if len(returnData) == 0 {
-					return &CallReturnType{Data: nil}, nil
-				}
-
-				return &CallReturnType{Data: returnData}, nil
-			}
-		}
-	}
-
-	return nil, fmt.Errorf("unexpected multicall result format")
+	callReturn := CallReturnType{Data: decodedResults[0].ReturnData}
+	return &callReturn, nil
 }
 
 // handleCCIPRead handles CCIP-Read offchain lookup.

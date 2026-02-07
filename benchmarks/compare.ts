@@ -10,8 +10,8 @@
  *   bun run compare.ts --bench call --go-results X --ts-results Y  # Single benchmark mode
  */
 
-import { readFileSync, existsSync, writeFileSync, readdirSync } from 'fs'
-import { join, basename } from 'path'
+import { readFileSync, existsSync, writeFileSync } from 'fs'
+import { join } from 'path'
 import { parseArgs } from 'util'
 
 // ============================================================================
@@ -761,7 +761,7 @@ function generateFullReport(comparisons: ComparisonResult[], stats: OverallStats
 // ============================================================================
 
 async function main() {
-  const resultsDir = join(import.meta.dir, 'results')
+  const resultsDir = join(import.meta.dirname, 'results')
   
   // Determine result file paths
   let goResultsPath: string
@@ -770,8 +770,8 @@ async function main() {
   
   if (mode === 'single' && args.bench) {
     // Single benchmark mode
-    goResultsPath = join(import.meta.dir, args['go-results'] || `results/${args.bench}-go-results.txt`)
-    tsResultsPath = join(import.meta.dir, args['ts-results'] || `results/${args.bench}-ts-results.txt`)
+    goResultsPath = join(import.meta.dirname, args['go-results'] || `results/${args.bench}-go-results.txt`)
+    tsResultsPath = join(import.meta.dirname, args['ts-results'] || `results/${args.bench}-ts-results.txt`)
     outputBaseName = args.bench
     console.log(`\nSingle benchmark mode: ${args.bench}`)
   } else {

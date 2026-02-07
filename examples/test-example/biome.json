@@ -3,10 +3,6 @@
   "files": {
     "includes": [
       "**",
-      "!**/_cjs",
-      "!**/_esm",
-      "!**/_types",
-      "!**/.turbo",
       "!**/node_modules",
       "!**/CHANGELOG.md",
       "!**/dist",
@@ -59,17 +55,6 @@
           "options": {
             "syntax": "shorthand"
           }
-        },
-        "noRestrictedImports": {
-          "level": "error",
-          "options": {
-            "paths": {
-              "@oogabooga/core/edenTreaty": {
-                "importNames": ["edenTreaty"],
-                "message": "Direct usage of edenTreaty from @oogabooga/core/edenTreaty is not allowed. Use the treaty export instead."
-              }
-            }
-          }
         }
       },
       "suspicious": {
@@ -106,25 +91,5 @@
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
-  },
-  "overrides": [
-    {
-      "includes": ["apps/**", "**/*.script.ts"],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noExplicitAny": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**/*.test.ts",
-        "**/*.test.tsx",
-        "**/packages/db/**",
-        "**/*.script.ts"
-      ]
-    }
-  ]
+  }
 }
