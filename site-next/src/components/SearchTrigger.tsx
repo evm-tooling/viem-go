@@ -42,7 +42,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
       <>
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center justify-center w-12 h-9 rounded-md text-gray-3 hover:text-white hover:bg-white/[0.08] transition-colors"
+          className="flex items-center justify-center w-12 h-9 rounded-lg text-gray-3 hover:text-white hover:bg-white/[0.08] transition-colors"
           aria-label="Search"
         >
           <svg
@@ -69,7 +69,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 min-w-[300px] h-10 px-3 rounded-lg border border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-150 hover:border-gray-4 hover:text-gray-3"
+        className="flex items-center gap-2 min-w-[300px] h-10 px-3 rounded-[12px] border border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-150 hover:border-gray-4 hover:text-gray-3"
       >
         <svg
           className="w-4 h-4 shrink-0"

@@ -35,11 +35,11 @@ function NavGroup({
   // Top-level section headers -- bold, white, always visible
   if (depth === 0) {
     return (
-      <div className="mt-5 first:mt-0">
-        <span className="flex items-center text-[0.9375rem] font-bold text-white tracking-wide mb-1 py-1.5 px-3">
+      <div className="mt-4 first:mt-0">
+        <span className="flex items-center text-[0.8125rem] font-semibold text-gray-3 uppercase tracking-wider mb-0.5 py-1 px-3">
           {item.label}
         </span>
-        <div className="ml-3 border-l border-gray-5/40">
+        <div className="flex flex-col gap-0">
           {item.items?.map((child, i) => (
             <NavNode key={i} item={child} depth={depth + 1} pathname={pathname} />
           ))}
@@ -53,7 +53,7 @@ function NavGroup({
     <div>
       <button
         onClick={() => setExpanded((prev) => !prev)}
-        className={`w-full flex items-center justify-between py-1.5 pl-4 pr-3 text-[0.9375rem] cursor-pointer transition-colors ${
+        className={`w-full flex items-center justify-between py-1.5 pl-4 pr-3 mx-1 rounded-md text-[0.875rem] cursor-pointer transition-colors hover:bg-white/[0.06] ${
           childActive
             ? "text-white font-semibold"
             : "text-gray-3 hover:text-white"
@@ -78,7 +78,7 @@ function NavGroup({
         </svg>
       </button>
       {expanded && (
-        <div className="ml-3 border-l border-gray-5/40">
+        <div className="flex flex-col gap-0">
           {item.items?.map((child, i) => (
             <NavNode key={i} item={child} depth={depth + 1} pathname={pathname} />
           ))}
@@ -98,10 +98,10 @@ function NavLeaf({ item, pathname }: { item: NavItem; pathname: string }) {
   return (
     <Link
       href={`/docs/${item.slug}`}
-      className={`block py-1.5 pl-4 pr-3 text-[0.9375rem] no-underline transition-colors ${
+      className={`block py-1.5 pl-4 pr-3 mx-1 rounded-md text-[0.875rem] no-underline transition-colors ${
         isActive
-          ? "text-accent font-medium border-l-2 border-accent -ml-px"
-          : "text-gray-3 hover:text-white"
+          ? "text-accent font-medium bg-accent/10"
+          : "text-gray-3 hover:text-white hover:bg-white/[0.06]"
       }`}
     >
       {item.label}
@@ -200,7 +200,7 @@ export default function DocsSidebar() {
   return (
     <>
       {/* Desktop sidebar -- hidden below lg */}
-      <aside className="hidden lg:flex w-[350px] pl-24 shrink-0 h-[calc(100vh-4rem)] sticky top-16 flex-col border-r border-accent/10 bg-gray-6/80 relative before:absolute before:top-0 before:bottom-0 before:right-full before:w-[50vw] before:bg-dark-bg">
+      <aside className="hidden lg:flex w-[260px] xl:w-[320px] 2xl:w-[380px] pl-4 xl:pl-12 2xl:pl-20 shrink-0 h-full flex-col bg-dark-deep/50 overflow-y-auto">
         <SidebarContent pathname={pathname} />
       </aside>
 
@@ -213,7 +213,7 @@ export default function DocsSidebar() {
             onClick={close}
           />
           {/* Panel */}
-          <aside className="fixed top-16 left-0 z-50 w-[300px] max-w-[85vw] h-[calc(100vh-4rem)] bg-dark-bg border-r border-accent/15 flex flex-col lg:hidden shadow-2xl animate-slide-in">
+          <aside className="fixed top-12 left-0 z-50 w-[300px] max-w-[85vw] h-[calc(100vh-3rem)] bg-dark-bg border-r border-accent/15 flex flex-col lg:hidden shadow-2xl animate-slide-in">
             <SidebarContent pathname={pathname} />
           </aside>
         </>

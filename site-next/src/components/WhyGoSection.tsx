@@ -23,10 +23,10 @@ const cards = [
 
 export default function WhyGoSection() {
   return (
-    <section className="w-full py-8 px-8 bg-gradient-to-b from-dark-deep/30 to-transparent">
+    <section className="w-full py-8 px-8 bg-dark-deep/35">
       <div className="max-w-[1120px] mx-auto mb-10 text-center">
-        <h2 className="text-[2rem] font-semibold text-white mb-3">Why Go?</h2>
-        <p className="text-lg text-gray-3 max-w-[600px] mx-auto">
+        <h2 className="text-[2.5rem] font-semibold text-white mb-2">Why Go?</h2>
+        <p className="text-[1.1rem] text-gray-2 max-w-[600px] mx-auto leading-relaxed">
           viem-go is designed for teams and projects that need Ethereum tooling
           in the Go ecosystem and have familiarity with the viem typescript
           library.
@@ -38,10 +38,10 @@ export default function WhyGoSection() {
             key={card.title}
             className="bg-gray-6/50 border border-accent/20 rounded-xl p-6 transition-all duration-200 hover:border-accent/40 hover:bg-gray-6/70 hover:-translate-y-0.5"
           >
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-[1.25rem] font-semibold text-white mb-1.5">
               {card.title}
             </h3>
-            <p className="text-[0.9375rem] text-gray-3 leading-normal">
+            <p className="text-[1rem] text-gray-2 leading-relaxed">
               {card.description}
             </p>
           </div>

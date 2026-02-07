@@ -61,7 +61,7 @@ function ComparisonCard({
       }`}
     >
       <div
-        className={`px-6 py-4 text-lg font-semibold text-white border-b border-accent/15 ${
+        className={`px-6 py-3 text-[1.1rem] font-semibold text-white border-b border-accent/15 ${
           highlighted ? "bg-accent/15" : "bg-dark-deep/60"
         }`}
       >
@@ -71,7 +71,7 @@ function ComparisonCard({
         {items.map((item, idx) => (
           <div
             key={idx}
-            className={`flex items-center gap-3 py-2 text-[0.9375rem] text-gray-2 ${
+            className={`flex items-center gap-3 py-2 text-[0.9rem] text-gray-2 ${
               idx < items.length - 1
                 ? "border-b border-accent/[0.08]"
                 : ""
@@ -90,10 +90,10 @@ export default function ComparisonSection() {
   return (
     <section className="w-full py-8 px-8 bg-gradient-to-b from-dark-deep/30 to-transparent">
       <div className="max-w-[1120px] mx-auto mb-10 text-center">
-        <h2 className="text-[2rem] font-semibold text-white mb-3">
+        <h2 className="text-[2.5rem] font-semibold text-white mb-2">
           viem-go vs go-ethereum
         </h2>
-        <p className="text-lg text-gray-3 max-w-[600px] mx-auto">
+        <p className="text-[1.1rem] text-gray-2 max-w-[600px] mx-auto leading-relaxed">
           Viem-go aims to hit that middleground of low level control and high
           level abstraction resulting in the best developer experience. See how
           viem-go compares to the standard go-ethereum library

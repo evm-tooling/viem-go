@@ -176,7 +176,7 @@ export default async function DocPage({ params }: PageProps) {
             {doc.meta.description}
           </p>
         )}
-        <div className="docs-prose">
+        <div className="docs-prose pr-12">
           <MDXRemote source={doc.content} components={mdxComponents} />
         </div>
       </article>

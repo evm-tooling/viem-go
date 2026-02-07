@@ -1,7 +1,26 @@
 "use client";
 
 import * as React from "react";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight, type PrismTheme } from "prism-react-renderer";
+
+/** Custom muted dark theme (similar to One Dark / viem docs) */
+const codeTheme: PrismTheme = {
+  plain: { color: "#abb2bf", backgroundColor: "transparent" },
+  styles: [
+    { types: ["comment", "prolog", "doctype", "cdata"], style: { color: "#5c6370", fontStyle: "italic" as const } },
+    { types: ["keyword", "operator", "tag"], style: { color: "#c678dd" } },
+    { types: ["property", "function"], style: { color: "#61afef" } },
+    { types: ["string", "attr-value", "template-string"], style: { color: "#d19a66" } },
+    { types: ["number", "boolean"], style: { color: "#d19a66" } },
+    { types: ["builtin", "class-name", "maybe-class-name"], style: { color: "#e5c07b" } },
+    { types: ["punctuation"], style: { color: "#abb2bf" } },
+    { types: ["attr-name"], style: { color: "#d19a66" } },
+    { types: ["char", "constant", "symbol"], style: { color: "#56b6c2" } },
+    { types: ["variable"], style: { color: "#e06c75" } },
+    { types: ["regex", "important"], style: { color: "#c678dd" } },
+    { types: ["plain"], style: { color: "#abb2bf" } },
+  ],
+};
 import {
   Tab,
   TabGroup,
@@ -59,20 +78,20 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
     const tab = tabs[0]!;
     const codeStr = (tab.code || "").trim();
     return (
-      <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-gray-6/80">
-        <div className="flex items-center justify-between px-3 h-11 bg-dark-deep/60">
+      <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-transparent">
+        <div className="flex items-center justify-between px-3 h-11 bg-gray-6 border-b border-accent/10">
           <span className="font-mono text-[0.8125rem] font-medium text-white leading-none">
             {title || tab.title}
           </span>
           <CopyButton text={codeStr} />
         </div>
         <Highlight
-          theme={themes.nightOwl}
+          theme={codeTheme}
           code={codeStr}
           language={tab.language}
         >
           {({ tokens, getLineProps, getTokenProps }) => (
-            <pre className="m-0 py-1.5 px-3 overflow-auto text-[0.8125rem] leading-relaxed bg-transparent">
+            <pre className="!m-0 !py-2 !px-3 !border-0 overflow-auto text-[0.8125rem] leading-relaxed bg-transparent">
               {tokens.map((line, i) => (
                 <div
                   key={i}
@@ -99,9 +118,9 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   }
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-gray-6/80">
+    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-transparent ">
       <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <div className="flex items-center justify-between h-11 bg-dark-deep/90">
+        <div className="flex items-center justify-between h-11 bg-[rgb(23,26,38,0.7)] border-b border-accent/10">
           <TabList className="flex h-full items-stretch">
             {tabs.map((tab, index) => (
               <Tab
@@ -121,18 +140,18 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
           </div>
         </div>
 
-        <TabPanels className="mt-0">
+        <TabPanels className="!mt-0 !pt-0 !pb-0">
           {tabs.map((tab, index) => {
             const codeStr = (tab.code || "").trim();
             return (
               <TabPanel key={index}>
                 <Highlight
-                  theme={themes.nightOwl}
+                  theme={codeTheme}
                   code={codeStr}
                   language={tab.language}
                 >
                   {({ tokens, getLineProps, getTokenProps }) => (
-                    <pre className="m-0 py-1.5 px-3 overflow-auto text-[0.8125rem] leading-relaxed bg-transparent">
+                    <pre className="!m-0 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed bg-transparent">
                       {tokens.map((line, i) => (
                         <div
                           key={i}

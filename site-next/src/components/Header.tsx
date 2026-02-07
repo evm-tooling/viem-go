@@ -1,46 +1,81 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import SearchTrigger from "./SearchTrigger";
 import SidebarToggle from "./SidebarToggle";
+import Image from "next/image";
+
+function NavLink({
+  href,
+  external,
+  children,
+}: {
+  href: string;
+  external?: boolean;
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const isActive = !external && pathname.startsWith(href);
+
+  const base =
+    "hidden sm:flex items-center text-sm font-medium no-underline px-3 py-1 transition-colors relative";
+  const active = isActive
+    ? "text-accent after:absolute after:bottom-[-11px] after:left-0 after:right-0 after:h-[2px] after:bg-accent after:rounded-full"
+    : "text-gray-2 hover:text-white";
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${base} ${active}`}
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={`${base} ${active}`}>
+      {children}
+    </Link>
+  );
+}
 
 export default function Header() {
+  const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-accent/10 bg-gray-6/80 backdrop-blur-md">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-        {/* Left: hamburger + logo + search */}
-        <div className="flex items-center gap-3 sm:gap-5 min-w-0">
-          <SidebarToggle />
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <img
-              src="/svg/golem-logo-full-light.svg"
-              alt="viem-go"
-              className="h-[6.25rem] max-sm:h-12"
-            />
-          </Link>
-          <div className="hidden sm:block ml-10">
-            <SearchTrigger />
+    <header className="sticky top-0 z-50 w-full  bg-dark-deep/80 py-[5px]">
+      <div className="px-4 sm:px-6 h-12 flex items-center justify-between gap-3">
+        {/* Left: logo area (matches sidebar width) + search (aligns with main content) */}
+        <div className="flex items-center min-w-0">
+          <div className={`flex items-center gap-3 sm:gap-4 shrink-0 ${pathname === "/" ? "" : "lg:w-[260px] xl:w-[320px] 2xl:w-[355px] xl:pl-14 2xl:pl-20"}`}>
+            <SidebarToggle />
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <Image
+              height={90}
+              width={90}
+                src="/svg/golem-logo-full-light.svg"
+                alt="viem-go"
+              />
+            </Link>
           </div>
+          { pathname !== "/" && <div className="hidden sm:block ">
+            <SearchTrigger />
+          </div>}{}
         </div>
 
         {/* Right: nav links */}
-        <nav className="flex items-center gap-1 shrink-0">
-          <Link
-            href="/docs/introduction"
-            className="hidden sm:block text-sm font-medium text-gray-2 no-underline px-3 py-2 rounded-md hover:text-white hover:bg-white/5 transition-colors"
-          >
-            Docs
-          </Link>
-          <a
-            href="https://github.com/ChefBingbong/viem-go"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:block text-sm font-medium text-gray-2 no-underline px-3 py-2 rounded-md hover:text-white hover:bg-white/5 transition-colors"
-          >
+        <nav className="flex items-center gap-2 shrink-0">
+          <NavLink href="/docs">Docs</NavLink>
+          <NavLink href="https://github.com/ChefBingbong/viem-go" external>
             GitHub
-          </a>
+          </NavLink>
           {/* Mobile search (icon only) */}
-          <div className="sm:hidden">
+          { pathname !== "/" && <div className="sm:hidden">
             <SearchTrigger compact />
-          </div>
+          </div>}
           {/* Version dropdown */}
           <VersionDropdown />
         </nav>

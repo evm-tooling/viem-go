@@ -2,8 +2,8 @@ export default function SupportSection() {
   return (
     <section className="w-full py-8 px-8">
       <div className="max-w-[1120px] mx-auto mb-10 text-center">
-        <h2 className="text-[2rem] font-semibold text-white mb-3">Support</h2>
-        <p className="text-lg text-gray-3 max-w-[600px] mx-auto">
+        <h2 className="text-[2.5rem] font-semibold text-white mb-2">Support</h2>
+        <p className="text-[1.1rem] text-gray-2 max-w-[600px] mx-auto leading-relaxed">
           Help support future development and make viem-go a sustainable
           open-source project
         </p>
@@ -13,7 +13,7 @@ export default function SupportSection() {
           href="https://github.com/sponsors/ChefBingbong"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 px-6 py-4 bg-gray-6/50 border border-accent/20 rounded-xl text-gray-2 no-underline font-medium text-base transition-all duration-200 hover:border-accent/40 hover:bg-gray-6/70 hover:text-white hover:-translate-y-0.5"
+          className="flex items-center gap-3 px-6 py-4 bg-gray-6/50 border border-accent/20 rounded-xl text-gray-2 no-underline font-semibold text-[1rem] transition-all duration-200 hover:border-accent/40 hover:bg-gray-6/70 hover:text-white hover:-translate-y-0.5"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +31,7 @@ export default function SupportSection() {
           href="https://github.com/ChefBingbong/viem-go"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 px-6 py-4 bg-gray-6/50 border border-accent/20 rounded-xl text-gray-2 no-underline font-medium text-base transition-all duration-200 hover:border-accent/40 hover:bg-gray-6/70 hover:text-white hover:-translate-y-0.5"
+          className="flex items-center gap-3 px-6 py-4 bg-gray-6/50 border border-accent/20 rounded-xl text-gray-2 no-underline font-semibold text-[1rem] transition-all duration-200 hover:border-accent/40 hover:bg-gray-6/70 hover:text-white hover:-translate-y-0.5"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

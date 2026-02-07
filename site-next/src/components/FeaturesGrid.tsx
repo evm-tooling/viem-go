@@ -28,10 +28,10 @@ export default function FeaturesGrid() {
           key={feature.title}
           className="relative h-[168px] rounded-lg border border-accent/15 p-5 mt-2 flex flex-col justify-start bg-gray-6/50 backdrop-blur-sm transition-all duration-200 hover:border-accent/35 hover:bg-gray-6/70 max-lg:h-[142px]"
         >
-          <h3 className="text-xl font-medium m-0 text-white">
+          <h3 className="text-[1.25rem] font-semibold m-0 text-white">
             {feature.title}
           </h3>
-          <p className="text-base text-gray-3 m-0 leading-normal mt-2">
+          <p className="text-[1rem] text-gray-2 m-0 leading-relaxed mt-2">
             {feature.description}
           </p>
         </div>
