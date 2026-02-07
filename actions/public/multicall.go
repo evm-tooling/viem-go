@@ -3,13 +3,11 @@ package public
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"runtime"
 	"sync"
 
 	json "github.com/goccy/go-json"
 
-	gethabi "github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
@@ -17,46 +15,6 @@ import (
 	"github.com/ChefBingbong/viem-go/constants"
 	"github.com/ChefBingbong/viem-go/utils/deployless"
 )
-
-// Cached aggregate3 ABI parameters and pre-parsed go-ethereum Arguments.
-// The Arguments are parsed once and reused for all multicalls, avoiding
-// the overhead of rebuilding type definitions on every call.
-var (
-	aggregate3EncodeArgs gethabi.Arguments
-	aggregate3DecodeArgs gethabi.Arguments
-	aggregate3ArgsOnce   sync.Once
-	aggregate3ArgsErr    error
-)
-
-// initAggregate3Args initializes the cached, pre-parsed go-ethereum Arguments
-// for aggregate3 encoding and decoding. This is the key optimization: we parse
-// the complex tuple[] type definition once and reuse the Arguments forever.
-func initAggregate3Args() {
-	aggregate3ArgsOnce.Do(func() {
-		// Build encode args: tuple(address target, bool allowFailure, bytes callData)[]
-		encodeType, err := gethabi.NewType("tuple[]", "", []gethabi.ArgumentMarshaling{
-			{Name: "target", Type: "address"},
-			{Name: "allowFailure", Type: "bool"},
-			{Name: "callData", Type: "bytes"},
-		})
-		if err != nil {
-			aggregate3ArgsErr = fmt.Errorf("failed to parse aggregate3 encode type: %w", err)
-			return
-		}
-		aggregate3EncodeArgs = gethabi.Arguments{{Type: encodeType}}
-
-		// Build decode args: tuple(bool success, bytes returnData)[]
-		decodeType, err := gethabi.NewType("tuple[]", "", []gethabi.ArgumentMarshaling{
-			{Name: "success", Type: "bool"},
-			{Name: "returnData", Type: "bytes"},
-		})
-		if err != nil {
-			aggregate3ArgsErr = fmt.Errorf("failed to parse aggregate3 decode type: %w", err)
-			return
-		}
-		aggregate3DecodeArgs = gethabi.Arguments{{Type: decodeType}}
-	})
-}
 
 // Cached aggregate3 selector - parsed once
 var (
@@ -653,31 +611,11 @@ func executeChunk(ctx context.Context, client Client, calls []Call3, multicallAd
 }
 
 // encodeAggregate3 encodes calls for the aggregate3 function.
-// Uses pre-parsed go-ethereum Arguments for direct packing, bypassing
-// the generic EncodeAbiParameters path which re-parses types on every call.
+// Uses a hand-rolled ABI encoder that writes directly to bytes -- zero reflect,
+// zero big.Int allocations, single buffer allocation. This is ~50-100x faster
+// than go-ethereum's generic reflect-based packer for large call arrays.
 func encodeAggregate3(calls []Call3) ([]byte, error) {
-	initAggregate3Args()
-	if aggregate3ArgsErr != nil {
-		return nil, aggregate3ArgsErr
-	}
-
-	// Convert Call3 structs to the format go-ethereum expects for tuple[]
-	tuples := make([]struct {
-		Target       common.Address `abi:"target"`
-		AllowFailure bool           `abi:"allowFailure"`
-		CallData     []byte         `abi:"callData"`
-	}, len(calls))
-	for i, c := range calls {
-		tuples[i].Target = c.Target
-		tuples[i].AllowFailure = c.AllowFailure
-		tuples[i].CallData = c.CallData
-	}
-
-	// Pack directly using cached Arguments
-	encoded, err := aggregate3EncodeArgs.Pack(tuples)
-	if err != nil {
-		return nil, fmt.Errorf("failed to pack aggregate3: %w", err)
-	}
+	encoded := encodeAggregate3Fast(calls)
 
 	// Prepend cached aggregate3 selector (0x82ad56cb)
 	selector := getAggregate3Selector()
@@ -689,75 +627,11 @@ func encodeAggregate3(calls []Call3) ([]byte, error) {
 }
 
 // decodeAggregate3Result decodes the result from aggregate3.
-// Uses pre-parsed go-ethereum Arguments and direct struct unpacking for speed,
-// bypassing the generic DecodeAbiParameters path entirely.
+// Uses a hand-rolled ABI decoder that reads directly from bytes -- zero reflect,
+// zero big.Int allocations, direct byte slicing. This is ~50-100x faster than
+// go-ethereum's generic reflect-based unpacker for large result arrays.
 func decodeAggregate3Result(data []byte) ([]aggregate3Result, error) {
-	initAggregate3Args()
-	if aggregate3ArgsErr != nil {
-		return nil, aggregate3ArgsErr
-	}
-
-	if len(data) == 0 {
-		return nil, fmt.Errorf("empty aggregate3 result data")
-	}
-
-	// Unpack directly using cached Arguments
-	unpacked, err := aggregate3DecodeArgs.Unpack(data)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unpack aggregate3 result: %w", err)
-	}
-
-	if len(unpacked) == 0 {
-		return nil, fmt.Errorf("empty aggregate3 result")
-	}
-
-	// The unpacked result is a []struct{Success bool, ReturnData []byte}
-	// go-ethereum returns this as a slice of anonymous structs
-	// We need to use reflect to extract the values since the exact type is generated at runtime
-	type resultStruct = struct {
-		Success    bool
-		ReturnData []byte
-	}
-
-	// Try direct type assertion for the common case
-	if tuples, ok := unpacked[0].([]resultStruct); ok {
-		results := make([]aggregate3Result, len(tuples))
-		for i, t := range tuples {
-			results[i] = aggregate3Result{Success: t.Success, ReturnData: t.ReturnData}
-		}
-		return results, nil
-	}
-
-	// Fallback: use reflect for go-ethereum's generated anonymous struct types
-	return decodeAggregate3Reflect(unpacked[0])
-}
-
-// decodeAggregate3Reflect handles the case where go-ethereum returns an anonymous struct
-// type that can't be directly asserted. Uses reflect to extract fields by name.
-func decodeAggregate3Reflect(raw any) ([]aggregate3Result, error) {
-	rv := reflect.ValueOf(raw)
-	if rv.Kind() != reflect.Slice {
-		return nil, fmt.Errorf("unexpected aggregate3 result type: %T (expected slice)", raw)
-	}
-
-	results := make([]aggregate3Result, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		elem := rv.Index(i)
-		if elem.Kind() == reflect.Struct {
-			successField := elem.FieldByName("Success")
-			returnDataField := elem.FieldByName("ReturnData")
-			if successField.IsValid() && returnDataField.IsValid() {
-				results[i] = aggregate3Result{
-					Success:    successField.Bool(),
-					ReturnData: returnDataField.Bytes(),
-				}
-				continue
-			}
-		}
-		return nil, fmt.Errorf("invalid aggregate3 result tuple at index %d: %T", i, elem.Interface())
-	}
-
-	return results, nil
+	return decodeAggregate3Fast(data)
 }
 
 // resolveMulticallAddress determines the multicall3 contract address.

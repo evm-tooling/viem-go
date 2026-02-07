@@ -36,39 +36,39 @@
   <text x="580.0" y="3408" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">1s</text>
   <text x="-10" y="16" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Abi</text>
   <text x="-10" y="58" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Result</text>
-  <rect x="0" y="36" width="127.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="133.0" y="48" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">93.5 ns</text>
+  <rect x="0" y="36" width="127.2" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="133.2" y="48" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">94.1 ns</text>
   <rect x="0" y="56" width="195.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="201.3" y="68" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.07 µs</text>
   <text x="-10" y="110" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Simple</text>
-  <rect x="0" y="88" width="150.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="156.3" y="100" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">215.1 ns</text>
+  <rect x="0" y="88" width="150.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="156.4" y="100" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">215.4 ns</text>
   <rect x="0" y="108" width="253.7" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="259.7" y="120" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">8.64 µs</text>
-  <text x="-10" y="162" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Complex</text>
-  <rect x="0" y="140" width="161.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="167.9" y="152" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">324.7 ns</text>
-  <rect x="0" y="160" width="256.4" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="262.4" y="172" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">9.53 µs</text>
-  <text x="-10" y="214" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked</text>
-  <rect x="0" y="192" width="162.6" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="168.6" y="204" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">334.0 ns</text>
-  <rect x="0" y="212" width="183.5" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="189.5" y="224" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">702.8 ns</text>
+  <text x="-10" y="162" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked</text>
+  <rect x="0" y="140" width="161.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="167.6" y="152" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">321.9 ns</text>
+  <rect x="0" y="160" width="183.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="189.5" y="172" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">702.8 ns</text>
+  <text x="-10" y="214" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Complex</text>
+  <rect x="0" y="192" width="162.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="168.1" y="204" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">327.8 ns</text>
+  <rect x="0" y="212" width="256.4" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="262.4" y="224" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">9.53 µs</text>
   <text x="-10" y="266" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked Multi</text>
-  <rect x="0" y="244" width="166.4" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="172.4" y="256" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">381.5 ns</text>
+  <rect x="0" y="244" width="167.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="173.1" y="256" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">391.1 ns</text>
   <rect x="0" y="264" width="200.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="206.3" y="276" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.28 µs</text>
   <text x="-10" y="318" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode 3-Arg</text>
-  <rect x="0" y="296" width="171.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="177.3" y="308" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">454.7 ns</text>
+  <rect x="0" y="296" width="171.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="177.5" y="308" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">457.8 ns</text>
   <rect x="0" y="316" width="257.9" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="263.9" y="328" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">10.03 µs</text>
   <text x="-10" y="364" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Address</text>
   <text x="-10" y="406" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">IsAddress Lower</text>
-  <rect x="0" y="384" width="160.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="166.0" y="396" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">304.3 ns</text>
+  <rect x="0" y="384" width="159.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="165.5" y="396" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">298.6 ns</text>
   <rect x="0" y="404" width="159.1" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="165.1" y="416" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">294.5 ns</text>
   <text x="-10" y="458" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Checksum</text>
@@ -77,81 +77,81 @@
   <rect x="0" y="456" width="184.2" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="190.2" y="468" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">722.1 ns</text>
   <text x="-10" y="510" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">IsAddress</text>
-  <rect x="0" y="488" width="190.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="196.7" y="500" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">909.8 ns</text>
+  <rect x="0" y="488" width="190.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="196.8" y="500" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">913.0 ns</text>
   <rect x="0" y="508" width="158.9" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="164.9" y="520" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">292.5 ns</text>
   <text x="-10" y="562" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">CREATE</text>
-  <rect x="0" y="540" width="217.2" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="223.2" y="552" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.35 µs</text>
+  <rect x="0" y="540" width="217.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="223.3" y="552" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.36 µs</text>
   <rect x="0" y="560" width="257.1" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="263.1" y="572" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">9.76 µs</text>
   <text x="-10" y="614" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">CREATE2</text>
-  <rect x="0" y="592" width="220.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="226.0" y="604" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.59 µs</text>
+  <rect x="0" y="592" width="220.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="226.3" y="604" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.62 µs</text>
   <rect x="0" y="612" width="273.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="279.3" y="624" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">17.41 µs</text>
   <text x="-10" y="660" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Call</text>
-  <text x="-10" y="702" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">BalanceOf Multi</text>
-  <rect x="0" y="680" width="337.1" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="343.1" y="692" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">169.87 µs</text>
-  <rect x="0" y="700" width="468.1" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="474.1" y="712" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">18.38 ms</text>
-  <text x="-10" y="754" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">With Data</text>
-  <rect x="0" y="732" width="337.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="343.3" y="744" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">171.30 µs</text>
-  <rect x="0" y="752" width="468.5" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="474.5" y="764" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">18.63 ms</text>
-  <text x="-10" y="806" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">With Account</text>
-  <rect x="0" y="784" width="337.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="343.9" y="796" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">175.13 µs</text>
-  <rect x="0" y="804" width="352.0" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="358.0" y="816" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">289.80 µs</text>
-  <text x="-10" y="858" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Basic</text>
-  <rect x="0" y="836" width="338.2" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="344.2" y="848" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">176.77 µs</text>
-  <rect x="0" y="856" width="469.5" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="475.5" y="868" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">19.32 ms</text>
-  <text x="-10" y="910" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Symbol</text>
-  <rect x="0" y="888" width="338.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="344.7" y="900" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">180.23 µs</text>
-  <rect x="0" y="908" width="467.4" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="473.4" y="920" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">17.92 ms</text>
-  <text x="-10" y="962" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decimals</text>
-  <rect x="0" y="940" width="339.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="345.3" y="952" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">184.36 µs</text>
-  <rect x="0" y="960" width="467.1" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="473.1" y="972" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">17.70 ms</text>
+  <text x="-10" y="702" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">With Account</text>
+  <rect x="0" y="680" width="339.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="345.7" y="692" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">186.73 µs</text>
+  <rect x="0" y="700" width="352.0" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="358.0" y="712" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">289.80 µs</text>
+  <text x="-10" y="754" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decimals</text>
+  <rect x="0" y="732" width="340.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="346.3" y="744" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">190.46 µs</text>
+  <rect x="0" y="752" width="467.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="473.1" y="764" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">17.70 ms</text>
+  <text x="-10" y="806" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">BalanceOf Multi</text>
+  <rect x="0" y="784" width="341.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="347.9" y="796" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">201.73 µs</text>
+  <rect x="0" y="804" width="468.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="474.1" y="816" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">18.38 ms</text>
+  <text x="-10" y="858" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Symbol</text>
+  <rect x="0" y="836" width="342.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="348.0" y="848" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">202.77 µs</text>
+  <rect x="0" y="856" width="467.4" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="473.4" y="868" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">17.92 ms</text>
+  <text x="-10" y="910" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">With Data</text>
+  <rect x="0" y="888" width="342.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="348.5" y="900" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">206.46 µs</text>
+  <rect x="0" y="908" width="468.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="474.5" y="920" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">18.63 ms</text>
+  <text x="-10" y="962" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Basic</text>
+  <rect x="0" y="940" width="353.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="359.0" y="952" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">299.95 µs</text>
+  <rect x="0" y="960" width="469.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="475.5" y="972" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">19.32 ms</text>
   <text x="-10" y="1008" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Ens</text>
   <text x="-10" y="1050" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Normalize</text>
-  <rect x="0" y="1028" width="164.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="170.3" y="1040" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">354.2 ns</text>
+  <rect x="0" y="1028" width="164.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="170.4" y="1040" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">355.1 ns</text>
   <rect x="0" y="1048" width="193.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="199.3" y="1060" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">999.7 ns</text>
   <text x="-10" y="1102" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Labelhash</text>
-  <rect x="0" y="1080" width="170.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="176.7" y="1092" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">445.7 ns</text>
+  <rect x="0" y="1080" width="170.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="176.0" y="1092" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">434.1 ns</text>
   <rect x="0" y="1100" width="248.6" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="254.6" y="1112" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">7.21 µs</text>
   <text x="-10" y="1154" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Normalize Long</text>
-  <rect x="0" y="1132" width="191.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="197.3" y="1144" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">929.6 ns</text>
+  <rect x="0" y="1132" width="190.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="196.3" y="1144" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">895.9 ns</text>
   <rect x="0" y="1152" width="220.8" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="226.8" y="1164" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.66 µs</text>
   <text x="-10" y="1206" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Namehash</text>
-  <rect x="0" y="1184" width="206.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="212.5" y="1196" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.60 µs</text>
+  <rect x="0" y="1184" width="206.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="212.6" y="1196" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.61 µs</text>
   <rect x="0" y="1204" width="286.6" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="292.6" y="1216" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">28.03 µs</text>
   <text x="-10" y="1258" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Namehash Deep</text>
-  <rect x="0" y="1236" width="224.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="230.7" y="1248" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">3.07 µs</text>
+  <rect x="0" y="1236" width="224.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="230.6" y="1248" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">3.06 µs</text>
   <rect x="0" y="1256" width="305.8" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="311.8" y="1268" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">55.59 µs</text>
   <text x="-10" y="1304" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Event</text>
   <text x="-10" y="1346" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Transfer</text>
-  <rect x="0" y="1324" width="168.8" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="174.8" y="1336" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">416.9 ns</text>
+  <rect x="0" y="1324" width="167.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="173.6" y="1336" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">398.2 ns</text>
   <rect x="0" y="1344" width="262.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="268.5" y="1356" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">11.84 µs</text>
   <text x="-10" y="1398" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Batch 10</text>
@@ -160,182 +160,182 @@
   <rect x="0" y="1396" width="328.0" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="334.0" y="1408" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">123.13 µs</text>
   <text x="-10" y="1450" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Batch 100</text>
-  <rect x="0" y="1428" width="298.1" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="304.1" y="1440" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">42.20 µs</text>
+  <rect x="0" y="1428" width="296.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="302.5" y="1440" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">39.85 µs</text>
   <rect x="0" y="1448" width="391.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="397.5" y="1460" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.19 ms</text>
   <text x="-10" y="1496" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Hash</text>
   <text x="-10" y="1538" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">SHA-256 Short</text>
-  <rect x="0" y="1516" width="142.1" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="148.1" y="1528" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">160.2 ns</text>
+  <rect x="0" y="1516" width="141.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="147.9" y="1528" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">159.0 ns</text>
   <rect x="0" y="1536" width="204.4" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="210.4" y="1548" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.49 µs</text>
   <text x="-10" y="1590" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Short</text>
-  <rect x="0" y="1568" width="170.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="176.0" y="1580" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">434.6 ns</text>
+  <rect x="0" y="1568" width="170.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="176.6" y="1580" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">443.7 ns</text>
   <rect x="0" y="1588" width="249.9" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="255.9" y="1600" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">7.54 µs</text>
   <text x="-10" y="1642" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Hex</text>
-  <rect x="0" y="1620" width="171.6" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="177.6" y="1632" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">460.0 ns</text>
+  <rect x="0" y="1620" width="171.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="177.1" y="1632" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">451.8 ns</text>
   <rect x="0" y="1640" width="248.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="254.3" y="1652" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">7.12 µs</text>
   <text x="-10" y="1694" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">SHA-256 Long</text>
-  <rect x="0" y="1672" width="181.8" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="187.8" y="1684" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">663.2 ns</text>
+  <rect x="0" y="1672" width="180.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="186.1" y="1684" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">623.0 ns</text>
   <rect x="0" y="1692" width="267.4" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="273.4" y="1704" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">14.11 µs</text>
   <text x="-10" y="1746" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Fn Selector</text>
-  <rect x="0" y="1724" width="213.6" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="219.6" y="1736" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.06 µs</text>
+  <rect x="0" y="1724" width="211.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="217.8" y="1736" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.93 µs</text>
   <rect x="0" y="1744" width="253.7" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="259.7" y="1756" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">8.65 µs</text>
   <text x="-10" y="1798" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Event Selector</text>
-  <rect x="0" y="1776" width="218.1" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="224.1" y="1788" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.42 µs</text>
+  <rect x="0" y="1776" width="217.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="223.7" y="1788" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.39 µs</text>
   <rect x="0" y="1796" width="252.8" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="258.8" y="1808" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">8.37 µs</text>
   <text x="-10" y="1850" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Long</text>
-  <rect x="0" y="1828" width="221.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="227.0" y="1840" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.69 µs</text>
+  <rect x="0" y="1828" width="220.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="226.9" y="1840" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.68 µs</text>
   <rect x="0" y="1848" width="308.4" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="314.4" y="1860" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">60.97 µs</text>
   <text x="-10" y="1896" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Multicall</text>
   <text x="-10" y="1938" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Basic</text>
-  <rect x="0" y="1916" width="341.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="347.9" y="1928" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">201.76 µs</text>
+  <rect x="0" y="1916" width="341.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="347.3" y="1928" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">197.92 µs</text>
   <rect x="0" y="1936" width="365.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="371.5" y="1948" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">469.94 µs</text>
   <text x="-10" y="1990" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Token Metadata</text>
-  <rect x="0" y="1968" width="343.1" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="349.1" y="1980" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">210.53 µs</text>
+  <rect x="0" y="1968" width="345.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="351.6" y="1980" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">230.42 µs</text>
   <rect x="0" y="1988" width="363.1" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="369.1" y="2000" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">430.26 µs</text>
-  <text x="-10" y="2042" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Multi-Contract</text>
-  <rect x="0" y="2020" width="345.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="351.5" y="2032" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">229.50 µs</text>
-  <rect x="0" y="2040" width="365.3" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="371.3" y="2052" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">466.65 µs</text>
+  <text x="-10" y="2042" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">With Args</text>
+  <rect x="0" y="2020" width="345.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="351.9" y="2032" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">233.29 µs</text>
+  <rect x="0" y="2040" width="360.6" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="366.6" y="2052" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">394.22 µs</text>
   <text x="-10" y="2094" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">10 Calls</text>
-  <rect x="0" y="2072" width="346.4" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="352.4" y="2084" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">237.29 µs</text>
+  <rect x="0" y="2072" width="355.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="361.0" y="2084" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">322.71 µs</text>
   <rect x="0" y="2092" width="368.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="374.5" y="2104" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">522.07 µs</text>
-  <text x="-10" y="2146" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">With Args</text>
-  <rect x="0" y="2124" width="346.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="352.5" y="2136" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">238.07 µs</text>
-  <rect x="0" y="2144" width="360.6" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="366.6" y="2156" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">394.22 µs</text>
-  <text x="-10" y="2198" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Deployless</text>
-  <rect x="0" y="2176" width="357.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="363.7" y="2188" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">354.90 µs</text>
-  <rect x="0" y="2196" width="376.2" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="382.2" y="2208" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">687.20 µs</text>
+  <text x="-10" y="2146" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Deployless</text>
+  <rect x="0" y="2124" width="358.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="364.9" y="2136" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">370.24 µs</text>
+  <rect x="0" y="2144" width="376.2" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="382.2" y="2156" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">687.20 µs</text>
+  <text x="-10" y="2198" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Multi-Contract</text>
+  <rect x="0" y="2176" width="366.2" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="372.2" y="2188" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">481.33 µs</text>
+  <rect x="0" y="2196" width="365.3" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="371.3" y="2208" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">466.65 µs</text>
   <text x="-10" y="2250" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">30 Calls</text>
-  <rect x="0" y="2228" width="366.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="372.3" y="2240" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">482.19 µs</text>
+  <rect x="0" y="2228" width="367.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="373.7" y="2240" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">508.49 µs</text>
   <rect x="0" y="2248" width="387.2" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="393.2" y="2260" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.02 ms</text>
   <text x="-10" y="2302" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">50 Calls</text>
-  <rect x="0" y="2280" width="373.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="379.7" y="2292" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">628.62 µs</text>
+  <rect x="0" y="2280" width="368.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="374.0" y="2292" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">512.86 µs</text>
   <rect x="0" y="2300" width="398.0" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="404.0" y="2312" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.50 ms</text>
-  <text x="-10" y="2354" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">100 Calls</text>
-  <rect x="0" y="2332" width="388.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="394.9" y="2344" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.08 ms</text>
-  <rect x="0" y="2352" width="414.1" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="420.1" y="2364" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.66 ms</text>
-  <text x="-10" y="2406" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">100 Mixed</text>
-  <rect x="0" y="2384" width="404.4" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="410.4" y="2396" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.89 ms</text>
-  <rect x="0" y="2404" width="412.9" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="418.9" y="2416" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.55 ms</text>
+  <text x="-10" y="2354" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">100 Mixed</text>
+  <rect x="0" y="2332" width="382.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="388.6" y="2344" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">865.08 µs</text>
+  <rect x="0" y="2352" width="412.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="418.9" y="2364" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.55 ms</text>
+  <text x="-10" y="2406" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">100 Calls</text>
+  <rect x="0" y="2384" width="384.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="390.5" y="2396" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">926.01 µs</text>
+  <rect x="0" y="2404" width="414.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="420.1" y="2416" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.66 ms</text>
   <text x="-10" y="2458" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">200 Calls</text>
-  <rect x="0" y="2436" width="404.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="410.5" y="2448" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.89 ms</text>
+  <rect x="0" y="2436" width="397.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="403.0" y="2448" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.45 ms</text>
   <rect x="0" y="2456" width="435.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="441.5" y="2468" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">5.73 ms</text>
   <text x="-10" y="2510" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">500 Calls</text>
-  <rect x="0" y="2488" width="417.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="423.9" y="2500" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">3.05 ms</text>
+  <rect x="0" y="2488" width="408.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="414.4" y="2500" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.17 ms</text>
   <rect x="0" y="2508" width="453.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="459.3" y="2520" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">10.80 ms</text>
   <text x="-10" y="2562" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">1K Calls</text>
-  <rect x="0" y="2540" width="439.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="445.3" y="2552" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">6.56 ms</text>
+  <rect x="0" y="2540" width="417.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="423.4" y="2552" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">3.00 ms</text>
   <rect x="0" y="2560" width="471.8" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="477.8" y="2572" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">20.93 ms</text>
   <text x="-10" y="2614" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">10K Aggressive</text>
-  <rect x="0" y="2592" width="481.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="487.9" y="2604" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">30.10 ms</text>
+  <rect x="0" y="2592" width="470.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="476.7" y="2604" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">20.11 ms</text>
   <rect x="0" y="2612" width="540.6" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="546.6" y="2624" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">244.39 ms</text>
   <text x="-10" y="2666" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">10K Chunked</text>
-  <rect x="0" y="2644" width="483.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="489.5" y="2656" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">31.85 ms</text>
+  <rect x="0" y="2644" width="471.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="477.0" y="2656" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">20.33 ms</text>
   <rect x="0" y="2664" width="537.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="543.5" y="2676" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">218.97 ms</text>
   <text x="-10" y="2718" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">10K Single RPC</text>
-  <rect x="0" y="2696" width="515.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="521.7" y="2708" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">100.52 ms</text>
+  <rect x="0" y="2696" width="504.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="510.4" y="2708" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">67.05 ms</text>
   <rect x="0" y="2716" width="536.2" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="542.2" y="2728" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">209.20 ms</text>
   <text x="-10" y="2764" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Signature</text>
   <text x="-10" y="2806" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Parse Signature</text>
-  <rect x="0" y="2784" width="146.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="152.0" y="2796" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">184.0 ns</text>
+  <rect x="0" y="2784" width="146.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="152.1" y="2796" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">184.9 ns</text>
   <rect x="0" y="2804" width="211.4" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="217.4" y="2816" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.91 µs</text>
   <text x="-10" y="2858" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">HashMessage</text>
-  <rect x="0" y="2836" width="187.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="193.3" y="2848" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">805.3 ns</text>
+  <rect x="0" y="2836" width="185.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="191.9" y="2848" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">767.6 ns</text>
   <rect x="0" y="2856" width="253.7" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="259.7" y="2868" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">8.65 µs</text>
   <text x="-10" y="2910" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">HashMessage Long</text>
-  <rect x="0" y="2888" width="210.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="216.5" y="2900" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.85 µs</text>
+  <rect x="0" y="2888" width="209.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="215.6" y="2900" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.79 µs</text>
   <rect x="0" y="2908" width="274.6" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="280.6" y="2920" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">18.23 µs</text>
   <text x="-10" y="2962" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Verify Message</text>
   <rect x="0" y="2940" width="284.6" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="290.6" y="2952" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">26.07 µs</text>
+  <text x="290.6" y="2952" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">26.08 µs</text>
   <rect x="0" y="2960" width="399.3" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="405.3" y="2972" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.57 ms</text>
   <text x="-10" y="3014" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Recover Address</text>
-  <rect x="0" y="2992" width="284.9" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="290.9" y="3004" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">26.31 µs</text>
+  <rect x="0" y="2992" width="284.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="290.6" y="3004" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">26.09 µs</text>
   <rect x="0" y="3012" width="401.1" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="407.1" y="3024" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.67 ms</text>
   <text x="-10" y="3060" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Unit</text>
-  <text x="-10" y="3102" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatUnits</text>
-  <rect x="0" y="3080" width="128.0" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="134.0" y="3092" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">96.7 ns</text>
-  <rect x="0" y="3100" width="136.9" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="142.9" y="3112" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">133.2 ns</text>
-  <text x="-10" y="3154" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseUnits(6)</text>
-  <rect x="0" y="3132" width="129.4" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="135.4" y="3144" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">101.7 ns</text>
-  <rect x="0" y="3152" width="150.7" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="156.7" y="3164" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">218.0 ns</text>
-  <text x="-10" y="3206" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseGwei</text>
-  <rect x="0" y="3184" width="130.7" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="136.7" y="3196" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">106.8 ns</text>
-  <rect x="0" y="3204" width="148.7" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="154.7" y="3216" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">202.9 ns</text>
-  <text x="-10" y="3258" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther</text>
-  <rect x="0" y="3236" width="133.5" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="139.5" y="3248" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">117.9 ns</text>
-  <rect x="0" y="3256" width="154.1" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="160.1" y="3268" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">245.8 ns</text>
-  <text x="-10" y="3310" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatEther</text>
-  <rect x="0" y="3288" width="133.6" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="139.6" y="3300" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">118.3 ns</text>
-  <rect x="0" y="3308" width="139.0" height="16" fill="url(#tsGrad2)" rx="3"/>
-  <text x="145.0" y="3320" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">143.4 ns</text>
+  <text x="-10" y="3102" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseGwei</text>
+  <rect x="0" y="3080" width="130.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="136.1" y="3092" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">104.5 ns</text>
+  <rect x="0" y="3100" width="148.7" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="154.7" y="3112" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">202.9 ns</text>
+  <text x="-10" y="3154" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther</text>
+  <rect x="0" y="3132" width="133.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="139.0" y="3144" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">115.8 ns</text>
+  <rect x="0" y="3152" width="154.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="160.1" y="3164" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">245.8 ns</text>
+  <text x="-10" y="3206" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatEther</text>
+  <rect x="0" y="3184" width="133.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="139.4" y="3196" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">117.6 ns</text>
+  <rect x="0" y="3204" width="139.0" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="145.0" y="3216" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">143.4 ns</text>
+  <text x="-10" y="3258" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseUnits(6)</text>
+  <rect x="0" y="3236" width="138.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="144.4" y="3248" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">140.4 ns</text>
+  <rect x="0" y="3256" width="150.7" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="156.7" y="3268" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">218.0 ns</text>
+  <text x="-10" y="3310" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatUnits</text>
+  <rect x="0" y="3288" width="139.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="145.3" y="3300" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">144.9 ns</text>
+  <rect x="0" y="3308" width="136.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="142.9" y="3320" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">133.2 ns</text>
   <text x="-10" y="3362" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther Large</text>
   <rect x="0" y="3340" width="161.3" height="16" fill="url(#goGrad2)" rx="3"/>
-  <text x="167.3" y="3352" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">318.8 ns</text>
+  <text x="167.3" y="3352" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">317.9 ns</text>
   <rect x="0" y="3360" width="152.5" height="16" fill="url(#tsGrad2)" rx="3"/>
   <text x="158.5" y="3372" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">232.9 ns</text>
 </g>
