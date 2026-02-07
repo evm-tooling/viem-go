@@ -129,6 +129,7 @@ const mode = args.bench ? 'single' : (args.mode || 'default')
 // Extract suite name from Go benchmark name
 function extractSuiteFromGoBench(name: string): string {
   // BenchmarkCall_Basic -> call, BenchmarkMulticall_Basic -> multicall
+  // BenchmarkAbi_EncodeSimple -> abi, BenchmarkHash_Keccak256Short -> hash
   const match = name.match(/^Benchmark([A-Z][a-z]+)/)
   return match ? match[1].toLowerCase() : 'unknown'
 }
@@ -242,6 +243,50 @@ function buildBenchmarkMapping(goResults: GoBenchmark[], tsResults: TSBenchmark[
     BenchmarkMulticall_10000Calls_SingleRPC: 'viem-ts: multicall (10000 calls single RPC)',
     BenchmarkMulticall_10000Calls_Chunked: 'viem-ts: multicall (10000 calls chunked)',
     BenchmarkMulticall_10000Calls_AggressiveChunking: 'viem-ts: multicall (10000 calls aggressive)',
+    // ABI encode/decode benchmarks
+    BenchmarkAbi_EncodeSimple: 'viem-ts: abi (encode simple)',
+    BenchmarkAbi_EncodeComplex: 'viem-ts: abi (encode complex)',
+    BenchmarkAbi_EncodeMultiArg: 'viem-ts: abi (encode multi-arg)',
+    BenchmarkAbi_DecodeResult: 'viem-ts: abi (decode result)',
+    BenchmarkAbi_EncodePacked: 'viem-ts: abi (encodePacked)',
+    BenchmarkAbi_EncodePackedMulti: 'viem-ts: abi (encodePacked multi)',
+    // Hash benchmarks
+    BenchmarkHash_Keccak256Short: 'viem-ts: hash (keccak256 short)',
+    BenchmarkHash_Keccak256Long: 'viem-ts: hash (keccak256 long)',
+    BenchmarkHash_Keccak256Hex: 'viem-ts: hash (keccak256 hex)',
+    BenchmarkHash_Sha256Short: 'viem-ts: hash (sha256 short)',
+    BenchmarkHash_Sha256Long: 'viem-ts: hash (sha256 long)',
+    BenchmarkHash_FunctionSelector: 'viem-ts: hash (function selector)',
+    BenchmarkHash_EventSelector: 'viem-ts: hash (event selector)',
+    // Signature benchmarks
+    BenchmarkSignature_HashMessage: 'viem-ts: signature (hashMessage)',
+    BenchmarkSignature_HashMessageLong: 'viem-ts: signature (hashMessage long)',
+    BenchmarkSignature_RecoverAddress: 'viem-ts: signature (recoverAddress)',
+    BenchmarkSignature_VerifyMessage: 'viem-ts: signature (verifyMessage)',
+    BenchmarkSignature_ParseSignature: 'viem-ts: signature (parseSignature)',
+    // Unit benchmarks
+    BenchmarkUnit_ParseEther: 'viem-ts: unit (parseEther)',
+    BenchmarkUnit_ParseEtherLarge: 'viem-ts: unit (parseEther large)',
+    BenchmarkUnit_FormatEther: 'viem-ts: unit (formatEther)',
+    BenchmarkUnit_ParseUnits6: 'viem-ts: unit (parseUnits 6)',
+    BenchmarkUnit_ParseGwei: 'viem-ts: unit (parseGwei)',
+    BenchmarkUnit_FormatUnits: 'viem-ts: unit (formatUnits)',
+    // Address benchmarks
+    BenchmarkAddress_IsAddress: 'viem-ts: address (isAddress)',
+    BenchmarkAddress_IsAddressLower: 'viem-ts: address (isAddress lower)',
+    BenchmarkAddress_Checksum: 'viem-ts: address (checksum)',
+    BenchmarkAddress_Create: 'viem-ts: address (create)',
+    BenchmarkAddress_Create2: 'viem-ts: address (create2)',
+    // Event benchmarks
+    BenchmarkEvent_DecodeTransfer: 'viem-ts: event (decode transfer)',
+    BenchmarkEvent_DecodeBatch10: 'viem-ts: event (decode batch 10)',
+    BenchmarkEvent_DecodeBatch100: 'viem-ts: event (decode batch 100)',
+    // ENS benchmarks
+    BenchmarkEns_Namehash: 'viem-ts: ens (namehash)',
+    BenchmarkEns_NamehashDeep: 'viem-ts: ens (namehash deep)',
+    BenchmarkEns_Labelhash: 'viem-ts: ens (labelhash)',
+    BenchmarkEns_Normalize: 'viem-ts: ens (normalize)',
+    BenchmarkEns_NormalizeLong: 'viem-ts: ens (normalize long)',
   }
   
   // Apply static mappings
@@ -786,7 +831,38 @@ function formatChartLabel(benchmark: string): string {
     .replace(/AggressiveChunking/g, 'Aggressive')
     .replace(/SingleRPC/g, 'Single RPC')
     .replace(/ChunkedParallel/g, 'Chunked')
+    // CPU benchmark labels
+    .replace(/Keccak256/g, 'Keccak256 ')
+    .replace(/Sha256/g, 'SHA-256 ')
+    .replace(/EncodePacked/g, 'EncodePacked ')
+    .replace(/EncodeSimple/g, 'Encode Simple')
+    .replace(/EncodeComplex/g, 'Encode Complex')
+    .replace(/EncodeMultiArg/g, 'Encode 3-Arg')
+    .replace(/DecodeResult/g, 'Decode Result')
+    .replace(/HashMessage/g, 'HashMessage ')
+    .replace(/RecoverAddress/g, 'Recover Address')
+    .replace(/VerifyMessage/g, 'Verify Message')
+    .replace(/ParseSignature/g, 'Parse Signature')
+    .replace(/ParseEther/g, 'ParseEther ')
+    .replace(/ParseUnits6/g, 'ParseUnits(6)')
+    .replace(/ParseGwei/g, 'ParseGwei')
+    .replace(/FormatEther/g, 'FormatEther')
+    .replace(/FormatUnits/g, 'FormatUnits')
+    .replace(/IsAddress/g, 'IsAddress ')
+    .replace(/Checksum/g, 'Checksum')
+    .replace(/Create2/g, 'CREATE2')
+    .replace(/Create(?!2)/g, 'CREATE')
+    .replace(/DecodeBatch/g, 'Decode Batch ')
+    .replace(/DecodeTransfer/g, 'Decode Transfer')
+    .replace(/Namehash/g, 'Namehash ')
+    .replace(/NamehashDeep/g, 'Namehash Deep')
+    .replace(/Labelhash/g, 'Labelhash')
+    .replace(/Normalize/g, 'Normalize ')
+    .replace(/NormalizeLong/g, 'Normalize Long')
+    .replace(/FunctionSelector/g, 'Fn Selector')
+    .replace(/EventSelector/g, 'Event Selector')
     .replace(/_/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim()
 }
 

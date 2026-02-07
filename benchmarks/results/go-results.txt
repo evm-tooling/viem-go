@@ -1,30 +1,67 @@
 Benchmark client connected to: http://127.0.0.1:8545
-Current block number: 24401392
+Current block number: 24402138
 goos: darwin
 goarch: arm64
 pkg: github.com/ChefBingbong/viem-go/benchmarks/go
 cpu: Apple M4 Pro
-BenchmarkCall_Basic-14                                 	   12808	    184930 ns/op	   30408 B/op	     328 allocs/op
-BenchmarkCall_WithData-14                              	   13368	    179602 ns/op	   31138 B/op	     330 allocs/op
-BenchmarkCall_WithAccount-14                           	   13126	    191890 ns/op	   30882 B/op	     334 allocs/op
-BenchmarkCall_Decimals-14                              	   13138	    194174 ns/op	   30441 B/op	     328 allocs/op
-BenchmarkCall_Symbol-14                                	   12288	    202911 ns/op	   30679 B/op	     328 allocs/op
-BenchmarkCall_BalanceOfMultiple-14                     	   11608	    184987 ns/op	   31225 B/op	     330 allocs/op
-BenchmarkMulticall_Basic-14                            	   10000	    218827 ns/op	   41099 B/op	     399 allocs/op
-BenchmarkMulticall_WithArgs-14                         	    9864	    222541 ns/op	   41946 B/op	     403 allocs/op
-BenchmarkMulticall_MultiContract-14                    	    9022	    264798 ns/op	   51985 B/op	     463 allocs/op
-BenchmarkMulticall_10Calls-14                          	    8383	    303373 ns/op	  106134 B/op	     802 allocs/op
-BenchmarkMulticall_30Calls-14                          	    4372	    549894 ns/op	  307012 B/op	    1915 allocs/op
-BenchmarkMulticall_Deployless-14                       	    6195	    391033 ns/op	  146761 B/op	     436 allocs/op
-BenchmarkMulticall_TokenMetadata-14                    	    9672	    238988 ns/op	   49595 B/op	     450 allocs/op
-BenchmarkMulticall_50Calls-14                          	    3072	    780430 ns/op	  503924 B/op	    3021 allocs/op
-BenchmarkMulticall_100Calls-14                         	    1728	   1373991 ns/op	 1045081 B/op	    5787 allocs/op
-BenchmarkMulticall_200Calls-14                         	     948	   2585980 ns/op	 1911370 B/op	   11299 allocs/op
-BenchmarkMulticall_500Calls-14                         	     630	   6271189 ns/op	 5173859 B/op	   28401 allocs/op
-BenchmarkMulticall_MixedContracts_100-14               	    1714	   1383611 ns/op	 1056941 B/op	    5788 allocs/op
-BenchmarkMulticall_1000Calls-14                        	     416	   6041294 ns/op	10347755 B/op	   56592 allocs/op
-BenchmarkMulticall_10000Calls_SingleRPC-14             	      18	 125677167 ns/op	97832710 B/op	  562990 allocs/op
-BenchmarkMulticall_10000Calls_Chunked-14               	      75	  32944897 ns/op	97955114 B/op	  563944 allocs/op
-BenchmarkMulticall_10000Calls_AggressiveChunking-14    	      69	  35949493 ns/op	97834547 B/op	  563897 allocs/op
+BenchmarkAbi_EncodeSimple-14                           	11541918	       206.1 ns/op	     200 B/op	       6 allocs/op
+BenchmarkAbi_EncodeComplex-14                          	 7682397	       311.4 ns/op	     328 B/op	      10 allocs/op
+BenchmarkAbi_EncodeMultiArg-14                         	 5519521	       439.8 ns/op	     592 B/op	      15 allocs/op
+BenchmarkAbi_DecodeResult-14                           	25818296	        91.66 ns/op	     112 B/op	       3 allocs/op
+BenchmarkAbi_EncodePacked-14                           	 7682216	       312.6 ns/op	     288 B/op	       8 allocs/op
+BenchmarkAbi_EncodePackedMulti-14                      	 6550027	       371.0 ns/op	     392 B/op	      11 allocs/op
+BenchmarkAddress_IsAddress-14                          	 2418868	       910.4 ns/op	     224 B/op	       5 allocs/op
+BenchmarkAddress_IsAddressLower-14                     	 7660909	       299.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddress_Checksum-14                           	 2995034	       800.6 ns/op	     128 B/op	       3 allocs/op
+BenchmarkAddress_Create-14                             	 1000000	      2339 ns/op	     600 B/op	      19 allocs/op
+BenchmarkAddress_Create2-14                            	  929151	      2632 ns/op	     536 B/op	      13 allocs/op
+BenchmarkCall_Basic-14                                 	   13138	    184251 ns/op	   26580 B/op	     278 allocs/op
+BenchmarkCall_WithData-14                              	   13302	    179284 ns/op	   26975 B/op	     280 allocs/op
+BenchmarkCall_WithAccount-14                           	   12996	    181105 ns/op	   26888 B/op	     284 allocs/op
+BenchmarkCall_Decimals-14                              	   13711	    183314 ns/op	   26155 B/op	     278 allocs/op
+BenchmarkCall_Symbol-14                                	   12130	    188984 ns/op	   26506 B/op	     278 allocs/op
+BenchmarkCall_BalanceOfMultiple-14                     	   13479	    180615 ns/op	   27210 B/op	     280 allocs/op
+BenchmarkEns_Namehash-14                               	 1523658	      1556 ns/op	     400 B/op	       9 allocs/op
+BenchmarkEns_NamehashDeep-14                           	  783123	      3024 ns/op	     560 B/op	      13 allocs/op
+BenchmarkEns_Labelhash-14                              	 5596677	       428.8 ns/op	     240 B/op	       4 allocs/op
+BenchmarkEns_Normalize-14                              	 6871580	       343.6 ns/op	     256 B/op	      11 allocs/op
+BenchmarkEns_NormalizeLong-14                          	 2779732	       887.3 ns/op	     696 B/op	      21 allocs/op
+BenchmarkEvent_DecodeTransfer-14                       	 6329958	       374.2 ns/op	     720 B/op	       9 allocs/op
+BenchmarkEvent_DecodeBatch10-14                        	  643654	      3733 ns/op	    7199 B/op	      91 allocs/op
+BenchmarkEvent_DecodeBatch100-14                       	   64250	     37273 ns/op	   71998 B/op	     912 allocs/op
+BenchmarkHash_Keccak256Short-14                        	 5659472	       425.0 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_Keccak256Long-14                         	  894118	      2667 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_Keccak256Hex-14                          	 5187686	       452.7 ns/op	     256 B/op	       5 allocs/op
+BenchmarkHash_Sha256Short-14                           	15433429	       153.3 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_Sha256Long-14                            	 3841395	       699.9 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_FunctionSelector-14                      	 1113272	      1970 ns/op	     976 B/op	      98 allocs/op
+BenchmarkHash_EventSelector-14                         	  991666	      2428 ns/op	    1376 B/op	     124 allocs/op
+BenchmarkMulticall_Basic-14                            	    9018	    229551 ns/op	   30755 B/op	     291 allocs/op
+BenchmarkMulticall_WithArgs-14                         	   10000	    219662 ns/op	   31808 B/op	     295 allocs/op
+BenchmarkMulticall_MultiContract-14                    	    7962	    265598 ns/op	   41419 B/op	     351 allocs/op
+BenchmarkMulticall_10Calls-14                          	    8396	    315944 ns/op	   91293 B/op	     666 allocs/op
+BenchmarkMulticall_30Calls-14                          	    4489	    523221 ns/op	  278913 B/op	    1697 allocs/op
+BenchmarkMulticall_Deployless-14                       	    6352	    381328 ns/op	  137379 B/op	     328 allocs/op
+BenchmarkMulticall_TokenMetadata-14                    	    9966	    238010 ns/op	   39100 B/op	     338 allocs/op
+BenchmarkMulticall_50Calls-14                          	    3304	   1122238 ns/op	  462764 B/op	    2723 allocs/op
+BenchmarkMulticall_100Calls-14                         	    1593	   1456754 ns/op	  966435 B/op	    5286 allocs/op
+BenchmarkMulticall_200Calls-14                         	     946	   2503890 ns/op	 1803796 B/op	   10396 allocs/op
+BenchmarkMulticall_500Calls-14                         	     664	   3721309 ns/op	 4792989 B/op	   26080 allocs/op
+BenchmarkMulticall_MixedContracts_100-14               	    1741	   1356606 ns/op	  978897 B/op	    5286 allocs/op
+BenchmarkMulticall_1000Calls-14                        	     433	   5478802 ns/op	 9631956 B/op	   52059 allocs/op
+BenchmarkMulticall_10000Calls_SingleRPC-14             	      18	 121108049 ns/op	92496926 B/op	  518409 allocs/op
+BenchmarkMulticall_10000Calls_Chunked-14               	      74	  29145681 ns/op	91784630 B/op	  519285 allocs/op
+BenchmarkMulticall_10000Calls_AggressiveChunking-14    	      74	  32109950 ns/op	91955351 B/op	  519318 allocs/op
+BenchmarkSignature_HashMessage-14                      	 3190964	       750.1 ns/op	     712 B/op	      12 allocs/op
+BenchmarkSignature_HashMessageLong-14                  	 1403230	      1717 ns/op	    2506 B/op	      15 allocs/op
+BenchmarkSignature_RecoverAddress-14                   	   92371	     25956 ns/op	    3568 B/op	      54 allocs/op
+BenchmarkSignature_VerifyMessage-14                    	   88730	     27430 ns/op	    3568 B/op	      54 allocs/op
+BenchmarkSignature_ParseSignature-14                   	13221561	       213.3 ns/op	     288 B/op	       7 allocs/op
+BenchmarkUnit_ParseEther-14                            	19477232	       116.8 ns/op	      88 B/op	       4 allocs/op
+BenchmarkUnit_ParseEtherLarge-14                       	 7820607	       312.6 ns/op	     152 B/op	       5 allocs/op
+BenchmarkUnit_FormatEther-14                           	20806279	       116.4 ns/op	      56 B/op	       3 allocs/op
+BenchmarkUnit_ParseUnits6-14                           	24873687	       101.3 ns/op	      64 B/op	       4 allocs/op
+BenchmarkUnit_ParseGwei-14                             	23315193	       103.1 ns/op	      72 B/op	       4 allocs/op
+BenchmarkUnit_FormatUnits-14                           	24788181	        98.28 ns/op	      40 B/op	       3 allocs/op
 PASS
-ok  	github.com/ChefBingbong/viem-go/benchmarks/go	71.780s
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	171.206s
