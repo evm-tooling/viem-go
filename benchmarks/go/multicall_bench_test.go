@@ -29,8 +29,6 @@ var (
 func multicallBenchConfig(contracts []public.MulticallContract) public.MulticallParameters {
 	return public.MulticallParameters{
 		Contracts:           contracts,
-		BatchSize:           0, // Disable chunking - ensures single RPC call
-		MaxConcurrentChunks: 1, // Safety: only 1 chunk anyway with BatchSize=0
 	}
 }
 
@@ -402,8 +400,8 @@ func BenchmarkMulticall_10000Calls_AggressiveChunking(b *testing.B) {
 	// Aggressive chunking for maximum parallelism
 	params := public.MulticallParameters{
 		Contracts:           contracts,
-		BatchSize:           2048, // Smaller batches = more chunks
-		MaxConcurrentChunks: 10,   // High parallelism
+		BatchSize:           8194, // Smaller batches = more chunks
+		MaxConcurrentChunks: 20,   // High parallelism
 	}
 
 	b.ResetTimer()

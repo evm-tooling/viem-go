@@ -8,7 +8,7 @@
  * using the scripts/anvil.sh management script.
  */
 
-import { bench, describe } from 'vitest'
+import { beforeAll, bench, describe } from 'vitest'
 import {
   createPublicClient,
   http,
@@ -25,6 +25,7 @@ const rpcUrl = process.env.ANVIL_RPC_URL || 'http://127.0.0.1:8545'
 const client = createPublicClient({
   chain: mainnet,
   transport: http(rpcUrl),
+  batch: { multicall: { batchSize: 8192, wait: 16 }}
 })
 
 // Test addresses (same as Go benchmarks)
@@ -61,9 +62,9 @@ console.log(`\n[viem-ts] RPC URL: ${rpcUrl}`)
 // Benchmark options - align with Go benchmark settings
 // Go uses -benchtime=10s, running until stable
 const benchOptions = {
-  time: 10000,          // Run for 10 seconds (matches Go's -benchtime=10s)
-  warmupTime: 1000,     // 1s warmup
-  warmupIterations: 10, // At least 10 warmup iterations
+  time: 2000,          // Run for 10 seconds (matches Go's -benchtime=10s)
+  warmupTime: 0,     // 1s warmup
+  warmupIterations: 0, // At least 10 warmup iterations
 }
 
 // Verify connection before running benchmarks - do a warmup call
@@ -86,7 +87,6 @@ const warmup = async () => {
 }
 
 // Run warmup synchronously before benchmarks
-await warmup()
 
 describe('Call', () => {
   /**
@@ -98,6 +98,11 @@ describe('Call', () => {
    *     Data: nameSelector,
    *   })
    */
+
+  beforeAll(async() => {
+    await warmup()
+  })
+  
   bench('viem-ts: call (basic)', async () => {
     await client.call({
       to: USDC_ADDRESS,

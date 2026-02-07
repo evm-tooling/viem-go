@@ -1,0 +1,13 @@
+Benchmark client connected to: http://127.0.0.1:8545
+Current block number: 24401439
+goos: darwin
+goarch: arm64
+cpu: Apple M4 Pro
+BenchmarkCall_Basic-14                	   12468	    188577 ns/op	   30363 B/op	     328 allocs/op
+BenchmarkCall_WithData-14             	   11929	    204209 ns/op	   31190 B/op	     330 allocs/op
+BenchmarkCall_WithAccount-14          	   11023	    184555 ns/op	   30772 B/op	     334 allocs/op
+BenchmarkCall_Decimals-14             	   13202	    177790 ns/op	   30166 B/op	     328 allocs/op
+BenchmarkCall_Symbol-14               	   13083	    180639 ns/op	   30458 B/op	     328 allocs/op
+BenchmarkCall_BalanceOfMultiple-14    	   13287	    275976 ns/op	   31401 B/op	     330 allocs/op
+PASS
+ok  	command-line-arguments	20.948s

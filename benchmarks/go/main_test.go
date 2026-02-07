@@ -8,6 +8,7 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 
@@ -64,6 +65,12 @@ func TestMain(m *testing.M) {
 	benchClient, err = client.CreatePublicClient(client.PublicClientConfig{
 		Chain:     &definitions.Mainnet,
 		Transport: transport.HTTP(rpcURL),
+		Batch: &client.BatchOptions{
+			Multicall: &client.MulticallBatchOptions{
+				BatchSize: 1024,
+				Wait:      16 * time.Millisecond,
+			},
+		},
 	})
 	if err != nil {
 		panic("failed to create benchmark client: " + err.Error())

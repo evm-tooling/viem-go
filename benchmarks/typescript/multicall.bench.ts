@@ -11,7 +11,7 @@
  * ensuring a single RPC call for fair comparison.
  */
 
-import { bench, describe } from 'vitest'
+import { beforeAll, bench, describe } from 'vitest'
 import {
   createPublicClient,
   http,
@@ -27,6 +27,7 @@ const rpcUrl = process.env.ANVIL_RPC_URL || 'http://127.0.0.1:8545'
 const client = createPublicClient({
   chain: mainnet,
   transport: http(rpcUrl),
+  batch: { multicall: { batchSize: 8192, wait: 16 }}
 })
 
 // Test addresses (same as Go benchmarks)
@@ -54,11 +55,6 @@ const benchOptions = {
   warmupIterations: 0, // At least 1 warmup iteration
 }
 
-// Multicall config - disable chunking for fair comparison (single RPC call)
-const multicallConfig = {
-  batchSize: 0,  // Disable chunking - ensures single RPC call
-}
-
 // Verify connection before running benchmarks
 const warmup = async () => {
   try {
@@ -79,15 +75,19 @@ const warmup = async () => {
 }
 
 // Run warmup synchronously before benchmarks
-await warmup()
+// await warmup()
 
 describe('Multicall', () => {
+
+  beforeAll(async() => {
+    await warmup()
+  })
   /**
    * BenchmarkMulticall_Basic - Simple multicall with 3 calls.
    */
   bench('viem-ts: multicall (basic)', async () => {
     await client.multicall({
-      ...multicallConfig,
+      batchSize: 1,
       contracts: [
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'name' },
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'symbol' },
@@ -101,7 +101,6 @@ describe('Multicall', () => {
    */
   bench('viem-ts: multicall (with args)', async () => {
     await client.multicall({
-      ...multicallConfig,
       contracts: [
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'balanceOf', args: [VITALIK_ADDRESS] },
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'balanceOf', args: [ANVIL_ACCOUNT_0] },
@@ -115,7 +114,6 @@ describe('Multicall', () => {
    */
   bench('viem-ts: multicall (multi-contract)', async () => {
     await client.multicall({
-      ...multicallConfig,
       contracts: [
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'name' },
         { address: WETH_ADDRESS, abi: erc20Abi, functionName: 'name' },
@@ -135,7 +133,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   /**
@@ -148,7 +146,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   /**
@@ -156,7 +154,6 @@ describe('Multicall', () => {
    */
   bench('viem-ts: multicall (deployless)', async () => {
     await client.multicall({
-      ...multicallConfig,
       deployless: true,
       contracts: [
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'name' },
@@ -171,7 +168,6 @@ describe('Multicall', () => {
    */
   bench('viem-ts: multicall (token metadata)', async () => {
     await client.multicall({
-      ...multicallConfig,
       contracts: [
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'name' },
         { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'symbol' },
@@ -195,7 +191,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({ contracts })
   }, benchOptions)
 
   /**
@@ -208,7 +204,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   /**
@@ -221,7 +217,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   /**
@@ -234,7 +230,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   /**
@@ -248,7 +244,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   // ============================================================
@@ -265,7 +261,7 @@ describe('Multicall', () => {
       functionName: 'balanceOf' as const,
       args: [VITALIK_ADDRESS] as const,
     }))
-    await client.multicall({ ...multicallConfig, contracts })
+    await client.multicall({  contracts })
   }, benchOptions)
 
   /**
@@ -316,7 +312,7 @@ describe('Multicall', () => {
       args: [VITALIK_ADDRESS] as const,
     }))
     await client.multicall({
-      batchSize: 2048, // Smaller batches = more parallelism
+      batchSize: 8192, // Smaller batches = more parallelism
       contracts,
     })
   }, benchOptions)
