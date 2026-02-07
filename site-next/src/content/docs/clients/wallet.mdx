@@ -3,13 +3,13 @@ title: Wallet Client
 description: Write access to the Ethereum blockchain for signing and sending transactions
 ---
 
+A Wallet Client is an interface to interact with Ethereum accounts and provides the ability to sign messages, send transactions, deploy contracts, and manage permissions through JSON-RPC wallet methods.
 
-A Wallet Client provides write access to the Ethereum blockchain, handling transaction signing and sending through JSON-RPC methods like `eth_sendTransaction`, `eth_sign`, and wallet-specific methods.
+The `CreateWalletClient` function sets up a Wallet Client with a given [Transport](/docs/clients/transports/http/) and optional [Chain](/docs/clients/intro/).
 
-## Creating a Wallet Client
+## Import
 
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
@@ -18,16 +18,57 @@ A Wallet Client provides write access to the Ethereum blockchain, handling trans
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
     "github.com/ChefBingbong/viem-go/chain/definitions"
-)
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+These are the most common imports for setting up a Wallet Client:
+
+- **client**: Client constructors and types (e.g. `CreateWalletClient`, `WalletClientConfig`, `NewAddressAccount`).
+- **transport**: Transport factories for JSON-RPC (e.g. `transport.HTTP(...)`, `transport.WebSocket(...)`).
+- **definitions**: Prebuilt chain definitions (e.g. `definitions.Mainnet`). Optional, but recommended.
+
+Import additional packages only when you need them:
+
+- **accounts**: Local account signing helpers (e.g. `accounts.PrivateKeyToAccount("0x...")`).
+- **common**: Address helpers from go-ethereum (e.g. `common.HexToAddress("0x...")`), useful for address-only JSON-RPC accounts.
+
+## Go notes
+
+#### Closing the client
+
+In viem-go, `walletClient.Close()` closes the underlying transport connection (especially important for WebSocket transports). It’s idiomatic to call it with `defer` right after successful construction.
+
+#### Passing a context
+
+Wallet Client actions accept a `context.Context` as the first argument (e.g. `walletClient.SendTransaction(ctx, ...)`). Use it to cancel requests or to set timeouts with `context.WithTimeout`.
+
+## JSON-RPC Accounts
+
+A JSON-RPC account **defers** signing of transactions & messages to the target node/wallet over JSON-RPC.
+
+In viem-go, you can represent a JSON-RPC account by hoisting an address-only account with `client.NewAddressAccount(...)`.
+
+#### 1: Initialize a Wallet Client
+
+Initialize a Wallet Client with your desired [Chain](/docs/clients/intro/) (e.g. `definitions.Mainnet`) and [Transport](/docs/clients/transports/http/) (e.g. `transport.HTTP`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
     Chain:     definitions.Mainnet,
     Transport: transport.HTTP("https://eth.llamarpc.com"),
 })
 if err != nil {
     log.Fatal(err)
 }
-defer walletClient.Close()`
+defer walletClient.Close()`,
+      showLineNumbers: false
     },
     {
       title: "viem",
@@ -38,316 +79,483 @@ import { mainnet } from 'viem/chains'
 const walletClient = createWalletClient({
   chain: mainnet,
   transport: http(),
-})`
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Configuration Options
+#### 2: Optional: Hoist an address-only account
 
-### WalletClientConfig
+If your target node/wallet supports account-based JSON-RPC signing (e.g. `eth_sendTransaction`), you can hoist an address-only account into the client:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `Account` | `Account` | Account for signing (optional) |
-| `Chain` | `*chain.Chain` | Chain configuration |
-| `Transport` | `TransportFactory` | Transport for RPC calls |
-| `Key` | `string` | Client identifier (default: "wallet") |
-| `Name` | `string` | Client name (default: "Wallet Client") |
-| `PollingInterval` | `time.Duration` | Polling frequency |
-| `CacheTime` | `time.Duration` | Cache duration |
-
-## Available Methods
-
-### Transaction Methods
-
-#### SendRawTransaction
-
-Send a pre-signed transaction:
-
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `// signedTx is a serialized signed transaction ([]byte)
-txHash, err := walletClient.SendRawTransaction(ctx, signedTx)
+      code: `account := client.NewAddressAccount(common.HexToAddress("0x..."))
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account, // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  account: '0x...', // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Local Accounts (Private Key, Mnemonic, etc)
+
+A Local Account performs signing of transactions & messages with a private key **before** executing a method over JSON-RPC.
+
+#### 1: Initialize a Wallet Client
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
 if err != nil {
     log.Fatal(err)
 }
-fmt.Printf("Transaction sent: %s\\n", txHash.Hex())`
+defer walletClient.Close()`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `const hash = await walletClient.sendRawTransaction({
-  serializedTransaction: signedTx,
-})
-console.log('Transaction sent:', hash)`
+      code: `import { createWalletClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const walletClient = createWalletClient({
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-#### SendTransaction
+#### 2: Set up your Local Account
 
-Send a transaction (requires unlocked account on the node):
-
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
-    From:  senderAddress,
-    To:    &recipientAddress,
-    Value: big.NewInt(1e18), // 1 ETH
-})
-if err != nil {
-    log.Fatal(err)
-}`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `const hash = await walletClient.sendTransaction({
-  to: recipientAddress,
-  value: parseEther('1'),
-})`
-    }
-  ]}
-/>
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
 
-### Signing Methods
-
-#### SignMessage
-
-Sign a message using EIP-191 personal sign:
-
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `signature, err := walletClient.SignMessage(ctx, address, []byte("Hello, Ethereum!"))
+account, err := accounts.PrivateKeyToAccount("0x...")
 if err != nil {
     log.Fatal(err)
 }
-fmt.Printf("Signature: 0x%x\\n", signature)`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `const signature = await walletClient.signMessage({
-  account: address,
-  message: 'Hello, Ethereum!',
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account, // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
 })
-console.log('Signature:', signature)`
-    }
-  ]}
-/>
-
-#### SignTypedData
-
-Sign EIP-712 typed structured data:
-
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `typedData := map[string]any{
-    "types": map[string]any{
-        "EIP712Domain": []map[string]string{
-            {"name": "name", "type": "string"},
-            {"name": "version", "type": "string"},
-            {"name": "chainId", "type": "uint256"},
-        },
-        "Mail": []map[string]string{
-            {"name": "from", "type": "string"},
-            {"name": "to", "type": "string"},
-            {"name": "contents", "type": "string"},
-        },
-    },
-    "primaryType": "Mail",
-    "domain": map[string]any{
-        "name":    "Ether Mail",
-        "version": "1",
-        "chainId": 1,
-    },
-    "message": map[string]any{
-        "from":     "alice@example.com",
-        "to":       "bob@example.com",
-        "contents": "Hello, Bob!",
-    },
+if err != nil {
+    log.Fatal(err)
 }
-
-signature, err := walletClient.SignTypedData(ctx, address, typedData)`
+defer walletClient.Close()`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `const signature = await walletClient.signTypedData({
-  account: address,
-  domain: {
-    name: 'Ether Mail',
-    version: '1',
-    chainId: 1,
-  },
-  types: {
-    Mail: [
-      { name: 'from', type: 'string' },
-      { name: 'to', type: 'string' },
-      { name: 'contents', type: 'string' },
-    ],
-  },
-  primaryType: 'Mail',
-  message: {
-    from: 'alice@example.com',
-    to: 'bob@example.com',
-    contents: 'Hello, Bob!',
-  },
-})`
+      code: `import { createWalletClient, http } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
+import { mainnet } from 'viem/chains'
+
+const account = privateKeyToAccount('0x...')
+
+const walletClient = createWalletClient({
+  account, // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-### Account Methods
+<Aside type="tip">
+<span className="text-[#D679F2]">By providing a local <b className="text-[#dbdfe7]">Account</b> (private key, mnemonic, or HD wallet), the client will sign transactions locally and send them via <b className="text-[#dbdfe7]">eth_sendRawTransaction</b> — no private keys are ever sent to the RPC node.</span>
+</Aside>
 
-#### GetAccounts
+#### 2: Consume Wallet Actions
 
-Get accounts managed by the connected wallet:
+Now you can use that address within Wallet Actions that require a signature from the user:
 
-```go
-accounts, err := walletClient.GetAccounts(ctx)
-// Returns: []common.Address
-```
-
-#### RequestAccounts
-
-Request account access (triggers wallet popup in browser contexts):
-
-```go
-accounts, err := walletClient.RequestAccounts(ctx)
-```
-
-### Chain Methods
-
-#### SwitchChain
-
-Switch to a different chain:
-
-```go
-err := walletClient.SwitchChain(ctx, big.NewInt(137)) // Polygon
-```
-
-#### AddChain
-
-Add a new chain to the wallet:
-
-```go
-err := walletClient.AddChain(ctx, &chain.Chain{
-    ID:   137,
-    Name: "Polygon",
-    NativeCurrency: chain.NativeCurrency{
-        Name:     "MATIC",
-        Symbol:   "MATIC",
-        Decimals: 18,
-    },
-    RpcUrls: map[string]chain.RpcUrls{
-        "default": {HTTP: []string{"https://polygon-rpc.com"}},
-    },
-})
-```
-
-### Permissions Methods
-
-```go
-// Get current permissions
-permissions, err := walletClient.GetPermissions(ctx)
-
-// Request new permissions
-permissions, err := walletClient.RequestPermissions(ctx, []map[string]any{
-    {"eth_accounts": map[string]any{}},
-})
-```
-
-### Asset Methods
-
-#### WatchAsset
-
-Add a token to the wallet's watch list:
-
-```go
-success, err := walletClient.WatchAsset(ctx, 
-    "ERC20",                            // token type
-    tokenAddress,                        // contract address
-    "USDC",                              // symbol
-    6,                                   // decimals
-    "https://example.com/usdc-icon.png", // image URL
-)
-```
-
-## Local Signing
-
-For local signing without relying on the RPC node, use accounts:
-
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
       code: `import (
-    "github.com/ChefBingbong/viem-go/accounts"
-    "github.com/ChefBingbong/viem-go/utils/transaction"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
 )
 
-// Create account from private key
-account, _ := accounts.PrivateKeyToAccount("0x...")
+WalletCl, err = client.CreateWalletClient(client.WalletClientConfig{
+		Account:   LocalAccount,
+		Chain:     &definitions.Mainnet,
+		Transport: transport.HTTP(),
+	})
+	if err != nil {
+	  log.Fatal(err)
+	}
 
-// Sign a message
-sig, err := account.SignMessage(signature.SignableMessage{
-    Raw: []byte("Hello, Ethereum!"),
-})
+hash, err := WalletCl.SendTransaction(ctx, wallet.SendTransactionParameters{ // [!code focus:5]
+		Account: WalletCl.Account(),
+		Chain:   &definitions.Mainnet,
+		To:      to.Hex(),
+		Value:   value,
+	})
 
-// Sign a transaction
-tx := &transaction.Transaction{
-    To:       &recipientAddress,
-    Value:    big.NewInt(1e18),
-    Gas:      21000,
-    GasPrice: big.NewInt(20e9),
-    Nonce:    0,
-    ChainID:  big.NewInt(1),
+	if err != nil {
+    log.Fatal(err)
 }
-signedTx, err := account.SignTransaction(tx)
-
-// Send the signed transaction
-txHash, err := walletClient.SendRawTransaction(ctx, signedTx)`
+`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { privateKeyToAccount } from 'viem/accounts'
-
-const account = privateKeyToAccount('0x...')
-
-// Sign a message
-const sig = await account.signMessage({
-  message: 'Hello, Ethereum!',
+      code: `import { createWalletClient, custom, parseEther } from 'viem'
+import { mainnet } from 'viem/chains'
+ 
+const client = createWalletClient({
+  chain: mainnet,
+  transport: custom(window.ethereum!)
 })
-
-// Sign and send a transaction
-const hash = await walletClient.sendTransaction({
-  account,
-  to: recipientAddress,
-  value: parseEther('1'),
-})`
+ 
+const [address] = await client.getAddresses()
+ 
+const hash = await client.sendTransaction({ // [!code focus:4]
+  account: address,
+  to: '0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC',
+  value: parseEther('0.001')
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-See [Accounts](/docs/accounts/overview/) for more details on local signing.
+## Error handling
+
+Most viem-go APIs return `(value, error)`. Always handle errors from `CreateWalletClient` and from each action call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "time"
+
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+defer cancel()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+// Example action (all actions take a context.Context)
+addresses, err := walletClient.GetAddresses(ctx)
+if err != nil {
+    log.Fatal(err)
+}
+_ = addresses`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createWalletClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const walletClient = createWalletClient({
+  chain: mainnet,
+  transport: http(),
+})
+
+const addresses = await walletClient.getAddresses()`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `client.Account`
+
+The Account to use for the Wallet Client. When provided, wallet actions can fall back to this account by default.
+
+You can provide either:
+- **JSON-RPC (address-only)**: Use `client.NewAddressAccount(...)` to defer signing to the node/wallet over JSON-RPC.
+- **Local account**: Use `accounts.PrivateKeyToAccount(...)` (or similar) to sign locally before sending via JSON-RPC.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `account := client.NewAddressAccount(common.HexToAddress("0x..."))
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account, // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  account: '0x...', // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Chain (optional)
+
+- **Type:** `*chain.Chain`
+
+The Chain configuration (e.g. `definitions.Mainnet`) for the Wallet Client.
+
+This is used for chain-aware behavior (like validating chain ID where applicable) and it also influences defaults like `PollingInterval` (based on the chain's block time). See [Clients & Transports](/docs/clients/intro/).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet, // [!code focus]
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  chain: mainnet, // [!code focus]
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Transport (required)
+
+- **Type:** `transport.TransportFactory`
+
+Transport factory for JSON-RPC calls. This parameter is required.
+
+If your transport needs its own configuration, keep it in the transport constructor and refer to the transport docs (e.g. [HTTP Transport](/docs/clients/transports/http/) or [WebSocket Transport](/docs/clients/transports/websocket/)).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"), // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  chain: mainnet,
+  transport: http(), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### CacheTime (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `PollingInterval`
+
+Time that cached data will remain in memory.
+
+In viem-go, if `CacheTime` is not set, it defaults to the client `PollingInterval`. You typically only need to tune this when you’re making repeated reads/writes and want to control how long computed/derived values stay warm.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    CacheTime:  10 * time.Second, // [!code focus]
+    Chain:      definitions.Mainnet,
+    Transport:  transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  cacheTime: 10_000, // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Key (optional)
+
+- **Type:** `string`
+- **Default:** `"wallet"`
+
+A key for the Client.
+
+This is primarily useful when you have multiple clients in the same process and want a stable identifier for debugging, logging, or internal bookkeeping. If not set, it defaults to `"wallet"`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Key:       "foo", // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  key: 'foo', // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Name (optional)
+
+- **Type:** `string`
+- **Default:** `"Wallet Client"`
+
+A human-readable name for the Client.
+
+This is useful for debugging (e.g. printing which client instance is in use) and for distinguishing multiple wallet client instances in your application. If not set, it defaults to `"Wallet Client"`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Name:      "Foo Wallet Client", // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const walletClient = createWalletClient({
+  name: 'Foo Wallet Client', // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `min(max(chain.BlockTime/2, 500ms), 4s)` (defaults to `4s` when `Chain` is not provided)
+
+Frequency for polling-enabled behavior.
+
+This value is used by polling-based logic (and it also becomes the default `CacheTime` when `CacheTime` is not explicitly set). By default, viem-go derives a sensible interval from the chain’s block time: `min(max(chain.BlockTime/2, 500ms), 4s)`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    PollingInterval: 10 * time.Second, // [!code focus]
+    Chain:           definitions.Mainnet,
+    Transport:       transport.HTTP("https://eth.llamarpc.com"),
+})
+`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `
+const walletClient = createWalletClient({
+  pollingInterval: 10_000, // [!code focus]
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Return Type
+
+`CreateWalletClient` returns `(*WalletClient, error)`.

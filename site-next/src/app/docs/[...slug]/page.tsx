@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { getDocBySlug, getAllDocSlugs, extractHeadings } from "@/lib/mdx";
 import { CodeGroup } from "@/components/CodePanel";
 import CopyButton from "@/components/CopyButton";
 import TerminalTyping from "@/components/TerminalTyping";
 import GitHubStats from "@/components/GitHubStats";
 import Aside from "@/components/Aside";
+import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/MdxTable";
 import TableOfContents from "@/components/TableOfContents";
 
 /** Generate a slug id from heading text (matches extractHeadings logic) */
@@ -44,73 +46,6 @@ function extractText(node: React.ReactNode): string {
     return extractText((node as React.ReactElement<{ children?: React.ReactNode }>).props.children);
   }
   return "";
-}
-
-/* Table components with inline styles to defeat Tailwind preflight */
-function Table({ children }: { children?: React.ReactNode }) {
-  return (
-    <div style={{ overflowX: "auto", margin: "1.5rem 0" }}>
-      <table
-        style={{
-          display: "table",
-          width: "100%",
-          borderCollapse: "collapse",
-          border: "1px solid rgba(57,145,205,0.15)",
-          borderRadius: "0.5rem",
-          overflow: "hidden",
-          fontSize: "0.9375rem",
-        }}
-      >
-        {children}
-      </table>
-    </div>
-  );
-}
-function Thead({ children }: { children?: React.ReactNode }) {
-  return <thead style={{ display: "table-header-group" }}>{children}</thead>;
-}
-function Tbody({ children }: { children?: React.ReactNode }) {
-  return <tbody style={{ display: "table-row-group" }}>{children}</tbody>;
-}
-function Tr({ children }: { children?: React.ReactNode }) {
-  return (
-    <tr style={{ display: "table-row", borderBottom: "1px solid rgba(57,145,205,0.1)" }}>
-      {children}
-    </tr>
-  );
-}
-function Th({ children }: { children?: React.ReactNode }) {
-  return (
-    <th
-      style={{
-        display: "table-cell",
-        padding: "0.75rem 1rem",
-        textAlign: "left",
-        background: "#252d3a",
-        fontWeight: 600,
-        color: "#ffffff",
-        borderBottom: "1px solid rgba(57,145,205,0.25)",
-      }}
-    >
-      {children}
-    </th>
-  );
-}
-function Td({ children }: { children?: React.ReactNode }) {
-  return (
-    <td
-      style={{
-        display: "table-cell",
-        padding: "0.75rem 1rem",
-        textAlign: "left",
-        color: "#b8c5d4",
-        background: "rgba(37,45,58,0.3)",
-        borderBottom: "1px solid rgba(57,145,205,0.08)",
-      }}
-    >
-      {children}
-    </td>
-  );
 }
 
 const mdxComponents = {
@@ -177,7 +112,11 @@ export default async function DocPage({ params }: PageProps) {
           </p>
         )}
         <div className="docs-prose pr-12">
-          <MDXRemote source={doc.content} components={mdxComponents} />
+          <MDXRemote
+            source={doc.content}
+            components={mdxComponents}
+            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+          />
         </div>
       </article>
       <TableOfContents headings={headings} />
