@@ -30,16 +30,22 @@ const icons: Record<string, React.ReactNode> = {
   ),
 };
 
-const styles: Record<string, { border: string; bg: string; accent: string }> = {
+const styles: Record<
+  string,
+  { border: string; bg: string; accent: string; content?: string }
+> = {
   note: {
     border: "border-accent/20",
     bg: "bg-accent/[0.07]",
     accent: "text-accent",
   },
   tip: {
-    border: "border-[#4ade80]/50",
-    bg: "bg-[#4ade80]/[0.25]",
-    accent: "text-[#4ade80]",
+    // Match the code snippet theme's purple keyword color.
+    border: "border-[#c678dd]/35",
+    bg: "bg-[#c678dd]/[0.10]",
+    accent: "text-[#c678dd]",
+    // Make highlighted/inline code words white inside the tip.
+    content: "[&_:not(pre)>code]:text-white",
   },
   caution: {
     border: "border-[#fbbf24]/20",
@@ -66,7 +72,11 @@ export default function Aside({
       className={`my-6 flex items-start gap-3 rounded-xl border ${style.border} ${style.bg} px-4 py-4`}
     >
       <span className={`mt-0.5 shrink-0 ${style.accent}`}>{icon}</span>
-      <div className="text-sm text-gray-2 leading-relaxed [&>p]:mb-0">{children}</div>
+      <div
+        className={`text-sm text-gray-2 leading-relaxed [&>p]:mb-0 ${style.content || ""}`}
+      >
+        {children}
+      </div>
     </div>
   );
 }
