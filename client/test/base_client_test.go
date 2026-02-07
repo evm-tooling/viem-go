@@ -2,11 +2,12 @@ package client_test
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"

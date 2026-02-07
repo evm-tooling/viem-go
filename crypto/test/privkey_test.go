@@ -1,8 +1,9 @@
 package crypto_test
 
 import (
-	json "github.com/goccy/go-json"
 	"testing/quick"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/renproject/surge"
 

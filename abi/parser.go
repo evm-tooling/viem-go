@@ -1,9 +1,10 @@
 package abi
 
 import (
-	json "github.com/goccy/go-json"
 	"fmt"
 	"strings"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/crypto"

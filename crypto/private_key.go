@@ -3,8 +3,9 @@ package crypto
 import (
 	"crypto/ecdsa"
 	"encoding/base64"
-	json "github.com/goccy/go-json"
 	"fmt"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/renproject/surge"

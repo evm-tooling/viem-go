@@ -2,8 +2,9 @@ package wallet
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
+
+	json "github.com/goccy/go-json"
 )
 
 // WatchAssetOptions contains the token options for the WatchAsset action.

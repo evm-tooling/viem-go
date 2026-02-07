@@ -1,10 +1,11 @@
 package rpc
 
 import (
-	json "github.com/goccy/go-json"
 	"errors"
 	"fmt"
 	"sync/atomic"
+
+	json "github.com/goccy/go-json"
 )
 
 // Common RPC errors

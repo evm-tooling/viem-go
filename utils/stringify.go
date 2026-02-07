@@ -1,9 +1,10 @@
 package utils
 
 import (
-	json "github.com/goccy/go-json"
 	"math/big"
 	"reflect"
+
+	json "github.com/goccy/go-json"
 )
 
 // Stringify is a JSON marshaling function that handles *big.Int values

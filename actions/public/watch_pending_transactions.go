@@ -2,9 +2,10 @@ package public
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"time"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/common"
 

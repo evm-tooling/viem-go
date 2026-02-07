@@ -1,8 +1,9 @@
 package types
 
 import (
-	json "github.com/goccy/go-json"
 	"fmt"
+
+	json "github.com/goccy/go-json"
 )
 
 // RPCRequest represents a JSON-RPC request.

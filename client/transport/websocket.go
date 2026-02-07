@@ -2,8 +2,9 @@ package transport
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"time"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ChefBingbong/viem-go/utils/rpc"
 )

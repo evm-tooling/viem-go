@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"crypto/rand"
 	"crypto/sha256"
-	json "github.com/goccy/go-json"
 	"testing"
 	"testing/quick"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/renproject/surge"
 

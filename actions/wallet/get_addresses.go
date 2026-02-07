@@ -2,8 +2,9 @@ package wallet
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ChefBingbong/viem-go/utils/address"
 )

@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	json "github.com/goccy/go-json"
 )
 
 // HTTPClientOptions contains options for the HTTP RPC client.

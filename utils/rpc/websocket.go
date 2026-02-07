@@ -2,10 +2,11 @@ package rpc
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"sync"
 	"time"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/gorilla/websocket"
 )

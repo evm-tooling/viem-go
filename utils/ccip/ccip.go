@@ -4,11 +4,12 @@ package ccip
 import (
 	"bytes"
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"

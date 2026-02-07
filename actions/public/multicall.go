@@ -2,11 +2,12 @@ package public
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"reflect"
 	"runtime"
 	"sync"
+
+	json "github.com/goccy/go-json"
 
 	gethabi "github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"

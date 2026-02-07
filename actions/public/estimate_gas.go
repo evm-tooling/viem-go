@@ -3,9 +3,10 @@ package public
 import (
 	"context"
 	"encoding/hex"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"math/big"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"

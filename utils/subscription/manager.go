@@ -5,8 +5,9 @@ package subscription
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"time"
+
+	json "github.com/goccy/go-json"
 )
 
 // SubscribeParams contains parameters for a WebSocket subscription.

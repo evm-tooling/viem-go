@@ -2,9 +2,10 @@ package public
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"math/big"
+
+	json "github.com/goccy/go-json"
 )
 
 // GetGasPriceReturnType is the return type for the GetGasPrice action.

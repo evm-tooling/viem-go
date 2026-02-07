@@ -3,12 +3,13 @@ package public_test
 import (
 	"bytes"
 	"context"
-	json "github.com/goccy/go-json"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"

@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"unsafe"
+
+	json "github.com/goccy/go-json"
 
 	"github.com/renproject/surge"
 )

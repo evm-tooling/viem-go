@@ -3,12 +3,13 @@ package client
 import (
 	"bytes"
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
 	"io"
 	"net/http"
 	"sync/atomic"
 	"time"
+
+	json "github.com/goccy/go-json"
 )
 
 // Transport defines the interface for JSON-RPC transport.

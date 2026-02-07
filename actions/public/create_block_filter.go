@@ -2,8 +2,9 @@ package public
 
 import (
 	"context"
-	json "github.com/goccy/go-json"
 	"fmt"
+
+	json "github.com/goccy/go-json"
 )
 
 // CreateBlockFilterReturnType is the return type for the CreateBlockFilter action.
