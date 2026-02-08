@@ -14,10 +14,13 @@ import {
   getContractAddress,
 } from 'viem'
 
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
 const benchOptions = {
-  time: 2000,
+  time: 0,
   warmupTime: 0,
   warmupIterations: 0,
+  iterations,
 }
 
 describe('Address', () => {

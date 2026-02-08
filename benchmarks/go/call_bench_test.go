@@ -13,9 +13,11 @@ import (
 //
 //	await client.call({ to: USDC, data: '0x06fdde03' })
 func BenchmarkCall_Basic(b *testing.B) {
+	ba := true
 	params := public.CallParameters{
 		To:   &usdcAddress,
 		Data: nameSelector,
+		Batch: &ba,
 	}
 
 	b.ResetTimer()
@@ -37,9 +39,13 @@ func BenchmarkCall_Basic(b *testing.B) {
 //	  data: encodeFunctionData({ abi: erc20Abi, functionName: 'balanceOf', args: [address] })
 //	})
 func BenchmarkCall_WithData(b *testing.B) {
+	ba := true
+
 	params := public.CallParameters{
 		To:   &usdcAddress,
 		Data: balanceOfVitalikData,
+		Batch: &ba,
+
 	}
 
 	b.ResetTimer()
@@ -62,10 +68,14 @@ func BenchmarkCall_WithData(b *testing.B) {
 //	  data: '0x06fdde03'
 //	})
 func BenchmarkCall_WithAccount(b *testing.B) {
+	ba := true
+
 	params := public.CallParameters{
 		Account: &anvilAccount0,
 		To:      &usdcAddress,
 		Data:    nameSelector,
+		Batch: &ba,
+
 	}
 
 	b.ResetTimer()

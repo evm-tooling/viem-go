@@ -2,8 +2,6 @@ package client
 
 import (
 	"context"
-	"encoding/hex"
-	"fmt"
 	"math/big"
 	"time"
 
@@ -92,47 +90,17 @@ func CreatePublicClient(config PublicClientConfig) (*PublicClient, error) {
 
 // GetBlockNumber returns the current block number.
 func (c *PublicClient) GetBlockNumber(ctx context.Context) (uint64, error) {
-	resp, err := c.Request(ctx, "eth_blockNumber")
-	if err != nil {
-		return 0, err
-	}
-
-	var hexNumber string
-	if err := json.Unmarshal(resp.Result, &hexNumber); err != nil {
-		return 0, err
-	}
-
-	return parseHexUint64(hexNumber)
+	return public.GetBlockNumber(ctx, c, public.GetBlockNumberParameters{})
 }
 
 // GetChainID returns the chain ID.
 func (c *PublicClient) GetChainID(ctx context.Context) (uint64, error) {
-	resp, err := c.Request(ctx, "eth_chainId")
-	if err != nil {
-		return 0, err
-	}
-
-	var hexChainID string
-	if err := json.Unmarshal(resp.Result, &hexChainID); err != nil {
-		return 0, err
-	}
-
-	return parseHexUint64(hexChainID)
+	return public.GetChainID(ctx, c)
 }
 
 // GetGasPrice returns the current gas price in wei.
 func (c *PublicClient) GetGasPrice(ctx context.Context) (*big.Int, error) {
-	resp, err := c.Request(ctx, "eth_gasPrice")
-	if err != nil {
-		return nil, err
-	}
-
-	var hexGasPrice string
-	if err := json.Unmarshal(resp.Result, &hexGasPrice); err != nil {
-		return nil, err
-	}
-
-	return parseHexBigInt(hexGasPrice)
+	return public.GetGasPrice(ctx, c)
 }
 
 // GetBalance returns the balance of an address in wei.
@@ -147,53 +115,48 @@ func (c *PublicClient) GetBalance(ctx context.Context, address common.Address, b
 
 // GetTransactionCount returns the nonce for an address.
 func (c *PublicClient) GetTransactionCount(ctx context.Context, address common.Address, blockTag ...BlockTag) (uint64, error) {
-	tag := c.resolveBlockTag(blockTag)
-
-	resp, err := c.Request(ctx, "eth_getTransactionCount", address.Hex(), string(tag))
-	if err != nil {
-		return 0, err
+	params := public.GetTransactionCountParameters{Address: address}
+	if len(blockTag) > 0 {
+		params.BlockTag = blockTag[0]
 	}
-
-	var hexNonce string
-	if err := json.Unmarshal(resp.Result, &hexNonce); err != nil {
-		return 0, err
-	}
-
-	return parseHexUint64(hexNonce)
+	return public.GetTransactionCount(ctx, c, params)
 }
 
 // GetCode returns the bytecode at an address.
 func (c *PublicClient) GetCode(ctx context.Context, address common.Address, blockTag ...BlockTag) ([]byte, error) {
-	tag := c.resolveBlockTag(blockTag)
-
-	resp, err := c.Request(ctx, "eth_getCode", address.Hex(), string(tag))
+	params := public.GetCodeParameters{Address: address}
+	if len(blockTag) > 0 {
+		params.BlockTag = blockTag[0]
+	}
+	code, err := public.GetCode(ctx, c, params)
 	if err != nil {
 		return nil, err
 	}
-
-	var hexCode string
-	if err := json.Unmarshal(resp.Result, &hexCode); err != nil {
-		return nil, err
+	// Preserve legacy behavior: return empty slice for "no code" instead of nil.
+	if code == nil {
+		return []byte{}, nil
 	}
-
-	return parseHexBytes(hexCode)
+	return code, nil
 }
 
 // GetStorageAt returns the value at a storage position.
 func (c *PublicClient) GetStorageAt(ctx context.Context, address common.Address, slot common.Hash, blockTag ...BlockTag) ([]byte, error) {
-	tag := c.resolveBlockTag(blockTag)
-
-	resp, err := c.Request(ctx, "eth_getStorageAt", address.Hex(), slot.Hex(), string(tag))
+	params := public.GetStorageAtParameters{
+		Address: address,
+		Slot:    slot,
+	}
+	if len(blockTag) > 0 {
+		params.BlockTag = blockTag[0]
+	}
+	value, err := public.GetStorageAt(ctx, c, params)
 	if err != nil {
 		return nil, err
 	}
-
-	var hexData string
-	if err := json.Unmarshal(resp.Result, &hexData); err != nil {
-		return nil, err
+	// Preserve legacy behavior: return empty slice for "0x"/empty instead of nil.
+	if value == nil {
+		return []byte{}, nil
 	}
-
-	return parseHexBytes(hexData)
+	return value, nil
 }
 
 // CallRequest represents the parameters for an eth_call request.
@@ -226,17 +189,19 @@ func (c *PublicClient) Call(ctx context.Context, call CallRequest, blockTag ...B
 
 // EstimateGas estimates gas for a call.
 func (c *PublicClient) EstimateGas(ctx context.Context, call CallRequest) (uint64, error) {
-	resp, err := c.Request(ctx, "eth_estimateGas", call)
-	if err != nil {
-		return 0, err
+	to := call.To // addressable
+	params := public.EstimateGasParameters{
+		Account:  call.From,
+		To:       &to,
+		Data:     call.Data,
+		Value:    call.Value,
+		GasPrice: call.GasPrice,
 	}
-
-	var hexGas string
-	if err := json.Unmarshal(resp.Result, &hexGas); err != nil {
-		return 0, err
+	if call.Gas > 0 {
+		gas := call.Gas
+		params.Gas = &gas
 	}
-
-	return parseHexUint64(hexGas)
+	return public.EstimateGas(ctx, c, params)
 }
 
 // GetBlock returns a block by tag.
@@ -308,21 +273,15 @@ func (c *PublicClient) GetTransaction(ctx context.Context, hash common.Hash) (*p
 
 // GetTransactionReceipt returns a transaction receipt.
 func (c *PublicClient) GetTransactionReceipt(ctx context.Context, hash common.Hash) (*types.Receipt, error) {
-	resp, err := c.Request(ctx, "eth_getTransactionReceipt", hash.Hex())
+	receipt, err := public.GetTransactionReceipt(ctx, c, public.GetTransactionReceiptParameters{Hash: hash})
 	if err != nil {
+		// Convert not-found error to nil for backward compatibility.
+		if _, ok := err.(*public.TransactionReceiptNotFoundError); ok {
+			return nil, nil
+		}
 		return nil, err
 	}
-
-	if resp.Result == nil || string(resp.Result) == "null" {
-		return nil, nil
-	}
-
-	var receipt types.Receipt
-	if err := json.Unmarshal(resp.Result, &receipt); err != nil {
-		return nil, err
-	}
-
-	return &receipt, nil
+	return receipt, nil
 }
 
 // FilterQuery represents parameters for eth_getLogs.
@@ -345,65 +304,49 @@ func (c *PublicClient) GetLogs(ctx context.Context, filter FilterQuery) ([]types
 
 // GetFeeHistory returns fee history.
 func (c *PublicClient) GetFeeHistory(ctx context.Context, blockCount uint64, newestBlock BlockTag, rewardPercentiles []float64) (json.RawMessage, error) {
-	resp, err := c.Request(ctx, "eth_feeHistory", fmt.Sprintf("0x%x", blockCount), string(newestBlock), rewardPercentiles)
+	history, err := public.GetFeeHistory(ctx, c, public.GetFeeHistoryParameters{
+		BlockCount:        blockCount,
+		BlockTag:          newestBlock,
+		RewardPercentiles: rewardPercentiles,
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	return resp.Result, nil
+	b, marshalErr := json.Marshal(history)
+	if marshalErr != nil {
+		return nil, marshalErr
+	}
+	return json.RawMessage(b), nil
 }
 
 // GetMaxPriorityFeePerGas returns the max priority fee per gas.
 func (c *PublicClient) GetMaxPriorityFeePerGas(ctx context.Context) (*big.Int, error) {
-	resp, err := c.Request(ctx, "eth_maxPriorityFeePerGas")
-	if err != nil {
-		return nil, err
-	}
-
-	var hexFee string
-	if err := json.Unmarshal(resp.Result, &hexFee); err != nil {
-		return nil, err
-	}
-
-	return parseHexBigInt(hexFee)
+	return public.EstimateMaxPriorityFeePerGas(ctx, c, public.EstimateMaxPriorityFeePerGasParameters{})
 }
 
 // GetProof returns the account and storage values with Merkle proof.
 func (c *PublicClient) GetProof(ctx context.Context, address common.Address, storageKeys []common.Hash, blockTag ...BlockTag) (json.RawMessage, error) {
-	tag := c.resolveBlockTag(blockTag)
-
-	keys := make([]string, len(storageKeys))
-	for i, k := range storageKeys {
-		keys[i] = k.Hex()
+	params := public.GetProofParameters{
+		Address:     address,
+		StorageKeys: storageKeys,
 	}
-
-	resp, err := c.Request(ctx, "eth_getProof", address.Hex(), keys, string(tag))
+	if len(blockTag) > 0 {
+		params.BlockTag = blockTag[0]
+	}
+	proof, err := public.GetProof(ctx, c, params)
 	if err != nil {
 		return nil, err
 	}
-
-	return resp.Result, nil
+	b, marshalErr := json.Marshal(proof)
+	if marshalErr != nil {
+		return nil, marshalErr
+	}
+	return json.RawMessage(b), nil
 }
 
 // WaitForTransactionReceipt waits for a transaction to be mined and returns its receipt.
 func (c *PublicClient) WaitForTransactionReceipt(ctx context.Context, hash common.Hash) (*types.Receipt, error) {
-	ticker := time.NewTicker(c.pollingInterval)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case <-ticker.C:
-			receipt, err := c.GetTransactionReceipt(ctx, hash)
-			if err != nil {
-				return nil, err
-			}
-			if receipt != nil {
-				return receipt, nil
-			}
-		}
-	}
+	return public.WaitForTransactionReceipt(ctx, c, public.WaitForTransactionReceiptParameters{Hash: hash})
 }
 
 // ---- Watch Actions ----
@@ -512,71 +455,4 @@ func (c *PublicClient) ReadContractWithABI(ctx context.Context, address common.A
 	}
 
 	return abi.DecodeFunctionResult(functionName, result)
-}
-
-// ---- Helper methods ----
-
-// resolveBlockTag returns the block tag to use, considering experimental block tag.
-func (c *PublicClient) resolveBlockTag(tags []BlockTag) BlockTag {
-	if len(tags) > 0 {
-		return tags[0]
-	}
-	if c.experimentalBlockTag != "" {
-		return c.experimentalBlockTag
-	}
-	return BlockTagLatest
-}
-
-// ---- Parsing helpers ----
-
-// parseHexUint64 parses a hex string to uint64.
-func parseHexUint64(hexStr string) (uint64, error) {
-	if len(hexStr) >= 2 && hexStr[:2] == "0x" {
-		hexStr = hexStr[2:]
-	}
-	if hexStr == "" {
-		return 0, nil
-	}
-
-	var result uint64
-	for _, c := range hexStr {
-		result *= 16
-		switch {
-		case c >= '0' && c <= '9':
-			result += uint64(c - '0')
-		case c >= 'a' && c <= 'f':
-			result += uint64(c - 'a' + 10)
-		case c >= 'A' && c <= 'F':
-			result += uint64(c - 'A' + 10)
-		}
-	}
-	return result, nil
-}
-
-// parseHexBytes parses a hex string to bytes.
-func parseHexBytes(hexStr string) ([]byte, error) {
-	if len(hexStr) >= 2 && hexStr[:2] == "0x" {
-		hexStr = hexStr[2:]
-	}
-	if hexStr == "" {
-		return []byte{}, nil
-	}
-	return hex.DecodeString(hexStr)
-}
-
-// parseHexBigInt parses a hex string to *big.Int.
-func parseHexBigInt(hexStr string) (*big.Int, error) {
-	if len(hexStr) >= 2 && hexStr[:2] == "0x" {
-		hexStr = hexStr[2:]
-	}
-	if hexStr == "" {
-		return big.NewInt(0), nil
-	}
-
-	n := new(big.Int)
-	_, ok := n.SetString(hexStr, 16)
-	if !ok {
-		return nil, fmt.Errorf("invalid hex string: %s", hexStr)
-	}
-	return n, nil
 }

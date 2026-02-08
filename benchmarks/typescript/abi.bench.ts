@@ -33,10 +33,13 @@ const ANVIL_0 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as const
 // Pre-encoded balanceOf return data (uint256 = 1000000)
 const balanceOfReturnData = '0x00000000000000000000000000000000000000000000000000000000000f4240' as const
 
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
 const benchOptions = {
-  time: 2000,
+  time: 0,
   warmupTime: 0,
   warmupIterations: 0,
+  iterations,
 }
 
 describe('Abi', () => {

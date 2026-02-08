@@ -5,13 +5,13 @@
  * for fair cross-language comparison.
  *
  * Both benchmark suites should be run against the same Anvil instance
- * using the scripts/anvil.sh management script.
+ * using the unified benchmarks entrypoint (benchmarks/bench.sh).
  *
  * IMPORTANT: All benchmarks use batchSize: 0 to disable chunking,
  * ensuring a single RPC call for fair comparison.
  */
 
-import { beforeAll, bench, describe } from 'vitest'
+import { bench, describe } from 'vitest'
 import {
   createPublicClient,
   http,
@@ -48,40 +48,17 @@ const erc20Abi = parseAbi([
 // Log connection info
 console.log(`\n[viem-ts] Multicall RPC URL: ${rpcUrl}`)
 
-// Benchmark options - align with Go benchmark settings
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
+// Benchmark options: iteration-based (controlled by BENCH_ITERATIONS)
 const benchOptions = {
-  time: 2000,          // Run for 2 seconds
-  warmupTime: 0,    // 1s warmup
-  warmupIterations: 0, // At least 1 warmup iteration
+  time: 0,
+  warmupTime: 0,
+  warmupIterations: 0,
+  iterations,
 }
-
-// Verify connection before running benchmarks
-const warmup = async () => {
-  try {
-    const blockNumber = await client.getBlockNumber()
-    console.log(`[viem-ts] Connected to Anvil, block number: ${blockNumber}`)
-    // Do a warmup multicall
-    await client.multicall({
-      contracts: [
-        { address: USDC_ADDRESS, abi: erc20Abi, functionName: 'name' },
-      ],
-    })
-    console.log('[viem-ts] Multicall warmup complete, starting benchmarks...')
-  } catch (error) {
-    console.error(`[viem-ts] FATAL: Failed to connect to Anvil at ${rpcUrl}`)
-    console.error(error)
-    process.exit(1)
-  }
-}
-
-// Run warmup synchronously before benchmarks
-// await warmup()
 
 describe('Multicall', () => {
-
-  beforeAll(async() => {
-    await warmup()
-  })
   /**
    * BenchmarkMulticall_Basic - Simple multicall with 3 calls.
    */

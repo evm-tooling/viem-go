@@ -1,67 +1,79 @@
-Benchmark client connected to: http://127.0.0.1:8545
-Current block number: 24403589
 goos: darwin
 goarch: arm64
 pkg: github.com/ChefBingbong/viem-go/benchmarks/go
 cpu: Apple M4 Pro
-BenchmarkAbi_EncodeSimple-14                           	11154450	       214.6 ns/op	     200 B/op	       6 allocs/op
-BenchmarkAbi_EncodeComplex-14                          	 7393200	       544.0 ns/op	     328 B/op	      10 allocs/op
-BenchmarkAbi_EncodeMultiArg-14                         	 3320588	       685.4 ns/op	     592 B/op	      15 allocs/op
-BenchmarkAbi_DecodeResult-14                           	21593300	       114.5 ns/op	     112 B/op	       3 allocs/op
-BenchmarkAbi_EncodePacked-14                           	 6754296	       523.0 ns/op	     288 B/op	       8 allocs/op
-BenchmarkAbi_EncodePackedMulti-14                      	 5015895	       482.6 ns/op	     392 B/op	      11 allocs/op
-BenchmarkAddress_IsAddress-14                          	63555745	        38.29 ns/op	      48 B/op	       1 allocs/op
-BenchmarkAddress_IsAddressLower-14                     	62334220	        58.67 ns/op	      48 B/op	       1 allocs/op
-BenchmarkAddress_Checksum-14                           	25367218	        98.89 ns/op	      96 B/op	       2 allocs/op
-BenchmarkAddress_Create-14                             	 2989647	      1167 ns/op	     440 B/op	      15 allocs/op
-BenchmarkAddress_Create2-14                            	 2296880	      1079 ns/op	     376 B/op	       9 allocs/op
-BenchmarkCall_Basic-14                                 	   13489	    274381 ns/op	   27992 B/op	     236 allocs/op
-BenchmarkCall_WithData-14                              	   10947	    187542 ns/op	   28379 B/op	     238 allocs/op
-BenchmarkCall_WithAccount-14                           	   13036	    175643 ns/op	   28421 B/op	     242 allocs/op
-BenchmarkCall_Decimals-14                              	   14060	    174224 ns/op	   27287 B/op	     236 allocs/op
-BenchmarkCall_Symbol-14                                	   12990	    180635 ns/op	   28177 B/op	     236 allocs/op
-BenchmarkCall_BalanceOfMultiple-14                     	   13174	    183921 ns/op	   28528 B/op	     238 allocs/op
-BenchmarkEns_Namehash-14                               	 1533409	      1661 ns/op	     400 B/op	       9 allocs/op
-BenchmarkEns_NamehashDeep-14                           	  779295	      3029 ns/op	     560 B/op	      13 allocs/op
-BenchmarkEns_Labelhash-14                              	 5557071	       433.9 ns/op	     240 B/op	       4 allocs/op
-BenchmarkEns_Normalize-14                              	 6950601	       349.1 ns/op	     256 B/op	      11 allocs/op
-BenchmarkEns_NormalizeLong-14                          	 2675295	       882.7 ns/op	     696 B/op	      21 allocs/op
-BenchmarkEvent_DecodeTransfer-14                       	 3328730	       639.2 ns/op	     720 B/op	       9 allocs/op
-BenchmarkEvent_DecodeBatch10-14                        	  537792	      3982 ns/op	    7200 B/op	      91 allocs/op
-BenchmarkEvent_DecodeBatch100-14                       	   60116	     39738 ns/op	   71999 B/op	     912 allocs/op
-BenchmarkHash_Keccak256Short-14                        	 5568955	       434.5 ns/op	     240 B/op	       4 allocs/op
-BenchmarkHash_Keccak256Long-14                         	  897886	      2812 ns/op	     240 B/op	       4 allocs/op
-BenchmarkHash_Keccak256Hex-14                          	 5209994	       459.7 ns/op	     256 B/op	       5 allocs/op
-BenchmarkHash_Sha256Short-14                           	14388711	       161.0 ns/op	     240 B/op	       4 allocs/op
-BenchmarkHash_Sha256Long-14                            	 3820330	       632.1 ns/op	     240 B/op	       4 allocs/op
-BenchmarkHash_FunctionSelector-14                      	 1243480	      1920 ns/op	     976 B/op	      98 allocs/op
-BenchmarkHash_EventSelector-14                         	 1000000	      2377 ns/op	    1376 B/op	     124 allocs/op
-BenchmarkMulticall_Basic-14                            	   12807	    182793 ns/op	   26375 B/op	     139 allocs/op
-BenchmarkMulticall_WithArgs-14                         	   13200	    189193 ns/op	   25750 B/op	     140 allocs/op
-BenchmarkMulticall_MultiContract-14                    	   10035	    220815 ns/op	   34118 B/op	     154 allocs/op
-BenchmarkMulticall_10Calls-14                          	   10000	    227875 ns/op	   69149 B/op	     212 allocs/op
-BenchmarkMulticall_30Calls-14                          	    7110	    377187 ns/op	  212127 B/op	     400 allocs/op
-BenchmarkMulticall_Deployless-14                       	    6618	    352429 ns/op	  134986 B/op	     177 allocs/op
-BenchmarkMulticall_TokenMetadata-14                    	   11635	    202770 ns/op	   33098 B/op	     144 allocs/op
-BenchmarkMulticall_50Calls-14                          	    5103	    484157 ns/op	  338482 B/op	     584 allocs/op
-BenchmarkMulticall_100Calls-14                         	    2856	    869667 ns/op	  692687 B/op	    1045 allocs/op
-BenchmarkMulticall_200Calls-14                         	    1692	   1410831 ns/op	 1283803 B/op	    1953 allocs/op
-BenchmarkMulticall_500Calls-14                         	     932	   2172946 ns/op	 3307221 B/op	    4991 allocs/op
-BenchmarkMulticall_MixedContracts_100-14               	    2457	    843830 ns/op	  701256 B/op	    1046 allocs/op
-BenchmarkMulticall_1000Calls-14                        	     812	   2909357 ns/op	 6579916 B/op	    9853 allocs/op
-BenchmarkMulticall_10000Calls_SingleRPC-14             	      33	  66612371 ns/op	63602499 B/op	   96211 allocs/op
-BenchmarkMulticall_10000Calls_Chunked-14               	     133	  18517578 ns/op	62284872 B/op	   97218 allocs/op
-BenchmarkMulticall_10000Calls_AggressiveChunking-14    	     127	  22368029 ns/op	59151698 B/op	   93613 allocs/op
-BenchmarkSignature_HashMessage-14                      	 3133692	       771.8 ns/op	     712 B/op	      12 allocs/op
-BenchmarkSignature_HashMessageLong-14                  	 1314906	      1809 ns/op	    2507 B/op	      15 allocs/op
-BenchmarkSignature_RecoverAddress-14                   	   91788	     25877 ns/op	    3571 B/op	      54 allocs/op
-BenchmarkSignature_VerifyMessage-14                    	   92278	     26062 ns/op	    3571 B/op	      54 allocs/op
-BenchmarkSignature_ParseSignature-14                   	12704335	       188.9 ns/op	     288 B/op	       7 allocs/op
-BenchmarkUnit_ParseEther-14                            	36852301	        64.95 ns/op	      64 B/op	       3 allocs/op
-BenchmarkUnit_ParseEtherLarge-14                       	18429198	       130.2 ns/op	      96 B/op	       4 allocs/op
-BenchmarkUnit_FormatEther-14                           	20651630	       116.2 ns/op	      56 B/op	       3 allocs/op
-BenchmarkUnit_ParseUnits6-14                           	40917750	        89.31 ns/op	      48 B/op	       3 allocs/op
-BenchmarkUnit_ParseGwei-14                             	38845322	        66.70 ns/op	      56 B/op	       3 allocs/op
-BenchmarkUnit_FormatUnits-14                           	25072365	        96.60 ns/op	      40 B/op	       3 allocs/op
+BenchmarkAbi_EncodeSimple-14         	    5000	       221.7 ns/op	     200 B/op	       6 allocs/op
+BenchmarkAbi_EncodeComplex-14        	    5000	       316.1 ns/op	     328 B/op	      10 allocs/op
+BenchmarkAbi_EncodeMultiArg-14       	    5000	       439.2 ns/op	     592 B/op	      15 allocs/op
+BenchmarkAbi_DecodeResult-14         	    5000	        88.29 ns/op	     112 B/op	       3 allocs/op
+BenchmarkAbi_EncodePacked-14         	    5000	       299.6 ns/op	     288 B/op	       8 allocs/op
+BenchmarkAbi_EncodePackedMulti-14    	    5000	       380.6 ns/op	     392 B/op	      11 allocs/op
 PASS
-ok  	github.com/ChefBingbong/viem-go/benchmarks/go	187.162s
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.229s
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkAddress_IsAddress-14         	    5000	        38.80 ns/op	      48 B/op	       1 allocs/op
+BenchmarkAddress_IsAddressLower-14    	    5000	        43.69 ns/op	      48 B/op	       1 allocs/op
+BenchmarkAddress_Checksum-14          	    5000	        78.11 ns/op	      96 B/op	       2 allocs/op
+BenchmarkAddress_Create-14            	    5000	       739.8 ns/op	     440 B/op	      15 allocs/op
+BenchmarkAddress_Create2-14           	    5000	       975.5 ns/op	     376 B/op	       9 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.226s
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkEns_Namehash-14         	    5000	      1567 ns/op	     400 B/op	       9 allocs/op
+BenchmarkEns_NamehashDeep-14     	    5000	      3032 ns/op	     560 B/op	      13 allocs/op
+BenchmarkEns_Labelhash-14        	    5000	       430.2 ns/op	     240 B/op	       4 allocs/op
+BenchmarkEns_Normalize-14        	    5000	       334.0 ns/op	     256 B/op	      11 allocs/op
+BenchmarkEns_NormalizeLong-14    	    5000	       849.2 ns/op	     696 B/op	      21 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.250s
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkEvent_DecodeTransfer-14    	    5000	       431.8 ns/op	     720 B/op	       9 allocs/op
+BenchmarkEvent_DecodeBatch10-14     	    5000	      3717 ns/op	    7199 B/op	      91 allocs/op
+BenchmarkEvent_DecodeBatch100-14    	    5000	     36941 ns/op	   71998 B/op	     912 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.419s
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkHash_Keccak256Short-14      	    5000	       433.1 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_Keccak256Long-14       	    5000	      2698 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_Keccak256Hex-14        	    5000	       436.7 ns/op	     256 B/op	       5 allocs/op
+BenchmarkHash_Sha256Short-14         	    5000	       142.5 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_Sha256Long-14          	    5000	       610.5 ns/op	     240 B/op	       4 allocs/op
+BenchmarkHash_FunctionSelector-14    	    5000	      2003 ns/op	     977 B/op	      98 allocs/op
+BenchmarkHash_EventSelector-14       	    5000	      2388 ns/op	    1376 B/op	     124 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.266s
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkSignature_HashMessage-14        	    5000	       792.3 ns/op	     714 B/op	      12 allocs/op
+BenchmarkSignature_HashMessageLong-14    	    5000	      1607 ns/op	    2505 B/op	      15 allocs/op
+BenchmarkSignature_RecoverAddress-14     	    5000	     25812 ns/op	    3569 B/op	      54 allocs/op
+BenchmarkSignature_VerifyMessage-14      	    5000	     28635 ns/op	    3569 B/op	      54 allocs/op
+BenchmarkSignature_ParseSignature-14     	    5000	       162.3 ns/op	     288 B/op	       7 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.502s
+goos: darwin
+goarch: arm64
+pkg: github.com/ChefBingbong/viem-go/benchmarks/go
+cpu: Apple M4 Pro
+BenchmarkUnit_ParseEther-14         	    5000	        71.57 ns/op	      64 B/op	       3 allocs/op
+BenchmarkUnit_ParseEtherLarge-14    	    5000	       121.4 ns/op	      96 B/op	       4 allocs/op
+BenchmarkUnit_FormatEther-14        	    5000	       111.3 ns/op	      56 B/op	       3 allocs/op
+BenchmarkUnit_ParseUnits6-14        	    5000	        52.53 ns/op	      48 B/op	       3 allocs/op
+BenchmarkUnit_ParseGwei-14          	    5000	        58.86 ns/op	      56 B/op	       3 allocs/op
+BenchmarkUnit_FormatUnits-14        	    5000	        94.32 ns/op	      40 B/op	       3 allocs/op
+PASS
+ok  	github.com/ChefBingbong/viem-go/benchmarks/go	0.225s

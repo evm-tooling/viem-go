@@ -23,10 +23,13 @@ const longMessage = 'The quick brown fox jumps over the lazy dog. ' +
   'This is a much longer message that simulates real-world signing scenarios ' +
   'where users might sign terms of service, governance proposals, or other text content.'
 
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
 const benchOptions = {
-  time: 2000,
+  time: 0,
   warmupTime: 0,
   warmupIterations: 0,
+  iterations,
 }
 
 describe('Signature', () => {

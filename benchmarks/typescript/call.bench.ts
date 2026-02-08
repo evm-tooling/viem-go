@@ -5,10 +5,10 @@
  * for fair cross-language comparison.
  *
  * Both benchmark suites should be run against the same Anvil instance
- * using the scripts/anvil.sh management script.
+ * using the unified benchmarks entrypoint (benchmarks/bench.sh).
  */
 
-import { beforeAll, bench, describe } from 'vitest'
+import { bench, describe } from 'vitest'
 import {
   createPublicClient,
   http,
@@ -59,34 +59,15 @@ const balanceOfVitalikData = encodeFunctionData({
 // Log connection info
 console.log(`\n[viem-ts] RPC URL: ${rpcUrl}`)
 
-// Benchmark options - align with Go benchmark settings
-// Go uses -benchtime=10s, running until stable
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
+// Benchmark options: iteration-based (controlled by BENCH_ITERATIONS)
 const benchOptions = {
-  time: 2000,          // Run for 10 seconds (matches Go's -benchtime=10s)
-  warmupTime: 0,     // 1s warmup
-  warmupIterations: 0, // At least 10 warmup iterations
+  time: 0,
+  warmupTime: 0,
+  warmupIterations: 0,
+  iterations,
 }
-
-// Verify connection before running benchmarks - do a warmup call
-// This ensures Anvil is running and helps stabilize benchmark results
-const warmup = async () => {
-  try {
-    const blockNumber = await client.getBlockNumber()
-    console.log(`[viem-ts] Connected to Anvil, block number: ${blockNumber}`)
-    // Do a warmup call
-    await client.call({
-      to: USDC_ADDRESS,
-      data: NAME_SELECTOR,
-    })
-    console.log('[viem-ts] Warmup complete, starting benchmarks...')
-  } catch (error) {
-    console.error(`[viem-ts] FATAL: Failed to connect to Anvil at ${rpcUrl}`)
-    console.error(error)
-    process.exit(1)
-  }
-}
-
-// Run warmup synchronously before benchmarks
 
 describe('Call', () => {
   /**
@@ -99,9 +80,7 @@ describe('Call', () => {
    *   })
    */
 
-  beforeAll(async() => {
-    await warmup()
-  })
+
   
   bench('viem-ts: call (basic)', async () => {
     await client.call({

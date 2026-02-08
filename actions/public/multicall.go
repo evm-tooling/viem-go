@@ -65,6 +65,8 @@ type MulticallParameters struct {
 	// This allows multicall on chains without a deployed multicall3 contract.
 	Deployless bool
 
+	ShouldBatch bool
+
 	// MulticallAddress overrides the default multicall3 contract address.
 	MulticallAddress *common.Address
 
@@ -194,10 +196,12 @@ func getNumWorkers(numJobs int) int {
 //	})
 func Multicall(ctx context.Context, client Client, params MulticallParameters) (MulticallReturnType, error) {
 	// Check if client has multicall batch aggregation enabled
-	if batch := client.Batch(); batch != nil && batch.Multicall != nil {
-		batcher := getMulticallBatcher(client, batch.Multicall)
-		if batcher != nil {
-			return batcher.Schedule(ctx, params)
+	if params.ShouldBatch {
+		if batch := client.Batch(); batch != nil && batch.Multicall != nil {
+			batcher := getMulticallBatcher(client, batch.Multicall)
+			if batcher != nil {
+				return batcher.Schedule(ctx, params)
+			}
 		}
 	}
 

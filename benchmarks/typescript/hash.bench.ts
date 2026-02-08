@@ -25,10 +25,13 @@ const longArray = new Uint8Array(1024)
 for (let i = 0; i < 1024; i++) longArray[i] = i % 256
 const longData = toHex(longArray)
 
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
 const benchOptions = {
-  time: 2000,
+  time: 0,
   warmupTime: 0,
   warmupIterations: 0,
+  iterations,
 }
 
 describe('Hash', () => {
