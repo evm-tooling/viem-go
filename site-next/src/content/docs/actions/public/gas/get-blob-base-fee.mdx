@@ -1,0 +1,73 @@
+---
+title: getBlobBaseFee
+description: Returns the current blob base fee in wei
+---
+
+# getBlobBaseFee
+
+Returns the current blob base fee (in wei).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+blobBaseFee, err := public.GetBlobBaseFee(ctx, publicClient) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Blob base fee: %s wei", blobBaseFee.String())`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*big.Int`
+
+The current blob base fee in wei.
+
+## Parameters
+
+This action takes no parameters.
+
+## JSON-RPC Method
+
+[`eth_blobBaseFee`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blobbasefee) (EIP-4844)

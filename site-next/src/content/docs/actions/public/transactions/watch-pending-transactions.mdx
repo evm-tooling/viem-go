@@ -1,0 +1,188 @@
+---
+title: watchPendingTransactions
+description: Watches and returns pending transaction hashes
+---
+
+# watchPendingTransactions
+
+Watches and returns pending transaction hashes.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+Watch actions return a channel of events. Cancel the context to stop watching.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "fmt"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+events := public.WatchPendingTransactions(ctx, publicClient, public.WatchPendingTransactionsParameters{
+    Batch: true, // [!code focus]
+})
+
+for event := range events { // [!code focus:6]
+    if event.Error != nil {
+        log.Printf("error: %v", event.Error)
+        continue
+    }
+    fmt.Printf("Pending transactions: %d\n", len(event.Hashes))
+    for _, hash := range event.Hashes {
+        fmt.Printf("  - %s\n", hash.Hex())
+    }
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchPendingTransactions({
+  onTransactions: hashes => console.log(hashes)
+})
+// @log: > ['0x...', '0x...', '0x...']`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`<-chan WatchPendingTransactionsEvent`
+
+A channel that emits `WatchPendingTransactionsEvent` structs containing:
+- `Hashes []common.Hash` - The pending transaction hashes (may contain multiple when `Batch` is true)
+- `Error error` - Any error that occurred
+
+## Parameters
+
+### Batch (optional)
+
+- **Type:** `bool`
+- **Default:** `true`
+
+Whether or not to batch the transaction hashes between polling intervals.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchPendingTransactions(ctx, publicClient, public.WatchPendingTransactionsParameters{
+    Batch: false, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchPendingTransactions({
+  batch: false, // [!code focus]
+  onTransactions: hashes => console.log(hashes),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Poll (optional)
+
+- **Type:** `*bool`
+- **Default:** `false` for WebSocket Transports, `true` for non-WebSocket Transports
+
+Whether or not to use a polling mechanism instead of a WebSocket subscription.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `poll := true
+events := public.WatchPendingTransactions(ctx, publicClient, public.WatchPendingTransactionsParameters{
+    Poll: &poll, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchPendingTransactions({
+  poll: true, // [!code focus]
+  onTransactions: hashes => console.log(hashes),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** Client's `PollingInterval`
+
+The interval between polls when using polling mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+events := public.WatchPendingTransactions(ctx, publicClient, public.WatchPendingTransactionsParameters{
+    PollingInterval: 5 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchPendingTransactions({
+  pollingInterval: 5_000, // [!code focus]
+  onTransactions: hashes => console.log(hashes),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- When polling:
+  - Calls [`eth_newPendingTransactionFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newpendingtransactionfilter) to initialize the filter
+  - Calls [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges) on a polling interval
+- When subscribing: uses [`eth_subscribe`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_subscribe) with `"newPendingTransactions"` event

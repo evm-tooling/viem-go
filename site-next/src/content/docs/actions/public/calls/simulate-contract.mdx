@@ -1,0 +1,322 @@
+---
+title: simulateContract
+description: Simulates/validates a contract interaction
+---
+
+# simulateContract
+
+Simulates/validates a contract interaction.
+
+This is useful for retrieving return data and revert reasons of contract write functions. This function does not require gas to execute and does not change the state of the blockchain. It is almost identical to ReadContract, but also supports contract write functions.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+// Parse ERC20 ABI
+erc20ABI, err := abi.ParseABI(\`[{"inputs":[{"name":"to","type":"address"},{"name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"type":"bool"}],"type":"function"}]\`)
+if err != nil {
+    log.Fatal(err)
+}
+
+tokenAddr := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+senderAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+recipientAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Account:      &senderAddr, // [!code focus]
+    Address:      tokenAddr, // [!code focus]
+    ABI:          erc20ABI, // [!code focus]
+    FunctionName: "transfer", // [!code focus]
+    Args:         []any{recipientAddr, big.NewInt(1000000)}, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+if result.Result.(bool) {
+    log.Println("Simulation successful!")
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const result = await publicClient.simulateContract({
+  account,
+  address: tokenAddress,
+  abi: erc20ABI,
+  functionName: 'transfer',
+  args: [recipientAddress, 1000000n],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*SimulateContractReturnType`
+
+An object containing:
+- `Result any` - The decoded return value from the contract call
+- `Request SimulateContractRequest` - The request data that can be used for writeContract
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+The contract address.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+tokenAddr := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr, // [!code focus]
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ABI (required)
+
+- **Type:** `*abi.ABI`
+
+The contract ABI.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+erc20ABI, err := abi.ParseABI(\`[{"inputs":[...],"name":"transfer",...}]\`)
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr,
+    ABI:          erc20ABI, // [!code focus]
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FunctionName (required)
+
+- **Type:** `string`
+
+The name of the function to call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr,
+    ABI:          erc20ABI,
+    FunctionName: "transfer", // [!code focus]
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Args (optional)
+
+- **Type:** `[]any`
+
+The function arguments.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr,
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+
+The account attached to the call (msg.sender).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `senderAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Account:      &senderAddr, // [!code focus]
+    Address:      tokenAddr,
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+The amount of wei to send with the call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr,
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+    Value:        big.NewInt(1000000000000000000), // 1 ETH // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to simulate at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr,
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+    BlockNumber:  &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to simulate at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Address:      tokenAddr,
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{recipientAddr, big.NewInt(1000000)},
+    BlockTag:     public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### StateOverride (optional)
+
+- **Type:** `types.StateOverride`
+
+State overrides for the call.
+
+### BlockOverrides (optional)
+
+- **Type:** `*types.BlockOverrides`
+
+Block-level overrides.
+
+### DataSuffix (optional)
+
+- **Type:** `[]byte`
+
+Optional data to append to the calldata. Useful for adding a "domain" tag.
+
+## JSON-RPC Method
+
+Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) with ABI-encoded data.

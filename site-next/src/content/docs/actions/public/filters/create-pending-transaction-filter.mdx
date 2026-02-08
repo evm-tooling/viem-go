@@ -1,0 +1,84 @@
+---
+title: createPendingTransactionFilter
+description: Creates a filter to listen for new pending transactions
+---
+
+# createPendingTransactionFilter
+
+Creates a filter to listen for new pending transactions.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+filter, err := public.CreatePendingTransactionFilter(ctx, publicClient) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+
+// Use filter.ID with GetFilterChanges to get new pending transaction hashes
+changes, err := public.GetFilterChangesTransactions(ctx, publicClient, filter.ID)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createPendingTransactionFilter()
+// Use filter with getFilterChanges to get new pending transaction hashes`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*CreatePendingTransactionFilterReturnType`
+
+A filter object containing:
+- `ID FilterID` - The filter identifier
+- `Type string` - Always `"transaction"` for pending transaction filters
+
+## Parameters
+
+This action takes no parameters.
+
+## JSON-RPC Method
+
+[`eth_newPendingTransactionFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newpendingtransactionfilter)

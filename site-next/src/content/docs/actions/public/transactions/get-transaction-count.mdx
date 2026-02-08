@@ -1,0 +1,182 @@
+---
+title: getTransactionCount
+description: Returns the number of transactions an account has sent
+---
+
+# getTransactionCount
+
+Returns the number of transactions an account has broadcast / sent.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactionCountParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction count: %d", count)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transactionCount = await publicClient.getTransactionCount({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+})
+// @log: > 420`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`uint64`
+
+The number of transactions an account has sent.
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+The address of the account.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactionCountParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transactionCount = await publicClient.getTransactionCount({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e', // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+Get the count at a block number.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(69420)
+count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactionCountParameters{
+    Address:     common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transactionCount = await publicClient.getTransactionCount({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+  blockNumber: 69420n  // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+Get the count at a block tag.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactionCountParameters{
+    Address:  common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transactionCount = await publicClient.getTransactionCount({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+  blockTag: 'safe'  // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Notes
+
+- The transaction count of an account can also be used as a nonce.
+
+## JSON-RPC Method
+
+[`eth_getTransactionCount`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gettransactioncount)

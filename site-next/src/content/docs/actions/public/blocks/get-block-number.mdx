@@ -1,0 +1,119 @@
+---
+title: getBlockNumber
+description: Returns the number of the most recent block seen
+---
+
+# getBlockNumber
+
+Returns the number of the most recent block seen.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+blockNumber, err := public.GetBlockNumber(ctx, publicClient, public.GetBlockNumberParameters{}) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Block number: %d", blockNumber)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const blockNumber = await publicClient.getBlockNumber()
+// @log: Output: 69420n`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`uint64`
+
+The number of the most recent block.
+
+## Parameters
+
+### CacheTime (optional)
+
+- **Type:** `*time.Duration`
+- **Default:** Client's `CacheTime`
+
+Time that cached block number will remain in memory.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "time"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+cacheTime := 4 * time.Second
+blockNumber, err := public.GetBlockNumber(ctx, publicClient, public.GetBlockNumberParameters{
+    CacheTime: &cacheTime, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const block = await publicClient.getBlockNumber({
+  cacheTime: 4_000 // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+By default, block numbers are cached for the period of the [Client's `CacheTime`](/docs/clients/public#cachetime-optional).
+
+- Setting a value above zero will make block number remain in the cache for that period.
+- Setting a value of `0` will disable the cache, and always retrieve a fresh block number.
+
+## JSON-RPC Method
+
+[`eth_blockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber)

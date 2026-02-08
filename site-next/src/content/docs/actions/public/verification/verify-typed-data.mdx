@@ -1,0 +1,450 @@
+---
+title: verifyTypedData
+description: Verifies a typed data signature
+---
+
+# verifyTypedData
+
+Verify that typed data was signed by the provided address.
+
+Supports verification of:
+- **Externally Owned Accounts**
+- **Smart Contract Accounts:**
+  - **Deployed** (via [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271))
+  - **Pre-deployed** (via [ERC-6492](https://eips.ethereum.org/EIPS/eip-6492))
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+typedData := signature.TypedDataDefinition{
+    Domain: signature.TypedDataDomain{
+        Name:              "Ether Mail",
+        Version:           "1",
+        ChainId:           big.NewInt(1),
+        VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Person": {
+            {Name: "name", Type: "string"},
+            {Name: "wallet", Type: "address"},
+        },
+        "Mail": {
+            {Name: "from", Type: "Person"},
+            {Name: "to", Type: "Person"},
+            {Name: "contents", Type: "string"},
+        },
+    },
+    PrimaryType: "Mail",
+    Message: map[string]any{
+        "from": map[string]any{
+            "name":   "Cow",
+            "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+        },
+        "to": map[string]any{
+            "name":   "Bob",
+            "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+        },
+        "contents": "Hello, Bob!",
+    },
+}
+
+valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:   common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"), // [!code focus]
+    TypedData: typedData, // [!code focus]
+    Signature: "0x...", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Valid: %v", valid)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await walletClient.signTypedData({
+  account,
+  domain,
+  types,
+  primaryType: 'Mail',
+  message,
+})
+const valid = await publicClient.verifyTypedData({
+  address: account.address,
+  domain,
+  types,
+  primaryType: 'Mail',
+  message,
+  signature,
+})
+// true`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`bool`
+
+Whether the signed typed data is valid for the given address.
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+The Ethereum address that signed the original typed data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:   common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"), // [!code focus]
+    TypedData: typedData,
+    Signature: "0x...",
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const valid = await publicClient.verifyTypedData({
+  address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', // [!code focus]
+  domain,
+  types,
+  primaryType: 'Mail',
+  message,
+  signature: '0x...',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### TypedData (required)
+
+- **Type:** `signature.TypedDataDefinition`
+
+The full EIP-712 typed data definition, including domain, types, primary type, and message.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+)
+
+typedData := signature.TypedDataDefinition{
+    Domain: signature.TypedDataDomain{ // [!code focus:6]
+        Name:              "Ether Mail",
+        Version:           "1",
+        ChainId:           big.NewInt(1),
+        VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Person": {
+            {Name: "name", Type: "string"},
+            {Name: "wallet", Type: "address"},
+        },
+        "Mail": {
+            {Name: "from", Type: "Person"},
+            {Name: "to", Type: "Person"},
+            {Name: "contents", Type: "string"},
+        },
+    },
+    PrimaryType: "Mail",
+    Message: map[string]any{
+        "from": map[string]any{
+            "name":   "Cow",
+            "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+        },
+        "to": map[string]any{
+            "name":   "Bob",
+            "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+        },
+        "contents": "Hello, Bob!",
+    },
+}
+
+valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:   common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"),
+    TypedData: typedData, // [!code focus]
+    Signature: "0x...",
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const valid = await publicClient.verifyTypedData({
+  address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  domain: { // [!code focus:6]
+    name: 'Ether Mail',
+    version: '1',
+    chainId: 1,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  },
+  types: {
+    Person: [
+      { name: 'name', type: 'string' },
+      { name: 'wallet', type: 'address' },
+    ],
+    Mail: [
+      { name: 'from', type: 'Person' },
+      { name: 'to', type: 'Person' },
+      { name: 'contents', type: 'string' },
+    ],
+  },
+  primaryType: 'Mail',
+  message: {
+    from: {
+      name: 'Cow',
+      wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+    },
+    to: {
+      name: 'Bob',
+      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+    },
+    contents: 'Hello, Bob!',
+  },
+  signature: '0x...',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Signature (required)
+
+- **Type:** `any` (accepts `string`, `[]byte`, or `*signature.Signature`)
+
+The signature of the typed data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:   common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"),
+    TypedData: typedData,
+    Signature: "0x...", // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const valid = await publicClient.verifyTypedData({
+  address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  domain,
+  types,
+  primaryType: 'Mail',
+  message,
+  signature: '0x...', // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+Only used when verifying typed data that was signed by a Smart Contract Account. The block number to check if the contract was already deployed.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(42069)
+valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:     common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"),
+    TypedData:   typedData,
+    Signature:   "0x...",
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const valid = await publicClient.verifyTypedData({
+  blockNumber: 42069n, // [!code focus]
+  address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  domain,
+  types,
+  primaryType: 'Mail',
+  message,
+  signature: '0x...',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+
+Only used when verifying typed data that was signed by a Smart Contract Account. The block tag to check if the contract was already deployed.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:   common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"),
+    TypedData: typedData,
+    Signature: "0x...",
+    BlockTag:  public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const valid = await publicClient.verifyTypedData({
+  blockTag: 'safe', // [!code focus]
+  address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  domain,
+  types,
+  primaryType: 'Mail',
+  message,
+  signature: '0x...',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Factory (optional)
+
+- **Type:** `*common.Address`
+
+The ERC-4337 Account Factory address for counterfactual verification. Used with `FactoryData` for undeployed smart accounts.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `factoryAddr := common.HexToAddress("0x...")
+valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:     common.HexToAddress("0x..."),
+    TypedData:   typedData,
+    Signature:   "0x...",
+    Factory:     &factoryAddr, // [!code focus]
+    FactoryData: factoryCalldata,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FactoryData (optional)
+
+- **Type:** `[]byte`
+
+The calldata to deploy the account via Factory. Used with `Factory` for undeployed smart accounts.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:     common.HexToAddress("0x..."),
+    TypedData:   typedData,
+    Signature:   "0x...",
+    Factory:     &factoryAddr,
+    FactoryData: factoryCalldata, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ERC6492VerifierAddress (optional)
+
+- **Type:** `*common.Address`
+
+The address of a deployed ERC-6492 signature verifier contract. If provided, uses this contract instead of deployless verification.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `verifierAddr := common.HexToAddress("0x...")
+valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataParameters{
+    Address:                common.HexToAddress("0x..."),
+    TypedData:              typedData,
+    Signature:              "0x...",
+    ERC6492VerifierAddress: &verifierAddr, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) to verify signatures onchain via ERC-1271 or ERC-6492.

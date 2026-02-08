@@ -1,0 +1,131 @@
+---
+title: estimateFeesPerGas
+description: Returns an estimate for the fees per gas for a transaction to be likely included in the next block
+---
+
+# estimateFeesPerGas
+
+Returns an estimate for the fees per gas (in wei) for a transaction to be likely included in the next block.
+
+- For EIP-1559 chains, returns `maxFeePerGas` & `maxPriorityFeePerGas`.
+- For legacy chains, returns `gasPrice`.
+- Applies a base fee multiplier (default 1.2) to provide a safety buffer.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+fees, err := public.EstimateFeesPerGas(ctx, publicClient, public.EstimateFeesPerGasParameters{}) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Max fee per gas: %s", fees.MaxFeePerGas.String())
+log.Printf("Max priority fee per gas: %s", fees.MaxPriorityFeePerGas.String())`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const fees = await publicClient.estimateFeesPerGas()
+// @log: {
+// @log:  maxFeePerGas: 10000000000n,
+// @log:  maxPriorityFeePerGas: 1000000000n,
+// @log: }`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*EstimateFeesPerGasReturnType`
+
+An object containing:
+- `Type FeeValuesType` - The type of fee values ("eip1559" or "legacy")
+- `MaxFeePerGas *big.Int` - The max fee per gas (EIP-1559)
+- `MaxPriorityFeePerGas *big.Int` - The max priority fee per gas (EIP-1559)
+- `GasPrice *big.Int` - The gas price (legacy)
+
+## Parameters
+
+### Type (optional)
+
+- **Type:** `FeeValuesType`
+- **Default:** `FeeValuesTypeEIP1559`
+
+The type of fee values to return.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `fees, err := public.EstimateFeesPerGas(ctx, publicClient, public.EstimateFeesPerGasParameters{
+    Type: public.FeeValuesTypeLegacy, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BaseFeeMultiplier (optional)
+
+- **Type:** `*float64`
+- **Default:** `1.2` (20% buffer)
+
+The multiplier applied to the base fee per gas (or gas price for legacy chains) when computing fees.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `multiplier := 1.5
+fees, err := public.EstimateFeesPerGas(ctx, publicClient, public.EstimateFeesPerGasParameters{
+    BaseFeeMultiplier: &multiplier, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+Uses [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber), [`eth_maxPriorityFeePerGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_maxpriorityfeepergas), and [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice) to compute fees.

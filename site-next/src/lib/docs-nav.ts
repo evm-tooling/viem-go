@@ -29,6 +29,106 @@ export const docsNav: NavItem[] = [
     ],
   },
   {
+    label: "Public Actions",
+
+        items: [
+          { label: "Introduction", slug: "actions/public/introduction" },
+          {
+            label: "Blocks",
+            items: [
+              { label: "getBlockNumber", slug: "actions/public/blocks/get-block-number" },
+              { label: "getBlock", slug: "actions/public/blocks/get-block" },
+              { label: "watchBlockNumber", slug: "actions/public/blocks/watch-block-number" },
+              { label: "watchBlocks", slug: "actions/public/blocks/watch-blocks" },
+              { label: "createBlockFilter", slug: "actions/public/blocks/create-block-filter" },
+            ],
+          },
+          {
+            label: "Transactions",
+            items: [
+              { label: "getTransaction", slug: "actions/public/transactions/get-transaction" },
+              { label: "getTransactionReceipt", slug: "actions/public/transactions/get-transaction-receipt" },
+              { label: "getTransactionCount", slug: "actions/public/transactions/get-transaction-count" },
+              { label: "getTransactionConfirmations", slug: "actions/public/transactions/get-transaction-confirmations" },
+              { label: "waitForTransactionReceipt", slug: "actions/public/transactions/wait-for-transaction-receipt" },
+              { label: "watchPendingTransactions", slug: "actions/public/transactions/watch-pending-transactions" },
+              { label: "fillTransaction", slug: "actions/public/transactions/fill-transaction" },
+            ],
+          },
+          {
+            label: "Calls & Simulation",
+            items: [
+              { label: "call", slug: "actions/public/calls/call" },
+              { label: "simulateContract", slug: "actions/public/calls/simulate-contract" },
+              { label: "simulateCalls", slug: "actions/public/calls/simulate-calls" },
+              { label: "simulateBlocks", slug: "actions/public/calls/simulate-blocks" },
+            ],
+          },
+          {
+            label: "Gas & Fees",
+            items: [
+              { label: "estimateGas", slug: "actions/public/gas/estimate-gas" },
+              { label: "estimateContractGas", slug: "actions/public/gas/estimate-contract-gas" },
+              { label: "estimateFeesPerGas", slug: "actions/public/gas/estimate-fees-per-gas" },
+              { label: "estimateMaxPriorityFeePerGas", slug: "actions/public/gas/estimate-max-priority-fee-per-gas" },
+              { label: "getGasPrice", slug: "actions/public/gas/get-gas-price" },
+              { label: "getBlobBaseFee", slug: "actions/public/gas/get-blob-base-fee" },
+              { label: "getFeeHistory", slug: "actions/public/gas/get-fee-history" },
+            ],
+          },
+          {
+            label: "Account & State",
+            items: [
+              { label: "getBalance", slug: "actions/public/account/get-balance" },
+              { label: "getCode", slug: "actions/public/account/get-code" },
+              { label: "getStorageAt", slug: "actions/public/account/get-storage-at" },
+              { label: "getProof", slug: "actions/public/account/get-proof" },
+            ],
+          },
+          {
+            label: "Logs & Events",
+            items: [
+              { label: "getLogs", slug: "actions/public/logs/get-logs" },
+              { label: "getContractEvents", slug: "actions/public/logs/get-contract-events" },
+              { label: "watchEvent", slug: "actions/public/logs/watch-event" },
+              { label: "watchContractEvent", slug: "actions/public/logs/watch-contract-event" },
+            ],
+          },
+          {
+            label: "Filters",
+            items: [
+              { label: "createEventFilter", slug: "actions/public/filters/create-event-filter" },
+              { label: "createContractEventFilter", slug: "actions/public/filters/create-contract-event-filter" },
+              { label: "createPendingTransactionFilter", slug: "actions/public/filters/create-pending-transaction-filter" },
+              { label: "getFilterChanges", slug: "actions/public/filters/get-filter-changes" },
+              { label: "getFilterLogs", slug: "actions/public/filters/get-filter-logs" },
+              { label: "uninstallFilter", slug: "actions/public/filters/uninstall-filter" },
+            ],
+          },
+          {
+            label: "Multicall",
+            items: [
+              { label: "multicall", slug: "actions/public/multicall/multicall" },
+            ],
+          },
+          {
+            label: "Verification",
+            items: [
+              { label: "verifyHash", slug: "actions/public/verification/verify-hash" },
+              { label: "verifyMessage", slug: "actions/public/verification/verify-message" },
+              { label: "verifyTypedData", slug: "actions/public/verification/verify-typed-data" },
+            ],
+          },
+          {
+            label: "Chain & Utilities",
+            items: [
+              { label: "getChainId", slug: "actions/public/chain/get-chain-id" },
+              { label: "createAccessList", slug: "actions/public/utilities/create-access-list" },
+            ],
+          },
+        ],
+      },
+  {
     label: "Chains",
     items: [
       { label: "Introduction", slug: "chains/introduction" },

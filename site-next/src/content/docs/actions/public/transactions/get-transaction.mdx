@@ -1,0 +1,251 @@
+---
+title: getTransaction
+description: Returns information about a transaction given a hash or block identifier
+---
+
+# getTransaction
+
+Returns information about a transaction given a hash or block identifier.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+txHash := common.HexToHash("0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d")
+tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParameters{
+    Hash: &txHash, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction from: %s", tx.From.Hex())`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.getTransaction({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d'
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*TransactionResponse`
+
+The transaction information.
+
+## Parameters
+
+### Hash (optional)
+
+- **Type:** `*common.Hash`
+
+Get information about a transaction given a transaction hash.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+txHash := common.HexToHash("0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d")
+tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParameters{
+    Hash: &txHash, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.getTransaction({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d' // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockHash (optional)
+
+- **Type:** `*common.Hash`
+
+Get information about a transaction given a block hash (must be used with `Index`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+blockHash := common.HexToHash("0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d")
+index := 0
+tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParameters{
+    BlockHash: &blockHash, // [!code focus]
+    Index:     &index, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.getTransaction({
+  blockHash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d', // [!code focus:2]
+  index: 0
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+Get information about a transaction given a block number (must be used with `Index`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(69420)
+index := 0
+tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParameters{
+    BlockNumber: &blockNum, // [!code focus]
+    Index:       &index, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.getTransaction({
+  blockNumber: 69420n, // [!code focus:2]
+  index: 0
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+Get information about a transaction given a block tag (must be used with `Index`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+index := 0
+tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParameters{
+    BlockTag: public.BlockTagSafe, // [!code focus]
+    Index:    &index, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.getTransaction({
+  blockTag: 'safe', // [!code focus:2]
+  index: 0
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Index (optional)
+
+- **Type:** `*int`
+
+An index to be used with a block identifier (number, hash or tag).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+index := 0
+tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParameters{
+    BlockTag: public.BlockTagSafe,
+    Index:    &index, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.getTransaction({
+  blockTag: 'safe',
+  index: 0 // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- [`eth_getTransactionByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByHash) for `hash`
+- [`eth_getTransactionByBlockHashAndIndex`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByBlockHashAndIndex) for `blockHash` + `index`
+- [`eth_getTransactionByBlockNumberAndIndex`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByBlockNumberAndIndex) for `blockNumber`/`blockTag` + `index`

@@ -1,0 +1,160 @@
+---
+title: getFilterLogs
+description: Returns a list of event logs since the filter was created
+---
+
+# getFilterLogs
+
+Returns a list of event logs since the filter was created.
+
+Note: `getFilterLogs` is only compatible with **event filters**.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+With a basic event filter:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+filter, _ := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr,
+})
+
+logs, err := public.GetFilterLogs(ctx, publicClient, public.GetFilterLogsParameters{
+    Filter: filter.ID, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Found %d logs", len(logs))`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+})
+const logs = await publicClient.getFilterLogs({ filter })`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+With a contract event filter (includes decoded args):
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+erc20ABI, _ := abi.ParseABI(\`[{"anonymous":false,"inputs":[...],"name":"Transfer",...}]\`)
+
+filter, _ := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+})
+
+logs, err := public.GetFilterLogs(ctx, publicClient, public.GetFilterLogsParameters{
+    Filter: filter, // [!code focus] - Pass the full filter object for ABI decoding
+})
+if err != nil {
+    log.Fatal(err)
+}
+// logs will have DecodedArgs populated`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]ContractEventLog`
+
+A list of event logs, each containing:
+- `Log formatters.Log` - The raw log data
+- `EventName string` - The decoded event name (if ABI was provided)
+- `DecodedArgs map[string]any` - The decoded event arguments (if ABI was provided)
+
+## Parameters
+
+### Filter (required)
+
+- **Type:** `any` (accepts `FilterID`, `*CreateEventFilterReturnType`, or `*CreateContractEventFilterReturnType`)
+
+The filter to get logs for. Can be a basic event filter or a contract event filter with ABI.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+logs, err := public.GetFilterLogs(ctx, publicClient, public.GetFilterLogsParameters{
+    Filter: filter.ID, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+})
+const logs = await publicClient.getFilterLogs({
+  filter // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_getFilterLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterlogs)

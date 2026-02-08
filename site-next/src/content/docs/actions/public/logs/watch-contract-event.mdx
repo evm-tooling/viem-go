@@ -1,0 +1,348 @@
+---
+title: watchContractEvent
+description: Watches and returns emitted contract event logs with ABI decoding
+---
+
+# watchContractEvent
+
+Watches and returns emitted contract event logs with ABI decoding.
+
+Unlike `watchEvent`, `watchContractEvent`:
+- Requires an ABI for event decoding
+- Automatically encodes event topics from ABI
+- Decodes event logs using the ABI
+- Filters by EventName
+
+Watch actions return a channel of events. Cancel the context to stop watching.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "fmt"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+erc20ABI, _ := abi.ParseABI(\`[{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]\`)
+
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:    contractAddr, // [!code focus]
+    ABI:        erc20ABI, // [!code focus]
+    EventName:  "Transfer", // [!code focus]
+    Batch:      true, // [!code focus]
+})
+
+for event := range events { // [!code focus:6]
+    if event.Error != nil {
+        log.Printf("error: %v", event.Error)
+        continue
+    }
+    fmt.Printf("Received %d Transfer logs\n", len(event.Logs))
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchContractEvent({
+  address: contractAddress,
+  abi: erc20ABI,
+  eventName: 'Transfer',
+  onLogs: logs => console.log(logs)
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`<-chan WatchContractEventEvent`
+
+A channel that emits `WatchContractEventEvent` structs containing:
+- `Logs []formatters.Log` - The decoded event logs (may contain multiple when `Batch` is true)
+- `Error error` - Any error that occurred
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+
+The contract address(es) to filter logs from.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr, // [!code focus]
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ABI (required)
+
+- **Type:** `*abi.ABI`
+
+The contract ABI for decoding event logs.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+erc20ABI, _ := abi.ParseABI(\`[{"anonymous":false,"inputs":[...],"name":"Transfer",...}]\`)
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI, // [!code focus]
+    EventName: "Transfer",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### EventName (required)
+
+- **Type:** `string`
+
+The name of the event to filter for. Must match an event in the ABI.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Args (optional)
+
+- **Type:** `map[string]any`
+
+Indexed event arguments to filter by. Keys are parameter names, values are the expected values.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `senderAddr := common.HexToAddress("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Args:      map[string]any{"from": senderAddr}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Batch (optional)
+
+- **Type:** `bool`
+- **Default:** `true`
+
+Whether to batch logs together. When true, multiple logs are collected and emitted together. When false, each log is emitted as a separate event.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Batch:     false, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FromBlock (optional)
+
+- **Type:** `*uint64`
+
+The block number to start watching from. If set, forces polling mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `fromBlock := uint64(16330000)
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    FromBlock: &fromBlock, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Poll (optional)
+
+- **Type:** `*bool`
+- **Default:** `false` for WebSocket Transports, `true` for non-WebSocket Transports
+
+Whether or not to use a polling mechanism instead of a WebSocket subscription.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `poll := true
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Poll:      &poll, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** Client's `PollingInterval`
+
+The interval between polls when using polling mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:        contractAddr,
+    ABI:            erc20ABI,
+    EventName:      "Transfer",
+    PollingInterval: 5 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Strict (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Determines whether logs must match the event definition exactly. When true, logs with mismatched indexed/non-indexed arguments are skipped.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Strict:    true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WorkerPoolSize (optional)
+
+- **Type:** `int`
+- **Default:** `4`
+
+The number of workers for parallel log decoding.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:       contractAddr,
+    ABI:           erc20ABI,
+    EventName:     "Transfer",
+    WorkerPoolSize: 8, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- When polling with filter support:
+  - Calls [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter) to create a filter
+  - Calls [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges) on a polling interval
+- When polling without filter support: calls [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs) for each block range
+- When subscribing: uses [`eth_subscribe`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_subscribe) with `"logs"` event

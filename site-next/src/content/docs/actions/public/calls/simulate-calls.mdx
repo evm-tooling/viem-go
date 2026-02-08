@@ -1,0 +1,244 @@
+---
+title: simulateCalls
+description: Simulates multiple calls and returns their results
+---
+
+# simulateCalls
+
+Simulates multiple calls and returns their results.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+tokenAddr := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+erc20ABI, _ := abi.ParseABI(\`[{"inputs":[],"name":"totalSupply","outputs":[{"type":"uint256"}],"type":"function"}]\`)
+
+result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls: []public.SimulateCall{ // [!code focus:5]
+        {
+            To:          &tokenAddr,
+            ABI:         erc20ABI,
+            FunctionName: "totalSupply",
+        },
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Results: %d calls simulated", len(result.Results))`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*SimulateCallsReturnType`
+
+An object containing:
+- `Results []SimulateCallResult` - The results of each call
+- `AssetChanges []AssetChange` - Asset balance changes (if `TraceAssetChanges` was enabled)
+- `Block formatters.Block` - The simulated block data
+
+## Parameters
+
+### Calls (required)
+
+- **Type:** `[]SimulateCall`
+
+The calls to simulate.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls: []public.SimulateCall{ // [!code focus:5]
+        {
+            To:          &tokenAddr,
+            ABI:         erc20ABI,
+            FunctionName: "totalSupply",
+        },
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+
+The account attached to the calls (msg.sender).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `senderAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Account: &senderAddr, // [!code focus]
+    Calls:   []public.SimulateCall{...},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to simulate at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls:       []public.SimulateCall{...},
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to simulate at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls:    []public.SimulateCall{...},
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### TraceAssetChanges (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables tracing of asset (ETH/ERC20) balance changes.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls:            []public.SimulateCall{...},
+    TraceAssetChanges: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### TraceTransfers (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables transfer tracing.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls:         []public.SimulateCall{...},
+    TraceTransfers: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Validation (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables validation mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParameters{
+    Calls:      []public.SimulateCall{...},
+    Validation: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### StateOverrides (optional)
+
+- **Type:** `types.StateOverride`
+
+State overrides for the simulation.
+
+## JSON-RPC Method
+
+Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) or [`eth_simulateV1`](https://github.com/ethereum/execution-apis/blob/main/src/engine/simulation.md) (if supported) for advanced simulation features.

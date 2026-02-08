@@ -1,0 +1,353 @@
+---
+title: watchEvent
+description: Watches and returns emitted event logs
+---
+
+# watchEvent
+
+Watches and returns emitted event logs.
+
+Watch actions return a channel of events. Cancel the context to stop watching.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "fmt"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+transferEvent, _ := abi.ParseEvent("Transfer(address indexed, address indexed, uint256)")
+
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr, // [!code focus]
+    Event:   transferEvent, // [!code focus]
+    Batch:   true, // [!code focus]
+})
+
+for event := range events { // [!code focus:6]
+    if event.Error != nil {
+        log.Printf("error: %v", event.Error)
+        continue
+    }
+    fmt.Printf("Received %d logs\n", len(event.Logs))
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchEvent({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  event: parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)'),
+  onLogs: logs => console.log(logs)
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`<-chan WatchEventEvent`
+
+A channel that emits `WatchEventEvent` structs containing:
+- `Logs []formatters.Log` - The event logs (may contain multiple when `Batch` is true)
+- `Error error` - Any error that occurred
+
+## Parameters
+
+### Address (optional)
+
+- **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+
+The contract address(es) to filter logs from.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr, // [!code focus]
+    Event:   transferEvent,
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchEvent({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // [!code focus]
+  event: parseAbiItem('event Transfer(...)'),
+  onLogs: logs => console.log(logs)
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Event (optional)
+
+- **Type:** `*abi.Event`
+
+A single event definition to filter for. Mutually exclusive with `Events`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+transferEvent, _ := abi.ParseEvent("Transfer(address indexed, address indexed, uint256)")
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr,
+    Event:   transferEvent, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Events (optional)
+
+- **Type:** `[]*abi.Event`
+
+A list of event definitions to filter for. Mutually exclusive with `Event`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `transferEvent, _ := abi.ParseEvent("Transfer(...)")
+approvalEvent, _ := abi.ParseEvent("Approval(...)")
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr,
+    Events:  []*abi.Event{transferEvent, approvalEvent}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Args (optional)
+
+- **Type:** `map[string]any`
+
+Indexed event arguments to filter by. Keys are parameter names, values are the expected values.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `senderAddr := common.HexToAddress("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr,
+    Event:   transferEvent,
+    Args:    map[string]any{"from": senderAddr}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Batch (optional)
+
+- **Type:** `bool`
+- **Default:** `true`
+
+Whether to batch logs together. When true, multiple logs are collected and emitted together. When false, each log is emitted as a separate event.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr,
+    Event:   transferEvent,
+    Batch:   false, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchEvent({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  event: parseAbiItem('event Transfer(...)'),
+  batch: false, // [!code focus]
+  onLogs: logs => console.log(logs)
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FromBlock (optional)
+
+- **Type:** `*uint64`
+
+The block number to start watching from. If set, forces polling mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `fromBlock := uint64(16330000)
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address:   contractAddr,
+    Event:     transferEvent,
+    FromBlock: &fromBlock, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Poll (optional)
+
+- **Type:** `*bool`
+- **Default:** `false` for WebSocket Transports, `true` for non-WebSocket Transports
+
+Whether or not to use a polling mechanism instead of a WebSocket subscription.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `poll := true
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr,
+    Event:   transferEvent,
+    Poll:    &poll, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** Client's `PollingInterval`
+
+The interval between polls when using polling mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address:        contractAddr,
+    Event:          transferEvent,
+    PollingInterval: 5 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Strict (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Determines whether logs must match the event definition exactly. When true, logs with mismatched indexed/non-indexed arguments are skipped.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address: contractAddr,
+    Event:   transferEvent,
+    Strict:  true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WorkerPoolSize (optional)
+
+- **Type:** `int`
+- **Default:** `4`
+
+The number of workers for parallel log processing. Only used when decoding event logs.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchEvent(ctx, publicClient, public.WatchEventParameters{
+    Address:       contractAddr,
+    Event:         transferEvent,
+    WorkerPoolSize: 8, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- When polling with filter support:
+  - Calls [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter) to create a filter
+  - Calls [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges) on a polling interval
+- When polling without filter support: calls [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs) for each block range
+- When subscribing: uses [`eth_subscribe`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_subscribe) with `"logs"` event
