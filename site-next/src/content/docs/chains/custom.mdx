@@ -1,0 +1,305 @@
+---
+title: Custom Chains
+description: Define custom EVM-compatible chains with DefineChain and use ExtractChain and AssertCurrentChain
+---
+
+You can support any EVM-compatible chain by defining a `chain.Chain` and passing it to [DefineChain](/docs/chains/custom/#definechain). viem-go does not include formatters or fee config; the `Chain` struct holds ID, name, native currency, RPC URLs, block explorers, optional block time, contracts, and a few extra fields.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/chain"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { defineChain } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## DefineChain
+
+`DefineChain` accepts a `chain.Chain` and returns an independent **value** copy. Use it to build chain configs for private networks, L2s, or any EVM chain. Store the result and pass a **pointer** to clients (`&myChain`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/chain"
+)
+
+func int64Ptr(n int64) *int64   { return &n }
+func uint64Ptr(n uint64) *uint64 { return &n }
+
+myChain := chain.DefineChain(chain.Chain{
+    ID:   42_069,
+    Name: "My Custom Chain",
+    NativeCurrency: chain.ChainNativeCurrency{
+        Name:     "Ether",
+        Symbol:   "ETH",
+        Decimals: 18,
+    },
+    BlockTime: int64Ptr(12),
+    RpcUrls: map[string]chain.ChainRpcUrls{
+        "default": {
+            HTTP:      []string{"https://my-rpc.example.com"},
+            WebSocket: []string{"wss://my-rpc.example.com"},
+        },
+    },
+    BlockExplorers: map[string]chain.ChainBlockExplorer{
+        "default": {
+            Name:   "Explorer",
+            URL:    "https://explorer.example.com",
+            ApiURL: "https://api.explorer.example.com",
+        },
+    },
+    Contracts: &chain.ChainContracts{
+        Multicall3: &chain.ChainContract{
+            Address:      common.HexToAddress("0xca11bde05977b3631167028862be2a173976ca11"),
+            BlockCreated: uint64Ptr(1),
+        },
+    },
+})
+
+// Use with client
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     &myChain,
+    Transport: transport.HTTP(myChain.DefaultRpcUrl()),
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { defineChain } from 'viem'
+
+export const myChain = defineChain({
+  id: 42_069,
+  name: 'My Custom Chain',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://my-rpc.example.com'],
+      webSocket: ['wss://my-rpc.example.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Explorer',
+      url: 'https://explorer.example.com',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 1,
+    },
+  },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Chain type (Go)
+
+The `Chain` struct mirrors the usual chain metadata. Use the key `"default"` for the primary RPC and block explorer.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **ID** | `int64` | Chain ID. |
+| **Name** | `string` | Human-readable name. |
+| **NativeCurrency** | `ChainNativeCurrency` | Name, symbol, decimals. |
+| **RpcUrls** | `map[string]ChainRpcUrls` | RPC endpoints; use `"default"` for primary. |
+| **BlockExplorers** | `map[string]ChainBlockExplorer` | Explorers; use `"default"` for primary. |
+| **BlockTime** | `*int64` | Block time in ms; used for default polling. |
+| **Contracts** | `*ChainContracts` | Optional Multicall3, ENS, etc. |
+| **EnsTlds** | `[]string` | Optional ENS TLDs. |
+| **SourceID** | `*int64` | Optional L1 chain ID (e.g. for L2s). |
+| **Testnet** | `bool` | Marks testnet. |
+| **ExperimentalPreconfirmationTime** | `*int64` | Optional preconfirmation time. |
+
+### ChainNativeCurrency
+
+```go
+type ChainNativeCurrency struct {
+    Name     string
+    Symbol   string
+    Decimals uint8
+}
+```
+
+### ChainRpcUrls
+
+```go
+type ChainRpcUrls struct {
+    HTTP      []string
+    WebSocket []string // optional
+}
+```
+
+Use a map key (e.g. `"default"`) when setting `RpcUrls` on `Chain`.
+
+### ChainBlockExplorer
+
+```go
+type ChainBlockExplorer struct {
+    Name   string
+    URL    string
+    ApiURL string // optional
+}
+```
+
+### ChainContracts and ChainContract
+
+```go
+type ChainContracts struct {
+    Multicall3           *ChainContract
+    EnsRegistry          *ChainContract
+    EnsUniversalResolver *ChainContract
+}
+
+type ChainContract struct {
+    Address      common.Address
+    BlockCreated *uint64
+}
+```
+
+Addresses use `common.Address` (e.g. `common.HexToAddress("0x...")`).
+
+## Helper methods
+
+On a `*chain.Chain` (or value when the method set is on `*Chain`):
+
+- **DefaultRpcUrl() string** — first HTTP URL in `RpcUrls["default"]`, or `""`.
+- **DefaultBlockExplorer() ChainBlockExplorer** — `BlockExplorers["default"]`, or zero value.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `c := &myChain
+rpcURL := c.DefaultRpcUrl()
+explorer := c.DefaultBlockExplorer()
+fmt.Println(explorer.URL)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## ExtractChain
+
+`ExtractChain(chains []*Chain, chainID int64)` returns the first chain in the slice whose `ID` matches `chainID`, or an error. Useful when you have a list of chains and a current chain ID (e.g. from the wallet).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/chain"
+
+chains := []*chain.Chain{
+    &definitions.Mainnet,
+    &definitions.Polygon,
+    &Sepolia,
+}
+
+c, err := chain.ExtractChain(chains, 1)
+if err != nil {
+    // ErrChainNotFound or ErrInvalidChainID
+    return err
+}
+// c is *chain.Chain for mainnet (ID 1)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Returns:** `(*Chain, error)`.
+- **Errors:** `ErrChainNotFound` (empty slice or no matching ID), `ErrInvalidChainID` (chainID &lt; 0).
+
+## AssertCurrentChain
+
+`AssertCurrentChain(chain *Chain, currentChainID int64)` checks that `currentChainID` equals `chain.ID`. Use it before sending a transaction to ensure the wallet is on the expected chain.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/chain"
+
+err := chain.AssertCurrentChain(&definitions.Mainnet, currentChainID)
+if err != nil {
+    if errors.Is(err, chain.ErrChainNotFound) {
+        // chain was nil
+    }
+    var mismatch *chain.ChainMismatchError
+    if errors.As(err, &mismatch) {
+        // mismatch.CurrentChainID != mismatch.Chain.ID
+    }
+    return err
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Returns:** `nil` if `chain != nil` and `currentChainID == chain.ID`.
+- **Errors:** `ErrChainNotFound` if `chain == nil`; `*ChainMismatchError` if IDs do not match. `ChainMismatchError` contains `Chain` and `CurrentChainID` and implements `error` with a descriptive message.
+
+## Error handling
+
+| Error | When |
+|-------|------|
+| **ErrChainNotFound** | No chain provided (e.g. `AssertCurrentChain(nil, ...)`) or `ExtractChain` found no match. |
+| **ErrInvalidChainID** | `ExtractChain(..., chainID)` with `chainID < 0`. |
+| **ErrInvalidChainsLen** | Used when the chain array is empty where a non-empty list is required. |
+| **ChainMismatchError** | `AssertCurrentChain`: current chain ID does not match the target chain. |
+
+## Using a custom chain with a client
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `myChain := chain.DefineChain(chain.Chain{ /* ... */ })
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     &myChain,
+    Transport: transport.HTTP(myChain.DefaultRpcUrl()),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer publicClient.Close()`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Go vs viem
+
+- viem-go has no separate **formatters** or **fees** config; the `Chain` struct holds only the fields above.
+- **DefineChain** returns a **value**; clients take `*chain.Chain`. Use `&myChain`.
+- Contract addresses are **`common.Address`**, not strings.
+- RPC and explorer entries are **maps** keyed by name (e.g. `"default"`), not nested structs with a `default` field.

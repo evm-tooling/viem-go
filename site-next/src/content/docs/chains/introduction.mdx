@@ -1,0 +1,106 @@
+---
+title: Chains
+description: Use built-in chain definitions or define custom EVM-compatible chains
+---
+
+The **chain** package provides chain metadata (ID, name, native currency, RPC URLs, block explorers, and optional contracts) used by [Public Client](/docs/clients/public/) and [Wallet Client](/docs/clients/wallet/). viem-go mirrors viem's chain concept but uses a single `Chain` struct and `DefineChain` instead of separate formatters/fees.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **chain**: `Chain` type, `DefineChain`, `ExtractChain`, `AssertCurrentChain`, and helpers (`DefaultRpcUrl`, `DefaultBlockExplorer`).
+- **definitions**: Prebuilt chain definitions (e.g. `definitions.Mainnet`, `definitions.Polygon`). Use with clients by passing a pointer: `Chain: &definitions.Mainnet`.
+
+## Usage
+
+Import a built-in chain from `chain/definitions` and pass it to the client config. The client expects a **pointer** to a chain (`*chain.Chain`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     &definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer publicClient.Close()`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Built-in chains
+
+viem-go ships with these chain definitions in `chain/definitions`:
+
+| Variable | Chain | ID |
+|----------|--------|-----|
+| `definitions.Mainnet` | Ethereum | 1 |
+| `definitions.Arbitrum` | Arbitrum One | 42_161 |
+| `definitions.Optimism` | OP Mainnet | 10 |
+| `definitions.Polygon` | Polygon PoS | 137 |
+| `definitions.Bsc` | BNB Smart Chain | 56 |
+| `definitions.Avalanche` | Avalanche C-Chain | 43_114 |
+
+Testnets (e.g. Sepolia) are not included; define them with [DefineChain](/docs/chains/custom/) and the same struct.
+
+## Custom chains
+
+To support an EVM-compatible chain not in the list, define a chain with `chain.DefineChain(chain.Chain{...})` and pass a pointer to your client. See [Custom Chains](/docs/chains/custom/) for the full `Chain` type and examples (including Sepolia).
+
+## Go notes
+
+- **Pointer:** Client config expects `Chain *chain.Chain`. Built-ins are values, so use `&definitions.Mainnet`. For a custom chain stored in a variable, use `&myChain`.
+- **DefineChain** returns a **value** (`chain.Chain`), not a pointer. It copies the config so the returned chain is independent. Store the result and pass `&myChain` to the client.
+- **Primary RPC/explorer:** Use the `"default"` key in `RpcUrls` and `BlockExplorers`. Helpers: `chain.DefaultRpcUrl()` and `chain.DefaultBlockExplorer()`.
+- **Block time:** When set, the client uses it to derive a default `PollingInterval` (e.g. for watch actions).
+
+## See also
+
+- [Mainnet](/docs/chains/mainnet/) — Ethereum mainnet
+- [Sepolia](/docs/chains/sepolia/) — Sepolia testnet (custom definition)
+- [Custom Chains](/docs/chains/custom/) — `DefineChain`, `Chain` type, `ExtractChain`, `AssertCurrentChain`

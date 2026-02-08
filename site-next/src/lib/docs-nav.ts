@@ -26,14 +26,15 @@ export const docsNav: NavItem[] = [
           { label: "WebSocket", slug: "clients/transports/websocket" },
         ],
       },
-      {
-        label: "Chains",
-        items: [
-          { label: "Mainnet", slug: "clients/chains/mainnet" },
-          { label: "Sepolia", slug: "clients/chains/sepolia" },
-          { label: "Custom Chains", slug: "clients/chains/custom" },
-        ],
-      },
+    ],
+  },
+  {
+    label: "Chains",
+    items: [
+      { label: "Introduction", slug: "chains/introduction" },
+      { label: "Mainnet", slug: "chains/mainnet" },
+      { label: "Sepolia", slug: "chains/sepolia" },
+      { label: "Custom Chains", slug: "chains/custom" },
     ],
   },
   {
