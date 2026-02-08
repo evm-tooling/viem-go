@@ -1,0 +1,154 @@
+---
+title: sendTransactionSync
+description: Creates, signs, and sends a new transaction to the network synchronously
+---
+
+# sendTransactionSync
+
+Creates, signs, and sends a new transaction to the network synchronously. Returns the transaction receipt after the transaction is included in a block.
+
+- For JSON-RPC accounts, sends via `eth_sendTransaction` then waits for receipt via `WaitForTransactionReceipt`.
+- For local accounts, prepares, signs locally, and sends via `sendRawTransactionSync` (EIP-7966).
+
+:::warning
+This Action is only recommended to be used on chains with low block times and fast finality (most chains apart from `mainnet`).
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransactionSyncParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // [!code focus]
+    Value: big.NewInt(1000000000000000000),
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction receipt: %+v", receipt)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*formatters.TransactionReceipt`
+
+The transaction receipt after the transaction is included in a block.
+
+## Parameters
+
+All parameters from [sendTransaction](/docs/actions/wallet/transactions/send-transaction) are supported, plus:
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `client.PollingInterval()`
+
+The polling interval to poll for the transaction receipt.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransactionSyncParameters{
+    PollingInterval: 1 * time.Second, // [!code focus]
+    To:              "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ThrowOnReceiptRevert (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+
+When true, throws an error if the transaction was detected as reverted.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `throwOnRevert := true
+receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransactionSyncParameters{
+    ThrowOnReceiptRevert: &throwOnRevert, // [!code focus]
+    To:                   "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `*time.Duration`
+- **Default:** `max(chain.blockTime * 3, 5000ms)`
+
+The timeout to wait for a response.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+timeout := 20 * time.Second
+receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransactionSyncParameters{
+    Timeout: &timeout, // [!code focus]
+    To:      "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
+- Local Accounts: [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

@@ -1,0 +1,218 @@
+---
+title: watchAsset
+description: Requests to watch an asset in wallet
+---
+
+# watchAsset
+
+Requests that the wallet tracks a specified token. Returns a boolean indicating if the token was successfully added.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+success, err := wallet.WatchAsset(ctx, walletClient, wallet.WatchAssetParameters{
+    Type: "ERC20", // [!code focus:5]
+    Options: wallet.WatchAssetOptions{
+        Address:  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        Decimals: 18,
+        Symbol:   "WETH",
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Asset added: %v", success)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const success = await walletClient.watchAsset({
+  type: 'ERC20',
+  options: {
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    decimals: 18,
+    symbol: 'WETH',
+  },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`bool`
+
+Boolean indicating if the token was successfully added.
+
+## Parameters
+
+### Type (required)
+
+- **Type:** `string`
+
+The token type (e.g., "ERC20").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `success, err := wallet.WatchAsset(ctx, walletClient, wallet.WatchAssetParameters{
+    Type: "ERC20", // [!code focus]
+    Options: wallet.WatchAssetOptions{
+        Address:  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        Decimals: 18,
+        Symbol:   "WETH",
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Options (required)
+
+- **Type:** `WatchAssetOptions`
+
+The token details.
+
+#### Options.Address (required)
+
+- **Type:** `string`
+
+The address of the token contract.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `success, err := wallet.WatchAsset(ctx, walletClient, wallet.WatchAssetParameters{
+    Type: "ERC20",
+    Options: wallet.WatchAssetOptions{
+        Address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // [!code focus]
+        Decimals: 18,
+        Symbol:   "WETH",
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+#### Options.Symbol (required)
+
+- **Type:** `string`
+
+A ticker symbol or shorthand, up to 11 characters.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `success, err := wallet.WatchAsset(ctx, walletClient, wallet.WatchAssetParameters{
+    Type: "ERC20",
+    Options: wallet.WatchAssetOptions{
+        Address:  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        Decimals: 18,
+        Symbol:   "WETH", // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+#### Options.Decimals (required)
+
+- **Type:** `uint8`
+
+The number of token decimals.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `success, err := wallet.WatchAsset(ctx, walletClient, wallet.WatchAssetParameters{
+    Type: "ERC20",
+    Options: wallet.WatchAssetOptions{
+        Address:  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        Decimals: 18, // [!code focus]
+        Symbol:   "WETH",
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+#### Options.Image (optional)
+
+- **Type:** `string`
+
+A string URL of the token logo.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `success, err := wallet.WatchAsset(ctx, walletClient, wallet.WatchAssetParameters{
+    Type: "ERC20",
+    Options: wallet.WatchAssetOptions{
+        Address:  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        Decimals: 18,
+        Symbol:   "WETH",
+        Image:    "https://weth.com/icon.png", // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- [`wallet_watchAsset`](https://eips.ethereum.org/EIPS/eip-747) (EIP-747)

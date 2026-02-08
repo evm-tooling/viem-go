@@ -1,0 +1,133 @@
+---
+title: getCapabilities
+description: Gets wallet capabilities (EIP-5792)
+---
+
+# getCapabilities
+
+Extracts capabilities that a connected wallet supports (e.g. paymasters, session keys, etc).
+
+This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabilitiesParameters{}) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Capabilities: %+v", capabilities)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Get Capabilities for Specific Chain
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `chainID := int64(1) // Mainnet
+capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabilitiesParameters{
+    ChainID: &chainID, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Mainnet capabilities: %+v", capabilities[chainID])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`ChainIDToCapabilities` (map[int64]Capabilities)
+
+A map where keys are chain IDs and values are capability objects for that chain. If `ChainID` is provided, the map will only contain capabilities for that specific chain.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `*string`
+
+The account address to get capabilities for. If nil, uses the client's account.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `accountAddr := "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC"
+capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabilitiesParameters{
+    Account: &accountAddr, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ChainID (optional)
+
+- **Type:** `*int64`
+
+Optionally restricts capabilities to a specific chain. If set, returns capabilities only for this chain ID. If nil, returns capabilities for all chains.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `chainID := int64(1) // Mainnet
+capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabilitiesParameters{
+    ChainID: &chainID, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- [`wallet_getCapabilities`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcapabilities) (EIP-5792)

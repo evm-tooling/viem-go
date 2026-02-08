@@ -1,0 +1,289 @@
+---
+title: prepareTransactionRequest
+description: Prepares a transaction request for signing
+---
+
+# prepareTransactionRequest
+
+Prepares a transaction request for signing by populating a nonce, gas limit, fee values, and a transaction type.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // [!code focus]
+    Value: big.NewInt(1000000000000000000),
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Prepared transaction: %+v", prepared)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*PrepareTransactionRequestParameters`
+
+The fully-prepared transaction request with all required fields populated (nonce, chainId, gas, fees, type).
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to prepare the transaction for. If nil, uses the client's account.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    Account: account, // [!code focus]
+    To:      "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Parameters (optional)
+
+- **Type:** `[]string`
+- **Default:** `["blobVersionedHashes", "chainId", "fees", "gas", "nonce", "type"]`
+
+Parameters to prepare. For instance, if `["gas", "nonce"]` is provided, then only the `gas` and `nonce` parameters will be prepared.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    Parameters: []string{"gas", "nonce"}, // [!code focus]
+    To:         "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### To (optional)
+
+- **Type:** `string`
+
+The transaction recipient or contract address.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+Value in wei sent with this transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    Value: big.NewInt(1000000000000000000), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Data (optional)
+
+- **Type:** `string`
+
+A contract hashed method call with encoded args.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    Data: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // [!code focus]
+    To:   "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Gas (optional)
+
+- **Type:** `*big.Int`
+
+The gas limit of the transaction. If missing and `gas` is in `Parameters`, it will be estimated.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    Gas: big.NewInt(21000), // [!code focus]
+    To:  "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### GasPrice (optional)
+
+- **Type:** `*big.Int`
+
+The price (in wei) to pay per gas. Only applies to Legacy Transactions.
+
+### MaxFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+Total fee per gas (in wei), inclusive of `maxPriorityFeePerGas`. Only applies to EIP-1559 Transactions. If missing and `fees` is in `Parameters`, it will be estimated.
+
+### MaxPriorityFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+Max priority fee per gas (in wei). Only applies to EIP-1559 Transactions. If missing and `fees` is in `Parameters`, it will be estimated.
+
+### Nonce (optional)
+
+- **Type:** `*int`
+
+Unique number identifying this transaction. If missing and `nonce` is in `Parameters`, it will be fetched from the network.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `nonce := 69
+prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.PrepareTransactionRequestParameters{
+    Nonce: &nonce, // [!code focus]
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Type (optional)
+
+- **Type:** `formatters.TransactionType`
+
+The transaction type. Can be `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`. If missing and `type` is in `Parameters`, it will be inferred from the network or transaction fields.
+
+### ChainID (optional)
+
+- **Type:** `*int64`
+
+The chain ID. If missing and `chainId` is in `Parameters`, it will be fetched from the client's chain or via `eth_chainId`.
+
+### Chain (optional)
+
+- **Type:** `*chain.Chain`
+
+The target chain. Used to infer chain ID and transaction type.
+
+### AccessList (optional)
+
+- **Type:** `[]formatters.AccessListItem`
+
+The access list for EIP-2930 transactions.
+
+### AuthorizationList (optional)
+
+- **Type:** `[]transaction.SignedAuthorization`
+
+Signed EIP-7702 Authorization list.
+
+### Blobs (optional)
+
+- **Type:** `[]string`
+
+Blobs for Blob Transactions (EIP-4844).
+
+### BlobVersionedHashes (optional)
+
+- **Type:** `[]string`
+
+Blob versioned hashes for Blob Transactions (EIP-4844).
+
+### MaxFeePerBlobGas (optional)
+
+- **Type:** `*big.Int`
+
+Max fee per blob gas for Blob Transactions (EIP-4844).

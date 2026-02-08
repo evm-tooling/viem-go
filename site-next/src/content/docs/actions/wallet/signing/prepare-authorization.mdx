@@ -1,0 +1,188 @@
+---
+title: prepareAuthorization
+description: Prepares an EIP-7702 authorization for signing
+---
+
+# prepareAuthorization
+
+Prepares an EIP-7702 Authorization object for signing. This action will fill the required fields of the Authorization object if they are not provided (e.g. `nonce` and `chainId`).
+
+With the prepared Authorization object, you can use [signAuthorization](/docs/actions/wallet/signing/sign-authorization) to sign over the Authorization object.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Prepared authorization: %+v", auth)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`authorization.AuthorizationRequest`
+
+The prepared authorization request with all required fields populated.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to prepare authorization for. If nil, uses the client's account.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthorizationParameters{
+    Account:         account, // [!code focus]
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ContractAddress (required)
+
+- **Type:** `string`
+
+The contract address being authorized. Either ContractAddress or Address must be provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Address (optional)
+
+- **Type:** `string`
+
+An alias for ContractAddress (for compatibility).
+
+### ChainID (optional)
+
+- **Type:** `*int`
+
+The chain ID for the authorization. If nil, it will be fetched from the client's chain or via eth_chainId.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `chainID := 1
+auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+    ChainID:         &chainID, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Nonce (optional)
+
+- **Type:** `*int`
+
+The nonce for the authorization. If nil, it will be fetched via eth_getTransactionCount with "pending" block tag.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `nonce := 0
+auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+    Nonce:           &nonce, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Executor (optional)
+
+- **Type:** `any`
+
+Specifies who will execute the EIP-7702 transaction:
+- `nil`: assumes another account will execute
+- `"self"`: the signing account will execute (nonce += 1)
+- `Account`: a specific account will execute (nonce += 1 if same as signing account)
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+    Executor:        "self", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>

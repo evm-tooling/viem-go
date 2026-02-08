@@ -1,0 +1,116 @@
+---
+title: signTransaction
+description: Signs a transaction with the Account's private key
+---
+
+# signTransaction
+
+Signs a transaction.
+
+- For local accounts (implementing TransactionSignableAccount), signs locally without an RPC call.
+- For JSON-RPC accounts, delegates to the `eth_signTransaction` RPC method.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+signed, err := wallet.SignTransaction(ctx, walletClient, wallet.SignTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // [!code focus]
+    Value: big.NewInt(1000000000000000000),
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Signed transaction: %s", signed)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`string`
+
+The signed transaction as a hex string.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to sign with. If nil, uses the client's account.
+
+### Chain (optional)
+
+- **Type:** `*chain.Chain`
+
+The target chain. If there is a mismatch between the wallet's current chain & the target chain, an error will be thrown.
+
+### SkipChainAssertion (optional)
+
+- **Type:** `bool`
+
+When true, skips the chain ID mismatch assertion.
+
+### Transaction Fields
+
+All transaction fields from [sendTransaction](/docs/actions/wallet/transactions/send-transaction) are supported:
+
+- `To` - The transaction recipient
+- `Value` - Value in wei
+- `Data` - Contract call data
+- `Gas` - Gas limit
+- `GasPrice` - Gas price (Legacy transactions)
+- `MaxFeePerGas` - Max fee per gas (EIP-1559)
+- `MaxPriorityFeePerGas` - Max priority fee per gas (EIP-1559)
+- `Nonce` - Transaction nonce
+- `Type` - Transaction type
+- `AccessList` - Access list (EIP-2930)
+- `AuthorizationList` - Authorization list (EIP-7702)
+- `Blobs` - Blobs (EIP-4844)
+- `BlobVersionedHashes` - Blob versioned hashes (EIP-4844)
+- `MaxFeePerBlobGas` - Max fee per blob gas (EIP-4844)
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_signTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_signtransaction)
+- Local Accounts: Signs locally. No JSON-RPC request.

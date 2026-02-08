@@ -1,0 +1,84 @@
+---
+title: getAddresses
+description: Returns a list of addresses owned by the wallet or client
+---
+
+# getAddresses
+
+Returns a list of account addresses owned by the wallet or client.
+
+If the client has a local account attached (implements LocalAccount), it returns the local address directly without making an RPC call.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+addresses, err := wallet.GetAddresses(ctx, walletClient) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Addresses: %v", addresses)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const accounts = await walletClient.getAddresses()
+// ['0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC']`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]address.Address`
+
+A list of checksummed Ethereum addresses.
+
+## Parameters
+
+This action takes no parameters.
+
+## JSON-RPC Method
+
+- [`eth_accounts`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_accounts)
+
+Note: For local accounts, this action returns the local address directly without making an RPC call.

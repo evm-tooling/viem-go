@@ -1,0 +1,160 @@
+---
+title: signMessage
+description: Signs a message with the Account's private key
+---
+
+# signMessage
+
+Calculates an Ethereum-specific signature in [EIP-191 format](https://eips.ethereum.org/EIPS/eip-191): `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`.
+
+- For local accounts (implementing SignableAccount), signs locally without an RPC call.
+- For JSON-RPC accounts, delegates to the `personal_sign` RPC method.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+sig, err := wallet.SignMessage(ctx, walletClient, wallet.SignMessageParameters{
+    Message: signature.NewSignableMessage("hello world"), // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Signature: %s", sig)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const signature = await walletClient.signMessage({
+  message: 'hello world'
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`string`
+
+The signed message as a hex string.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+Account to use for signing. If nil, uses the client's account.
+
+Accepts a [JSON-RPC Account](/docs/clients/wallet) or [Local Account](/docs/accounts/overview).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+sig, err := wallet.SignMessage(ctx, walletClient, wallet.SignMessageParameters{
+    Account: account, // [!code focus]
+    Message: signature.NewSignableMessage("hello world"),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Message (required)
+
+- **Type:** `signature.SignableMessage`
+
+Message to sign. Can be a string message or raw hex/bytes.
+
+By default, viem-go signs the UTF-8 representation of the message.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+sig, err := wallet.SignMessage(ctx, walletClient, wallet.SignMessageParameters{
+    Message: signature.NewSignableMessage("hello world"), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+To sign the data representation of the message, you can use the `Raw` field.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/utils/signature"
+    "github.com/ChefBingbong/viem-go/utils/encoding"
+)
+
+sig, err := wallet.SignMessage(ctx, walletClient, wallet.SignMessageParameters{
+    Message: signature.SignableMessage{
+        Raw: encoding.HexToBytes("0x68656c6c6f20776f726c64"), // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`personal_sign`](https://docs.metamask.io/guide/signing-data#personal-sign)
+- Local Accounts: Signs locally. No JSON-RPC request.

@@ -8,17 +8,27 @@ export const docsNav: NavItem[] = [
   {
     label: "Introduction",
     items: [
-      { label: "Why viem-go", slug: "introduction" },
-      { label: "Getting Started", slug: "getting-started" },
-      { label: "Examples", slug: "examples" },
+      {
+        label: "Overview",
+        items: [
+          { label: "Why viem-go", slug: "introduction" },
+          { label: "Getting Started", slug: "getting-started" },
+          { label: "Examples", slug: "examples" },
+        ],
+      },
     ],
   },
   {
     label: "Clients",
     items: [
-      { label: "Introduction", slug: "clients/intro" },
-      { label: "Public Client", slug: "clients/public" },
-      { label: "Wallet Client", slug: "clients/wallet" },
+      {
+        label: "Overview",
+        items: [
+          { label: "Introduction", slug: "clients/intro" },
+          { label: "Public Client", slug: "clients/public" },
+          { label: "Wallet Client", slug: "clients/wallet" },
+        ],
+      },
       {
         label: "Transports",
         items: [
@@ -32,7 +42,12 @@ export const docsNav: NavItem[] = [
     label: "Public Actions",
 
         items: [
-          { label: "Introduction", slug: "actions/public/introduction" },
+          {
+            label: "Overview",
+            items: [
+              { label: "Introduction", slug: "actions/public/introduction" },
+            ],
+          },
           {
             label: "Blocks",
             items: [
@@ -129,18 +144,95 @@ export const docsNav: NavItem[] = [
         ],
       },
   {
+    label: "Wallet Actions",
+    items: [
+      {
+        label: "Overview",
+        items: [
+          { label: "Introduction", slug: "actions/wallet/introduction" },
+        ],
+      },
+      {
+        label: "Transactions",
+        items: [
+          { label: "sendTransaction", slug: "actions/wallet/transactions/send-transaction" },
+          { label: "sendTransactionSync", slug: "actions/wallet/transactions/send-transaction-sync" },
+          { label: "sendRawTransaction", slug: "actions/wallet/transactions/send-raw-transaction" },
+          { label: "sendRawTransactionSync", slug: "actions/wallet/transactions/send-raw-transaction-sync" },
+          { label: "prepareTransactionRequest", slug: "actions/wallet/transactions/prepare-transaction-request" },
+        ],
+      },
+      {
+        label: "Signing",
+        items: [
+          { label: "signMessage", slug: "actions/wallet/signing/sign-message" },
+          { label: "signTransaction", slug: "actions/wallet/signing/sign-transaction" },
+          { label: "signTypedData", slug: "actions/wallet/signing/sign-typed-data" },
+          { label: "signAuthorization", slug: "actions/wallet/signing/sign-authorization" },
+          { label: "prepareAuthorization", slug: "actions/wallet/signing/prepare-authorization" },
+        ],
+      },
+      {
+        label: "Contracts",
+        items: [
+          { label: "writeContract", slug: "actions/wallet/contracts/write-contract" },
+          { label: "writeContractSync", slug: "actions/wallet/contracts/write-contract-sync" },
+          { label: "deployContract", slug: "actions/wallet/contracts/deploy-contract" },
+        ],
+      },
+      {
+        label: "EIP-5792 Calls",
+        items: [
+          { label: "sendCalls", slug: "actions/wallet/calls/send-calls" },
+          { label: "sendCallsSync", slug: "actions/wallet/calls/send-calls-sync" },
+          { label: "getCallsStatus", slug: "actions/wallet/calls/get-calls-status" },
+          { label: "showCallsStatus", slug: "actions/wallet/calls/show-calls-status" },
+          { label: "waitForCallsStatus", slug: "actions/wallet/calls/wait-for-calls-status" },
+        ],
+      },
+      {
+        label: "Account Management",
+        items: [
+          { label: "getAddresses", slug: "actions/wallet/account/get-addresses" },
+          { label: "requestAddresses", slug: "actions/wallet/account/request-addresses" },
+          { label: "getPermissions", slug: "actions/wallet/account/get-permissions" },
+          { label: "requestPermissions", slug: "actions/wallet/account/request-permissions" },
+          { label: "getCapabilities", slug: "actions/wallet/account/get-capabilities" },
+        ],
+      },
+      {
+        label: "Chain Management",
+        items: [
+          { label: "addChain", slug: "actions/wallet/chain/add-chain" },
+          { label: "switchChain", slug: "actions/wallet/chain/switch-chain" },
+          { label: "watchAsset", slug: "actions/wallet/chain/watch-asset" },
+        ],
+      },
+    ],
+  },
+  {
     label: "Chains",
     items: [
-      { label: "Introduction", slug: "chains/introduction" },
-      { label: "Mainnet", slug: "chains/mainnet" },
-      { label: "Sepolia", slug: "chains/sepolia" },
-      { label: "Custom Chains", slug: "chains/custom" },
+      {
+        label: "Overview",
+        items: [
+          { label: "Introduction", slug: "chains/introduction" },
+          { label: "Mainnet", slug: "chains/mainnet" },
+          { label: "Sepolia", slug: "chains/sepolia" },
+          { label: "Custom Chains", slug: "chains/custom" },
+        ],
+      },
     ],
   },
   {
     label: "Accounts",
     items: [
-      { label: "Overview", slug: "accounts/overview" },
+      {
+        label: "Overview",
+        items: [
+          { label: "Overview", slug: "accounts/overview" },
+        ],
+      },
       {
         label: "Key Types",
         items: [
@@ -155,26 +247,36 @@ export const docsNav: NavItem[] = [
   {
     label: "ABI",
     items: [
-      { label: "Parse", slug: "abi/parse" },
-      { label: "Encode Parameters", slug: "abi/encode-parameters" },
-      { label: "Decode Parameters", slug: "abi/decode-parameters" },
-      { label: "Encode Packed", slug: "abi/encode-packed" },
-      { label: "Get Abi Item", slug: "abi/get-abi-item" },
+      {
+        label: "Overview",
+        items: [
+          { label: "Parse", slug: "abi/parse" },
+          { label: "Encode Parameters", slug: "abi/encode-parameters" },
+          { label: "Decode Parameters", slug: "abi/decode-parameters" },
+          { label: "Encode Packed", slug: "abi/encode-packed" },
+          { label: "Get Abi Item", slug: "abi/get-abi-item" },
+        ],
+      },
     ],
   },
   {
     label: "Contract",
     items: [
-      { label: "Reading Contracts", slug: "contract/read-contract" },
-      { label: "Writing Contracts", slug: "contract/write-contract" },
-      { label: "Get Code", slug: "contract/get-code" },
-      { label: "Get Storage At", slug: "contract/get-storage-at" },
-      { label: "Multicall", slug: "contract/multicall" },
-      { label: "Contract Events", slug: "contract/contract-events" },
-      { label: "Deploy Contract", slug: "contract/deploy-contract" },
-      { label: "Simulate Contract", slug: "contract/simulate-contract" },
-      { label: "Estimate Contract Gas", slug: "contract/estimate-contract-gas" },
-      { label: "Contract Utilities", slug: "contract/contract-utilities" },
+      {
+        label: "Core",
+        items: [
+          { label: "Reading Contracts", slug: "contract/read-contract" },
+          { label: "Writing Contracts", slug: "contract/write-contract" },
+          { label: "Get Code", slug: "contract/get-code" },
+          { label: "Get Storage At", slug: "contract/get-storage-at" },
+          { label: "Multicall", slug: "contract/multicall" },
+          { label: "Contract Events", slug: "contract/contract-events" },
+          { label: "Deploy Contract", slug: "contract/deploy-contract" },
+          { label: "Simulate Contract", slug: "contract/simulate-contract" },
+          { label: "Estimate Contract Gas", slug: "contract/estimate-contract-gas" },
+          { label: "Contract Utilities", slug: "contract/contract-utilities" },
+        ],
+      },
       {
         label: "ABI",
         items: [
@@ -190,9 +292,14 @@ export const docsNav: NavItem[] = [
   {
     label: "Utilities",
     items: [
-      { label: "Units", slug: "utilities/units" },
-      { label: "Hex", slug: "utilities/hex" },
-      { label: "Bytes", slug: "utilities/bytes" },
+      {
+        label: "Basics",
+        items: [
+          { label: "Units", slug: "utilities/units" },
+          { label: "Hex", slug: "utilities/hex" },
+          { label: "Bytes", slug: "utilities/bytes" },
+        ],
+      },
       {
         label: "Data",
         items: [

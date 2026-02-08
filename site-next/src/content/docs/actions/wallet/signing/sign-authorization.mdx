@@ -1,0 +1,141 @@
+---
+title: signAuthorization
+description: Signs an EIP-7702 authorization
+---
+
+# signAuthorization
+
+Signs an EIP-7702 Authorization object.
+
+This action first prepares the authorization (filling in chainId and nonce if needed), then signs it using the account's signAuthorization method.
+
+:::warning
+This action requires a local account that implements AuthorizationSignableAccount. JSON-RPC accounts are not supported for this action.
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account,
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+signed, err := wallet.SignAuthorization(ctx, walletClient, wallet.SignAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Signed authorization: %+v", signed)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*types.SignedAuthorization`
+
+The signed EIP-7702 authorization.
+
+## Parameters
+
+All parameters from [prepareAuthorization](/docs/actions/wallet/signing/prepare-authorization) are supported:
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to sign with. If nil, uses the client's account. Must be a local account.
+
+### ContractAddress (required)
+
+- **Type:** `string`
+
+The contract address being authorized.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `signed, err := wallet.SignAuthorization(ctx, walletClient, wallet.SignAuthorizationParameters{
+    ContractAddress: "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Address (optional)
+
+- **Type:** `string`
+
+An alias for ContractAddress (for compatibility).
+
+### ChainID (optional)
+
+- **Type:** `*int`
+
+The chain ID for the authorization. If nil, it will be fetched from the client's chain or via eth_chainId.
+
+### Nonce (optional)
+
+- **Type:** `*int`
+
+The nonce for the authorization. If nil, it will be fetched via eth_getTransactionCount with "pending" block tag.
+
+### Executor (optional)
+
+- **Type:** `any`
+
+Specifies who will execute the EIP-7702 transaction:
+- `nil`: assumes another account will execute
+- `"self"`: the signing account will execute (nonce += 1)
+- `Account`: a specific account will execute (nonce += 1 if same as signing account)
+
+## JSON-RPC Methods
+
+- Local Accounts: Signs locally. No JSON-RPC request.
+- JSON-RPC Accounts: Not supported.

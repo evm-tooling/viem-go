@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { docsNav, type NavItem } from "@/lib/docs-nav";
 import { useSidebar } from "./SidebarContext";
@@ -15,6 +15,18 @@ function isChildActive(item: NavItem, pathname: string): boolean {
   if (item.slug && pathname === `/docs/${item.slug}`) return true;
   if (item.items) return item.items.some((c) => isChildActive(c, pathname));
   return false;
+}
+
+/** Recursively find the slug of the first leaf in a group */
+function findFirstLeafSlug(item: NavItem): string | null {
+  if (item.slug) return item.slug;
+  if (item.items) {
+    for (const child of item.items) {
+      const slug = findFirstLeafSlug(child);
+      if (slug) return slug;
+    }
+  }
+  return null;
 }
 
 type HoverState = {
@@ -32,20 +44,23 @@ function findActiveGroupId(
   sections: NavItem[],
   pathname: string,
   depth: number = 0,
+  parentPath: string = "",
 ): string | null {
   for (const item of sections) {
     if (!item.items) continue;
 
     // depth 0 = section headers (Introduction, Clients, etc.) — not collapsible
     if (depth === 0) {
-      const found = findActiveGroupId(item.items, pathname, 1);
+      const found = findActiveGroupId(item.items, pathname, 1, item.label);
       if (found) return found;
       continue;
     }
 
+    const itemPath = `${parentPath}/${item.label}`;
+
     // depth 1+ = collapsible groups
     if (isChildActive(item, pathname)) {
-      return `group:${depth}:${item.label}`;
+      return `group:${itemPath}`;
     }
   }
   return null;
@@ -80,15 +95,14 @@ function NavLeaf({
 }) {
   const isActive = pathname === `/docs/${item.slug}`;
   const id = `leaf:${item.slug}`;
-  const showHighlight =
-    hover.hoveredId === id || (!hover.hoveredId && isActive);
+  const showHighlight = hover.hoveredId === id;
 
   return (
     <div
       className={cn(
         "relative",
         depth === 1 && "border-l-2 transition-colors duration-150",
-        depth === 1 && (isActive ? "border-accent" : "border-gray-5/30")
+        depth === 1 && (isActive ? "!border-brand-blue-light" : "!border-gray-5/30"),
       )}
       onClick={onToggle}
       onMouseEnter={() => hover.setHoveredId(id)}
@@ -100,7 +114,7 @@ function NavLeaf({
         size="sm"
 
         className={cn(
-          "relative w-full justify-start rounded-md h-auto py-1.5 pr-3 overflow-hidden",
+          "relative w-full justify-start rounded-md h-auto py-1 pr-3 overflow-hidden",
           depth > 1 ? "pl-4" : "pl-4",
           isActive
             ? "text-accent font-medium hover:text-accent"
@@ -126,6 +140,7 @@ function NavGroupItem({
   isOpen,
   onToggle,
   accordion,
+  parentPath,
 }: {
   item: NavItem;
   depth: number;
@@ -134,21 +149,32 @@ function NavGroupItem({
   isOpen: boolean;
   onToggle: () => void;
   accordion: AccordionState;
+  parentPath: string;
 }) {
+  const router = useRouter();
   const childActive = isChildActive(item, pathname);
-  const id = `group:${depth}:${item.label}`;
+  const itemPath = `${parentPath}/${item.label}`;
+  const id = `group:${itemPath}`;
   const showHighlight =
     hover.hoveredId === id || (!hover.hoveredId && childActive);
+
+  const handleClick = () => {
+    onToggle();
+    // When expanding (not collapsing), navigate to the first leaf
+    if (!isOpen) {
+      const slug = findFirstLeafSlug(item);
+      if (slug) router.push(`/docs/${slug}`);
+    }
+  };
 
   return (
     <div
       className={cn(
         "w-full",
         depth === 1 && "border-l-2 transition-colors duration-150",
-        depth === 1 && (childActive ? "border-accent" : "border-gray-5/30"),
-        //  isOpen ? "bg-primary/[0.07]border-accent" : ""
+        depth === 1 && (childActive ? "!border-brand-blue-light" : "!border-gray-5/30"),
       )}
-      onClick={onToggle}
+      onClick={handleClick}
     >
       <div
         className={cn(
@@ -165,7 +191,7 @@ function NavGroupItem({
         onMouseEnter={() => hover.setHoveredId(id)}
         onFocus={() => hover.setHoveredId(id)}
         className={cn(
-          "relative w-full justify-between rounded-md h-auto py-1.5 pr-3 overflow-hidden",
+          "relative w-full justify-between rounded-md h-auto py-1 pr-3 overflow-hidden",
           depth > 1 ? "pl-4" : "pl-4",
           childActive ? "text-gray-1 font-semibold" : "text-gray-3"
         )}
@@ -213,13 +239,14 @@ function NavGroupItem({
             }}
             className="overflow-hidden"
           >
-            <div className="relative ml-3 border-l border-gray-5/40 pl-0.5">
+            <div className="relative ml-3  pl-0.5">
               <NavChildren
                 items={item.items!}
                 depth={depth + 1}
                 pathname={pathname}
                 hover={hover}
                 accordion={accordion}
+                parentPath={itemPath}
               />
             </div>
           </motion.div>
@@ -238,17 +265,19 @@ function NavChildren({
   pathname,
   hover,
   accordion,
+  parentPath,
 }: {
   items: NavItem[];
   depth: number;
   pathname: string;
   hover: HoverState;
   accordion: AccordionState;
+  parentPath: string;
 }) {
   return (
     <div className="flex flex-col gap-0">
       {items.map((child) => {
-              const groupId = `group:${depth}:${child.label}`;
+              const groupId = `group:${parentPath}/${child.label}`;
               const isOpen = accordion.openGroupId === groupId;
         if (child.items) {
 
@@ -266,6 +295,7 @@ function NavChildren({
                 );
               }}
               accordion={accordion}
+              parentPath={parentPath}
             />
           );
         }
@@ -303,7 +333,7 @@ function NavSection({
   accordion: AccordionState;
 }) {
   return (
-    <div className="mt-8 first:mt-0">
+    <div className="mt-1 first:mt-0">
       <span className="flex items-center text-[0.8125rem] font-bold text-gray-1 uppercase tracking-wider mb-2 py-1 px-3">
         {item.label}
       </span>
@@ -315,6 +345,7 @@ function NavSection({
             pathname={pathname}
             hover={hover}
             accordion={accordion}
+            parentPath={item.label}
           />
         </div>
       )}

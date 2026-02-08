@@ -1,0 +1,114 @@
+---
+title: writeContractSync
+description: Executes a write function on a contract synchronously
+---
+
+# writeContractSync
+
+Executes a write function on a contract synchronously. Returns the transaction receipt after the transaction is included in a block.
+
+A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a Transaction is needed to be broadcast in order to change the state.
+
+Internally, encodes the function call using the ABI and delegates to [sendTransactionSync](/docs/actions/wallet/transactions/send-transaction-sync) with the ABI-encoded data.
+
+:::warning
+This internally sends a transaction – it does not validate if the contract write will succeed. It is highly recommended to simulate the contract write first.
+:::
+
+:::warning
+This Action is only recommended to be used on chains with low block times and fast finality (most chains apart from `mainnet`).
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+receipt, err := wallet.WriteContractSync(ctx, walletClient, wallet.WriteContractSyncParameters{
+    WriteContractParameters: wallet.WriteContractParameters{
+        Address:      "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2", // [!code focus]
+        ABI:          mintABI,
+        FunctionName: "mint",
+        Args:         []any{uint32(69420)},
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction receipt: %+v", receipt)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*formatters.TransactionReceipt`
+
+The transaction receipt after the transaction is included in a block.
+
+## Parameters
+
+All parameters from [writeContract](/docs/actions/wallet/contracts/write-contract) are supported, plus:
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `client.PollingInterval()`
+
+The polling interval to poll for the transaction receipt.
+
+### ThrowOnReceiptRevert (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+
+When true, throws an error if the transaction was detected as reverted.
+
+### Timeout (optional)
+
+- **Type:** `*time.Duration`
+- **Default:** `max(chain.blockTime * 3, 5000ms)`
+
+The timeout to wait for a response.
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
+- Local Accounts: [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

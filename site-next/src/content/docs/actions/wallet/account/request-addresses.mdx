@@ -1,0 +1,84 @@
+---
+title: requestAddresses
+description: Requests a list of accounts managed by a wallet
+---
+
+# requestAddresses
+
+Requests a list of accounts managed by a wallet.
+
+Sends a request to the wallet, asking for permission to access the user's accounts. After the user accepts the request, it will return a list of accounts (addresses).
+
+This API can be useful for dapps that need to access the user's accounts in order to execute transactions or interact with smart contracts.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+addresses, err := wallet.RequestAddresses(ctx, walletClient) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Addresses: %v", addresses)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const accounts = await walletClient.requestAddresses()
+// ['0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC']`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]address.Address`
+
+A list of checksummed Ethereum addresses.
+
+## Parameters
+
+This action takes no parameters.
+
+## JSON-RPC Method
+
+- [`eth_requestAccounts`](https://eips.ethereum.org/EIPS/eip-1102) (EIP-1102)
