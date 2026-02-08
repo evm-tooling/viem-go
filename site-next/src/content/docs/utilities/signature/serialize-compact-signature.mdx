@@ -1,0 +1,189 @@
+---
+title: serializeCompactSignature
+description: Combines compact signature components into a hex string (EIP-2098)
+---
+
+# serializeCompactSignature
+
+Combines compact signature components (`R` and `YParityAndS`) into a hex formatted compact signature string ([EIP-2098](https://eips.ethereum.org/EIPS/eip-2098)).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+hexSig, err := signature.SerializeCompactSignature(&signature.CompactSignature{
+    R:           "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    YParityAndS: "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+})
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Compact Signature: %s\n", hexSig)
+// Compact Signature: 0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064
+
+// Serialize to bytes
+sigBytes, _ := signature.SerializeCompactSignatureBytes(&signature.CompactSignature{
+    R:           "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    YParityAndS: "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+})
+// []byte{0x68, 0xa0, ...} (64 bytes)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { serializeCompactSignature } from 'viem'
+
+const hex = serializeCompactSignature({
+  r: '0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90',
+  yParityAndS: '0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)` for `SerializeCompactSignature`, `([]byte, error)` for `SerializeCompactSignatureBytes`
+
+The serialized compact signature. `SerializeCompactSignature` returns a hex string with `0x` prefix (64 bytes), `SerializeCompactSignatureBytes` returns raw bytes.
+
+## Parameters
+
+### signature (required)
+
+- **Type:** `*signature.CompactSignature`
+
+The compact signature struct containing `R` and `YParityAndS` components.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig := &signature.CompactSignature{
+    R:           "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    YParityAndS: "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+}
+
+hexSig, _ := signature.SerializeCompactSignature(sig)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `serializeCompactSignature({
+  r: '0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90',
+  yParityAndS: '0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### R (required)
+
+- **Type:** `string`
+
+The R component of the signature (32 bytes as hex string).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig := &signature.CompactSignature{
+    R: "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### YParityAndS (required)
+
+- **Type:** `string`
+
+The S component with yParity encoded in the top bit of the first byte (32 bytes as hex string).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig := &signature.CompactSignature{
+    YParityAndS: "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### SerializeCompactSignature
+
+Serializes a compact signature to a hex string:
+
+```go
+hexSig, _ := signature.SerializeCompactSignature(sig)
+// "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064"
+```
+
+### SerializeCompactSignatureBytes
+
+Serializes a compact signature to bytes:
+
+```go
+sigBytes, _ := signature.SerializeCompactSignatureBytes(sig)
+// []byte{0x68, 0xa0, ...} (64 bytes)
+```
+
+## Conversion Functions
+
+### SignatureToCompactSignature
+
+Converts a regular `Signature` to a `CompactSignature`:
+
+```go
+compact, _ := signature.SignatureToCompactSignature(&signature.Signature{
+    R:       "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    S:       "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+    YParity: 0,
+})
+```
+
+### CompactSignatureToSignature
+
+Converts a `CompactSignature` back to a regular `Signature`:
+
+```go
+sig, _ := signature.CompactSignatureToSignature(compact)
+```
+
+## Notes
+
+- Compact signatures are 64 bytes instead of 65 bytes (saves 1 byte)
+- The yParity is encoded in the top bit (bit 7) of the first byte of S
+- EIP-2098 format is commonly used in Ethereum to reduce signature size

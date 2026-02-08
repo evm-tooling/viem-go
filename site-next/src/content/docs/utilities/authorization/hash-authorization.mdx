@@ -1,0 +1,218 @@
+---
+title: hashAuthorization
+description: Computes an Authorization hash in EIP-7702 format
+---
+
+# hashAuthorization
+
+Computes an Authorization hash in [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702) format: `keccak256('0x05' || rlp([chain_id, address, nonce]))`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/authorization"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/authorization"
+
+hash, err := authorization.HashAuthorization(authorization.HashAuthorizationParameters{
+    AuthorizationRequest: authorization.AuthorizationRequest{
+        Address:  "0x1234567890123456789012345678901234567890",
+        ChainId:  1,
+        Nonce:    0,
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Hash: %s\n", hash)
+// Hash: 0x...
+
+// Get hash as bytes
+hashBytes, err := authorization.HashAuthorizationBytes(authorization.AuthorizationRequest{
+    Address:  "0x1234567890123456789012345678901234567890",
+    ChainId:  1,
+    Nonce:    0,
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)` for `HashAuthorization`/`HashAuthorizationHex`, `([]byte, error)` for `HashAuthorizationBytes`
+
+The authorization hash. `HashAuthorization`/`HashAuthorizationHex` returns a hex string with `0x` prefix, `HashAuthorizationBytes` returns raw bytes.
+
+## Parameters
+
+### params (required)
+
+- **Type:** `authorization.HashAuthorizationParameters`
+
+Parameters for hashing an authorization.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := authorization.HashAuthorizationParameters{
+    AuthorizationRequest: authorization.AuthorizationRequest{
+        Address:  "0x1234567890123456789012345678901234567890",
+        ChainId:  1,
+        Nonce:    0,
+    },
+}
+
+hash, _ := authorization.HashAuthorization(params)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.AuthorizationRequest (required)
+
+- **Type:** `authorization.AuthorizationRequest`
+
+The authorization request containing address, chain ID, and nonce.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `authRequest := authorization.AuthorizationRequest{
+    Address:  "0x1234567890123456789012345678901234567890",
+    ChainId:  1,
+    Nonce:    0,
+}
+
+params := authorization.HashAuthorizationParameters{
+    AuthorizationRequest: authRequest,
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.AuthorizationRequest.Address (required)
+
+- **Type:** `string`
+
+The contract address being authorized. Can also use `ContractAddress` for compatibility.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `authRequest := authorization.AuthorizationRequest{
+    Address: "0x1234567890123456789012345678901234567890",
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.AuthorizationRequest.ChainId (required)
+
+- **Type:** `int`
+
+The chain ID for this authorization.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `authRequest := authorization.AuthorizationRequest{
+    ChainId: 1,
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.AuthorizationRequest.Nonce (required)
+
+- **Type:** `int`
+
+The account nonce for this authorization.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `authRequest := authorization.AuthorizationRequest{
+    Nonce: 0,
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### HashAuthorization
+
+Computes the authorization hash:
+
+```go
+hash, _ := authorization.HashAuthorization(params)
+```
+
+### HashAuthorizationHex
+
+Computes the authorization hash and returns a hex string:
+
+```go
+hash, _ := authorization.HashAuthorizationHex(authRequest)
+```
+
+### HashAuthorizationBytes
+
+Computes the authorization hash and returns bytes:
+
+```go
+hashBytes, _ := authorization.HashAuthorizationBytes(authRequest)
+```
+
+## Hash Format
+
+The authorization hash is computed as:
+```
+keccak256('0x05' || rlp([chain_id, address, nonce]))
+```
+
+Where:
+- `0x05` is the EIP-7702 magic byte
+- The RLP-encoded list contains chain ID, address, and nonce
+
+## Notes
+
+- Used in EIP-7702 transactions for contract account authorization
+- The address field is required (cannot be empty)
+- The hash is used to authorize contract accounts to act as EOAs

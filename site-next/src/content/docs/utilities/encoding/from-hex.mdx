@@ -1,0 +1,278 @@
+---
+title: fromHex
+description: Decodes a hex string to bytes, number, boolean, or string
+---
+
+# fromHex
+
+Decodes a hex string to bytes, number, boolean, or string using a fluent API.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"
+import "math/big"
+
+// Convert hex to bytes
+bytes, _ := encoding.FromHex("0x48656c6c6f").ToBytes()
+// []byte{72, 101, 108, 108, 111}
+
+// Convert hex to big.Int
+num, _ := encoding.FromHex("0x1a4").ToBigInt()
+// big.Int representing 420
+
+// Convert hex to int64
+num, _ := encoding.FromHex("0x1a4").ToNumber()
+// int64(420)
+
+// Convert hex to uint64
+num, _ := encoding.FromHex("0x1a4").ToUint()
+// uint64(420)
+
+// Convert hex to boolean
+b, _ := encoding.FromHex("0x1").ToBool()
+// true
+
+// Convert hex to string
+str, _ := encoding.FromHex("0x48656c6c6f20776f726c642e").ToString()
+// "Hello world."
+
+// With size validation
+bytes, _ := encoding.FromHex("0x01").WithSize(4).ToBytes()
+// []byte{0x00, 0x00, 0x00, 0x01} (padded)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { fromHex } from 'viem'
+
+fromHex('0x1a4', 'number')
+// 420
+
+fromHex('0xc5cf39211876fb5e5884327fa56fc0b75', 'bigint')
+// 4206942069420694206942069420694206942069n
+
+fromHex('0x48656c6c6f20776f726c642e', 'string')
+// "Hello world"
+
+fromHex('0x48656c6c6f20576f726c6421', 'bytes')
+// Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** Depends on the conversion method called (`[]byte`, `*big.Int`, `int64`, `uint64`, `bool`, `string`, `error`)
+
+The decoded value in the requested format.
+
+## Parameters
+
+### hex (required)
+
+- **Type:** `string`
+
+The hex string to decode (should have `0x` prefix).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `bytes, _ := encoding.FromHex("0x48656c6c6f").ToBytes()`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `fromHex('0x1a4', 'number')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSize(size) (optional)
+
+- **Type:** `int`
+
+Validates and optionally pads the hex to the specified byte size.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Validate size and pad if needed
+bytes, _ := encoding.FromHex("0x01").WithSize(4).ToBytes()
+// []byte{0x00, 0x00, 0x00, 0x01}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `fromHex('0x00000000000000000000000000000000000000000000000000000000000001a4', {
+  size: 32,
+  to: 'number'
+})
+// 420`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSigned() (optional)
+
+- **Type:** method
+
+Treats the hex as a signed integer (two's complement) for `ToBigInt` and `ToNumber` conversions.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Convert signed hex
+num, _ := encoding.FromHex("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").
+    WithSize(32).
+    WithSigned().
+    ToBigInt()
+// big.Int representing -1`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Conversion Methods
+
+### ToBytes()
+
+Converts hex to a byte slice:
+
+```go
+bytes, _ := encoding.FromHex("0x0102").ToBytes()
+// []byte{0x01, 0x02}
+```
+
+### ToBigInt()
+
+Converts hex to a `*big.Int`:
+
+```go
+num, _ := encoding.FromHex("0x1a4").ToBigInt()
+// big.Int representing 420
+```
+
+### ToNumber()
+
+Converts hex to an `int64`:
+
+```go
+num, _ := encoding.FromHex("0x1a4").ToNumber()
+// int64(420)
+```
+
+### ToUint()
+
+Converts hex to a `uint64`:
+
+```go
+num, _ := encoding.FromHex("0x1a4").ToUint()
+// uint64(420)
+```
+
+### ToBool()
+
+Converts hex to a boolean:
+
+```go
+b, _ := encoding.FromHex("0x1").ToBool()
+// true
+
+b, _ = encoding.FromHex("0x0").ToBool()
+// false
+```
+
+### ToString()
+
+Converts hex to a UTF-8 string:
+
+```go
+str, _ := encoding.FromHex("0x48656c6c6f").ToString()
+// "Hello"
+```
+
+## Standalone Functions
+
+### HexToBytes
+
+Converts hex to bytes:
+
+```go
+bytes, _ := encoding.HexToBytes("0x0102")
+// []byte{0x01, 0x02}
+```
+
+### HexToBigInt
+
+Converts hex to `*big.Int`:
+
+```go
+num, _ := encoding.HexToBigInt("0x1a4", false)
+// big.Int representing 420
+```
+
+### HexToNumber
+
+Converts hex to `int64`:
+
+```go
+num, _ := encoding.HexToNumber("0x1a4", false)
+// int64(420)
+```
+
+### HexToUint
+
+Converts hex to `uint64`:
+
+```go
+num, _ := encoding.HexToUint("0x1a4")
+// uint64(420)
+```
+
+### HexToBool
+
+Converts hex to boolean:
+
+```go
+b, _ := encoding.HexToBool("0x1")
+// true
+```
+
+### HexToString
+
+Converts hex to string:
+
+```go
+str, _ := encoding.HexToString("0x48656c6c6f")
+// "Hello"
+```

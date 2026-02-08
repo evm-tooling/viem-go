@@ -1,0 +1,121 @@
+---
+title: toEventSelector
+description: Returns the event selector (topic0) for a given event definition
+---
+
+# toEventSelector
+
+Returns the event selector (topic0) for a given event definition. The selector is the full keccak256 hash of the event signature.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Get event selector
+selector, _ := hash.ToEventSelector("event Transfer(address indexed from, address indexed to, uint256 amount)")
+// "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+
+selector, _ = hash.ToEventSelector("Transfer(address,address,uint256)")
+// "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+
+// Get selector as bytes
+selectorBytes, _ := hash.ToEventSelectorBytes("event Transfer(address,address,uint256)")
+// []byte{0xdd, 0xf2, 0x52, ...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toEventSelector } from 'viem'
+
+const selector = toEventSelector('Transfer(address,address,uint256)')
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+
+const selector2 = toEventSelector('Transfer(address indexed from, address indexed to, uint256 amount)')
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)` for `ToEventSelector`, `([]byte, error)` for `ToEventSelectorBytes`
+
+The event selector (32-byte hash). `ToEventSelector` returns a hex string with `0x` prefix, `ToEventSelectorBytes` returns raw bytes.
+
+## Parameters
+
+### event (required)
+
+- **Type:** `string`
+
+The event definition string. Can include the `event` keyword and `indexed` keywords, or just the signature.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// With event keyword and indexed
+selector, _ := hash.ToEventSelector("event Transfer(address indexed from, address indexed to, uint256 amount)")
+// "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+
+// Without event keyword
+selector, _ = hash.ToEventSelector("Transfer(address,address,uint256)")
+// "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toEventSelector('Transfer(address,address,uint256)')
+// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### ToEventSelector
+
+Returns the selector as a hex string:
+
+```go
+selector, _ := hash.ToEventSelector("event Transfer(address,address,uint256)")
+// "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+```
+
+### ToEventSelectorBytes
+
+Returns the selector as raw 32 bytes:
+
+```go
+selectorBytes, _ := hash.ToEventSelectorBytes("event Transfer(address,address,uint256)")
+// []byte{0xdd, 0xf2, 0x52, ...}
+```
+
+## Notes
+
+- The event signature is normalized (spaces removed, parameter names and `indexed` keywords removed) before hashing
+- The full 32-byte hash is used (unlike function selectors which use only 4 bytes)
+- Event selectors are used as topic0 in event logs

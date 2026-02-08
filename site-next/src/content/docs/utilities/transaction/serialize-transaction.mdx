@@ -1,0 +1,178 @@
+---
+title: serializeTransaction
+description: Serializes a transaction object to RLP-encoded hex
+---
+
+# serializeTransaction
+
+Serializes a transaction object to RLP-encoded hex. Supports Legacy, EIP-2930, EIP-1559, EIP-4844, and EIP-7702 transactions.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"
+
+tx := &transaction.Transaction{
+    Type:                 transaction.TransactionTypeEIP1559,
+    ChainId:              1,
+    Nonce:                69,
+    MaxFeePerGas:         big.NewInt(20000000000), // 20 gwei
+    MaxPriorityFeePerGas: big.NewInt(2000000000),  // 2 gwei
+    Gas:                  big.NewInt(21000),
+    To:                   "0x1234512345123451234512345123451234512345",
+    Value:                big.NewInt(10000000000000000), // 0.01 ether
+}
+
+serialized, err := transaction.SerializeTransaction(tx, nil)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Serialized: %s\n", serialized)
+// Serialized: 0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { serializeTransaction } from 'viem'
+
+const serialized = serializeTransaction({
+  chainId: 1,
+  gas: 21001n,
+  maxFeePerGas: parseGwei('20'),
+  maxPriorityFeePerGas: parseGwei('2'),
+  nonce: 69,
+  to: '0x1234512345123451234512345123451234512345',
+  value: parseEther('0.01'),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)`
+
+The serialized transaction as a hex string with transaction type prefix.
+
+## Parameters
+
+### transaction (required)
+
+- **Type:** `*transaction.Transaction`
+
+The transaction object to serialize. The transaction type is determined automatically from the fields, or can be explicitly set.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tx := &transaction.Transaction{
+    ChainId:              1,
+    Nonce:                69,
+    MaxFeePerGas:         big.NewInt(20000000000),
+    MaxPriorityFeePerGas: big.NewInt(2000000000),
+    Gas:                  big.NewInt(21000),
+    To:                   "0x1234512345123451234512345123451234512345",
+    Value:                big.NewInt(10000000000000000),
+}
+
+serialized, _ := transaction.SerializeTransaction(tx, nil)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `serializeTransaction({
+  chainId: 1,
+  gas: 21001n,
+  maxFeePerGas: parseGwei('20'),
+  maxPriorityFeePerGas: parseGwei('2'),
+  nonce: 69,
+  to: '0x1234512345123451234512345123451234512345',
+  value: parseEther('0.01'),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### signature (optional)
+
+- **Type:** `*signature.Signature`
+
+Optional signature to include in the serialized transaction. If provided, the transaction will be serialized as signed.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig := &signature.Signature{
+    R:       "0x123451234512345123451234512345123451234512345123451234512345",
+    S:       "0x123451234512345123451234512345123451234512345123451234512345",
+    YParity: 1,
+}
+
+serialized, _ := transaction.SerializeTransaction(tx, sig)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `serializeTransaction({
+  chainId: 1,
+  gas: 21001n,
+  maxFeePerGas: parseGwei('20'),
+  maxPriorityFeePerGas: parseGwei('2'),
+  nonce: 69,
+  to: '0x1234512345123451234512345123451234512345',
+  value: parseEther('0.01'),
+}, {
+  r: '0x123451234512345123451234512345123451234512345123451234512345',
+  s: '0x123451234512345123451234512345123451234512345123451234512345',
+  yParity: 1
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Transaction Type Detection
+
+The transaction type is automatically determined from the fields:
+- **EIP-7702**: Has `AuthorizationList`
+- **EIP-4844**: Has blob-related fields (`Blobs`, `BlobVersionedHashes`, `MaxFeePerBlobGas`, `Sidecars`)
+- **EIP-1559**: Has `MaxFeePerGas` or `MaxPriorityFeePerGas`
+- **EIP-2930**: Has `GasPrice` and `AccessList`
+- **Legacy**: Has `GasPrice` without `AccessList`
+
+## Serialized Format
+
+The serialized transaction format depends on the type:
+- **Legacy**: RLP-encoded without type prefix
+- **EIP-2930**: `0x01` + RLP-encoded transaction
+- **EIP-1559**: `0x02` + RLP-encoded transaction
+- **EIP-4844**: `0x03` + RLP-encoded transaction (or wrapper format with sidecars)
+- **EIP-7702**: `0x04` + RLP-encoded transaction

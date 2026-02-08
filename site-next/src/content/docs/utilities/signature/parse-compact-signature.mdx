@@ -1,0 +1,123 @@
+---
+title: parseCompactSignature
+description: Parses a hex formatted compact signature (EIP-2098) into a structured CompactSignature
+---
+
+# parseCompactSignature
+
+Parses a hex formatted compact signature ([EIP-2098](https://eips.ethereum.org/EIPS/eip-2098)) into a structured `CompactSignature` with `R` and `YParityAndS` components.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+sig, err := signature.ParseCompactSignature(
+    "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("R: %s\n", sig.R)
+// R: 0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90
+
+fmt.Printf("YParityAndS: %s\n", sig.YParityAndS)
+// YParityAndS: 0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseCompactSignature } from 'viem'
+
+const { r, yParityAndS } = parseCompactSignature('0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(*signature.CompactSignature, error)`
+
+A structured compact signature with `R` and `YParityAndS` fields.
+
+## Parameters
+
+### signatureHex (required)
+
+- **Type:** `string`
+
+The hex formatted compact signature string. Must be 64 bytes (128 hex characters with `0x` prefix).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig, _ := signature.ParseCompactSignature(
+    "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `parseCompactSignature('0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Compact Signature Structure
+
+The parsed compact signature contains:
+
+- **R**: The R component (32 bytes as hex string)
+- **YParityAndS**: The S component with yParity encoded in the top bit of the first byte (32 bytes as hex string)
+
+## Functions
+
+### ParseCompactSignature
+
+Parses a hex compact signature string:
+
+```go
+sig, _ := signature.ParseCompactSignature("0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b907e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064")
+```
+
+### ParseCompactSignatureBytes
+
+Parses a 64-byte compact signature:
+
+```go
+sig, _ := signature.ParseCompactSignatureBytes([]byte{0x68, 0xa0, ...})
+```
+
+## Compact Signature Format (EIP-2098)
+
+The compact signature format is:
+- First 32 bytes: R component
+- Next 32 bytes: S component with yParity encoded in the top bit (bit 7) of the first byte
+  - If bit 7 is set, yParity = 1
+  - If bit 7 is clear, yParity = 0
+
+This reduces the signature size from 65 bytes to 64 bytes.

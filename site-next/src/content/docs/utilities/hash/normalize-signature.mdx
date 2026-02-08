@@ -1,0 +1,83 @@
+---
+title: normalizeSignature
+description: Normalizes a function or event signature by removing parameter names and unnecessary whitespace
+---
+
+# normalizeSignature
+
+Normalizes a function or event signature by removing parameter names, `indexed` keywords, and unnecessary whitespace, keeping only the types.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Normalize function signature
+sig, _ := hash.NormalizeSignature("function transfer(address to, uint256 amount)")
+// "transfer(address,uint256)"
+
+// Normalize event signature
+sig, _ = hash.NormalizeSignature("event Transfer(address indexed from, address indexed to, uint256 amount)")
+// "Transfer(address,address,uint256)"
+
+// Normalize without function/event keyword
+sig, _ = hash.NormalizeSignature("ownerOf(uint256 tokenId)")
+// "ownerOf(uint256)"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)`
+
+The normalized signature string with parameter names and whitespace removed.
+
+## Parameters
+
+### signature (required)
+
+- **Type:** `string`
+
+The function or event signature to normalize.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig, _ := hash.NormalizeSignature("function transfer(address to, uint256 amount)")
+// "transfer(address,uint256)"
+
+sig, _ = hash.NormalizeSignature("event Transfer(address indexed from, address indexed to, uint256 amount)")
+// "Transfer(address,address,uint256)"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Notes
+
+- Removes the `function` and `event` keywords
+- Removes parameter names (keeps only types)
+- Removes `indexed` keywords from event parameters
+- Removes unnecessary whitespace
+- Used internally by `ToFunctionSelector`, `ToEventSelector`, and other hash functions

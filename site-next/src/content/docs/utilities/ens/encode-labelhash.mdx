@@ -1,0 +1,84 @@
+---
+title: encodeLabelhash
+description: Encodes a hash as an ENS encoded label
+---
+
+# encodeLabelhash
+
+Encodes a hash as an ENS encoded label. This is the inverse of `EncodedLabelToLabelhash`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"
+
+// Encode a labelhash
+encoded := ens.EncodeLabelhash("0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0")
+// "[4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0]"
+
+// Works without 0x prefix
+encoded = ens.EncodeLabelhash("4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0")
+// "[4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0]"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string`
+
+The encoded label in the format `[<64 hex chars>]`.
+
+## Parameters
+
+### hash (required)
+
+- **Type:** `string`
+
+The hash to encode. Should be 64 hex characters (with or without `0x` prefix).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `encoded := ens.EncodeLabelhash("0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0")
+// "[4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0]"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Encoded Label Format
+
+Encoded labels are in the format:
+```
+[<64 hex characters>]
+```
+
+For example: `[4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0]`
+
+## Notes
+
+- Removes `0x` prefix if present
+- Used to represent labelhashes in ENS names
+- Encoded labels are preserved during normalization
+- Inverse operation of `EncodedLabelToLabelhash`

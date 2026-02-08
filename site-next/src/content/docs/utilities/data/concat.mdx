@@ -1,0 +1,114 @@
+---
+title: concat
+description: Concatenates multiple byte slices or hex strings
+---
+
+# concat
+
+Concatenates multiple byte slices or hex strings into a single value.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"
+
+// Concatenate byte slices
+result := data.Concat([]byte{0x01}, []byte{0x02}, []byte{0x03})
+// []byte{0x01, 0x02, 0x03}
+
+// Concatenate hex strings
+hexResult := data.ConcatHex("0x01", "0x02", "0x03")
+// "0x010203"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { concat } from 'viem'
+
+concat(['0x00000069', '0x00000420'])
+// 0x0000006900000420
+
+concat([new Uint8Array([69]), new Uint8Array([420])])
+// Uint8Array [69, 420]`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `[]byte` for `Concat`/`ConcatBytes`, `string` for `ConcatHex`
+
+The concatenated value. For byte slices, returns `[]byte`. For hex strings, returns a hex string with `0x` prefix.
+
+## Parameters
+
+### values (required)
+
+- **Type:** `...[]byte` for `Concat`/`ConcatBytes`, `...string` for `ConcatHex`
+
+One or more byte slices or hex strings to concatenate.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Concatenate multiple byte slices
+result := data.ConcatBytes(
+    []byte{0x01, 0x02},
+    []byte{0x03, 0x04},
+    []byte{0x05},
+)
+// []byte{0x01, 0x02, 0x03, 0x04, 0x05}
+
+// Concatenate multiple hex strings
+hexResult := data.ConcatHex(
+    "0x0102",
+    "0x0304",
+    "0x05",
+)
+// "0x0102030405"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `concat(['0x00000069', '0x00000420'])
+// 0x0000006900000420`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### Concat
+
+Generic function that automatically detects the type based on the first element. For byte slices, use `ConcatBytes` explicitly.
+
+### ConcatBytes
+
+Concatenates multiple byte slices into one.
+
+### ConcatHex
+
+Concatenates multiple hex strings into one. All inputs should have `0x` prefix.

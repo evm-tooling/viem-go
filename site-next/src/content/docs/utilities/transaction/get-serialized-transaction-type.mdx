@@ -1,0 +1,98 @@
+---
+title: getSerializedTransactionType
+description: Determines the transaction type from a serialized transaction
+---
+
+# getSerializedTransactionType
+
+Determines the transaction type from a serialized transaction hex string by examining the type prefix.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+
+// Get type from serialized transaction
+txType, err := transaction.GetSerializedTransactionType("0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Type: %s\n", txType)
+// Type: eip1559`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { getSerializedTransactionType } from 'viem'
+
+const type = getSerializedTransactionType('0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0')
+// 'eip1559'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(transaction.TransactionType, error)`
+
+The transaction type: `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`.
+
+## Parameters
+
+### serializedTransaction (required)
+
+- **Type:** `string`
+
+The serialized transaction hex string.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `txType, _ := transaction.GetSerializedTransactionType("0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `getSerializedTransactionType('0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Type Detection
+
+The transaction type is determined from the first byte(s) of the serialized transaction:
+
+- **Legacy**: No type prefix (starts with RLP data)
+- **EIP-2930**: `0x01` prefix
+- **EIP-1559**: `0x02` prefix
+- **EIP-4844**: `0x03` prefix
+- **EIP-7702**: `0x04` prefix
+
+## Notes
+
+- This function only examines the type prefix, not the transaction fields
+- For determining type from a transaction object, use `GetTransactionType` instead
+- Returns an error if the serialized transaction format is invalid

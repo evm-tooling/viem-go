@@ -1,0 +1,287 @@
+---
+title: fromBytes
+description: Decodes a byte array to hex, number, boolean, or string
+---
+
+# fromBytes
+
+Decodes a byte array to hex, number, boolean, or string using a fluent API.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"
+import "math/big"
+
+// Convert bytes to hex
+hex, _ := encoding.FromBytes([]byte{72, 101, 108, 108, 111}).ToHex()
+// "0x48656c6c6f"
+
+// Convert bytes to big.Int
+num, _ := encoding.FromBytes([]byte{1, 164}).ToBigInt()
+// big.Int representing 420
+
+// Convert bytes to int64
+num, _ := encoding.FromBytes([]byte{1, 164}).ToNumber()
+// int64(420)
+
+// Convert bytes to uint64
+num, _ := encoding.FromBytes([]byte{1, 164}).ToUint()
+// uint64(420)
+
+// Convert bytes to boolean
+b, _ := encoding.FromBytes([]byte{1}).ToBool()
+// true
+
+// Convert bytes to string
+str, _ := encoding.FromBytes([]byte{72, 101, 108, 108, 111}).ToString()
+// "Hello"
+
+// With size validation
+hex, _ := encoding.FromBytes([]byte{0x01}).WithSize(4).ToHex()
+// "0x00000001" (padded)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { fromBytes } from 'viem'
+
+fromBytes(
+  new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]), 
+  'string'
+)
+// 'Hello world'
+
+fromBytes(new Uint8Array([1, 164]), 'number')
+// 420
+
+fromBytes(new Uint8Array([1]), 'boolean')
+// true`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** Depends on the conversion method called (`string`, `*big.Int`, `int64`, `uint64`, `bool`, `error`)
+
+The decoded value in the requested format.
+
+## Parameters
+
+### bytes (required)
+
+- **Type:** `[]byte`
+
+The byte array to decode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hex, _ := encoding.FromBytes([]byte{72, 101, 108, 108, 111}).ToHex()`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `fromBytes(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]), 'string')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSize(size) (optional)
+
+- **Type:** `int`
+
+Validates that the bytes don't exceed the specified size.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Validate size
+hex, err := encoding.FromBytes([]byte{0x01, 0x02, 0x03}).WithSize(2).ToHex()
+// error: size overflow`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `fromBytes(
+  new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 
+  { size: 32, to: 'string' }
+)
+// 'Hello world'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSigned() (optional)
+
+- **Type:** method
+
+Treats the bytes as a signed integer (two's complement) for `ToBigInt` and `ToNumber` conversions.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Convert signed bytes
+num, _ := encoding.FromBytes([]byte{0xff, 0xff, 0xff, 0xff}).
+    WithSize(4).
+    WithSigned().
+    ToBigInt()
+// big.Int representing -1`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Conversion Methods
+
+### ToHex()
+
+Converts bytes to a hex string:
+
+```go
+hex, _ := encoding.FromBytes([]byte{0x01, 0x02}).ToHex()
+// "0x0102"
+```
+
+### ToHexUnprefixed()
+
+Converts bytes to a hex string without `0x` prefix:
+
+```go
+hex, _ := encoding.FromBytes([]byte{0x01, 0x02}).ToHexUnprefixed()
+// "0102"
+```
+
+### ToBigInt()
+
+Converts bytes to a `*big.Int`:
+
+```go
+num, _ := encoding.FromBytes([]byte{1, 164}).ToBigInt()
+// big.Int representing 420
+```
+
+### ToNumber()
+
+Converts bytes to an `int64`:
+
+```go
+num, _ := encoding.FromBytes([]byte{1, 164}).ToNumber()
+// int64(420)
+```
+
+### ToUint()
+
+Converts bytes to a `uint64`:
+
+```go
+num, _ := encoding.FromBytes([]byte{1, 164}).ToUint()
+// uint64(420)
+```
+
+### ToBool()
+
+Converts bytes to a boolean:
+
+```go
+b, _ := encoding.FromBytes([]byte{1}).ToBool()
+// true
+
+b, _ = encoding.FromBytes([]byte{0}).ToBool()
+// false
+```
+
+### ToString()
+
+Converts bytes to a UTF-8 string (trims trailing zeros):
+
+```go
+str, _ := encoding.FromBytes([]byte{72, 101, 108, 108, 111}).ToString()
+// "Hello"
+```
+
+## Standalone Functions
+
+### BytesToHex
+
+Converts bytes to hex:
+
+```go
+hex := encoding.BytesToHex([]byte{0x01, 0x02})
+// "0x0102"
+```
+
+### BytesToBigInt
+
+Converts bytes to `*big.Int`:
+
+```go
+num := encoding.BytesToBigInt([]byte{1, 164}, false)
+// big.Int representing 420
+```
+
+### BytesToNumber
+
+Converts bytes to `int64`:
+
+```go
+num, _ := encoding.BytesToNumber([]byte{1, 164}, false)
+// int64(420)
+```
+
+### BytesToUint
+
+Converts bytes to `uint64`:
+
+```go
+num, _ := encoding.BytesToUint([]byte{1, 164})
+// uint64(420)
+```
+
+### BytesToBool
+
+Converts bytes to boolean:
+
+```go
+b, _ := encoding.BytesToBool([]byte{1})
+// true
+```
+
+### BytesToString
+
+Converts bytes to string:
+
+```go
+str := encoding.BytesToString([]byte{72, 101, 108, 108, 111})
+// "Hello"
+```

@@ -1,0 +1,189 @@
+---
+title: pad
+description: Pads a byte slice or hex string with leading or trailing zeros
+---
+
+# pad
+
+Pads a byte slice or hex string with leading or trailing zeros to reach a target size.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+By default, `Pad` pads a value with leading zeros up to 32 bytes.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"
+
+// Pad bytes (default: left, 32 bytes)
+result, _ := data.Pad([]byte{0xa4, 0xe1, 0x2a, 0x45})
+// []byte{0x00, 0x00, ..., 0xa4, 0xe1, 0x2a, 0x45} (32 bytes)
+
+// Pad hex string
+hexResult, _ := data.PadHex("0xa4e12a45", data.PadLeft, 32)
+// "0x00000000000000000000000000000000000000000000000000000000a4e12a45"
+
+// Pad on the right
+rightPadded, _ := data.PadBytes([]byte{0x01}, data.PadRight, 4)
+// []byte{0x01, 0x00, 0x00, 0x00}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { pad } from 'viem'
+
+pad('0xa4e12a45')
+// 0x00000000000000000000000000000000000000000000000000000000a4e12a45
+
+pad(new Uint8Array([1, 122, 51, 123]))
+// Uint8Array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,122,51,123]`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]byte, error)` for `Pad`/`PadBytes`, `(string, error)` for `PadHex`
+
+The padded value. Returns an error if the input size exceeds the target size.
+
+## Parameters
+
+### bytes/hex (required)
+
+- **Type:** `[]byte` for `Pad`/`PadBytes`, `string` for `PadHex`
+
+The byte slice or hex string to pad.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, _ := data.PadBytes([]byte{0x01, 0x02}, data.PadLeft, 4)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `pad('0xa4e12a45')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### opts.dir (optional)
+
+- **Type:** `data.PadDirection` (`PadLeft` or `PadRight`)
+- **Default:** `PadLeft`
+
+The direction in which to pad the zeros – either leading (left) or trailing (right).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Pad on the right
+result, _ := data.PadBytes(
+    []byte{0xa4, 0xe1, 0x2a, 0x45},
+    data.PadRight,
+    8,
+)
+// []byte{0xa4, 0xe1, 0x2a, 0x45, 0x00, 0x00, 0x00, 0x00}
+
+// Pad hex on the right
+hexResult, _ := data.PadHex("0xa4e12a45", data.PadRight, 8)
+// "0xa4e12a4500000000"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `pad('0xa4e12a45', {
+  dir: 'right'
+})
+// 0xa4e12a4500000000000000000000000000000000000000000000000000000000`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### opts.size (optional)
+
+- **Type:** `int`
+- **Default:** `32`
+
+Size (in bytes) of the target value.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Pad to 16 bytes
+result, _ := data.Pad([]byte{0x01}, data.PadOptions{
+    Size: 16,
+})
+// []byte{0x00, ..., 0x01} (16 bytes)
+
+// Pad hex to 4 bytes
+hexResult, _ := data.PadHex("0xa4e12a45", data.PadLeft, 4)
+// "0x00000000a4e12a45"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `pad('0xa4e12a45', {
+  size: 16
+})
+// 0x000000000000000000000000a4e12a45`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Convenience Functions
+
+### PadLeftBytes / PadRightBytes
+
+Convenience functions for padding bytes in a specific direction:
+
+```go
+result, _ := data.PadLeftBytes([]byte{0x01}, 4)
+// []byte{0x00, 0x00, 0x00, 0x01}
+
+result, _ := data.PadRightBytes([]byte{0x01}, 4)
+// []byte{0x01, 0x00, 0x00, 0x00}
+```
+
+### PadLeftHex / PadRightHex
+
+Convenience functions for padding hex strings in a specific direction:
+
+```go
+result, _ := data.PadLeftHex("0x01", 4)
+// "0x00000001"
+
+result, _ := data.PadRightHex("0x01", 4)
+// "0x01000000"
+```

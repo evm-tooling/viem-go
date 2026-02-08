@@ -1,0 +1,136 @@
+---
+title: namehash
+description: Computes the namehash of an ENS name according to EIP-137
+---
+
+# namehash
+
+Computes the namehash of an ENS name according to [EIP-137](https://eips.ethereum.org/EIPS/eip-137). The namehash algorithm recursively hashes each label from right to left, starting with 32 zero bytes as the initial hash.
+
+:::warning[Warning]
+ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules. You likely want to normalize ENS names with UTS-46 normalization before passing them to namehash. You can use the `Normalize` function for this.
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"
+
+// Compute namehash
+hash := ens.Namehash("vitalik.eth")
+// "0xee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835"
+
+hash = ens.Namehash("eth")
+// "0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae"
+
+// Get namehash as bytes
+hashBytes := ens.NamehashBytes("vitalik.eth")
+// []byte{...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { namehash } from 'viem'
+
+namehash('vitalik.eth')
+// 0xee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835
+
+namehash('eth')
+// 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string` for `Namehash`, `[]byte` for `NamehashBytes`
+
+The namehash as a hex string with `0x` prefix (32 bytes) or raw bytes.
+
+## Parameters
+
+### name (required)
+
+- **Type:** `string`
+
+The ENS name to compute the namehash for. Should be normalized before hashing.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Normalize first (recommended)
+normalized, _ := ens.Normalize("Vitalik.ETH")
+hash := ens.Namehash(normalized)
+// "0xee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835"
+
+// Direct namehash (if already normalized)
+hash = ens.Namehash("vitalik.eth")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `namehash('vitalik.eth')
+// 0xee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Algorithm
+
+The namehash algorithm:
+1. Starts with 32 zero bytes
+2. Splits the name into labels (by `.`)
+3. Iterates labels from right to left
+4. For each label:
+   - Computes the labelhash (or uses encoded labelhash if present)
+   - Concatenates the current result with the labelhash
+   - Hashes the concatenation with keccak256
+5. Returns the final 32-byte hash
+
+## Functions
+
+### Namehash
+
+Computes namehash and returns a hex string:
+
+```go
+hash := ens.Namehash("vitalik.eth")
+```
+
+### NamehashBytes
+
+Computes namehash and returns raw bytes:
+
+```go
+hashBytes := ens.NamehashBytes("vitalik.eth")
+```
+
+## Notes
+
+- Empty name returns 32 zero bytes
+- Handles encoded labelhashes (format: `[<64 hex chars>]`)
+- Used in ENS contracts to identify names
+- Should normalize names before hashing to ensure consistency

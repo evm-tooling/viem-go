@@ -1,0 +1,140 @@
+---
+title: commitmentsToVersionedHashes
+description: Transforms a list of commitments to their versioned hashes
+---
+
+# commitmentsToVersionedHashes
+
+Transforms a list of KZG commitments to their versioned hashes.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"
+
+commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)
+
+// Transform commitments to versioned hashes
+versionedHashes := blob.CommitmentsToVersionedHashes(commitments, kzg.VersionedHashVersionKzg)
+// [][]byte{...}
+
+// Use default KZG version
+versionedHashes = blob.CommitmentsToVersionedHashesDefault(commitments)
+
+// Get as hex strings
+hexHashes := blob.CommitmentsToVersionedHashesHex(commitments, kzg.VersionedHashVersionKzg)
+// []string{"0x01...", "0x01...", ...}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `[][]byte` for `CommitmentsToVersionedHashes`, `[]string` for `CommitmentsToVersionedHashesHex`
+
+An array of versioned hashes, one for each commitment. Each hash is 32 bytes.
+
+## Parameters
+
+### commitments (required)
+
+- **Type:** `[][]byte` for `CommitmentsToVersionedHashes`, `[]string` for `CommitmentsHexToVersionedHashes`
+
+The KZG commitments to transform.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)
+versionedHashes := blob.CommitmentsToVersionedHashes(commitments, kzg.VersionedHashVersionKzg)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### version (required)
+
+- **Type:** `byte`
+
+The version byte to use. For KZG commitments, use `kzg.VersionedHashVersionKzg` (0x01).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `versionedHashes := blob.CommitmentsToVersionedHashes(commitments, kzg.VersionedHashVersionKzg)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### CommitmentsToVersionedHashes
+
+Transforms commitments to versioned hashes:
+
+```go
+versionedHashes := blob.CommitmentsToVersionedHashes(commitments, kzg.VersionedHashVersionKzg)
+```
+
+### CommitmentsToVersionedHashesDefault
+
+Transforms commitments using the default KZG version:
+
+```go
+versionedHashes := blob.CommitmentsToVersionedHashesDefault(commitments)
+```
+
+### CommitmentsToVersionedHashesHex
+
+Transforms commitments and returns hex strings:
+
+```go
+hexHashes := blob.CommitmentsToVersionedHashesHex(commitments, kzg.VersionedHashVersionKzg)
+```
+
+### CommitmentsHexToVersionedHashes
+
+Transforms hex commitments to versioned hashes:
+
+```go
+versionedHashes, _ := blob.CommitmentsHexToVersionedHashes(hexCommitments, kzg.VersionedHashVersionKzg)
+```
+
+### CommitmentsHexToVersionedHashesHex
+
+Transforms hex commitments and returns hex versioned hashes:
+
+```go
+hexHashes, _ := blob.CommitmentsHexToVersionedHashesHex(hexCommitments, kzg.VersionedHashVersionKzg)
+```
+
+## Notes
+
+- Each versioned hash is 32 bytes (256 bits)
+- The number of hashes equals the number of commitments
+- Used in EIP-4844 blob transactions to reference blob commitments

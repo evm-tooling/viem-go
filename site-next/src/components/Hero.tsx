@@ -65,7 +65,7 @@ export default function Hero() {
         {/* Right - terminal + stats */}
         <div className="w-[520px] shrink-0 flex flex-col justify-start gap-4 max-lg:hidden">
           {/* Install terminal */}
-          <div className="flex flex-col rounded-lg overflow-hidden border border-accent/20 bg-gray-6/80 min-h-[180px]">
+          <div className="flex flex-col rounded-lg overflow-hidden border border-accent/20 bg-dark-deep min-h-[180px]">
             <div className="flex justify-between items-center bg-dark-deep/30 border-b border-accent/15 pr-2">
               <div className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium text-gray-1 bg-gray-6/40 border-b-2 border-accent" style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}>
                 <svg

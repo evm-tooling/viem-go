@@ -1,0 +1,132 @@
+---
+title: labelhash
+description: Computes the keccak256 hash of an ENS label
+---
+
+# labelhash
+
+Computes the keccak256 hash of an ENS label.
+
+:::warning[Warning]
+ENS labels prohibit certain forbidden characters (e.g. underscore) and have other validation rules. You likely want to normalize ENS labels with UTS-46 normalization before passing them to labelhash. You can use the `Normalize` function for this.
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"
+
+// Compute labelhash
+hash := ens.Labelhash("eth")
+// "0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0"
+
+hash = ens.Labelhash("vitalik")
+// "0xaf2caa1c2ca1d027f1ac823b529d0a67cd144264b2789fa2ea4d63a67c7103cc"
+
+// Get labelhash as bytes
+hashBytes := ens.LabelhashBytes("eth")
+// []byte{...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { labelhash } from 'viem'
+
+labelhash('eth')
+// 0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0
+
+labelhash('vitalik')
+// 0xaf2caa1c2ca1d027f1ac823b529d0a67cd144264b2789fa2ea4d63a67c7103cc`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string` for `Labelhash`, `[]byte` for `LabelhashBytes`
+
+The labelhash as a hex string with `0x` prefix (32 bytes) or raw bytes.
+
+## Parameters
+
+### label (required)
+
+- **Type:** `string`
+
+The ENS label to compute the labelhash for. Should be normalized before hashing.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Normalize first (recommended)
+normalized, _ := ens.Normalize("ETH")
+hash := ens.Labelhash(normalized)
+// "0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0"
+
+// Direct labelhash (if already normalized)
+hash = ens.Labelhash("eth")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `labelhash('eth')
+// 0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Algorithm
+
+The labelhash algorithm:
+1. If the label is empty, returns 32 zero bytes
+2. If the label is an encoded labelhash (format: `[<64 hex chars>]`), extracts and returns it
+3. Otherwise, computes keccak256 of the label bytes
+4. Returns the 32-byte hash
+
+## Functions
+
+### Labelhash
+
+Computes labelhash and returns a hex string:
+
+```go
+hash := ens.Labelhash("eth")
+```
+
+### LabelhashBytes
+
+Computes labelhash and returns raw bytes:
+
+```go
+hashBytes := ens.LabelhashBytes("eth")
+```
+
+## Notes
+
+- Empty label returns 32 zero bytes
+- Handles encoded labelhashes (format: `[<64 hex chars>]`)
+- Used internally by `Namehash` to hash individual labels
+- Should normalize labels before hashing to ensure consistency

@@ -1,0 +1,190 @@
+---
+title: assertRequest
+description: Validates a transaction request and returns an error if invalid
+---
+
+# assertRequest
+
+Validates a transaction request and returns an error if the request is invalid. Checks address validity and fee constraints.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"
+
+err := transaction.AssertRequest(transaction.AssertRequestParams{
+    Account:              "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    To:                   "0x1234567890123456789012345678901234567890",
+    MaxFeePerGas:         big.NewInt(1000000000),
+    MaxPriorityFeePerGas: big.NewInt(100000000),
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { assertRequest } from 'viem'
+
+assertRequest({
+  account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  to: '0x1234567890123456789012345678901234567890',
+  maxFeePerGas: parseGwei('1'),
+  maxPriorityFeePerGas: parseGwei('0.1'),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `error`
+
+Returns `nil` if the request is valid, or an error describing the validation failure.
+
+## Parameters
+
+### params (required)
+
+- **Type:** `transaction.AssertRequestParams`
+
+The transaction request parameters to validate.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := transaction.AssertRequestParams{
+    Account:              "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    To:                   "0x1234567890123456789012345678901234567890",
+    MaxFeePerGas:         big.NewInt(1000000000),
+    MaxPriorityFeePerGas: big.NewInt(100000000),
+}
+
+err := transaction.AssertRequest(params)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `assertRequest({
+  account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  to: '0x1234567890123456789012345678901234567890',
+  maxFeePerGas: parseGwei('1'),
+  maxPriorityFeePerGas: parseGwei('0.1'),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.Account (optional)
+
+- **Type:** `string`
+
+The account address. Must be a valid Ethereum address format if provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := transaction.AssertRequestParams{
+    Account: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.To (optional)
+
+- **Type:** `string`
+
+The recipient address. Must be a valid Ethereum address format if provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := transaction.AssertRequestParams{
+    To: "0x1234567890123456789012345678901234567890",
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.MaxFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+The maximum fee per gas. Must not exceed max uint256, and must be >= `MaxPriorityFeePerGas` if both are provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := transaction.AssertRequestParams{
+    MaxFeePerGas: big.NewInt(1000000000),
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.MaxPriorityFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+The maximum priority fee per gas. Must not exceed `MaxFeePerGas` if both are provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := transaction.AssertRequestParams{
+    MaxPriorityFeePerGas: big.NewInt(100000000),
+    // ...
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Validations
+
+This function validates:
+1. **Account Address**: Must be a valid 40-character hex address with `0x` prefix (if provided)
+2. **To Address**: Must be a valid 40-character hex address with `0x` prefix (if provided)
+3. **MaxFeePerGas**: Must not exceed max uint256 value
+4. **Fee Constraint**: `MaxPriorityFeePerGas` must not exceed `MaxFeePerGas` (if both are provided)

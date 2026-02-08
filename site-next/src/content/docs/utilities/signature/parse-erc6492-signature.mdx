@@ -1,0 +1,111 @@
+---
+title: parseErc6492Signature
+description: Parses an ERC-6492 formatted signature
+---
+
+# parseErc6492Signature
+
+Parses a hex-formatted ERC-6492 flavored signature. If the signature is not in ERC-6492 format, the underlying (original) signature is returned.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+parsed, err := signature.ParseErc6492Signature(
+    "0x000000000000000000000000cafebabecafebabecafebabecafebabecafebabe000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000004deadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041a461f509887bd19e312c0c58467ce8ff8e300d3c1a90b608a760c5b80318eaf15fe57c96f9175d6cd4daad4663763baa7e78836e067d0163e9a2ccf2ff753f5b1b000000000000000000000000000000000000000000000000000000000000006492649264926492649264926492649264926492649264926492649264926492",
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Factory Address: %s\n", parsed.Address)
+// Factory Address: 0xCAFEBABECAFEBABECAFEBABECAFEBABECAFEBABE
+
+fmt.Printf("Factory Data: %s\n", parsed.Data)
+// Factory Data: 0xdeadbeef
+
+fmt.Printf("Original Signature: %s\n", parsed.Signature)
+// Original Signature: 0xa461f509887bd19e312c0c58467ce8ff8e300d3c1a90b608a760c5b80318eaf15fe57c96f9175d6cd4daad4663763baa7e78836e067d0163e9a2ccf2ff753f5b1b`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseErc6492Signature } from 'viem'
+
+const { address, data, signature } = await parseErc6492Signature('0x000000000000000000000000cafebabecafebabecafebabecafebabecafebabe...6492649264926492649264926492649264926492649264926492649264926492')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(*signature.Erc6492Signature, error)`
+
+A parsed ERC-6492 signature containing:
+- `Address`: The ERC-4337 Account Factory address
+- `Data`: The calldata to pass to deploy account (if not deployed)
+- `Signature`: The original signature
+
+If the signature is not ERC-6492 format, returns the original signature in the `Signature` field.
+
+## Parameters
+
+### signature (required)
+
+- **Type:** `string`
+
+The ERC-6492 formatted signature string. Must end with ERC-6492 magic bytes if it's an ERC-6492 signature.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `parsed, _ := signature.ParseErc6492Signature(
+    "0x000000000000000000000000cafebabecafebabecafebabecafebabecafebabe...6492649264926492649264926492649264926492649264926492649264926492",
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `parseErc6492Signature('0x000000000000000000000000cafebabecafebabecafebabecafebabecafebabe...6492649264926492649264926492649264926492649264926492649264926492')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Erc6492Signature Structure
+
+The parsed ERC-6492 signature contains:
+
+- **Address**: The ERC-4337 Account Factory address (hex string)
+- **Data**: The calldata to pass to deploy account (hex string)
+- **Signature**: The original signature (hex string)
+
+## Notes
+
+- ERC-6492 signatures are used for counterfactual contract account verification
+- The signature format is: `abi.encode(factoryAddress, factoryData, originalSignature) + magicBytes`
+- If the signature doesn't end with magic bytes, it's treated as a regular signature and returned as-is
+- This allows verification of signatures from accounts that haven't been deployed yet

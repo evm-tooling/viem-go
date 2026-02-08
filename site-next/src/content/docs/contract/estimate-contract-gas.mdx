@@ -1,0 +1,122 @@
+---
+title: Estimate Contract Gas
+description: Estimate gas for a contract write or deployment
+---
+
+**EstimateContractGas** returns the estimated gas needed to execute a contract function call. Uses **eth_estimateGas** with ABI-encoded calldata. Use before sending a write transaction to set a gas limit or detect reverts.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { estimateContractGas } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `parsedABI, _ := abi.Parse(erc20ABI)
+
+gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContractGasParameters{
+    Account:      &senderAddr,
+    Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+    ABI:         parsedABI,
+    FunctionName: "transfer",
+    Args:         []any{recipient, amount},
+    Value:        big.NewInt(0),
+})
+if err != nil {
+    log.Fatal(err) // e.g. execution would revert
+}
+fmt.Printf("Estimated gas: %d\n", gas)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const gas = await publicClient.estimateContractGas({
+  account: sender,
+  address: usdc,
+  abi: erc20ABI,
+  functionName: 'transfer',
+  args: [recipient, amount],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+- **Default:** `nil`
+- Caller address for the estimation.
+
+### Address (required)
+
+- **Type:** `common.Address`
+- Contract address.
+
+### ABI (required)
+
+- **Type:** `*abi.ABI`
+- Contract ABI (used to encode function data).
+
+### FunctionName (required)
+
+- **Type:** `string`
+- Function to estimate (e.g. `"transfer"`).
+
+### Args (optional)
+
+- **Type:** `[]any`
+- **Default:** `nil`
+- Function arguments.
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+- **Default:** `nil`
+- Wei to send with the call.
+
+### BlockNumber / BlockTag (optional)
+
+- **Type:** `*uint64` or `BlockTag`
+- **Default:** latest
+- Block at which to estimate.
+
+### Gas, GasPrice, MaxFeePerGas, MaxPriorityFeePerGas, Nonce, AccessList, StateOverride (optional)
+
+- Optional hints or overrides for the estimation context.
+
+## Return type
+
+- **EstimateContractGas** returns `(uint64, error)` — estimated gas units. On revert, returns an error.
+
+## See also
+
+- [Writing Contracts](/docs/contract/write-contract/) — PrepareContractWrite, WriteContract
+- [Simulate Contract](/docs/contract/simulate-contract/) — full simulation with return value
+- [Deploy Contract](/docs/contract/deploy-contract/) — deployment gas

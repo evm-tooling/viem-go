@@ -1,0 +1,181 @@
+---
+title: bytes
+description: Root-level byte conversion utilities
+---
+
+# bytes
+
+Root-level byte conversion utilities providing a fluent API for converting byte arrays to other types.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils"
+import "math/big"
+
+// Convert bytes to hex
+hex := utils.FromBytes([]byte{0x01, 0x02}).ToHex()
+// "0x0102"
+
+// Convert bytes to int64
+num := utils.FromBytes([]byte{1, 164}).ToInt()
+// int64(420)
+
+// Convert bytes to uint64
+num = utils.FromBytes([]byte{1, 164}).ToUint()
+// uint64(420)
+
+// Convert bytes to big.Int
+bigNum := utils.FromBytes([]byte{1, 164}).ToBigInt()
+// big.Int representing 420
+
+// Convert bytes to boolean
+b := utils.FromBytes([]byte{1}).ToBool()
+// true`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Fluent API
+
+### FromBytes
+
+Creates a `ByteConverter` from a byte slice:
+
+```go
+converter := utils.FromBytes([]byte{0x01, 0x02})
+```
+
+### ByteConverter Methods
+
+- **ToHex()**: Converts bytes to hex string
+- **ToInt()**: Converts bytes to int64
+- **ToUint()**: Converts bytes to uint64
+- **ToBigInt()**: Converts bytes to *big.Int
+- **ToBool()**: Converts bytes to boolean
+- **ToBytes()**: Returns the underlying byte slice
+
+## Standalone Functions
+
+### BytesToHex
+
+Converts bytes to hex string:
+
+```go
+hex := utils.BytesToHex([]byte{0x01, 0x02})
+// "0x0102"
+```
+
+### BytesToHexUnprefixed
+
+Converts bytes to hex string without `0x` prefix:
+
+```go
+hex := utils.BytesToHexUnprefixed([]byte{0x01, 0x02})
+// "0102"
+```
+
+### BytesToInt
+
+Converts bytes to int64:
+
+```go
+num := utils.BytesToInt([]byte{1, 164})
+```
+
+### BytesToUint
+
+Converts bytes to uint64:
+
+```go
+num := utils.BytesToUint([]byte{1, 164})
+```
+
+### BytesToBigInt
+
+Converts bytes to *big.Int:
+
+```go
+bigNum := utils.BytesToBigInt([]byte{1, 164})
+```
+
+### BytesToBool
+
+Converts bytes to boolean:
+
+```go
+b := utils.BytesToBool([]byte{1})
+```
+
+### IntToBytes
+
+Converts int64 to bytes:
+
+```go
+bytes := utils.IntToBytes(420)
+```
+
+### IntToBytesMinimal
+
+Converts int64 to bytes with minimal size (strips leading zeros):
+
+```go
+bytes := utils.IntToBytesMinimal(420)
+```
+
+### UintToBytes
+
+Converts uint64 to bytes:
+
+```go
+bytes := utils.UintToBytes(420)
+```
+
+### BigIntToBytes
+
+Converts *big.Int to bytes:
+
+```go
+bytes := utils.BigIntToBytes(big.NewInt(420))
+```
+
+### BigIntToBytesPadded
+
+Converts *big.Int to bytes with padding:
+
+```go
+bytes := utils.BigIntToBytesPadded(big.NewInt(420), 32)
+```
+
+### BoolToBytes
+
+Converts boolean to bytes:
+
+```go
+bytes := utils.BoolToBytes(true)
+// []byte{1}
+```
+
+## Notes
+
+- These are root-level utilities in the `utils` package
+- For more advanced features (size validation, signed conversions), use the `encoding` package utilities
+- The fluent API provides a convenient way to chain conversions

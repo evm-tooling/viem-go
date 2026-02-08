@@ -1,0 +1,117 @@
+---
+title: compactSignatureToSignature
+description: Converts a CompactSignature back to a regular Signature
+---
+
+# compactSignatureToSignature
+
+Converts a `CompactSignature` ([EIP-2098](https://eips.ethereum.org/EIPS/eip-2098)) back to a regular `Signature` with separate `R`, `S`, `V`, and `YParity` components.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+compact := &signature.CompactSignature{
+    R:           "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    YParityAndS: "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+}
+
+sig, err := signature.CompactSignatureToSignature(compact)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("R: %s\n", sig.R)
+// R: 0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90
+
+fmt.Printf("S: %s\n", sig.S)
+// S: 0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064
+
+fmt.Printf("YParity: %d\n", sig.YParity)
+// YParity: 0`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { compactSignatureToSignature } from 'viem'
+
+const sig = compactSignatureToSignature({
+  r: '0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90',
+  yParityAndS: '0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(*signature.Signature, error)`
+
+A regular signature with `R`, `S`, `V`, and `YParity` components.
+
+## Parameters
+
+### compactSignature (required)
+
+- **Type:** `*signature.CompactSignature`
+
+The compact signature struct containing `R` and `YParityAndS` components.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `compact := &signature.CompactSignature{
+    R:           "0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90",
+    YParityAndS: "0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064",
+}
+
+sig, _ := signature.CompactSignatureToSignature(compact)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `compactSignatureToSignature({
+  r: '0x68a020a209d3d56c46f38cc50a33f704f4a9a10a59377f8dd762ac66910e9b90',
+  yParityAndS: '0x7e865ad05c4035ab5792787d4a0297a43617ae897930a6fe4d822b8faea52064',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Implementation
+
+This function:
+1. Extracts yParity from the top bit (bit 7) of the first byte of `YParityAndS`
+2. Clears the top bit to get the actual S value
+3. Constructs a regular `Signature` with `R`, `S`, `YParity`, and `V` (derived from yParity)
+
+## Notes
+
+- The yParity is decoded from the top bit of the first byte of `YParityAndS`
+- If bit 7 is set, yParity = 1
+- If bit 7 is clear, yParity = 0
+- The `V` value is set to 27 (yParity=0) or 28 (yParity=1) for compatibility

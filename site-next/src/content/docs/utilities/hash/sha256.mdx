@@ -1,0 +1,118 @@
+---
+title: sha256
+description: Calculates the SHA-256 hash of a byte array or hex value
+---
+
+# sha256
+
+Calculates the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) hash of a byte array or hex value.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Hash bytes
+h := hash.Sha256([]byte("hello world"))
+// "0xb94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+
+// Hash hex string
+h = hash.Sha256("0x68656c6c6f20776f726c64")
+// "0xb94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+
+// Hash string (UTF-8)
+h = hash.Sha256("hello world")
+// "0xb94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+
+// Get raw bytes
+bytes := hash.Sha256Bytes([]byte("hello world"))
+// []byte{...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { sha256, toBytes } from 'viem'
+
+sha256(toBytes('hello world'))
+// 0xb94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string` for `Sha256`, `[]byte` for `Sha256Bytes`
+
+The hashed value. `Sha256` returns a hex string with `0x` prefix, `Sha256Bytes` returns raw bytes.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `any` (supports `[]byte` or `string`)
+
+The hex value or byte array to hash. If a string is provided without `0x` prefix, it's treated as UTF-8.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Hash bytes
+hash := hash.Sha256([]byte("hello"))
+
+// Hash hex string
+hash = hash.Sha256("0x68656c6c6f")
+
+// Hash UTF-8 string
+hash = hash.Sha256("hello")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `sha256(toBytes('hello world'))
+// 0xb94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### Sha256
+
+Computes SHA-256 hash and returns a hex string:
+
+```go
+hash := hash.Sha256([]byte("hello"))
+// "0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+```
+
+### Sha256Bytes
+
+Computes SHA-256 hash and returns raw bytes:
+
+```go
+bytes := hash.Sha256Bytes([]byte("hello"))
+// []byte{0x2c, 0xf2, 0x4d, ...}
+```

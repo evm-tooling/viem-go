@@ -1,0 +1,128 @@
+---
+title: normalize
+description: Normalizes an ENS name according to ENSIP-15 (UTS-46)
+---
+
+# normalize
+
+Normalizes an ENS name according to [ENSIP-15](https://github.com/ensdomains/docs/blob/9edf9443de4333a0ea7ec658a870672d5d180d53/ens-improvement-proposals/ensip-15-normalization-standard.md) (UTS-46). This handles Unicode normalization, case folding, and validation.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"
+
+// Normalize ENS name
+normalized, err := ens.Normalize("Vitalik.ETH")
+if err != nil {
+    log.Fatal(err)
+}
+// "vitalik.eth"
+
+normalized, _ = ens.Normalize("wevm.eth")
+// "wevm.eth"
+
+// Panic on error
+normalized = ens.MustNormalize("Vitalik.ETH")
+// "vitalik.eth"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { normalize } from 'viem'
+
+normalize('Vitalik.ETH')
+// 'vitalik.eth'
+
+normalize('wevm.eth')
+// 'wevm.eth'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)` for `Normalize`, `string` for `MustNormalize`
+
+The normalized ENS name. Empty string is returned for empty input.
+
+## Parameters
+
+### name (required)
+
+- **Type:** `string`
+
+The ENS name to normalize.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `normalized, _ := ens.Normalize("Vitalik.ETH")
+// "vitalik.eth"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `normalize('Vitalik.ETH')
+// 'vitalik.eth'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Normalization Process
+
+The normalization process:
+1. Uses IDNA profile for ENS normalization (UTS-46 processing)
+2. Handles Unicode normalization (NFC)
+3. Performs case folding (lowercase)
+4. Handles Punycode encoding/decoding
+5. Processes each label separately
+6. Preserves encoded labelhashes (format: `[<64 hex chars>]`)
+
+## Functions
+
+### Normalize
+
+Normalizes an ENS name and returns an error if normalization fails:
+
+```go
+normalized, err := ens.Normalize("Vitalik.ETH")
+```
+
+### MustNormalize
+
+Normalizes an ENS name and panics on error:
+
+```go
+normalized := ens.MustNormalize("Vitalik.ETH")
+```
+
+## Notes
+
+- Empty name returns empty string
+- Encoded labelhashes are preserved as-is (not normalized)
+- Uses non-transitional processing for ENS compatibility
+- Should be used before hashing names with `Namehash` or `Labelhash`

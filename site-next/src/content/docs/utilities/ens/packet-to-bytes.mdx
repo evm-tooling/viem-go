@@ -1,0 +1,105 @@
+---
+title: packetToBytes
+description: Encodes an ENS name into a DNS packet ByteArray
+---
+
+# packetToBytes
+
+Encodes an ENS name into a DNS packet ByteArray. This is used for the off-chain resolution protocol (CCIP-Read).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"
+
+// Encode ENS name to DNS packet
+bytes := ens.PacketToBytes("vitalik.eth")
+// []byte{7, 'v', 'i', 't', 'a', 'l', 'i', 'k', 3, 'e', 't', 'h', 0}
+
+// Get as hex string
+hex := ens.PacketToBytesHex("vitalik.eth")
+// "0x077669746c696b0365746800"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `[]byte` for `PacketToBytes`, `string` for `PacketToBytesHex`
+
+The DNS packet as bytes or hex string.
+
+## Parameters
+
+### packet (required)
+
+- **Type:** `string`
+
+The ENS name to encode as a DNS packet.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `bytes := ens.PacketToBytes("vitalik.eth")
+// []byte{7, 'v', 'i', 't', 'a', 'l', 'i', 'k', 3, 'e', 't', 'h', 0}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## DNS Packet Format
+
+The DNS packet format follows DNS encoding:
+- Each label is prefixed with its length byte
+- The packet ends with a zero byte
+- Labels longer than 255 characters are encoded as labelhashes
+
+Example: `"vitalik.eth"` becomes:
+```
+[7] 'v' 'i' 't' 'a' 'l' 'i' 'k' [3] 'e' 't' 'h' [0]
+```
+
+## Functions
+
+### PacketToBytes
+
+Encodes an ENS name to DNS packet bytes:
+
+```go
+bytes := ens.PacketToBytes("vitalik.eth")
+```
+
+### PacketToBytesHex
+
+Encodes an ENS name to DNS packet hex string:
+
+```go
+hex := ens.PacketToBytesHex("vitalik.eth")
+```
+
+## Notes
+
+- Leading and trailing dots are stripped
+- Empty name returns `[]byte{0}`
+- Labels longer than 255 characters are encoded as labelhashes
+- Used for CCIP-Read off-chain resolution protocol

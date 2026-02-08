@@ -1,0 +1,203 @@
+---
+title: toHex
+description: Encodes a value (string, number, boolean, or byte array) to a hex string
+---
+
+# toHex
+
+Encodes a value (string, number, boolean, or byte array) to a hex string with `0x` prefix.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"
+import "math/big"
+
+// Convert number to hex
+hex, _ := encoding.ToHex(420).Hex()
+// "0x1a4"
+
+// Convert string to hex
+hex, _ := encoding.ToHex("Hello world").Hex()
+// "0x48656c6c6f20776f726c642e"
+
+// Convert bytes to hex
+hex, _ := encoding.ToHex([]byte{72, 101, 108, 108, 111}).Hex()
+// "0x48656c6c6f"
+
+// Convert boolean to hex
+hex, _ := encoding.ToHex(true).Hex()
+// "0x1"
+
+// Convert with size padding
+hex, _ := encoding.ToHex(420).WithSize(32).Hex()
+// "0x00000000000000000000000000000000000000000000000000000000000001a4"
+
+// Convert big.Int
+hex, _ := encoding.ToHex(big.NewInt(420)).Hex()
+// "0x1a4"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toHex } from 'viem'
+
+toHex(420)
+// "0x1a4"
+
+toHex('Hello world')
+// "0x48656c6c6f20776f726c642e"
+
+toHex(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33]))
+// "0x48656c6c6f20576f726c6421"
+
+toHex(true)
+// "0x1"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)`
+
+The hex-encoded value with `0x` prefix.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `any` (supports `[]byte`, `string`, `bool`, `int`, `int8-64`, `uint`, `uint8-64`, `*big.Int`)
+
+The value to encode as hex.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hex, _ := encoding.ToHex(420).Hex()
+// "0x1a4"
+
+hex, _ := encoding.ToHex("Hello world").Hex()
+// "0x48656c6c6f20776f726c642e"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toHex(420)
+// "0x1a4"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSize(size) (optional)
+
+- **Type:** `int`
+
+Pads the output to the specified byte size.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hex, _ := encoding.ToHex(420).WithSize(32).Hex()
+// "0x00000000000000000000000000000000000000000000000000000000000001a4"
+
+hex, _ := encoding.ToHex([]byte{0x01}).WithSize(4).Hex()
+// "0x00000001"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toHex(420, { size: 32 })
+// "0x00000000000000000000000000000000000000000000000000000000000001a4"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSigned() (optional)
+
+- **Type:** method
+
+Treats numbers as signed for conversion (uses two's complement). Requires `WithSize` to be set.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+// Convert negative number with two's complement
+hex, _ := encoding.ToHex(big.NewInt(-1)).WithSize(32).WithSigned().Hex()
+// "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Standalone Functions
+
+### NumberToHex
+
+Converts a number to hex:
+
+```go
+hex := encoding.NumberToHex(big.NewInt(420))
+// "0x1a4"
+```
+
+### StringToHex
+
+Converts a UTF-8 string to hex:
+
+```go
+hex := encoding.StringToHex("Hello world")
+// "0x48656c6c6f20776f726c642e"
+```
+
+### BoolToHex
+
+Converts a boolean to hex:
+
+```go
+hex := encoding.BoolToHex(true)
+// "0x1"
+
+hex = encoding.BoolToHex(false)
+// "0x0"
+```
+
+### NumberToHexWithSize
+
+Converts a number to hex with padding:
+
+```go
+hex, _ := encoding.NumberToHexWithSize(big.NewInt(420), 32, false)
+// "0x00000000000000000000000000000000000000000000000000000000000001a4"
+```

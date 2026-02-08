@@ -1,0 +1,117 @@
+---
+title: parseTransaction
+description: Parses a serialized RLP-encoded transaction into a structured transaction
+---
+
+# parseTransaction
+
+Parses a serialized RLP-encoded transaction into a structured `Transaction`. Supports signed and unsigned transactions of types: Legacy, EIP-2930, EIP-1559, EIP-4844, and EIP-7702.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+
+// Parse an EIP-1559 transaction
+tx, err := transaction.ParseTransaction("0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Type: %s\n", tx.Type)
+// Type: eip1559
+
+fmt.Printf("Chain ID: %d\n", tx.ChainId)
+// Chain ID: 1
+
+fmt.Printf("To: %s\n", tx.To)
+// To: 0x70997970C51812dc3A010C7d01b50e0D17dc79C8`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseTransaction } from 'viem'
+
+const transaction = parseTransaction('0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(*transaction.Transaction, error)`
+
+The parsed transaction object with all fields populated based on the transaction type.
+
+## Parameters
+
+### serializedTransaction (required)
+
+- **Type:** `string`
+
+The serialized RLP-encoded transaction hex string. Must start with a transaction type prefix (`0x00` for legacy, `0x01` for EIP-2930, `0x02` for EIP-1559, `0x03` for EIP-4844, `0x04` for EIP-7702).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tx, _ := transaction.ParseTransaction("0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `parseTransaction('0x02ef0182031184773594008477359400809470997970c51812dc3a010c7d01b50e0d17dc79c8880de0b6b3a764000080c0')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Supported Transaction Types
+
+### Legacy (0x00)
+
+Parses legacy transactions without type prefix.
+
+### EIP-2930 (0x01)
+
+Parses EIP-2930 transactions with access lists.
+
+### EIP-1559 (0x02)
+
+Parses EIP-1559 transactions with `maxFeePerGas` and `maxPriorityFeePerGas`.
+
+### EIP-4844 (0x03)
+
+Parses EIP-4844 blob transactions with blob-related fields.
+
+### EIP-7702 (0x04)
+
+Parses EIP-7702 transactions with authorization lists.
+
+## Notes
+
+- Automatically detects the transaction type from the serialized format
+- Supports both signed and unsigned transactions
+- For EIP-4844 transactions, also parses blob sidecars if present in wrapper format
+- Returns an error if the transaction format is invalid or unsupported

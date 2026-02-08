@@ -1,0 +1,144 @@
+---
+title: sidecarsToVersionedHashes
+description: Extracts versioned hashes from blob sidecars
+---
+
+# sidecarsToVersionedHashes
+
+Extracts versioned hashes from blob sidecars by transforming their commitments.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"
+
+sidecars, _ := blob.ToBlobSidecars(blob.ToBlobSidecarsParams{
+    Data: []byte("hello world"),
+    Kzg:  kzgImpl,
+})
+
+// Extract versioned hashes from sidecars
+versionedHashes := blob.SidecarsToVersionedHashes(sidecars, kzg.VersionedHashVersionKzg)
+// [][]byte{...}
+
+// Use default KZG version
+versionedHashes = blob.SidecarsToVersionedHashesDefault(sidecars)
+
+// Get as hex strings
+hexHashes := blob.SidecarsToVersionedHashesHex(sidecars, kzg.VersionedHashVersionKzg)
+// []string{"0x01...", "0x01...", ...}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `[][]byte` for `SidecarsToVersionedHashes`, `[]string` for `SidecarsToVersionedHashesHex`
+
+An array of versioned hashes, one for each sidecar. Each hash is 32 bytes.
+
+## Parameters
+
+### sidecars (required)
+
+- **Type:** `[]blob.BlobSidecar` for `SidecarsToVersionedHashes`, `[]blob.BlobSidecarHex` for `SidecarsHexToVersionedHashes`
+
+The blob sidecars to extract versioned hashes from.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sidecars, _ := blob.ToBlobSidecars(params)
+versionedHashes := blob.SidecarsToVersionedHashes(sidecars, kzg.VersionedHashVersionKzg)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### version (required)
+
+- **Type:** `byte`
+
+The version byte to use. For KZG commitments, use `kzg.VersionedHashVersionKzg` (0x01).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `versionedHashes := blob.SidecarsToVersionedHashes(sidecars, kzg.VersionedHashVersionKzg)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### SidecarsToVersionedHashes
+
+Extracts versioned hashes from sidecars:
+
+```go
+versionedHashes := blob.SidecarsToVersionedHashes(sidecars, kzg.VersionedHashVersionKzg)
+```
+
+### SidecarsToVersionedHashesDefault
+
+Extracts versioned hashes using the default KZG version:
+
+```go
+versionedHashes := blob.SidecarsToVersionedHashesDefault(sidecars)
+```
+
+### SidecarsToVersionedHashesHex
+
+Extracts versioned hashes and returns hex strings:
+
+```go
+hexHashes := blob.SidecarsToVersionedHashesHex(sidecars, kzg.VersionedHashVersionKzg)
+```
+
+### SidecarsHexToVersionedHashes
+
+Extracts versioned hashes from hex sidecars:
+
+```go
+versionedHashes, _ := blob.SidecarsHexToVersionedHashes(hexSidecars, kzg.VersionedHashVersionKzg)
+```
+
+### SidecarsHexToVersionedHashesHex
+
+Extracts versioned hashes from hex sidecars and returns hex strings:
+
+```go
+hexHashes, _ := blob.SidecarsHexToVersionedHashesHex(hexSidecars, kzg.VersionedHashVersionKzg)
+```
+
+## Notes
+
+- Extracts versioned hashes from the commitments in each sidecar
+- Each versioned hash is 32 bytes (256 bits)
+- The number of hashes equals the number of sidecars
+- Used in EIP-4844 blob transactions to reference blob commitments

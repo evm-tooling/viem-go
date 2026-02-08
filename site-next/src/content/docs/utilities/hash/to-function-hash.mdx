@@ -1,0 +1,110 @@
+---
+title: toFunctionHash
+description: Returns the full keccak256 hash of a function signature
+---
+
+# toFunctionHash
+
+Returns the full keccak256 hash of a function signature. This is an alias for `ToSignatureHash` specifically for function definitions.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Get full function hash
+hash, _ := hash.ToFunctionHash("function transfer(address to, uint256 amount)")
+// "0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b"
+
+// Get hash as bytes
+hashBytes, _ := hash.ToFunctionHashBytes("function transfer(address,uint256)")
+// []byte{0xa9, 0x05, 0x9c, ...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toFunctionHash } from 'viem'
+
+const hash = toFunctionHash('function transfer(address, uint256)')
+// 0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)` for `ToFunctionHash`, `([]byte, error)` for `ToFunctionHashBytes`
+
+The full 32-byte keccak256 hash of the function signature. `ToFunctionHash` returns a hex string with `0x` prefix, `ToFunctionHashBytes` returns raw bytes.
+
+## Parameters
+
+### function (required)
+
+- **Type:** `string`
+
+The function definition string.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, _ := hash.ToFunctionHash("function transfer(address,uint256)")
+// "0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toFunctionHash('function transfer(address, uint256)')
+// 0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### ToFunctionHash
+
+Returns the full hash as a hex string:
+
+```go
+hash, _ := hash.ToFunctionHash("function transfer(address,uint256)")
+// "0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b"
+```
+
+### ToFunctionHashBytes
+
+Returns the full hash as raw 32 bytes:
+
+```go
+hashBytes, _ := hash.ToFunctionHashBytes("function transfer(address,uint256)")
+// []byte{0xa9, 0x05, 0x9c, ...}
+```
+
+## Notes
+
+- This returns the full 32-byte hash, unlike `ToFunctionSelector` which returns only the first 4 bytes
+- The function signature is normalized before hashing
+- This is equivalent to `ToSignatureHash` for function definitions

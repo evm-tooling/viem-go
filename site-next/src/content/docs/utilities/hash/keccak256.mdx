@@ -1,0 +1,121 @@
+---
+title: keccak256
+description: Calculates the Keccak256 hash of a byte array or hex value
+---
+
+# keccak256
+
+Calculates the [Keccak256](https://en.wikipedia.org/wiki/SHA-3) hash of a byte array or hex value. This is the primary hash function used in Ethereum.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Hash bytes
+h := hash.Keccak256([]byte("hello world"))
+// "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
+
+// Hash hex string
+h = hash.Keccak256("0x68656c6c6f20776f726c64")
+// "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
+
+// Hash string (UTF-8)
+h = hash.Keccak256("hello world")
+// "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
+
+// Get raw bytes
+bytes := hash.Keccak256Bytes([]byte("hello world"))
+// []byte{...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { keccak256, toBytes } from 'viem'
+
+keccak256(toBytes('hello world'))
+// 0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad
+
+keccak256('0xdeadbeef')
+// 0xd4fd4e189132273036449fc9e11198c739161b4c0116a9a2dccdfa1c492006f1`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string` for `Keccak256`, `[]byte` for `Keccak256Bytes`
+
+The hashed value. `Keccak256` returns a hex string with `0x` prefix, `Keccak256Bytes` returns raw bytes.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `any` (supports `[]byte` or `string`)
+
+The hex value or byte array to hash. If a string is provided without `0x` prefix, it's treated as UTF-8.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Hash bytes
+hash := hash.Keccak256([]byte("hello"))
+
+// Hash hex string
+hash = hash.Keccak256("0x68656c6c6f")
+
+// Hash UTF-8 string
+hash = hash.Keccak256("hello")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `keccak256(toBytes('hello world'))
+// 0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### Keccak256
+
+Computes Keccak256 hash and returns a hex string:
+
+```go
+hash := hash.Keccak256([]byte("hello"))
+// "0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8"
+```
+
+### Keccak256Bytes
+
+Computes Keccak256 hash and returns raw bytes:
+
+```go
+bytes := hash.Keccak256Bytes([]byte("hello"))
+// []byte{0x1c, 0x8a, 0xff, ...}
+```

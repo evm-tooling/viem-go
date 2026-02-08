@@ -1,0 +1,115 @@
+---
+title: size
+description: Returns the size of a hex string or byte slice in bytes
+---
+
+# size
+
+Returns the size of a hex string or byte slice in bytes.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"
+
+// Get size of hex string
+size := data.SizeHex("0x0102")
+// 2
+
+// Get size of byte slice
+size := data.SizeBytes([]byte{0x01, 0x02, 0x03})
+// 3
+
+// Generic size function (works with both)
+size := data.Size("0x0102")
+// 2
+
+size = data.Size([]byte{0x01, 0x02})
+// 2`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { size } from 'viem'
+
+size('0x00000069')
+// 4
+
+size(new Uint8Array([69, 420]))
+// 2`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `int`
+
+The size in bytes. For hex strings, calculates the byte length from hex characters (rounds up for odd lengths).
+
+## Parameters
+
+### value (required)
+
+- **Type:** `string` for `SizeHex`, `[]byte` for `SizeBytes`, `any` for `Size`
+
+The hex string or byte slice to measure.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Hex string size
+size := data.SizeHex("0x0102")
+// 2
+
+// Byte slice size
+size := data.SizeBytes([]byte{0x01, 0x02, 0x03})
+// 3
+
+// Generic size (auto-detects type)
+size := data.Size("0x0102")
+// 2
+
+size = data.Size([]byte{0x01, 0x02})
+// 2`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `size('0x00000069')
+// 4
+
+size(new Uint8Array([69, 420]))
+// 2`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Notes
+
+- For hex strings, the size is calculated as `(hexLength + 1) / 2` to handle odd-length hex strings
+- Empty hex strings (`"0x"`) return `0`
+- The hex string should have a `0x` prefix

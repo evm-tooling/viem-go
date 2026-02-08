@@ -1,0 +1,90 @@
+---
+title: Get Storage At
+description: Read a storage slot at an address with getStorageAt
+---
+
+**GetStorageAt** returns the raw 32-byte value at a storage slot for a given address. Uses **eth_getStorageAt**. Useful for low-level storage layout inspection.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { getStorageAt } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParameters{
+    Address: common.HexToAddress("0x..."),
+    Slot:    common.HexToHash("0x0"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+// value is []byte (up to 32 bytes); nil means zero/empty`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const value = await publicClient.getStorageAt({
+  address: '0x...',
+  slot: '0x0',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+- The contract or account address to read storage from.
+
+### Slot (required)
+
+- **Type:** `common.Hash`
+- The 32-byte storage slot key (e.g. `common.HexToHash("0x0")` for slot 0).
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+- **Default:** use BlockTag
+- Block number. Mutually exclusive with **BlockTag**.
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+- Block tag. Mutually exclusive with **BlockNumber**.
+
+## Return type
+
+- **GetStorageAt** returns `([]byte, error)`. The value is the raw bytes at that slot (up to 32 bytes). `nil` means zero/empty.
+
+## See also
+
+- [Get Code](/docs/contract/get-code/) — contract bytecode
+- [Reading Contracts](/docs/contract/read-contract/) — ABI-based reads

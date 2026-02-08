@@ -1,0 +1,133 @@
+---
+title: Multicall
+description: Batch multiple contract read calls into one RPC with multicall
+---
+
+**Multicall** executes multiple contract read calls in a single RPC round-trip using the Multicall3 contract (or deployless execution). Each call is ABI-encoded and decoded; results are returned in order with success/failure per call.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { multicall } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `parsedABI, _ := abi.Parse(erc20ABI)
+
+results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts: []public.MulticallContract{
+        {
+            Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+            ABI:          parsedABI,
+            FunctionName: "balanceOf",
+            Args:         []any{ownerAddr},
+        },
+        {
+            Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+            ABI:          parsedABI,
+            FunctionName: "totalSupply",
+        },
+    },
+    AllowFailure: func() *bool { b := true; return &b }(),
+})
+if err != nil {
+    log.Fatal(err)
+}
+for i, r := range results {
+    if r.Status == "success" {
+        fmt.Println(i, r.Result)
+    } else {
+        fmt.Println(i, r.Error)
+    }
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const results = await publicClient.multicall({
+  contracts: [
+    { address: usdc, abi: erc20ABI, functionName: 'balanceOf', args: [owner] },
+    { address: usdc, abi: erc20ABI, functionName: 'totalSupply' },
+  ],
+  allowFailure: true,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### Contracts (required)
+
+- **Type:** `[]MulticallContract`
+- **MulticallContract** fields: **Address** (`common.Address`), **ABI** (`*abi.ABI`), **FunctionName** (`string`), **Args** (`[]any`). Each element is one contract call.
+
+### AllowFailure (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+- If true, failed calls are included in results with status `"failure"` and an error; the whole multicall does not fail. If false, the first failure aborts the multicall.
+
+### BatchSize (optional)
+
+- **Type:** `int`
+- **Default:** `1024`
+- Maximum calldata size per batch (bytes). Calls are chunked into batches accordingly.
+
+### MulticallAddress (optional)
+
+- **Type:** `*common.Address`
+- **Default:** chain default Multicall3 address
+- Override the multicall contract address.
+
+### BlockNumber / BlockTag (optional)
+
+- **Type:** `*uint64` or `BlockTag`
+- **Default:** latest
+- Block at which to execute the calls.
+
+### Deployless (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+- If true, use deployless multicall (bytecode execution) for chains without a deployed Multicall3 contract.
+
+### MaxConcurrentChunks (optional)
+
+- **Type:** `int`
+- **Default:** `4`
+- Limit concurrent batch executions. Set to 0 or negative for unlimited.
+
+## Return type
+
+- **Multicall** returns `([]MulticallResult, error)`. **MulticallResult** has **Status** (`"success"` or `"failure"`), **Result** (`any`), and **Error** (`error`).
+
+## See also
+
+- [Reading Contracts](/docs/contract/read-contract/) — single readContract
+- [ABI Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData

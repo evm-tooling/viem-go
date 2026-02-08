@@ -1,0 +1,123 @@
+---
+title: hashMessage
+description: Hashes a message in EIP-191 format
+---
+
+# hashMessage
+
+Calculates an Ethereum-specific hash in [EIP-191 format](https://eips.ethereum.org/EIPS/eip-191): `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+// Hash a string message
+hash := signature.HashMessage(signature.NewSignableMessage("hello world"))
+// "0xd9eba16ed0ecae432b71fe008c98cc872bb4cc214d3220a36f365326cf807d68"
+
+// Hash hex data
+hash = signature.HashMessage(signature.NewSignableMessageHex("0x68656c6c6f20776f726c64"))
+// "0xd9eba16ed0ecae432b71fe008c98cc872bb4cc214d3220a36f365326cf807d68"
+
+// Get hash as bytes
+hashBytes := signature.HashMessageBytes(signature.NewSignableMessage("hello world"))
+// []byte{...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { hashMessage } from 'viem'
+
+hashMessage('hello world')
+// 0xd9eba16ed0ecae432b71fe008c98cc872bb4cc214d3220a36f365326cf807d68
+
+hashMessage({ raw: '0x68656c6c6f20776f726c64' })
+// 0xd9eba16ed0ecae432b71fe008c98cc872bb4cc214d3220a36f365326cf807d68`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string` for `HashMessage`, `[]byte` for `HashMessageBytes`
+
+The hashed message. `HashMessage` returns a hex string with `0x` prefix, `HashMessageBytes` returns raw bytes.
+
+## Parameters
+
+### message (required)
+
+- **Type:** `signature.SignableMessage`
+
+The message to hash. Use `signature.NewSignableMessage()` for string messages or `signature.NewSignableMessageHex()` for hex data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Hash string message
+hash := signature.HashMessage(signature.NewSignableMessage("hello world"))
+
+// Hash hex data
+hash = signature.HashMessage(signature.NewSignableMessageHex("0x68656c6c6f20776f726c64"))`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `hashMessage('hello world')
+// 0xd9eba16ed0ecae432b71fe008c98cc872bb4cc214d3220a36f365326cf807d68`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### HashMessage
+
+Hashes a message and returns a hex string:
+
+```go
+hash := signature.HashMessage(signature.NewSignableMessage("hello world"))
+// "0xd9eba16ed0ecae432b71fe008c98cc872bb4cc214d3220a36f365326cf807d68"
+```
+
+### HashMessageBytes
+
+Hashes a message and returns raw bytes:
+
+```go
+hashBytes := signature.HashMessageBytes(signature.NewSignableMessage("hello world"))
+// []byte{...}
+```
+
+## Message Format
+
+The message hash is computed as:
+```
+keccak256("\x19Ethereum Signed Message:\n" + len(message) + message)
+```
+
+This format ensures that messages signed for Ethereum cannot be replayed on other platforms.

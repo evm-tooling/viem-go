@@ -1,0 +1,125 @@
+---
+title: getTransactionType
+description: Determines the transaction type based on transaction fields
+---
+
+# getTransactionType
+
+Determines the transaction type based on the transaction fields. Returns the transaction type string.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"
+
+tx := &transaction.Transaction{
+    MaxFeePerGas: big.NewInt(1000000000),
+}
+
+txType, err := transaction.GetTransactionType(tx)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Type: %s\n", txType)
+// Type: eip1559`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { getTransactionType } from 'viem'
+
+const type = getTransactionType({
+  maxFeePerGas: parseGwei('1'),
+})
+// 'eip1559'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(transaction.TransactionType, error)`
+
+The transaction type: `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`.
+
+## Parameters
+
+### transaction (required)
+
+- **Type:** `*transaction.Transaction`
+
+The transaction object to analyze.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tx := &transaction.Transaction{
+    MaxFeePerGas: big.NewInt(1000000000),
+}
+
+txType, _ := transaction.GetTransactionType(tx)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `getTransactionType({
+  maxFeePerGas: parseGwei('1'),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Type Detection Logic
+
+The transaction type is determined in the following order:
+
+1. **Explicit Type**: If `tx.Type` is set, it's returned directly
+2. **EIP-7702**: If `AuthorizationList` is present
+3. **EIP-4844**: If blob-related fields are present (`Blobs`, `BlobVersionedHashes`, `MaxFeePerBlobGas`, `Sidecars`)
+4. **EIP-1559**: If `MaxFeePerGas` or `MaxPriorityFeePerGas` is present
+5. **EIP-2930**: If `GasPrice` and `AccessList` are present
+6. **Legacy**: If `GasPrice` is present without `AccessList`
+7. **Error**: If none of the above conditions are met
+
+## Functions
+
+### GetTransactionType
+
+Returns the transaction type:
+
+```go
+txType, _ := transaction.GetTransactionType(tx)
+```
+
+### MustGetTransactionType
+
+Returns the transaction type or panics:
+
+```go
+txType := transaction.MustGetTransactionType(tx)
+```

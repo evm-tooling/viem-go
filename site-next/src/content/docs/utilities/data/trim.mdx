@@ -1,0 +1,157 @@
+---
+title: trim
+description: Removes leading or trailing zero bytes/characters from a byte slice or hex string
+---
+
+# trim
+
+Removes leading or trailing zero bytes/characters from a byte slice or hex string.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"
+
+// Trim leading zeros from bytes
+result := data.TrimBytes([]byte{0x00, 0x00, 0x01, 0x02}, data.TrimLeft)
+// []byte{0x01, 0x02}
+
+// Trim trailing zeros from bytes
+result := data.TrimBytes([]byte{0x01, 0x02, 0x00, 0x00}, data.TrimRight)
+// []byte{0x01, 0x02}
+
+// Trim leading zeros from hex string
+hexResult := data.TrimHex("0x00000102", data.TrimLeft)
+// "0x0102"
+
+// Trim trailing zeros from hex string
+hexResult := data.TrimHex("0x01020000", data.TrimRight)
+// "0x0102"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { trim } from 'viem'
+
+trim('0x00000000000000000000000000000000000000000000000000000000a4e12a45')
+// 0xa4e12a45
+
+trim('0xa4e12a4500000000000000000000000000000000000000000000000000000000', { dir: 'right' })
+// 0xa4e12a45`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `[]byte` for `TrimBytes`, `string` for `TrimHex`
+
+The trimmed value with leading or trailing zeros removed.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `[]byte` for `TrimBytes`, `string` for `TrimHex`
+
+The byte slice or hex string to trim.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result := data.TrimBytes([]byte{0x00, 0x00, 0x01, 0x02}, data.TrimLeft)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `trim('0x00000000000000000000000000000000000000000000000000000000a4e12a45')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### dir (required)
+
+- **Type:** `data.TrimDirection` (`TrimLeft` or `TrimRight`)
+
+The direction in which to trim zeros – either leading (left) or trailing (right).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Trim leading zeros
+result := data.TrimBytes([]byte{0x00, 0x00, 0x01, 0x02}, data.TrimLeft)
+// []byte{0x01, 0x02}
+
+// Trim trailing zeros
+result := data.TrimBytes([]byte{0x01, 0x02, 0x00, 0x00}, data.TrimRight)
+// []byte{0x01, 0x02}
+
+// Trim hex leading zeros
+hexResult := data.TrimHex("0x00000102", data.TrimLeft)
+// "0x0102"
+
+// Trim hex trailing zeros
+hexResult := data.TrimHex("0x01020000", data.TrimRight)
+// "0x0102"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `trim('0xa4e12a4500000000000000000000000000000000000000000000000000000000', { dir: 'right' })
+// 0xa4e12a45`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Convenience Functions
+
+### TrimLeftBytes / TrimRightBytes
+
+Convenience functions for trimming bytes in a specific direction:
+
+```go
+result := data.TrimLeftBytes([]byte{0x00, 0x00, 0x01, 0x02})
+// []byte{0x01, 0x02}
+
+result := data.TrimRightBytes([]byte{0x01, 0x02, 0x00, 0x00})
+// []byte{0x01, 0x02}
+```
+
+### TrimLeftHex / TrimRightHex
+
+Convenience functions for trimming hex strings in a specific direction:
+
+```go
+result := data.TrimLeftHex("0x00000102")
+// "0x0102"
+
+result := data.TrimRightHex("0x01020000")
+// "0x0102"
+```

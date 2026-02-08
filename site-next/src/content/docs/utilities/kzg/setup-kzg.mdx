@@ -1,0 +1,213 @@
+---
+title: setupKzg
+description: Sets up and returns a KZG interface with trusted setup loading
+---
+
+# setupKzg
+
+Sets up and returns a KZG interface. It loads the trusted setup from the specified path before returning.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/kzg"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/kzg"
+import "github.com/ethereum/c-kzg-4844/bindings/go"
+
+kzgImpl, err := kzg.SetupKzg(kzg.SetupKzgParams{
+    BlobToKzgCommitment: func(blob []byte) ([]byte, error) {
+        var b ckzg.Blob
+        copy(b[:], blob)
+        commitment, err := ckzg.BlobToKZGCommitment(&b)
+        if err != nil {
+            return nil, err
+        }
+        return commitment[:], nil
+    },
+    ComputeBlobKzgProof: func(blob, commitment []byte) ([]byte, error) {
+        var b ckzg.Blob
+        var c ckzg.Bytes48
+        copy(b[:], blob)
+        copy(c[:], commitment)
+        proof, err := ckzg.ComputeBlobKZGProof(&b, c)
+        if err != nil {
+            return nil, err
+        }
+        return proof[:], nil
+    },
+    LoadTrustedSetup: func(path string) error {
+        return ckzg.LoadTrustedSetupFile(path)
+    },
+}, "/path/to/trusted_setup.txt")
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(kzg.Kzg, error)`
+
+A KZG implementation that can be used for blob operations.
+
+## Parameters
+
+### params (required)
+
+- **Type:** `kzg.SetupKzgParams`
+
+Parameters for setting up KZG.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := kzg.SetupKzgParams{
+    BlobToKzgCommitment: func(blob []byte) ([]byte, error) {
+        // Implementation
+    },
+    ComputeBlobKzgProof: func(blob, commitment []byte) ([]byte, error) {
+        // Implementation
+    },
+    LoadTrustedSetup: func(path string) error {
+        // Implementation
+    },
+}
+
+kzgImpl, _ := kzg.SetupKzg(params, "/path/to/trusted_setup.txt")`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.BlobToKzgCommitment (required)
+
+- **Type:** `func(blob []byte) ([]byte, error)`
+
+Function that converts a blob to a KZG commitment.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `BlobToKzgCommitment: func(blob []byte) ([]byte, error) {
+    var b ckzg.Blob
+    copy(b[:], blob)
+    commitment, err := ckzg.BlobToKZGCommitment(&b)
+    if err != nil {
+        return nil, err
+    }
+    return commitment[:], nil
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.ComputeBlobKzgProof (required)
+
+- **Type:** `func(blob []byte, commitment []byte) ([]byte, error)`
+
+Function that computes the KZG proof for a blob.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `ComputeBlobKzgProof: func(blob, commitment []byte) ([]byte, error) {
+    var b ckzg.Blob
+    var c ckzg.Bytes48
+    copy(b[:], blob)
+    copy(c[:], commitment)
+    proof, err := ckzg.ComputeBlobKZGProof(&b, c)
+    if err != nil {
+        return nil, err
+    }
+    return proof[:], nil
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.LoadTrustedSetup (optional)
+
+- **Type:** `func(path string) error`
+
+Function that loads the trusted setup from a file path. If the trusted setup is already loaded, errors are ignored.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `LoadTrustedSetup: func(path string) error {
+    return ckzg.LoadTrustedSetupFile(path)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### trustedSetupPath (required)
+
+- **Type:** `string`
+
+The path to the trusted setup file.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `kzgImpl, _ := kzg.SetupKzg(params, "/path/to/trusted_setup.txt")`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### SetupKzg
+
+Sets up KZG with trusted setup loading:
+
+```go
+kzgImpl, _ := kzg.SetupKzg(params, "/path/to/trusted_setup.txt")
+```
+
+### SetupKzgWithLoader
+
+Sets up KZG using a `KzgWithSetup` implementation:
+
+```go
+kzgImpl, _ := kzg.SetupKzgWithLoader(kzgWithSetup, "/path/to/trusted_setup.txt")
+```
+
+## Notes
+
+- If the trusted setup is already loaded, "already loaded" errors are ignored
+- The KZG implementation can be used for blob operations (commitments, proofs)
+- Requires a trusted setup file for EIP-4844 blob transactions

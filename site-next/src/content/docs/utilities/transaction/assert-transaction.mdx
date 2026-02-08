@@ -1,0 +1,156 @@
+---
+title: assertTransaction
+description: Validates a transaction object and returns an error if invalid
+---
+
+# assertTransaction
+
+Validates a transaction object and returns an error if the transaction is invalid. Different validation functions exist for each transaction type.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+import "math/big"
+
+tx := &transaction.Transaction{
+    Type:                 transaction.TransactionTypeEIP1559,
+    ChainId:              1,
+    Nonce:                0,
+    MaxFeePerGas:         big.NewInt(1000000000),
+    MaxPriorityFeePerGas: big.NewInt(100000000),
+    Gas:                  big.NewInt(21000),
+    To:                   "0x1234512345123451234512345123451234512345",
+    Value:                big.NewInt(0),
+}
+
+// Assert EIP-1559 transaction
+err := transaction.AssertTransactionEIP1559(tx)
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { assertTransaction } from 'viem'
+
+assertTransaction({
+  chainId: 1,
+  maxFeePerGas: parseGwei('1'),
+  maxPriorityFeePerGas: parseGwei('0.1'),
+  gas: 21000n,
+  to: '0x1234512345123451234512345123451234512345',
+  value: 0n,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `error`
+
+Returns `nil` if the transaction is valid, or an error describing the validation failure.
+
+## Parameters
+
+### transaction (required)
+
+- **Type:** `*transaction.Transaction`
+
+The transaction object to validate.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tx := &transaction.Transaction{
+    ChainId:              1,
+    MaxFeePerGas:         big.NewInt(1000000000),
+    MaxPriorityFeePerGas: big.NewInt(100000000),
+    Gas:                  big.NewInt(21000),
+    To:                   "0x1234512345123451234512345123451234512345",
+}
+
+err := transaction.AssertTransactionEIP1559(tx)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `assertTransaction({
+  chainId: 1,
+  maxFeePerGas: parseGwei('1'),
+  maxPriorityFeePerGas: parseGwei('0.1'),
+  gas: 21000n,
+  to: '0x1234512345123451234512345123451234512345',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Assertion Functions
+
+### AssertTransactionEIP1559
+
+Validates an EIP-1559 transaction:
+- Chain ID must be > 0
+- `To` address must be valid (if present)
+- `MaxFeePerGas` must not exceed max uint256
+- `MaxPriorityFeePerGas` must not exceed `MaxFeePerGas`
+
+### AssertTransactionEIP2930
+
+Validates an EIP-2930 transaction:
+- Chain ID must be > 0
+- `To` address must be valid (if present)
+- Must not have EIP-1559 fee fields
+- `GasPrice` must not exceed max uint256
+
+### AssertTransactionEIP4844
+
+Validates an EIP-4844 transaction:
+- Validates blob versioned hashes (size and version)
+- Also validates as EIP-1559 transaction
+
+### AssertTransactionEIP7702
+
+Validates an EIP-7702 transaction:
+- Validates authorization list addresses and chain IDs
+- Also validates as EIP-1559 transaction
+
+### AssertTransactionLegacy
+
+Validates a legacy transaction:
+- `To` address must be valid (if present)
+- `GasPrice` must not exceed max uint256
+
+## Common Validations
+
+All transaction types validate:
+- Address format (if `To` is present)
+- Fee values don't exceed maximum uint256
+- Chain ID is valid (for typed transactions)

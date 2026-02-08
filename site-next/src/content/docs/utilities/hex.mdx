@@ -1,0 +1,138 @@
+---
+title: hex
+description: Root-level hex conversion utilities
+---
+
+# hex
+
+Root-level hex conversion utilities providing a fluent API for converting hex strings to other types.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils"
+
+// Convert hex to bytes
+bytes, _ := utils.FromHex("0x0102").ToBytes()
+// []byte{0x01, 0x02}
+
+// Convert hex to int64
+num, _ := utils.FromHex("0x1a4").ToInt()
+// int64(420)
+
+// Convert hex to uint64
+num, _ := utils.FromHex("0x1a4").ToUint()
+// uint64(420)
+
+// Convert hex to big.Int
+bigNum, _ := utils.FromHex("0x1a4").ToBigInt()
+// big.Int representing 420
+
+// Convert hex to boolean
+b, _ := utils.FromHex("0x1").ToBool()
+// true`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Fluent API
+
+### FromHex
+
+Creates a `HexConverter` from a hex string:
+
+```go
+converter := utils.FromHex("0x0102")
+```
+
+### HexConverter Methods
+
+- **ToBytes()**: Converts hex to bytes
+- **ToInt()**: Converts hex to int64
+- **ToUint()**: Converts hex to uint64
+- **ToBigInt()**: Converts hex to *big.Int
+- **ToBool()**: Converts hex to boolean
+- **String()**: Returns the original hex string
+
+## Standalone Functions
+
+### HexToBytes
+
+Converts hex to bytes:
+
+```go
+bytes, _ := utils.HexToBytes("0x0102")
+```
+
+### HexToInt
+
+Converts hex to int64:
+
+```go
+num, _ := utils.HexToInt("0x1a4")
+```
+
+### HexToUint
+
+Converts hex to uint64:
+
+```go
+num, _ := utils.HexToUint("0x1a4")
+```
+
+### HexToBigInt
+
+Converts hex to *big.Int:
+
+```go
+bigNum, _ := utils.HexToBigInt("0x1a4")
+```
+
+### HexToBool
+
+Converts hex to boolean:
+
+```go
+b, _ := utils.HexToBool("0x1")
+```
+
+### IsValidHex
+
+Checks if a string is valid hex:
+
+```go
+valid := utils.IsValidHex("0x0102")
+```
+
+### PadHex
+
+Pads a hex string to a target byte length:
+
+```go
+padded := utils.PadHex("0x01", 4)
+// "0x00000001"
+```
+
+## Notes
+
+- These are root-level utilities in the `utils` package
+- For more advanced features (size validation, signed conversions), use the `encoding` package utilities
+- The fluent API provides a convenient way to chain conversions

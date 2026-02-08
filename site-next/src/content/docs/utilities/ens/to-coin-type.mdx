@@ -1,0 +1,112 @@
+---
+title: toCoinType
+description: Converts a chain ID to an ENSIP-9 compliant coin type
+---
+
+# toCoinType
+
+Converts a chain ID to an [ENSIP-9](https://docs.ens.domains/ensip/9) compliant coin type.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/ens"
+
+// Ethereum mainnet (chainId 1) uses SLIP-44 coin type 60
+coinType, err := ens.ToCoinType(1)
+if err != nil {
+    log.Fatal(err)
+}
+// 60
+
+// Optimism (chainId 10)
+coinType, _ = ens.ToCoinType(10)
+// 2147483658
+
+// Polygon (chainId 137)
+coinType, _ = ens.ToCoinType(137)
+// 2147483785
+
+// Panic on error
+coinType = ens.MustToCoinType(1)
+// 60`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(uint64, error)` for `ToCoinType`, `uint64` for `MustToCoinType`
+
+The coin type for the chain ID.
+
+## Parameters
+
+### chainId (required)
+
+- **Type:** `int`
+
+The chain ID to convert. Must be >= 0 and < 0x80000000.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `coinType, _ := ens.ToCoinType(1)
+// 60
+
+coinType, _ = ens.ToCoinType(10)
+// 2147483658`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Conversion Rules
+
+1. **Ethereum Mainnet (chainId 1)**: Returns `60` (ETH's SLIP-44 coin type)
+2. **Other Chains**: Applies ENSIP-9 formula: `0x80000000 | chainId`
+
+## Functions
+
+### ToCoinType
+
+Converts chain ID to coin type:
+
+```go
+coinType, _ := ens.ToCoinType(1)
+```
+
+### MustToCoinType
+
+Converts chain ID to coin type or panics:
+
+```go
+coinType := ens.MustToCoinType(1)
+```
+
+## Notes
+
+- Ethereum mainnet (chainId 1) uses SLIP-44 coin type 60
+- Other chains use the ENSIP-9 formula: `0x80000000 | chainId`
+- Chain ID must be >= 0 and < 0x80000000
+- Used in ENS address resolution for multi-chain addresses

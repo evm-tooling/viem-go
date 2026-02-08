@@ -1,0 +1,73 @@
+---
+title: toSignature
+description: Returns the normalized signature for a given function or event definition
+---
+
+# toSignature
+
+Returns the normalized signature for a given function or event definition. This is an alias for `NormalizeSignature`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Get normalized function signature
+sig, _ := hash.ToSignature("function ownerOf(uint256 tokenId)")
+// "ownerOf(uint256)"
+
+// Get normalized event signature
+sig, _ = hash.ToSignature("event Transfer(address indexed from, address indexed to, uint256 amount)")
+// "Transfer(address,address,uint256)"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)`
+
+The normalized signature string.
+
+## Parameters
+
+### def (required)
+
+- **Type:** `string`
+
+The function or event definition string.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig, _ := hash.ToSignature("function transfer(address to, uint256 amount)")
+// "transfer(address,uint256)"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Notes
+
+- This is equivalent to `NormalizeSignature`
+- Used internally by hash functions to normalize signatures before hashing

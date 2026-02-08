@@ -1,0 +1,154 @@
+---
+title: blobsToProofs
+description: Computes KZG proofs for a list of blobs and their commitments
+---
+
+# blobsToProofs
+
+Computes KZG proofs for a list of blobs and their commitments using a KZG implementation.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"
+
+blobs, _ := blob.ToBlobs([]byte("hello world"))
+commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)
+
+// Compute proofs
+proofs, err := blob.BlobsToProofs(blobs, commitments, kzgImpl)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Get proofs as hex strings
+hexProofs, err := blob.BlobsToProofsHex(blobs, commitments, kzgImpl)
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([][]byte, error)` for `BlobsToProofs`, `([]string, error)` for `BlobsToProofsHex`
+
+An array of KZG proofs, one for each blob. Each proof is 48 bytes.
+
+## Parameters
+
+### blobs (required)
+
+- **Type:** `[][]byte`
+
+The blobs to compute proofs for. Must have the same length as `commitments`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blobs, _ := blob.ToBlobs([]byte("hello world"))
+commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)
+proofs, _ := blob.BlobsToProofs(blobs, commitments, kzgImpl)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### commitments (required)
+
+- **Type:** `[][]byte`
+
+The KZG commitments corresponding to the blobs. Must have the same length as `blobs`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)
+proofs, _ := blob.BlobsToProofs(blobs, commitments, kzgImpl)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### kzgImpl (required)
+
+- **Type:** `kzg.Kzg`
+
+The KZG implementation to use for computing proofs.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `proofs, _ := blob.BlobsToProofs(blobs, commitments, kzgImpl)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### BlobsToProofs
+
+Computes proofs from blobs and commitments:
+
+```go
+proofs, _ := blob.BlobsToProofs(blobs, commitments, kzgImpl)
+```
+
+### BlobsToProofsHex
+
+Computes proofs and returns them as hex strings:
+
+```go
+hexProofs, _ := blob.BlobsToProofsHex(blobs, commitments, kzgImpl)
+```
+
+### BlobsHexToProofs
+
+Computes proofs from hex-encoded blobs and commitments:
+
+```go
+proofs, _ := blob.BlobsHexToProofs(hexBlobs, hexCommitments, kzgImpl)
+```
+
+### BlobsHexToProofsHex
+
+Computes hex proofs from hex blobs and commitments:
+
+```go
+hexProofs, _ := blob.BlobsHexToProofsHex(hexBlobs, hexCommitments, kzgImpl)
+```
+
+## Notes
+
+- Each proof is 48 bytes (384 bits)
+- Proofs are used to verify that a blob matches its commitment
+- The number of proofs equals the number of blobs
+- `blobs` and `commitments` must have the same length

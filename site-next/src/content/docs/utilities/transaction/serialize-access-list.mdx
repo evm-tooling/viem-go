@@ -1,0 +1,179 @@
+---
+title: serializeAccessList
+description: Serializes an EIP-2930 access list for RLP encoding
+---
+
+# serializeAccessList
+
+Serializes an EIP-2930 access list for RLP encoding. Validates addresses and storage keys before serialization.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+
+accessList := transaction.AccessList{
+    {
+        Address: "0x1234567890123456789012345678901234567890",
+        StorageKeys: []string{
+            "0x0000000000000000000000000000000000000000000000000000000000000001",
+        },
+    },
+}
+
+serialized, err := transaction.SerializeAccessList(accessList)
+if err != nil {
+    log.Fatal(err)
+}
+// serialized is []any for RLP encoding`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { serializeAccessList } from 'viem'
+
+const serialized = serializeAccessList([
+  {
+    address: '0x1234567890123456789012345678901234567890',
+    storageKeys: [
+      '0x0000000000000000000000000000000000000000000000000000000000000001',
+    ],
+  },
+])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]any, error)`
+
+The serialized access list as an RLP-compatible slice. Each item is `[address, [storageKey1, storageKey2, ...]]`.
+
+## Parameters
+
+### accessList (required)
+
+- **Type:** `transaction.AccessList`
+
+The access list to serialize. Each item contains an address and storage keys.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `accessList := transaction.AccessList{
+    {
+        Address: "0x1234567890123456789012345678901234567890",
+        StorageKeys: []string{
+            "0x0000000000000000000000000000000000000000000000000000000000000001",
+        },
+    },
+}
+
+serialized, _ := transaction.SerializeAccessList(accessList)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `serializeAccessList([
+  {
+    address: '0x1234567890123456789012345678901234567890',
+    storageKeys: [
+      '0x0000000000000000000000000000000000000000000000000000000000000001',
+    ],
+  },
+])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Address (required)
+
+- **Type:** `string`
+
+The contract address. Must be a valid 40-character hex address with `0x` prefix.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `item := transaction.AccessListItem{
+    Address: "0x1234567890123456789012345678901234567890",
+    StorageKeys: []string{...},
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### StorageKeys (required)
+
+- **Type:** `[]string`
+
+The storage keys to access. Each key must be exactly 32 bytes (64 hex characters with `0x` prefix).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `item := transaction.AccessListItem{
+    Address: "0x1234567890123456789012345678901234567890",
+    StorageKeys: []string{
+        "0x0000000000000000000000000000000000000000000000000000000000000001",
+        "0x0000000000000000000000000000000000000000000000000000000000000002",
+    },
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Serialized Format
+
+The serialized access list format is:
+```
+[
+  [address1, [storageKey1, storageKey2, ...]],
+  [address2, [storageKey3, ...]],
+  ...
+]
+```
+
+## ParseAccessList
+
+To parse an RLP-decoded access list back to `AccessList`:
+
+```go
+parsed, _ := transaction.ParseAccessList(rlpDecodedData)
+```
+
+## Validations
+
+This function validates:
+1. **Address Format**: Each address must be a valid 40-character hex address
+2. **Storage Key Size**: Each storage key must be exactly 32 bytes (64 hex characters)

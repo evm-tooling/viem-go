@@ -1,0 +1,164 @@
+---
+title: Contract Events
+description: Create event filters, get contract events, and watch contract events
+---
+
+Contract events are logged by the EVM and can be queried or watched. viem-go provides **CreateContractEventFilter** (for use with GetFilterChanges/GetFilterLogs), **GetContractEvents** (one-shot **eth_getLogs** with ABI decoding), and **WatchContractEvent** (streaming with decoding).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createContractEventFilter, getContractEvents, watchContractEvent } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## GetContractEvents
+
+Fetch event logs for a contract (and optionally a specific event and indexed args) in one call. Uses **eth_getLogs** and decodes logs using the ABI.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEventsParameters{
+    Address:   contractAddress,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Args:      []any{fromAddress, nil}, // from=specific, to=any
+})
+if err != nil {
+    log.Fatal(err)
+}
+for _, log := range logs {
+    fmt.Println(log.EventName, log.DecodedArgs)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### GetContractEvents parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| **Address** | `common.Address` or `[]common.Address` | Yes | Contract address(es). |
+| **ABI** | `any` (JSON or *abi.ABI) | Yes | Contract ABI for decoding. |
+| **EventName** | `string` | No | Filter to this event (e.g. `"Transfer"`). Omit for all events in ABI. |
+| **Args** | `[]any` | No | Indexed args in order; use `nil` for “any”. |
+| **FromBlock** / **FromBlockTag** | `*uint64` / `BlockTag` | No | Start of range. |
+| **ToBlock** / **ToBlockTag** | `*uint64` / `BlockTag` | No | End of range. |
+| **BlockHash** | `*common.Hash` | No | Single block by hash (mutually exclusive with range). |
+| **Strict** | `bool` | No | If true, exclude logs that don’t match event definition. Default: false. |
+
+**Return type:** `[]ContractEventLog` — each has **EventName**, **DecodedArgs** (`map[string]any`), plus standard log fields (address, topics, data, blockNumber, etc.).
+
+## CreateContractEventFilter
+
+Create a filter that can be polled with **GetFilterChanges** or **GetFilterLogs** (eth_newFilter). Use when you want to poll for new logs yourself.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddress,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Args:      []any{nil, toAddress}, // from=any, to=specific
+})
+if err != nil {
+    log.Fatal(err)
+}
+// Use filter.ID with public.GetFilterChanges(ctx, client, filter.ID) or GetFilterLogs`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### CreateContractEventFilter parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| **Address** | `common.Address` or `[]common.Address` | Yes | Contract address(es). |
+| **ABI** | `any` | Yes | Contract ABI (for topic encoding). |
+| **EventName** | `string` | No | Filter to this event. |
+| **Args** | `[]any` | No | Indexed args; `nil` = any. |
+| **FromBlock** / **FromBlockTag** | `*uint64` / `BlockTag` | No | Start block. |
+| **ToBlock** / **ToBlockTag** | `*uint64` / `BlockTag` | No | End block. |
+| **Strict** | `bool` | No | Strict matching. Default: false. |
+
+**Return type:** **CreateContractEventFilterReturnType** — **ID** (FilterID), **Type** (`"event"`), **ABI**, **EventName**, **Args**, **Strict**. Use **ID** with GetFilterChanges/GetFilterLogs.
+
+## WatchContractEvent
+
+Stream contract event logs with ABI decoding. Uses **eth_subscribe** (logs) when available, or polling (eth_newFilter + eth_getFilterChanges or eth_getLogs). Cancelling the context stops the stream.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEventParameters{
+    Address:   contractAddress,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Args:      map[string]any{"to": toAddress},
+    Batch:     true,
+})
+
+for event := range events {
+    if event.Error != nil {
+        log.Println(event.Error)
+        continue
+    }
+    for _, log := range event.Logs {
+        fmt.Println(log)
+    }
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WatchContractEvent parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| **Address** | `common.Address` or `[]common.Address` | Yes | Contract address(es). |
+| **ABI** | `*abi.ABI` | Yes | Contract ABI for decoding. |
+| **EventName** | `string` | Yes | Event to watch. |
+| **Args** | `map[string]any` | No | Filter by indexed args (name → value). |
+| **FromBlock** | `*uint64` | No | Start block (forces polling if set). |
+| **Strict** | `bool` | No | Skip logs that don’t match. Default: false. |
+| **Batch** | `bool` | No | Emit multiple logs per event. Default: true. |
+| **Poll** | `*bool` | No | Force polling vs subscription. |
+| **PollingInterval** | `time.Duration` | No | Poll interval when polling. |
+| **WorkerPoolSize** | `int` | No | Decoding workers. Default: 4. |
+
+**Return type:** channel of **WatchContractEventEvent** — **Logs** (slice of formatted logs), **Error**. Close context to stop.
+
+## See also
+
+- [ABI Decoding](/docs/contract/abi-decoding/) — DecodeEventLog
+- [ABI Encoding](/docs/contract/abi-encoding/) — EncodeEventTopics
+- [Selectors & Items](/docs/contract/abi-selectors/) — ParseEventLogs

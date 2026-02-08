@@ -1,0 +1,146 @@
+---
+title: fromBlobs
+description: Transforms blobs back into the original data
+---
+
+# fromBlobs
+
+Transforms blobs back into the original data. This reverses the encoding performed by `ToBlobs`.
+
+:::warning[Warning]
+This function transforms data from viem-go-shaped blobs. It is designed to be used with `ToBlobs` to convert arbitrary data to blobs.
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+
+// Transform blobs back to data
+blobs, _ := blob.ToBlobs([]byte("hello world"))
+data, err := blob.FromBlobs(blobs)
+if err != nil {
+    log.Fatal(err)
+}
+// data = []byte("hello world")
+
+// Transform hex blobs back to hex data
+hexBlobs := []string{"0x...", "0x..."}
+hexData, err := blob.FromBlobsHex(hexBlobs)
+if err != nil {
+    log.Fatal(err)
+}
+// hexData = "0x68656c6c6f20776f726c64"
+
+// Transform hex blobs back to bytes
+data, err = blob.FromBlobsToBytes(hexBlobs)
+if err != nil {
+    log.Fatal(err)
+}
+// data = []byte("hello world")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { fromBlobs } from 'viem'
+
+const data = fromBlobs({ blobs: ['0x...'] })`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]byte, error)` for `FromBlobs`, `(string, error)` for `FromBlobsHex`, `([]byte, error)` for `FromBlobsToBytes`
+
+The original data extracted from the blobs.
+
+## Parameters
+
+### blobs (required)
+
+- **Type:** `[][]byte` for `FromBlobs`, `[]string` for `FromBlobsHex`/`FromBlobsToBytes`
+
+The blobs to transform back into data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Transform blobs back to bytes
+blobs := [][]byte{...}
+data, _ := blob.FromBlobs(blobs)
+
+// Transform hex blobs back to hex data
+hexBlobs := []string{"0x...", "0x..."}
+hexData, _ := blob.FromBlobsHex(hexBlobs)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `fromBlobs({ blobs: ['0x...'] })`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Decoding Process
+
+The decoding process:
+1. Reads each blob sequentially
+2. Skips the zero byte at the start of each field element
+3. Extracts data from the remaining 31 bytes
+4. Stops when encountering the terminator byte (`0x80`) followed by only padding
+
+## Functions
+
+### FromBlobs
+
+Transforms blobs back to bytes:
+
+```go
+data, _ := blob.FromBlobs(blobs)
+```
+
+### FromBlobsHex
+
+Transforms hex blobs back to hex data:
+
+```go
+hexData, _ := blob.FromBlobsHex(hexBlobs)
+```
+
+### FromBlobsToBytes
+
+Transforms hex blobs back to bytes:
+
+```go
+data, _ := blob.FromBlobsToBytes(hexBlobs)
+```
+
+## Notes
+
+- The decoding process automatically handles multiple blobs
+- Stops reading when the terminator byte is encountered
+- Returns the original data exactly as it was encoded

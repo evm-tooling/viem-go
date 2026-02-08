@@ -1,0 +1,236 @@
+---
+title: rlp
+description: Encodes and decodes values using Recursive Length Prefix (RLP) encoding
+---
+
+# rlp
+
+Encodes and decodes values using [Recursive Length Prefix (RLP)](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encoding, the serialization format used in Ethereum.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"
+
+// Encode hex string to RLP
+encoded, _ := encoding.ToRlp("0x123456789").Hex()
+// "0x850123456789"
+
+// Encode byte array to RLP
+encoded, _ := encoding.ToRlp([]byte{1, 2, 3, 4, 5, 6, 7, 8, 9}).Hex()
+// "0x89010203040506070809"
+
+// Encode list to RLP
+encoded, _ := encoding.ToRlp([]any{
+    "0x7f",
+    "0x7f",
+    "0x8081e8",
+}).Hex()
+// "0xc67f7f838081e8"
+
+// Decode RLP hex string
+decoded, _ := encoding.FromRlp("0x850123456789")
+result, _ := decoded.Hex()
+// "0x123456789"
+
+// Decode RLP list
+decoded, _ := encoding.FromRlp("0xc67f7f838081e8")
+result, _ := decoded.Hex()
+// []any{"0x7f", "0x7f", "0x8081e8"}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toRlp, fromRlp } from 'viem'
+
+toRlp('0x123456789')
+// "0x850123456789"
+
+toRlp(['0x7f', '0x7f', '0x8081e8'])
+// "0xc67f7f838081e8"
+
+fromRlp('0x850123456789', 'hex')
+// "0x123456789"
+
+fromRlp('0xc67f7f838081e8', 'hex')
+// ['0x7f', '0x7f', '0x8081e8']`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]byte, error)` for `Bytes()`, `(string, error)` for `Hex()`, `(any, error)` for decoder methods
+
+The RLP-encoded or decoded value.
+
+## Parameters
+
+### value (required for encoding)
+
+- **Type:** `any` (supports `[]byte`, `string` (hex), `[]any`, `encoding.RecursiveBytes`)
+
+The value to RLP encode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Encode hex string
+encoded, _ := encoding.ToRlp("0x123456789").Hex()
+// "0x850123456789"
+
+// Encode list
+encoded, _ := encoding.ToRlp([]any{"0x7f", "0x7f"}).Hex()
+// "0xc27f7f"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toRlp('0x123456789')
+// "0x850123456789"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### data (required for decoding)
+
+- **Type:** `[]byte` or `string` (hex)
+
+The RLP-encoded data to decode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Decode from hex string
+decoded, _ := encoding.FromRlp("0x850123456789")
+result, _ := decoded.Hex()
+// "0x123456789"
+
+// Decode from bytes
+decoded, _ := encoding.FromRlp([]byte{0x85, 0x01, 0x23, 0x45, 0x67, 0x89})
+result, _ := decoded.Bytes()
+// []byte{0x01, 0x23, 0x45, 0x67, 0x89}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `fromRlp('0x850123456789', 'hex')
+// "0x123456789"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Encoding Methods
+
+### Hex()
+
+Encodes to RLP and returns a hex string:
+
+```go
+encoded, _ := encoding.ToRlp("0x123456789").Hex()
+// "0x850123456789"
+```
+
+### Bytes()
+
+Encodes to RLP and returns bytes:
+
+```go
+encoded, _ := encoding.ToRlp("0x123456789").Bytes()
+// []byte{0x85, 0x01, 0x23, 0x45, 0x67, 0x89}
+```
+
+## Decoding Methods
+
+### Hex()
+
+Decodes RLP and returns the result as recursive hex strings:
+
+```go
+decoded, _ := encoding.FromRlp("0xc67f7f838081e8")
+result, _ := decoded.Hex()
+// []any{"0x7f", "0x7f", "0x8081e8"}
+```
+
+### Bytes()
+
+Decodes RLP and returns the result as recursive bytes:
+
+```go
+decoded, _ := encoding.FromRlp("0x850123456789")
+result, _ := decoded.Bytes()
+// []byte{0x01, 0x23, 0x45, 0x67, 0x89}
+```
+
+## Standalone Functions
+
+### RlpEncode
+
+Encodes data to RLP bytes:
+
+```go
+encoded, _ := encoding.RlpEncode("0x123456789")
+// []byte{0x85, 0x01, 0x23, 0x45, 0x67, 0x89}
+```
+
+### RlpEncodeToHex
+
+Encodes data to RLP hex string:
+
+```go
+encoded, _ := encoding.RlpEncodeToHex("0x123456789")
+// "0x850123456789"
+```
+
+### RlpDecode
+
+Decodes RLP bytes:
+
+```go
+decoded, _ := encoding.RlpDecode([]byte{0x85, 0x01, 0x23, 0x45, 0x67, 0x89})
+// []byte{0x01, 0x23, 0x45, 0x67, 0x89}
+```
+
+### RlpDecodeHex
+
+Decodes RLP hex string:
+
+```go
+decoded, _ := encoding.RlpDecodeHex("0x850123456789")
+// []byte{0x01, 0x23, 0x45, 0x67, 0x89}
+```
+
+## RLP Encoding Rules
+
+- Single bytes < 0x80 encode as themselves
+- Short strings (1-55 bytes) encode as `0x80 + length` followed by bytes
+- Long strings (>55 bytes) encode as `0xb7 + length_of_length` followed by length and bytes
+- Short lists (total length ≤55 bytes) encode as `0xc0 + length` followed by items
+- Long lists (>55 bytes total) encode as `0xf7 + length_of_length` followed by length and items

@@ -1,0 +1,124 @@
+---
+title: toFunctionSelector
+description: Returns the 4-byte function selector for a given function definition
+---
+
+# toFunctionSelector
+
+Returns the 4-byte function selector for a given function definition. The selector is the first 4 bytes of the keccak256 hash of the function signature.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Get function selector
+selector, _ := hash.ToFunctionSelector("function ownerOf(uint256 tokenId)")
+// "0x6352211e"
+
+selector, _ = hash.ToFunctionSelector("function transfer(address to, uint256 amount)")
+// "0xa9059cbb"
+
+// Get selector as bytes
+selectorBytes, _ := hash.ToFunctionSelectorBytes("function transfer(address,uint256)")
+// []byte{0xa9, 0x05, 0x9c, 0xbb}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toFunctionSelector } from 'viem'
+
+const selector = toFunctionSelector('function ownerOf(uint256 tokenId)')
+// 0x6352211e
+
+const selector2 = toFunctionSelector('ownerOf(uint256)')
+// 0x6352211e`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)` for `ToFunctionSelector`, `([]byte, error)` for `ToFunctionSelectorBytes`
+
+The 4-byte function selector. `ToFunctionSelector` returns a hex string with `0x` prefix, `ToFunctionSelectorBytes` returns raw bytes.
+
+## Parameters
+
+### function (required)
+
+- **Type:** `string`
+
+The function definition string. Can include the `function` keyword or just the signature.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// With function keyword
+selector, _ := hash.ToFunctionSelector("function ownerOf(uint256 tokenId)")
+// "0x6352211e"
+
+// Without function keyword
+selector, _ = hash.ToFunctionSelector("transfer(address,uint256)")
+// "0xa9059cbb"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toFunctionSelector('function ownerOf(uint256 tokenId)')
+// 0x6352211e
+
+toFunctionSelector('ownerOf(uint256)')
+// 0x6352211e`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### ToFunctionSelector
+
+Returns the selector as a hex string:
+
+```go
+selector, _ := hash.ToFunctionSelector("function transfer(address,uint256)")
+// "0xa9059cbb"
+```
+
+### ToFunctionSelectorBytes
+
+Returns the selector as raw 4 bytes:
+
+```go
+selectorBytes, _ := hash.ToFunctionSelectorBytes("function transfer(address,uint256)")
+// []byte{0xa9, 0x05, 0x9c, 0xbb}
+```
+
+## Notes
+
+- The function signature is normalized (spaces removed, parameter names removed) before hashing
+- Only the first 4 bytes of the keccak256 hash are used
+- Function selectors are used to identify which function to call in contract interactions

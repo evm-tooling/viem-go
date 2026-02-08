@@ -1,0 +1,216 @@
+---
+title: toBlobSidecars
+description: Creates blob sidecars from data or pre-computed components
+---
+
+# toBlobSidecars
+
+Creates blob sidecars from data or pre-computed components (blobs, commitments, proofs). A sidecar contains a blob, its KZG commitment, and its proof.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"
+
+// Create sidecars from raw data
+sidecars, err := blob.ToBlobSidecars(blob.ToBlobSidecarsParams{
+    Data: []byte("hello world"),
+    Kzg:  kzgImpl,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+// Create sidecars from pre-computed components
+sidecars, err = blob.ToBlobSidecars(blob.ToBlobSidecarsParams{
+    Blobs:       blobs,
+    Commitments: commitments,
+    Proofs:      proofs,
+})
+
+// Get sidecars as hex strings
+hexSidecars, err := blob.ToBlobSidecarsHex(blob.ToBlobSidecarsParams{
+    Data: []byte("hello world"),
+    Kzg:  kzgImpl,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]blob.BlobSidecar, error)` for `ToBlobSidecars`, `([]blob.BlobSidecarHex, error)` for `ToBlobSidecarsHex`
+
+An array of blob sidecars, each containing a blob, commitment, and proof.
+
+## Parameters
+
+### params (required)
+
+- **Type:** `blob.ToBlobSidecarsParams`
+
+Parameters for creating blob sidecars.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := blob.ToBlobSidecarsParams{
+    Data: []byte("hello world"),
+    Kzg:  kzgImpl,
+}
+
+sidecars, _ := blob.ToBlobSidecars(params)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.Data (optional)
+
+- **Type:** `[]byte`
+
+Raw data to transform into blobs. Mutually exclusive with `Blobs`. Requires `Kzg` to compute commitments and proofs.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := blob.ToBlobSidecarsParams{
+    Data: []byte("hello world"),
+    Kzg:  kzgImpl,
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.Blobs (optional)
+
+- **Type:** `[][]byte`
+
+Pre-computed blobs. Mutually exclusive with `Data`. Requires either `Commitments` and `Proofs` to be provided, or `Kzg` to compute them.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := blob.ToBlobSidecarsParams{
+    Blobs:       blobs,
+    Commitments: commitments,
+    Proofs:      proofs,
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.Commitments (optional)
+
+- **Type:** `[][]byte`
+
+Pre-computed KZG commitments. Required if `Blobs` is set without `Kzg`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := blob.ToBlobSidecarsParams{
+    Blobs:       blobs,
+    Commitments: commitments,
+    Proofs:      proofs,
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.Proofs (optional)
+
+- **Type:** `[][]byte`
+
+Pre-computed KZG proofs. Required if `Blobs` is set without `Kzg`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := blob.ToBlobSidecarsParams{
+    Blobs:       blobs,
+    Commitments: commitments,
+    Proofs:      proofs,
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### params.Kzg (optional)
+
+- **Type:** `kzg.Kzg`
+
+KZG implementation for computing commitments and proofs. Required if `Data` is set, or if `Blobs` is set without `Commitments` and `Proofs`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `params := blob.ToBlobSidecarsParams{
+    Data: []byte("hello world"),
+    Kzg:  kzgImpl,
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### ToBlobSidecars
+
+Creates blob sidecars:
+
+```go
+sidecars, _ := blob.ToBlobSidecars(params)
+```
+
+### ToBlobSidecarsHex
+
+Creates hex-encoded blob sidecars:
+
+```go
+hexSidecars, _ := blob.ToBlobSidecarsHex(params)
+```
+
+## Sidecar Structure
+
+Each sidecar contains:
+- **Blob**: The blob data (131,072 bytes)
+- **Commitment**: The KZG commitment (48 bytes)
+- **Proof**: The KZG proof (48 bytes)

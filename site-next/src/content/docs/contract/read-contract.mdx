@@ -86,16 +86,64 @@ balance := result.(*big.Int)`
   ]}
 />
 
-## ReadContractOptions
+## Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `Address` | `common.Address` | Yes | Contract address |
-| `ABI` | `string` or `[]byte` or `*abi.ABI` | Yes | Contract ABI |
-| `FunctionName` | `string` | Yes | Function to call |
-| `Args` | `[]any` | No | Function arguments |
-| `From` | `*common.Address` | No | Caller address (for access control) |
-| `Block` | `BlockTag` | No | Block to read from (default: latest) |
+The Public Client’s **ReadContract** uses **ReadContractOptions**. The **contract** package’s **ReadContract[T]** uses **ReadContractParams**. Both support the same concepts (address, ABI, function name, args, block).
+
+### Address (required)
+
+- **Type:** `common.Address`
+- The contract address to call.
+
+### ABI (required)
+
+- **Type:** `any` — `string`, `[]byte`, or `*abi.ABI`
+- The contract ABI as JSON bytes, a JSON string, or a pre-parsed **\*abi.ABI** from [abi.Parse](/docs/abi/parse/).
+
+### FunctionName (required)
+
+- **Type:** `string`
+- The name of the view/pure function to call (e.g. `"balanceOf"`, `"totalSupply"`).
+
+### Args (optional)
+
+- **Type:** `[]any`
+- **Default:** `nil`
+- Function arguments in order. Omit for functions with no parameters.
+
+### From (optional)
+
+- **Type:** `*common.Address`
+- **Default:** `nil`
+- Caller address used for the call. Some contracts use this for access control or modifiers.
+
+### Block / BlockTag (optional)
+
+- **Type:** `client.BlockTag` (e.g. `client.BlockTagLatest`, `"safe"`, `"0x1234"`) or **BlockTag** in **ReadContractParams**
+- **Default:** latest
+- Block at which to execute the read (e.g. `client.BlockTagSafe`, hex block number).
+
+## Return type
+
+- **PublicClient.ReadContract(ctx, opts)** returns `(any, error)`. The decoded value is the first return value (e.g. `*big.Int`, `string`, `common.Address`). For multiple return values, use **contract.ReadContract** with a struct type or **SimulateContract** which returns `[]any`.
+- **contract.ReadContract[T](client, params)** returns `(T, error)` with type-safe result (e.g. `ReadContract[*big.Int]`, `ReadContract[string]`). Use **contract.ReadContractWithContext** when you need to pass a context.
+
+## SimulateContract
+
+Use **SimulateContract** to run a contract call (including state-changing functions) without sending a transaction. Useful to check revert reasons or return values before writing. See [Simulate Contract](/docs/contract/simulate-contract/).
+
+```go
+result, err := publicClient.SimulateContract(ctx, client.SimulateContractOptions{
+    ReadContractOptions: client.ReadContractOptions{
+        Address:      contractAddress,
+        ABI:          abi,
+        FunctionName: "transfer",
+        Args:         []any{recipient, amount},
+        From:         &sender,
+    },
+    Value: big.NewInt(0),
+})
+```
 
 ## Using Typed Contract Bindings
 
@@ -169,23 +217,6 @@ result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
 })
 ```
 
-## Simulating Calls
-
-Use `SimulateContract` to test calls that would normally require a transaction:
-
-```go
-result, err := publicClient.SimulateContract(ctx, client.SimulateContractOptions{
-    ReadContractOptions: client.ReadContractOptions{
-        Address:      contractAddress,
-        ABI:          abi,
-        FunctionName: "transfer",
-        Args:         []any{recipient, amount},
-        From:         &sender,
-    },
-    Value: big.NewInt(0),
-})
-```
-
 ## Error Handling
 
 Contract calls can fail for various reasons:
@@ -210,6 +241,14 @@ if err != nil {
     return err
 }
 ```
+
+## See also
+
+- [Writing Contracts](/docs/contract/write-contract/) — PrepareContractWrite, WriteContract
+- [Simulate Contract](/docs/contract/simulate-contract/) — SimulateContract
+- [Get Code](/docs/contract/get-code/) — GetCode
+- [Multicall](/docs/contract/multicall/) — batch readContract calls
+- [ABI Decoding](/docs/contract/abi-decoding/) — DecodeFunctionResult
 
 ## Type Conversions
 

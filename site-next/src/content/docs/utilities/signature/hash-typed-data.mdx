@@ -1,0 +1,315 @@
+---
+title: hashTypedData
+description: Hashes typed data in EIP-712 format
+---
+
+# hashTypedData
+
+Signs typed data and calculates an Ethereum-specific hash in [EIP-712 format](https://eips.ethereum.org/EIPS/eip-712): `keccak256("\x19\x01" || domainSeparator || hashStruct(message))`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+import "math/big"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+import "math/big"
+
+typedData := signature.TypedDataDefinition{
+    Domain: signature.TypedDataDomain{
+        Name:              "Ether Mail",
+        Version:           "1",
+        ChainId:           big.NewInt(1),
+        VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Person": {
+            {Name: "name", Type: "string"},
+            {Name: "wallet", Type: "address"},
+        },
+        "Mail": {
+            {Name: "from", Type: "Person"},
+            {Name: "to", Type: "Person"},
+            {Name: "contents", Type: "string"},
+        },
+    },
+    PrimaryType: "Mail",
+    Message: map[string]any{
+        "from": map[string]any{
+            "name":   "Cow",
+            "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+        },
+        "to": map[string]any{
+            "name":   "Bob",
+            "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+        },
+        "contents": "Hello, Bob!",
+    },
+}
+
+hash, err := signature.HashTypedData(typedData)
+// "0x..."`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { hashTypedData } from 'viem'
+
+const hash = hashTypedData({
+  domain: {
+    name: 'Ether Mail',
+    version: '1',
+    chainId: 1,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  },
+  types: {
+    Person: [
+      { name: 'name', type: 'string' },
+      { name: 'wallet', type: 'address' },
+    ],
+    Mail: [
+      { name: 'from', type: 'Person' },
+      { name: 'to', type: 'Person' },
+      { name: 'contents', type: 'string' },
+    ],
+  },
+  primaryType: 'Mail',
+  message: {
+    from: {
+      name: 'Cow',
+      wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+    },
+    to: {
+      name: 'Bob',
+      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+    },
+    contents: 'Hello, Bob!',
+  },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `(string, error)`
+
+The hashed typed data as a hex string with `0x` prefix.
+
+## Parameters
+
+### typedData (required)
+
+- **Type:** `signature.TypedDataDefinition`
+
+The typed data definition containing domain, types, primary type, and message.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `typedData := signature.TypedDataDefinition{
+    Domain: signature.TypedDataDomain{
+        Name:    "My App",
+        Version: "1",
+        ChainId: big.NewInt(1),
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Message": {
+            {Name: "content", Type: "string"},
+        },
+    },
+    PrimaryType: "Message",
+    Message: map[string]any{
+        "content": "Hello!",
+    },
+}
+
+hash, err := signature.HashTypedData(typedData)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `hashTypedData({
+  domain: { /* ... */ },
+  types: { /* ... */ },
+  primaryType: 'Mail',
+  message: { /* ... */ },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### domain (required)
+
+- **Type:** `signature.TypedDataDomain`
+
+The EIP-712 domain parameters. All fields are optional.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `domain := signature.TypedDataDomain{
+    Name:              "Ether Mail",
+    Version:           "1",
+    ChainId:           big.NewInt(1),
+    VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `domain: {
+  name: 'Ether Mail',
+  version: '1',
+  chainId: 1,
+  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### types (required)
+
+- **Type:** `map[string][]signature.TypedDataField`
+
+The type definitions for the typed data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `types := map[string][]signature.TypedDataField{
+    "Person": {
+        {Name: "name", Type: "string"},
+        {Name: "wallet", Type: "address"},
+    },
+    "Mail": {
+        {Name: "from", Type: "Person"},
+        {Name: "to", Type: "Person"},
+        {Name: "contents", Type: "string"},
+    },
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `types: {
+  Person: [
+    { name: 'name', type: 'string' },
+    { name: 'wallet', type: 'address' },
+  ],
+  Mail: [
+    { name: 'from', type: 'Person' },
+    { name: 'to', type: 'Person' },
+    { name: 'contents', type: 'string' },
+  ],
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### primaryType (required)
+
+- **Type:** `string`
+
+The primary type to extract from `types` and use in `message`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `primaryType := "Mail"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `primaryType: 'Mail'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### message (required)
+
+- **Type:** `map[string]any`
+
+The structured message to hash. Must match the structure defined in `types` for `primaryType`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `message := map[string]any{
+    "from": map[string]any{
+        "name":   "Cow",
+        "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+    },
+    "to": map[string]any{
+        "name":   "Bob",
+        "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+    },
+    "contents": "Hello, Bob!",
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `message: {
+  from: {
+    name: 'Cow',
+    wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+  },
+  to: {
+    name: 'Bob',
+    wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+  },
+  contents: 'Hello, Bob!',
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Hash Format
+
+The typed data hash is computed as:
+```
+keccak256("\x19\x01" || domainSeparator || hashStruct(message))
+```
+
+Where:
+- `domainSeparator` is the hash of the EIP712Domain struct
+- `hashStruct(message)` is the hash of the message struct according to its type definition

@@ -1,0 +1,118 @@
+---
+title: ripemd160
+description: Calculates the RIPEMD-160 hash of a byte array or hex value
+---
+
+# ripemd160
+
+Calculates the [RIPEMD-160](https://en.wikipedia.org/wiki/RIPEMD) hash of a byte array or hex value. This hash function is used in Bitcoin address generation.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+
+// Hash bytes
+h := hash.Ripemd160([]byte("hello world"))
+// "0x98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f"
+
+// Hash hex string
+h = hash.Ripemd160("0x68656c6c6f20776f726c64")
+// "0x98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f"
+
+// Hash string (UTF-8)
+h = hash.Ripemd160("hello world")
+// "0x98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f"
+
+// Get raw bytes
+bytes := hash.Ripemd160Bytes([]byte("hello world"))
+// []byte{...}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { ripemd160, toBytes } from 'viem'
+
+ripemd160(toBytes('hello world'))
+// 0x98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `string` for `Ripemd160`, `[]byte` for `Ripemd160Bytes`
+
+The hashed value. `Ripemd160` returns a hex string with `0x` prefix, `Ripemd160Bytes` returns raw bytes.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `any` (supports `[]byte` or `string`)
+
+The hex value or byte array to hash. If a string is provided without `0x` prefix, it's treated as UTF-8.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Hash bytes
+hash := hash.Ripemd160([]byte("hello"))
+
+// Hash hex string
+hash = hash.Ripemd160("0x68656c6c6f")
+
+// Hash UTF-8 string
+hash = hash.Ripemd160("hello")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `ripemd160(toBytes('hello world'))
+// 0x98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### Ripemd160
+
+Computes RIPEMD-160 hash and returns a hex string:
+
+```go
+hash := hash.Ripemd160([]byte("hello"))
+// "0x108f07b8382412612c048d07d13f814118445acd"
+```
+
+### Ripemd160Bytes
+
+Computes RIPEMD-160 hash and returns raw bytes:
+
+```go
+bytes := hash.Ripemd160Bytes([]byte("hello"))
+// []byte{0x10, 0x8f, 0x07, ...}
+```

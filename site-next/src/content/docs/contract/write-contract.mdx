@@ -69,21 +69,58 @@ const hash = await walletClient.writeContract(request)`
   ]}
 />
 
-## PrepareContractWriteOptions
+## Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `Address` | `common.Address` | Yes | Contract address |
-| `ABI` | `string` or `[]byte` | Yes | Contract ABI |
-| `FunctionName` | `string` | Yes | Function to call |
-| `Args` | `[]any` | No | Function arguments |
-| `From` | `common.Address` | Yes | Sender address |
-| `Value` | `*big.Int` | No | ETH to send (for payable functions) |
-| `Gas` | `uint64` | No | Gas limit (estimated if not provided) |
-| `GasPrice` | `*big.Int` | No | Gas price (legacy tx) |
-| `MaxFeePerGas` | `*big.Int` | No | Max fee (EIP-1559) |
-| `MaxPriorityFeePerGas` | `*big.Int` | No | Priority fee (EIP-1559) |
-| `Nonce` | `*uint64` | No | Nonce (fetched if not provided) |
+**PrepareContractWrite** uses **PrepareContractWriteOptions**. **wallet.WriteContract** uses **WriteContractParameters**; **WriteContractSync** uses **WriteContractSyncParameters** (embeds **WriteContractParameters** plus polling/timeout). **wallet.DeployContract** uses **DeployContractParameters**.
+
+### Address (required for write)
+
+- **Type:** `common.Address` (PrepareContractWrite) or `string` (WriteContractParameters)
+- The contract address to call.
+
+### ABI (required)
+
+- **Type:** `any` — `string`, `[]byte`, or `*abi.ABI`
+- Contract ABI for encoding the function call.
+
+### FunctionName (required for write)
+
+- **Type:** `string`
+- The name of the function to call (e.g. `"transfer"`, `"approve"`).
+
+### Args (optional)
+
+- **Type:** `[]any`
+- **Default:** `nil`
+- Function arguments in order.
+
+### From / Account (required for write)
+
+- **Type:** `common.Address` (PrepareContractWrite) or **Account** (WriteContractParameters: optional if client has default account)
+- Sender address. For **WriteContract** / **WriteContractSync**, omit if the Wallet Client has a default account.
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+- **Default:** `nil`
+- ETH to send with the transaction (for payable functions).
+
+### Gas, GasPrice, MaxFeePerGas, MaxPriorityFeePerGas (optional)
+
+- **Type:** `uint64` (Gas for PrepareContractWrite), `*big.Int` (Gas in wallet params), `*big.Int` (GasPrice, MaxFeePerGas, MaxPriorityFeePerGas)
+- **Default:** Gas is estimated if not set; fees from chain or client defaults.
+- Override gas limit or fee parameters.
+
+### Nonce (optional)
+
+- **Type:** `*uint64` (PrepareContractWrite) or `*int` (wallet params)
+- **Default:** Fetched from chain (pending nonce) if not provided.
+
+### WriteContractSync-only: PollingInterval, ThrowOnReceiptRevert, Timeout (optional)
+
+- **PollingInterval:** `time.Duration` — interval to poll for receipt. Default: client’s polling interval.
+- **ThrowOnReceiptRevert:** `*bool` — if true, return error when receipt status is reverted. Default: true.
+- **Timeout:** `*time.Duration` — max wait for receipt. Default: derived from chain block time.
 
 ## Signing and Sending
 
@@ -250,16 +287,34 @@ tx, _ := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptio
 })
 ```
 
-## Error Handling
+## DeployContract
+
+To deploy a new contract, use **wallet.DeployContract** with bytecode and optional constructor args. See [Deploy Contract](/docs/contract/deploy-contract/).
+
+## EstimateContractGas
+
+Estimate gas for a write without sending: use **public.EstimateContractGas**. See [Estimate Contract Gas](/docs/contract/estimate-contract-gas/).
+
+## EncodeFunctionData
+
+**client.EncodeFunctionData(opts)** returns only the calldata (selector + encoded args) without building a full transaction. Useful for multicall or custom tx building. See [ABI Encoding](/docs/contract/abi-encoding/) for encoding with a parsed ABI.
+
+## Error handling
 
 ```go
 tx, err := publicClient.PrepareContractWrite(ctx, opts)
 if err != nil {
-    // Estimation failed - likely the transaction would revert
     if strings.Contains(err.Error(), "execution reverted") {
         log.Println("Transaction would revert")
-        // Decode revert reason if available
     }
     return err
 }
 ```
+
+## See also
+
+- [Reading Contracts](/docs/contract/read-contract/) — ReadContract, SimulateContract
+- [Deploy Contract](/docs/contract/deploy-contract/) — DeployContract
+- [Estimate Contract Gas](/docs/contract/estimate-contract-gas/) — EstimateContractGas
+- [Simulate Contract](/docs/contract/simulate-contract/) — test writes without sending
+- [ABI Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData on *ABI

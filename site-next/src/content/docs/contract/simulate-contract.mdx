@@ -1,0 +1,131 @@
+---
+title: Simulate Contract
+description: Run a contract call without sending a transaction
+---
+
+**SimulateContract** executes a contract call via **eth_call** and returns the decoded return value (and optionally revert info). Use it to test state-changing calls or to validate arguments before sending a transaction. Works with both view and write functions.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { simulateContract } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// SimulateContractParameters requires *abi.ABI
+parsedABI, _ := abi.Parse(erc20ABI)
+
+result, err := public.SimulateContract(ctx, publicClient, public.SimulateContractParameters{
+    Account:      &senderAddr,
+    Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+    ABI:         parsedABI,
+    FunctionName: "transfer",
+    Args:         []any{recipient, big.NewInt(1000)},
+    Value:        big.NewInt(0),
+})
+if err != nil {
+    // e.g. execution reverted
+    log.Fatal(err)
+}
+// result.Result is the decoded return value; result.Request can be used for writeContract`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const { result } = await publicClient.simulateContract({
+  account: sender,
+  address: usdc,
+  abi: erc20ABI,
+  functionName: 'transfer',
+  args: [recipient, 1000n],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+- **Default:** `nil`
+- Caller address (msg.sender) for the simulation.
+
+### Address (required)
+
+- **Type:** `common.Address`
+- Contract address to call.
+
+### ABI (required)
+
+- **Type:** `*abi.ABI`
+- Contract ABI for encoding calldata and decoding result.
+
+### FunctionName (required)
+
+- **Type:** `string`
+- Function to call (e.g. `"transfer"`, `"approve"`).
+
+### Args (optional)
+
+- **Type:** `[]any`
+- **Default:** `nil`
+- Function arguments in order.
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+- **Default:** `nil`
+- Wei to send with the call (for payable functions).
+
+### BlockNumber / BlockTag (optional)
+
+- **Type:** `*uint64` or `BlockTag`
+- **Default:** latest
+- Block at which to simulate.
+
+### StateOverride / BlockOverrides / AccessList (optional)
+
+- **StateOverride:** override account/contract state for the call.
+- **BlockOverrides:** override block fields.
+- **AccessList:** EIP-2930 access list.
+
+### Gas, GasPrice, MaxFeePerGas, MaxPriorityFeePerGas, Nonce (optional)
+
+- Optional tx-style fields for the simulation context.
+
+## Return type
+
+- **public.SimulateContract** returns `(*SimulateContractReturnType, error)`. **SimulateContractReturnType** has **Result** (`any` — decoded return value) and **Request** (**SimulateContractRequest** — can be used to build a writeContract call). On revert, returns an error (use **abi.DecodeErrorResult** to decode revert data). **PublicClient.SimulateContract** returns `([]any, error)` (decoded return values only).
+
+## See also
+
+- [Reading Contracts](/docs/contract/read-contract/) — ReadContract (view/pure)
+- [Writing Contracts](/docs/contract/write-contract/) — WriteContract after simulating
+- [ABI Decoding](/docs/contract/abi-decoding/) — DecodeErrorResult for revert data
+- [Estimate Contract Gas](/docs/contract/estimate-contract-gas/) — gas estimation

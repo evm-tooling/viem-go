@@ -1,0 +1,36 @@
+---
+title: Contract Utilities
+description: Encode and decode helpers used by contract actions
+---
+
+Contract actions (readContract, writeContract, getContractEvents, etc.) use ABI encoding and decoding under the hood. You can use the same utilities directly when building custom calldata, decoding return data, or parsing event logs.
+
+## Where they live
+
+| Utility | Package / API | Doc |
+|--------|----------------|-----|
+| **encodeFunctionData** | **client.EncodeFunctionData(opts)** or **abi.EncodeFunctionData** on *ABI | [ABI Encoding](/docs/contract/abi-encoding/) |
+| **decodeFunctionData** | **abi.DecodeFunctionData** on *ABI | [ABI Decoding](/docs/contract/abi-decoding/) |
+| **decodeFunctionResult** | **abi.DecodeFunctionResult** on *ABI | [ABI Decoding](/docs/contract/abi-decoding/) |
+| **encodeEventTopics** | **abi.EncodeEventTopics** on *ABI | [ABI Encoding](/docs/contract/abi-encoding/) |
+| **decodeEventLog** | **abi.DecodeEventLog** / **DecodeEventLogByName** on *ABI | [ABI Decoding](/docs/contract/abi-decoding/) |
+| **encodeErrorResult** | **abi.EncodeErrorResult** on *ABI | [ABI Encoding](/docs/contract/abi-encoding/) |
+| **decodeErrorResult** | **abi.DecodeErrorResult** on *ABI | [ABI Decoding](/docs/contract/abi-decoding/) |
+| **encodeFunctionResult** | **abi.EncodeFunctionResult** on *ABI | [ABI Encoding](/docs/contract/abi-encoding/) |
+| **parseEventLogs** | **abi.ParseEventLogs** on *ABI | [Selectors & Items](/docs/contract/abi-selectors/) |
+| **encodeDeployData** | Bytecode + **abi.EncodeConstructor(args...)** | [Deploy Contract](/docs/contract/deploy-contract/), [ABI Encoding](/docs/contract/abi-encoding/) |
+| **decodeDeployData** | Decode constructor args from deploy data: use **abi.DecodeFunctionArgsFromData** with constructor “function” or decode with **DecodeAbiParameters** and constructor input params | [ABI Decoding](/docs/contract/abi-decoding/), [ABI Decode Parameters](/docs/abi/decode-parameters/) |
+
+## Client-level helpers
+
+- **client.EncodeFunctionData(EncodeFunctionDataOptions)** — encode calldata from ABI (string/bytes), function name, and args. Uses **abi.Parse** and **EncodeFunctionData** internally. Use when you don’t have a parsed *ABI.
+- **client.DecodeFunctionResult(DecodeFunctionResultOptions)** — decode return data from ABI, function name, and raw data. Use when you don’t have a parsed *ABI.
+
+For all other helpers (with a parsed **\*abi.ABI**), use the **abi** package as in the table above. Standalone parameter encode/decode (no ABI) is in the [ABI](/docs/abi/parse/) section: **EncodeAbiParameters**, **DecodeAbiParameters**, **EncodePacked**.
+
+## See also
+
+- [ABI Introduction](/docs/contract/abi-introduction/) — parsed ABI and types
+- [ABI Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData, EncodeEventTopics, EncodeErrorResult, EncodeConstructor
+- [ABI Decoding](/docs/contract/abi-decoding/) — DecodeFunctionData, DecodeFunctionResult, DecodeEventLog, DecodeErrorResult
+- [ABI Selectors & Items](/docs/contract/abi-selectors/) — FormatAbiItem, ParseEventLogs

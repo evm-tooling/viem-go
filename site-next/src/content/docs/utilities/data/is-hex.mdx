@@ -1,0 +1,138 @@
+---
+title: isHex
+description: Checks if a string is a valid hex string
+---
+
+# isHex
+
+Checks if a string is a valid hex string.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"
+
+// Valid hex string
+valid := data.IsHex("0x0102")
+// true
+
+// Valid empty hex
+valid = data.IsHex("0x")
+// true
+
+// Invalid (no prefix)
+valid = data.IsHex("0102")
+// false
+
+// Invalid characters (strict mode)
+valid = data.IsHex("0xgg", data.IsHexOptions{Strict: true})
+// false
+
+// Valid prefix only (non-strict mode)
+valid = data.IsHex("0xgg", data.IsHexOptions{Strict: false})
+// true`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { isHex } from 'viem'
+
+isHex('0x00000069')
+// true
+
+isHex('0x')
+// true
+
+isHex('00000069')
+// false`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `bool`
+
+`true` if the string is a valid hex string, `false` otherwise.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `string`
+
+The string to validate.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid := data.IsHex("0x0102")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `isHex('0x00000069')`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### opts.strict (optional)
+
+- **Type:** `bool`
+- **Default:** `true`
+
+If `true`, validates that the string contains only valid hex characters (`0-9`, `a-f`, `A-F`). If `false`, only checks for the `0x` prefix.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Strict mode (default) - validates hex characters
+valid := data.IsHex("0x0102", data.IsHexOptions{Strict: true})
+// true
+
+valid = data.IsHex("0xgg", data.IsHexOptions{Strict: true})
+// false
+
+// Non-strict mode - only checks prefix
+valid = data.IsHex("0xgg", data.IsHexOptions{Strict: false})
+// true`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Convenience Function
+
+### IsHexString
+
+Alias for `IsHex` with `Strict: true`:
+
+```go
+valid := data.IsHexString("0x0102")
+// true
+```

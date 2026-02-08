@@ -1,0 +1,194 @@
+---
+title: slice
+description: Returns a section of a byte slice or hex string given start/end byte offsets
+---
+
+# slice
+
+Returns a section of a byte slice or hex string given start/end byte offsets.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/data"
+
+// Slice bytes
+result, _ := data.SliceBytes([]byte{0x01, 0x02, 0x03, 0x04}, 1, 3)
+// []byte{0x02, 0x03}
+
+// Slice hex string
+hexResult, _ := data.SliceHex("0x01020304", 1, 3)
+// "0x0203"
+
+// Slice from start to end
+fromStart, _ := data.SliceBytesStart([]byte{0x01, 0x02, 0x03}, 1)
+// []byte{0x02, 0x03}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { slice } from 'viem'
+
+slice('0x00000069', 2, 4)
+// 0x0000
+
+slice(new Uint8Array([69, 420]), 1)
+// Uint8Array [420]`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]byte, error)` for `SliceBytes`, `(string, error)` for `SliceHex`
+
+The sliced section. Returns an error if the start offset is out of bounds.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `[]byte` for `SliceBytes`, `string` for `SliceHex`
+
+The byte slice or hex string to slice.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, _ := data.SliceBytes([]byte{0x01, 0x02, 0x03, 0x04}, 1, 3)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `slice('0x00000069', 2, 4)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### start (required)
+
+- **Type:** `int`
+
+The start byte offset (inclusive). Use `0` for the beginning. Negative values are treated as `0`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Start from byte 1
+result, _ := data.SliceBytes([]byte{0x01, 0x02, 0x03, 0x04}, 1, 3)
+// []byte{0x02, 0x03}
+
+// Start from beginning
+result, _ := data.SliceBytes([]byte{0x01, 0x02, 0x03, 0x04}, 0, 2)
+// []byte{0x01, 0x02}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `slice('0x00000069', 2, 4)
+// 0x0000`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### end (required)
+
+- **Type:** `int`
+
+The end byte offset (exclusive). Use `0` or a value greater than the length to slice to the end.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Slice from byte 1 to byte 3 (exclusive)
+result, _ := data.SliceBytes([]byte{0x01, 0x02, 0x03, 0x04}, 1, 3)
+// []byte{0x02, 0x03}
+
+// Slice to the end
+result, _ := data.SliceBytes([]byte{0x01, 0x02, 0x03}, 1, 0)
+// []byte{0x02, 0x03}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `slice('0x00000069', 2, 4)
+// 0x0000`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### opts.strict (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+If `true`, validates that the slice produces the expected size.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Strict mode validates result size
+result, err := data.SliceBytes(
+    []byte{0x01, 0x02, 0x03},
+    0,
+    2,
+    data.SliceOptions{Strict: true},
+)
+// []byte{0x01, 0x02}, nil`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Convenience Functions
+
+### SliceBytesStart
+
+Slices from a start position to the end of the value:
+
+```go
+result, _ := data.SliceBytesStart([]byte{0x01, 0x02, 0x03}, 1)
+// []byte{0x02, 0x03}
+```
+
+### SliceHexStart
+
+Slices a hex string from a start position to the end:
+
+```go
+result, _ := data.SliceHexStart("0x01020304", 1)
+// "0x020304"
+```

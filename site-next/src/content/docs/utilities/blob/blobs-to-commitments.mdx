@@ -1,0 +1,140 @@
+---
+title: blobsToCommitments
+description: Computes KZG commitments for a list of blobs
+---
+
+# blobsToCommitments
+
+Computes KZG commitments for a list of blobs using a KZG implementation.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/blob"
+import "github.com/ChefBingbong/viem-go/utils/kzg"
+
+blobs, _ := blob.ToBlobs([]byte("hello world"))
+
+// Compute commitments
+commitments, err := blob.BlobsToCommitments(blobs, kzgImpl)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Get commitments as hex strings
+hexCommitments, err := blob.BlobsToCommitmentsHex(blobs, kzgImpl)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Compute from hex blobs
+hexBlobs := []string{"0x...", "0x..."}
+commitments, err = blob.BlobsHexToCommitments(hexBlobs, kzgImpl)
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([][]byte, error)` for `BlobsToCommitments`, `([]string, error)` for `BlobsToCommitmentsHex`
+
+An array of KZG commitments, one for each blob. Each commitment is 48 bytes.
+
+## Parameters
+
+### blobs (required)
+
+- **Type:** `[][]byte` for `BlobsToCommitments`, `[]string` for `BlobsHexToCommitments`
+
+The blobs to compute commitments for.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blobs, _ := blob.ToBlobs([]byte("hello world"))
+commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### kzgImpl (required)
+
+- **Type:** `kzg.Kzg`
+
+The KZG implementation to use for computing commitments.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Functions
+
+### BlobsToCommitments
+
+Computes commitments from blobs:
+
+```go
+commitments, _ := blob.BlobsToCommitments(blobs, kzgImpl)
+```
+
+### BlobsToCommitmentsHex
+
+Computes commitments and returns them as hex strings:
+
+```go
+hexCommitments, _ := blob.BlobsToCommitmentsHex(blobs, kzgImpl)
+```
+
+### BlobsHexToCommitments
+
+Computes commitments from hex-encoded blobs:
+
+```go
+commitments, _ := blob.BlobsHexToCommitments(hexBlobs, kzgImpl)
+```
+
+### BlobsHexToCommitmentsHex
+
+Computes hex commitments from hex blobs:
+
+```go
+hexCommitments, _ := blob.BlobsHexToCommitmentsHex(hexBlobs, kzgImpl)
+```
+
+## Notes
+
+- Each commitment is 48 bytes (384 bits)
+- Commitments are used to verify blob integrity
+- The number of commitments equals the number of blobs

@@ -1,0 +1,192 @@
+---
+title: toBytes
+description: Encodes a value (string, hex, number, or boolean) to a byte array
+---
+
+# toBytes
+
+Encodes a value (string, hex, number, or boolean) to a byte array using a fluent API.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/encoding"
+import "math/big"
+
+// Convert string to bytes
+bytes, _ := encoding.ToBytes("Hello world").ToBytes()
+// []byte{72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100}
+
+// Convert hex to bytes
+bytes, _ := encoding.ToBytes("0x48656c6c6f").ToBytes()
+// []byte{72, 101, 108, 108, 111}
+
+// Convert number to bytes
+bytes, _ := encoding.ToBytes(big.NewInt(420)).ToBytes()
+// []byte{1, 164}
+
+// Convert boolean to bytes
+bytes, _ := encoding.ToBytes(true).ToBytes()
+// []byte{1}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { toBytes } from 'viem'
+
+toBytes('Hello world')
+// Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33])
+
+toBytes('0x48656c6c6f20576f726c6421')
+// Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33])
+
+toBytes(420)
+// Uint8Array([1, 164])
+
+toBytes(true)
+// Uint8Array([1])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+- **Type:** `([]byte, error)`
+
+The byte array representation of the value.
+
+## Parameters
+
+### value (required)
+
+- **Type:** `any` (supports `string`, `[]byte`, `bool`, `int`, `int8-64`, `uint`, `uint8-64`, `*big.Int`)
+
+The value to encode as bytes.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `bytes, _ := encoding.ToBytes("Hello world").ToBytes()
+// []byte{72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100}
+
+bytes, _ = encoding.ToBytes("0x0102").ToBytes()
+// []byte{0x01, 0x02}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toBytes('Hello world')
+// Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSize(size) (optional)
+
+- **Type:** `int`
+
+Validates that the result doesn't exceed the specified byte size.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Validate size
+bytes, err := encoding.ToBytes([]byte{0x01, 0x02, 0x03}).WithSize(2).ToBytes()
+// error: size overflow`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `toBytes('Hello world', { size: 32 })
+// Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### WithSigned() (optional)
+
+- **Type:** method
+
+Treats numbers as signed for conversion (uses two's complement). Requires `WithSize` to be set.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+// Convert negative number with two's complement
+bytes, _ := encoding.ToBytes(big.NewInt(-1)).WithSize(32).WithSigned().ToBytes()
+// []byte{0xff, 0xff, ..., 0xff} (32 bytes)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Standalone Functions
+
+The encoding package also provides standalone conversion functions:
+
+### StringToBytes
+
+Converts a string to bytes:
+
+```go
+bytes := encoding.StringToBytes("Hello")
+// []byte{72, 101, 108, 108, 111}
+```
+
+### HexToBytes
+
+Converts hex to bytes:
+
+```go
+bytes, _ := encoding.HexToBytes("0x0102")
+// []byte{0x01, 0x02}
+```
+
+### NumberToBytes
+
+Converts a number to bytes:
+
+```go
+bytes := encoding.NumberToBytes(big.NewInt(420))
+// []byte{1, 164}
+```
+
+### BoolToBytes
+
+Converts a boolean to bytes:
+
+```go
+bytes := encoding.BoolToBytes(true)
+// []byte{1}
+```

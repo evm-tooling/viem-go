@@ -1,0 +1,86 @@
+---
+title: Get Code
+description: Retrieve contract bytecode at an address with getCode
+---
+
+**GetCode** returns the bytecode at a given address (e.g. contract deployment code). Uses **eth_getCode**. No ABI required.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { getCode } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
+    Address: common.HexToAddress("0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+if code == nil {
+    // No contract at this address (EOA or empty)
+}
+fmt.Printf("Bytecode length: %d bytes\n", len(code))`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const code = await publicClient.getCode({
+  address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+- The address to get bytecode for.
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+- **Default:** use BlockTag
+- Block number to query. Mutually exclusive with **BlockTag**.
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag` (e.g. `"latest"`, `"pending"`, `"safe"`)
+- **Default:** `"latest"`
+- Block tag to query. Mutually exclusive with **BlockNumber**.
+
+## Return type
+
+- **GetCode** returns `([]byte, error)`. `nil` slice means no code (empty account or EOA).
+
+## See also
+
+- [Get Storage At](/docs/contract/get-storage-at/) — read storage slots
+- [Reading Contracts](/docs/contract/read-contract/) — call contract view functions
