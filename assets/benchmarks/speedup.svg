@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="1562" viewBox="0 0 880 1562">
+<defs>
+  <linearGradient id="goGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#00ADD8" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#0891B2" stop-opacity="0.85"/>
+  </linearGradient>
+  <linearGradient id="tsGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#3178C6" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.85"/>
+  </linearGradient>
+</defs>
+<rect width="880" height="1562" fill="#FAFAFA" rx="12"/>
+<rect x=".5" y=".5" width="879" height="1561" fill="none" stroke="#E5E7EB" rx="12"/>
+<text x="440" y="34" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="700" fill="#111827">viem-go vs viem (TypeScript) &#8212; Speedup</text>
+<text x="440" y="54" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#6B7280">Go is 14.5x faster overall (geometric mean, 37 benchmarks) &#183; log scale</text>
+<g transform="translate(200,80)">
+  <line x1="0.0" y1="0" x2="0.0" y2="1427" stroke="#E5E7EB"/>
+  <text x="0.0" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">1x</text>
+  <line x1="59.2" y1="0" x2="59.2" y2="1427" stroke="#E5E7EB"/>
+  <text x="59.2" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">2x</text>
+  <line x1="137.5" y1="0" x2="137.5" y2="1427" stroke="#E5E7EB"/>
+  <text x="137.5" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">5x</text>
+  <line x1="196.7" y1="0" x2="196.7" y2="1427" stroke="#E5E7EB"/>
+  <text x="196.7" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">10x</text>
+  <line x1="255.9" y1="0" x2="255.9" y2="1427" stroke="#E5E7EB"/>
+  <text x="255.9" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">20x</text>
+  <line x1="334.1" y1="0" x2="334.1" y2="1427" stroke="#E5E7EB"/>
+  <text x="334.1" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">50x</text>
+  <line x1="393.3" y1="0" x2="393.3" y2="1427" stroke="#E5E7EB"/>
+  <text x="393.3" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">100x</text>
+  <line x1="452.5" y1="0" x2="452.5" y2="1427" stroke="#E5E7EB"/>
+  <text x="452.5" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">200x</text>
+  <line x1="530.8" y1="0" x2="530.8" y2="1427" stroke="#E5E7EB"/>
+  <text x="530.8" y="1443" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">500x</text>
+  <line x1="0" y1="0" x2="0" y2="1427" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="-10" y="16" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Abi</text>
+  <text x="-10" y="30" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 19.2x</text>
+  <text x="-10" y="57" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked</text>
+  <rect x="0" y="40" width="119.8" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="127.8" y="57" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">4.1x</text>
+  <text x="-10" y="88" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked Multi</text>
+  <rect x="0" y="71" width="127.5" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="135.5" y="88" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">4.5x</text>
+  <text x="-10" y="119" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Result</text>
+  <rect x="0" y="102" width="276.0" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="284.0" y="119" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">25x</text>
+  <text x="-10" y="150" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode 3-Arg</text>
+  <rect x="0" y="133" width="289.4" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="297.4" y="150" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">30x</text>
+  <text x="-10" y="181" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Complex</text>
+  <rect x="0" y="164" width="336.8" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="344.8" y="181" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">52x</text>
+  <text x="-10" y="212" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Simple</text>
+  <rect x="0" y="195" width="363.5" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="371.5" y="212" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">71x</text>
+  <text x="-10" y="242" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Address</text>
+  <text x="-10" y="256" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 16.4x</text>
+  <text x="-10" y="283" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">IsAddress Lower</text>
+  <rect x="0" y="266" width="213.4" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="221.4" y="283" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">12x</text>
+  <text x="-10" y="314" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">IsAddress</text>
+  <rect x="0" y="297" width="224.3" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="232.3" y="314" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">14x</text>
+  <text x="-10" y="345" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Checksum</text>
+  <rect x="0" y="328" width="236.2" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="244.2" y="345" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">16x</text>
+  <text x="-10" y="376" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">CREATE</text>
+  <rect x="0" y="359" width="256.2" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="264.2" y="376" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">20x</text>
+  <text x="-10" y="407" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">CREATE2</text>
+  <rect x="0" y="390" width="264.4" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="272.4" y="407" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">22x</text>
+  <text x="-10" y="437" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Ens</text>
+  <text x="-10" y="451" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 12.5x</text>
+  <text x="-10" y="478" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Normalize Long</text>
+  <rect x="0" y="461" width="103.7" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="111.7" y="478" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">3.4x</text>
+  <text x="-10" y="509" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Normalize</text>
+  <rect x="0" y="492" width="205.0" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="213.0" y="509" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">11x</text>
+  <text x="-10" y="540" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Labelhash</text>
+  <rect x="0" y="523" width="242.5" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="250.5" y="540" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">17x</text>
+  <text x="-10" y="571" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Namehash Deep</text>
+  <rect x="0" y="554" width="248.8" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="256.8" y="571" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">18x</text>
+  <text x="-10" y="602" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Namehash</text>
+  <rect x="0" y="585" width="278.2" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="286.2" y="602" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">26x</text>
+  <text x="-10" y="632" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Event</text>
+  <text x="-10" y="646" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 37.8x</text>
+  <text x="-10" y="673" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Batch 10</text>
+  <rect x="0" y="656" width="295.1" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="303.1" y="673" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">32x</text>
+  <text x="-10" y="704" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Transfer</text>
+  <rect x="0" y="687" width="304.6" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="312.6" y="704" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">35x</text>
+  <text x="-10" y="735" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Batch 100</text>
+  <rect x="0" y="718" width="331.0" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="339.0" y="735" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">48x</text>
+  <text x="-10" y="765" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Hash</text>
+  <text x="-10" y="779" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 15.4x</text>
+  <text x="-10" y="806" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Event Selector</text>
+  <rect x="0" y="789" width="127.5" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="135.5" y="806" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">4.5x</text>
+  <text x="-10" y="837" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Fn Selector</text>
+  <rect x="0" y="820" width="151.3" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="159.3" y="837" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">5.9x</text>
+  <text x="-10" y="868" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Short</text>
+  <rect x="0" y="851" width="254.0" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="262.0" y="868" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">20x</text>
+  <text x="-10" y="899" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">SHA-256 Short</text>
+  <rect x="0" y="882" width="267.7" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="275.7" y="899" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">23x</text>
+  <text x="-10" y="930" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Long</text>
+  <rect x="0" y="913" width="270.6" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="278.6" y="930" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">24x</text>
+  <text x="-10" y="961" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Hex</text>
+  <rect x="0" y="944" width="280.8" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="288.8" y="961" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">27x</text>
+  <text x="-10" y="992" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">SHA-256 Long</text>
+  <rect x="0" y="975" width="284.4" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="292.4" y="992" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">28x</text>
+  <text x="-10" y="1022" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Signature</text>
+  <text x="-10" y="1036" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 27.6x</text>
+  <text x="-10" y="1063" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">HashMessage Long</text>
+  <rect x="0" y="1046" width="223.8" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="231.8" y="1063" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">14x</text>
+  <text x="-10" y="1094" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Parse Signature</text>
+  <rect x="0" y="1077" width="225.6" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="233.6" y="1094" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">14x</text>
+  <text x="-10" y="1125" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">HashMessage</text>
+  <rect x="0" y="1108" width="229.6" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="237.6" y="1125" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">15x</text>
+  <text x="-10" y="1156" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Verify Message</text>
+  <rect x="0" y="1139" width="360.2" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="368.2" y="1156" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">68x</text>
+  <text x="-10" y="1187" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Recover Address</text>
+  <rect x="0" y="1170" width="378.3" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="386.3" y="1187" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">84x</text>
+  <text x="-10" y="1217" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Unit</text>
+  <text x="-10" y="1231" text-anchor="end" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">avg 3.9x</text>
+  <text x="-10" y="1258" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatUnits</text>
+  <rect x="0" y="1241" width="86.6" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="94.6" y="1258" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">2.8x</text>
+  <text x="-10" y="1289" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatEther</text>
+  <rect x="0" y="1272" width="89.9" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="97.9" y="1289" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">2.9x</text>
+  <text x="-10" y="1320" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther Large</text>
+  <rect x="0" y="1303" width="90.1" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="98.1" y="1320" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">2.9x</text>
+  <text x="-10" y="1351" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseUnits(6)</text>
+  <rect x="0" y="1334" width="129.0" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="137.0" y="1351" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">4.5x</text>
+  <text x="-10" y="1382" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseGwei</text>
+  <rect x="0" y="1365" width="139.2" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="147.2" y="1382" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">5.1x</text>
+  <text x="-10" y="1413" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther</text>
+  <rect x="0" y="1396" width="156.1" height="26" fill="url(#goGrad)" rx="4"/>
+  <text x="164.1" y="1413" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#0E7490">6.2x</text>
+</g>
+<g transform="translate(340,1534)">
+  <rect width="14" height="14" fill="#00ADD8" rx="3"/>
+  <text x="18" y="11" font-family="system-ui,sans-serif" font-size="11" fill="#4B5563">Go faster</text>
+  <rect x="100" width="14" height="14" fill="#3178C6" rx="3"/>
+  <text x="118" y="11" font-family="system-ui,sans-serif" font-size="11" fill="#4B5563">TS faster</text>
+</g>
+</svg>

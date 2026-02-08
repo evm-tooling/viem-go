@@ -147,17 +147,32 @@ Built in ERC standards are included such as erc20.
 
 ## Performance
 
-Benchmarks show viem go is faster across ABI encoding and decoding, hashing, signature operations, event log decoding, ENS utilities, call actions, multicall batching, and unit parsing. See benchmarks folder for methodology and results charts. viem-go doesn't just match viem's API -- it outperforms it. Across 59 benchmarks spanning 9 test suites, Go wins 54 of them (92%) and wins all 9 suites.
+Benchmarks show viem go is faster across ABI encoding and decoding, hashing, signature operations, event log decoding, ENS utilities, call actions, multicall batching, and unit parsing. See benchmarks folder for methodology and results charts.
 
-![Summary](benchmarks/results/charts/summary.svg)
+viem-go doesn't just match viem's API -- it outperforms it. At 5000 iterations, Go wins **37/37 benchmarks (100%)** with a **14.55x geometric mean speedup**. At 50 iterations the speedup peaks at **29.89x**.
+
+### Summary (5000 iterations)
+
+![Summary](assets/benchmarks/summary.svg)
 
 ### Speedup by Benchmark
 
-![Speedup](benchmarks/results/charts/speedup.svg)
+![Speedup](assets/benchmarks/speedup.svg)
 
 ### Latency Comparison
 
-![Latency](benchmarks/results/charts/latency.svg)
+![Latency](assets/benchmarks/latency.svg)
+
+<details>
+<summary><strong>Peak speedup charts (50 iterations — 29.89x geo mean)</strong></summary>
+
+![Summary at 50 iterations](assets/benchmarks/summary-iter50.svg)
+
+![Speedup at 50 iterations](assets/benchmarks/speedup-iter50.svg)
+
+![Latency at 50 iterations](assets/benchmarks/latency-iter50.svg)
+
+</details>
 
 **Key takeaways:**
 

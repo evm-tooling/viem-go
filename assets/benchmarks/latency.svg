@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="2311" viewBox="0 0 880 2311">
+<defs>
+  <linearGradient id="goGrad2" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#00ADD8" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#0891B2" stop-opacity="0.8"/>
+  </linearGradient>
+  <linearGradient id="tsGrad2" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#3178C6" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.8"/>
+  </linearGradient>
+</defs>
+<rect width="880" height="2311" fill="#FAFAFA" rx="12"/>
+<rect x=".5" y=".5" width="879" height="2310" fill="none" stroke="#E5E7EB" rx="12"/>
+<text x="440" y="34" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="700" fill="#111827">Latency Comparison: Go vs TypeScript</text>
+<text x="440" y="54" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#6B7280">Nanoseconds per operation (lower is better) &#183; log scale</text>
+<g transform="translate(200,80)">
+  <line x1="0.0" y1="0" x2="0.0" y2="2176" stroke="#E5E7EB"/>
+  <text x="0.0" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">1ns</text>
+  <line x1="82.9" y1="0" x2="82.9" y2="2176" stroke="#E5E7EB"/>
+  <text x="82.9" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">10ns</text>
+  <line x1="165.7" y1="0" x2="165.7" y2="2176" stroke="#E5E7EB"/>
+  <text x="165.7" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">100ns</text>
+  <line x1="248.6" y1="0" x2="248.6" y2="2176" stroke="#E5E7EB"/>
+  <text x="248.6" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">1&#181;s</text>
+  <line x1="331.4" y1="0" x2="331.4" y2="2176" stroke="#E5E7EB"/>
+  <text x="331.4" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">10&#181;s</text>
+  <line x1="414.3" y1="0" x2="414.3" y2="2176" stroke="#E5E7EB"/>
+  <text x="414.3" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">100&#181;s</text>
+  <line x1="497.1" y1="0" x2="497.1" y2="2176" stroke="#E5E7EB"/>
+  <text x="497.1" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">1ms</text>
+  <line x1="580.0" y1="0" x2="580.0" y2="2176" stroke="#E5E7EB"/>
+  <text x="580.0" y="2192" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#9CA3AF">10ms</text>
+  <text x="-10" y="16" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Abi</text>
+  <text x="-10" y="58" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Result</text>
+  <rect x="0" y="36" width="161.2" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="167.2" y="48" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">88.3 ns</text>
+  <rect x="0" y="56" width="277.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="283.5" y="68" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.23 µs</text>
+  <text x="-10" y="110" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Simple</text>
+  <rect x="0" y="88" width="194.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="200.4" y="100" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">221.7 ns</text>
+  <rect x="0" y="108" width="347.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="353.5" y="120" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">15.63 µs</text>
+  <text x="-10" y="162" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked</text>
+  <rect x="0" y="140" width="205.2" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="211.2" y="152" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">299.6 ns</text>
+  <rect x="0" y="160" width="255.7" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="261.7" y="172" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.22 µs</text>
+  <text x="-10" y="214" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode Complex</text>
+  <rect x="0" y="192" width="207.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="213.1" y="204" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">316.1 ns</text>
+  <rect x="0" y="212" width="349.0" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="355.0" y="224" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">16.31 µs</text>
+  <text x="-10" y="266" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">EncodePacked Multi</text>
+  <rect x="0" y="244" width="213.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="219.8" y="256" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">380.6 ns</text>
+  <rect x="0" y="264" width="267.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="273.5" y="276" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.69 µs</text>
+  <text x="-10" y="318" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Encode 3-Arg</text>
+  <rect x="0" y="296" width="219.0" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="225.0" y="308" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">439.2 ns</text>
+  <rect x="0" y="316" width="340.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="346.9" y="328" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">13.01 µs</text>
+  <text x="-10" y="364" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Address</text>
+  <text x="-10" y="406" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">IsAddress</text>
+  <rect x="0" y="384" width="131.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="137.6" y="396" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">38.8 ns</text>
+  <rect x="0" y="404" width="226.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="232.1" y="416" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">536.3 ns</text>
+  <text x="-10" y="458" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">IsAddress Lower</text>
+  <rect x="0" y="436" width="135.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="141.9" y="448" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">43.7 ns</text>
+  <rect x="0" y="456" width="225.8" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="231.8" y="468" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">531.5 ns</text>
+  <text x="-10" y="510" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Checksum</text>
+  <rect x="0" y="488" width="156.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="162.8" y="500" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">78.1 ns</text>
+  <rect x="0" y="508" width="256.4" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="262.4" y="520" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.24 µs</text>
+  <text x="-10" y="562" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">CREATE</text>
+  <rect x="0" y="540" width="237.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="243.7" y="552" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">739.8 ns</text>
+  <rect x="0" y="560" width="345.7" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="351.7" y="572" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">14.85 µs</text>
+  <text x="-10" y="614" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">CREATE2</text>
+  <rect x="0" y="592" width="247.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="253.7" y="604" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">975.5 ns</text>
+  <rect x="0" y="612" width="359.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="365.1" y="624" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">21.57 µs</text>
+  <text x="-10" y="660" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Ens</text>
+  <text x="-10" y="702" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Normalize</text>
+  <rect x="0" y="680" width="209.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="215.1" y="692" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">334.0 ns</text>
+  <rect x="0" y="700" width="295.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="301.5" y="712" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">3.68 µs</text>
+  <text x="-10" y="754" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Labelhash</text>
+  <rect x="0" y="732" width="218.2" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="224.2" y="744" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">430.2 ns</text>
+  <rect x="0" y="752" width="320.4" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="326.4" y="764" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">7.36 µs</text>
+  <text x="-10" y="806" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Normalize Long</text>
+  <rect x="0" y="784" width="242.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="248.7" y="796" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">849.2 ns</text>
+  <rect x="0" y="804" width="286.4" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="292.4" y="816" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.86 µs</text>
+  <text x="-10" y="858" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Namehash</text>
+  <rect x="0" y="836" width="264.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="270.7" y="848" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.57 µs</text>
+  <rect x="0" y="856" width="382.0" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="388.0" y="868" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">40.72 µs</text>
+  <text x="-10" y="910" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Namehash Deep</text>
+  <rect x="0" y="888" width="288.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="294.5" y="900" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">3.03 µs</text>
+  <rect x="0" y="908" width="393.3" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="399.3" y="920" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">55.80 µs</text>
+  <text x="-10" y="956" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Event</text>
+  <text x="-10" y="998" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Transfer</text>
+  <rect x="0" y="976" width="218.4" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="224.4" y="988" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">431.8 ns</text>
+  <rect x="0" y="996" width="346.7" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="352.7" y="1008" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">15.27 µs</text>
+  <text x="-10" y="1050" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Batch 10</text>
+  <rect x="0" y="1028" width="295.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="301.8" y="1040" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">3.72 µs</text>
+  <rect x="0" y="1048" width="420.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="426.1" y="1060" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">117.61 µs</text>
+  <text x="-10" y="1102" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Decode Batch 100</text>
+  <rect x="0" y="1080" width="378.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="384.5" y="1092" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">36.94 µs</text>
+  <rect x="0" y="1100" width="517.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="523.9" y="1112" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.78 ms</text>
+  <text x="-10" y="1148" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Hash</text>
+  <text x="-10" y="1190" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">SHA-256 Short</text>
+  <rect x="0" y="1168" width="178.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="184.5" y="1180" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">142.5 ns</text>
+  <rect x="0" y="1188" width="291.2" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="297.2" y="1200" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">3.27 µs</text>
+  <text x="-10" y="1242" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Short</text>
+  <rect x="0" y="1220" width="218.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="224.5" y="1232" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">433.1 ns</text>
+  <rect x="0" y="1240" width="325.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="331.5" y="1252" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">8.47 µs</text>
+  <text x="-10" y="1294" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Hex</text>
+  <rect x="0" y="1272" width="218.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="224.8" y="1284" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">436.7 ns</text>
+  <rect x="0" y="1292" width="337.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="343.1" y="1304" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">11.70 µs</text>
+  <text x="-10" y="1346" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">SHA-256 Long</text>
+  <rect x="0" y="1324" width="230.8" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="236.8" y="1336" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">610.5 ns</text>
+  <rect x="0" y="1344" width="350.6" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="356.6" y="1356" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">17.06 µs</text>
+  <text x="-10" y="1398" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Fn Selector</text>
+  <rect x="0" y="1376" width="273.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="279.6" y="1388" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.00 µs</text>
+  <rect x="0" y="1396" width="337.3" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="343.3" y="1408" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">11.78 µs</text>
+  <text x="-10" y="1450" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Event Selector</text>
+  <rect x="0" y="1428" width="279.9" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="285.9" y="1440" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.39 µs</text>
+  <rect x="0" y="1448" width="333.6" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="339.6" y="1460" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">10.63 µs</text>
+  <text x="-10" y="1502" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Keccak256 Long</text>
+  <rect x="0" y="1480" width="284.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="290.3" y="1492" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">2.70 µs</text>
+  <rect x="0" y="1500" width="398.3" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="404.3" y="1512" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">64.11 µs</text>
+  <text x="-10" y="1548" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Signature</text>
+  <text x="-10" y="1590" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Parse Signature</text>
+  <rect x="0" y="1568" width="183.1" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="189.1" y="1580" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">162.3 ns</text>
+  <rect x="0" y="1588" width="278.2" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="284.2" y="1600" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.28 µs</text>
+  <text x="-10" y="1642" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">HashMessage</text>
+  <rect x="0" y="1620" width="240.2" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="246.2" y="1632" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">792.3 ns</text>
+  <rect x="0" y="1640" width="336.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="342.9" y="1652" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">11.66 µs</text>
+  <text x="-10" y="1694" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">HashMessage Long</text>
+  <rect x="0" y="1672" width="265.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="271.6" y="1684" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">1.61 µs</text>
+  <rect x="0" y="1692" width="359.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="365.9" y="1704" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">22.09 µs</text>
+  <text x="-10" y="1746" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Recover Address</text>
+  <rect x="0" y="1724" width="365.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="371.6" y="1736" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">25.81 µs</text>
+  <rect x="0" y="1744" width="524.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="530.9" y="1756" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">2.17 ms</text>
+  <text x="-10" y="1798" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">Verify Message</text>
+  <rect x="0" y="1776" width="369.3" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="375.3" y="1788" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">28.64 µs</text>
+  <rect x="0" y="1796" width="521.0" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="527.0" y="1808" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">1.94 ms</text>
+  <text x="-10" y="1844" text-anchor="end" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1F2937">Unit</text>
+  <text x="-10" y="1886" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseUnits(6)</text>
+  <rect x="0" y="1864" width="142.5" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="148.5" y="1876" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">52.5 ns</text>
+  <rect x="0" y="1884" width="196.9" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="202.9" y="1896" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">237.9 ns</text>
+  <text x="-10" y="1938" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseGwei</text>
+  <rect x="0" y="1916" width="146.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="152.6" y="1928" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">58.9 ns</text>
+  <rect x="0" y="1936" width="205.3" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="211.3" y="1948" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">300.4 ns</text>
+  <text x="-10" y="1990" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther</text>
+  <rect x="0" y="1968" width="153.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="159.7" y="1980" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">71.6 ns</text>
+  <rect x="0" y="1988" width="219.4" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="225.4" y="2000" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">445.0 ns</text>
+  <text x="-10" y="2042" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatUnits</text>
+  <rect x="0" y="2020" width="163.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="169.6" y="2032" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">94.3 ns</text>
+  <rect x="0" y="2040" width="200.1" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="206.1" y="2052" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">260.0 ns</text>
+  <text x="-10" y="2094" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">FormatEther</text>
+  <rect x="0" y="2072" width="169.6" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="175.6" y="2084" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">111.3 ns</text>
+  <rect x="0" y="2092" width="207.5" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="213.5" y="2104" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">319.0 ns</text>
+  <text x="-10" y="2146" text-anchor="end" font-family="system-ui,sans-serif" font-size="11.5" fill="#4B5563">ParseEther Large</text>
+  <rect x="0" y="2124" width="172.7" height="16" fill="url(#goGrad2)" rx="3"/>
+  <text x="178.7" y="2136" font-family="system-ui,sans-serif" font-size="10" fill="#0E7490">121.4 ns</text>
+  <rect x="0" y="2144" width="210.7" height="16" fill="url(#tsGrad2)" rx="3"/>
+  <text x="216.7" y="2156" font-family="system-ui,sans-serif" font-size="10" fill="#1E40AF">348.8 ns</text>
+</g>
+<g transform="translate(340,2283)">
+  <rect width="14" height="14" fill="#00ADD8" rx="3"/>
+  <text x="18" y="11" font-family="system-ui,sans-serif" font-size="11" fill="#4B5563">Go (viem-go)</text>
+  <rect x="120" width="14" height="14" fill="#3178C6" rx="3"/>
+  <text x="138" y="11" font-family="system-ui,sans-serif" font-size="11" fill="#4B5563">TypeScript (viem)</text>
+</g>
+</svg>
