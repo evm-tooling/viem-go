@@ -1,0 +1,213 @@
+---
+title: ABI Selectors & Items
+description: Compute selectors and event topics, format signatures, and parse event logs for contract ABIs in viem-go
+---
+
+Compute function/error selectors and event topics, format human-readable signatures, and batch-parse event logs using a **parsed contract ABI**. For generic lookup by name or selector (GetAbiItem), see [Get Abi Item](/docs/abi/get-abi-item/) in the ABI section.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "encoding/hex"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## ComputeSelector
+
+Compute the 4-byte function (or error) selector from a signature string: first 4 bytes of **keccak256(signature)**.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "encoding/hex"
+    "github.com/ChefBingbong/viem-go/abi"
+)
+
+sel := abi.ComputeSelector("transfer(address,uint256)")
+// sel is [4]byte; hex: 0xa9059cbb
+
+hexSel := abi.ComputeSelectorHex("transfer(address,uint256)")
+// "0xa9059cbb"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **ComputeSelector(signature string) [4]byte**
+- **ComputeSelectorHex(signature string) string** — returns hex with `0x` prefix.
+
+### Selector conversion
+
+- **SelectorToHex(selector [4]byte) string** — selector to `0x` hex string.
+- **HexToSelector(hexStr string) ([4]byte, error)** — hex string (with or without `0x`) to 4-byte selector.
+- **MustHexToSelector(hexStr string) [4]byte** — same, panics on error.
+
+## ComputeEventTopic
+
+Compute the 32-byte event topic (keccak256 of the event signature). Used as the first topic in **eth_getLogs** for non-anonymous events.
+
+```go
+topic := abi.ComputeEventTopic("Transfer(address,address,uint256)")
+// topic is common.Hash
+
+hexTopic := abi.ComputeEventTopicHex("Transfer(address,address,uint256)")
+// "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+```
+
+- **ComputeEventTopic(signature string) common.Hash**
+- **ComputeEventTopicHex(signature string) string**
+
+## Signature helpers
+
+- **BuildFunctionSignature(name string, paramTypes []string) string** — e.g. `"transfer(address,uint256)"`.
+- **BuildEventSignature(name string, paramTypes []string) string** — same as above; alias for clarity.
+- **ParseFunctionSignature(signature string) (name string, paramTypes []string, error)** — parse back to name and types.
+
+## Standard selectors and topics
+
+- **StandardSelectors** — `map[string][4]byte` of common ERC20/ERC721 function selectors (e.g. `"transfer"`, `"balanceOf"`).
+- **StandardEventTopics** — `map[string]common.Hash` for common events (e.g. `"Transfer"`, `"Approval"`).
+- **IsStandardSelector(selector [4]byte) (string, bool)** — returns name and true if selector is in **StandardSelectors**.
+- **IsStandardEventTopic(topic common.Hash) (string, bool)** — returns name and true if topic is in **StandardEventTopics**.
+
+### Lookup by name or selector on a contract ABI
+
+- **GetFunction(name string) (*Function, error)** — by function name.
+- **GetEvent(name string) (*Event, error)** — by event name.
+- **GetError(name string) (*Error, error)** — by error name.
+- **GetFunctionBySelector(selector [4]byte) (*Function, error)** — by 4-byte selector.
+- **GetEventByTopic(topic common.Hash) (*Event, error)** — by event topic.
+- **GetErrorBySelector(selector [4]byte) (*Error, error)** — by 4-byte selector.
+
+For generic **GetAbiItem** (by name or hex selector with overload resolution), see [Get Abi Item](/docs/abi/get-abi-item/).
+
+## FormatAbiItem
+
+Produce a human-readable signature for a function, event, or error (no argument values).
+
+```go
+fn, _ := parsed.GetFunction("transfer")
+sig, err := abi.FormatAbiItem(fn)
+// "transfer(address,uint256)"
+
+// Parameters only (types, or types + names)
+typesOnly := abi.FormatAbiParams(fn.Inputs, false)  // "address,uint256"
+withNames := abi.FormatAbiParams(fn.Inputs, true)   // "address to, uint256 amount"
+```
+
+- **FormatAbiItem(item any) (string, error)** — item is *Function, *Event, or *Error.
+- **FormatAbiParams(params []Parameter, includeName bool) string**
+
+### FormatAbiItemWithArgs
+
+Format an ABI item with actual argument values (e.g. for logging).
+
+```go
+formatted := abi.FormatAbiItemWithArgs(fn, []any{to, amount}, nil)
+// "transfer(0x1234..., 1000000000000000000)"
+
+formatted := abi.FormatAbiItemWithArgs(fn, []any{to, amount}, &abi.FormatAbiItemWithArgsOptions{
+    IncludeFunctionName: true,
+    IncludeName:         true,
+})
+// "transfer(to: 0x1234..., amount: 1000000000000000000)"
+```
+
+- **FormatAbiItemWithArgs(item AbiItem, args []any, opts *FormatAbiItemWithArgsOptions) string**
+- **FormatAbiItemWithArgsOptions**: **IncludeFunctionName** (default true), **IncludeName** (default false).
+
+### On *ABI
+
+- **FormatFunctionCallWithArgs(functionName string, args ...any) (string, error)** — format a function call with args by name.
+- **GetFunctionSignature(name string) (string, error)**
+- **GetEventSignature(name string) (string, error)**
+- **GetErrorSignature(name string) (string, error)**
+
+## ParseEventLogs
+
+Decode multiple raw logs in one go. Keeps only logs whose first topic matches an event on the ABI; optionally filter by event name or indexed args.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+rawLogs := []abi.RawLog{
+    {Address: addr, Topics: topics1, Data: data1},
+    {Address: addr, Topics: topics2, Data: data2},
+}
+
+// Parse all events that match the ABI
+parsed := parsedABI.ParseEventLogs(rawLogs, nil)
+
+// Only Transfer events
+parsed := parsedABI.ParseEventLogs(rawLogs, &abi.ParseEventLogsOptions{
+    EventName: []string{"Transfer"},
+})
+
+// Filter by indexed args
+parsed := parsedABI.ParseEventLogs(rawLogs, &abi.ParseEventLogsOptions{
+    EventName: []string{"Transfer"},
+    Args:      map[string]any{"from": sender},
+    Strict:    true,
+})
+
+for _, log := range parsed {
+    fmt.Println(log.EventName, log.Args)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **RawLog** — **Address**, **Topics** (`[]common.Hash`), **Data**; optional **BlockNumber**, **TransactionHash**, **LogIndex**.
+- **ParsedEventLog** — **EventName**, **Args** (`map[string]any`), **Address**, **Topics**, **Data**, plus optional receipt fields.
+- **ParseEventLogsOptions**: **EventName []string**, **Args map[string]any**, **Strict bool** (default true; fail on decode errors).
+
+**Signature:** `(a *ABI) ParseEventLogs(logs []RawLog, opts *ParseEventLogsOptions) []ParsedEventLog`
+
+## PrepareEncodeFunctionData
+
+Resolve an overloaded function by name (and args) or by selector, then encode with **EncodeWithPrepared**. Useful when encoding the same function repeatedly.
+
+```go
+prepared, err := parsed.PrepareEncodeFunctionData("transfer", to, amount)
+if err != nil {
+    log.Fatal(err)
+}
+// prepared.FunctionName, prepared.FunctionSelector, prepared.Abi
+
+data, err := parsed.EncodeWithPrepared(prepared, to, amount)
+```
+
+- **PrepareEncodeFunctionData(functionName string, args ...any) (*PreparedFunctionData, error)**
+- **PrepareEncodeFunctionDataBySelector(selector [4]byte) (*PreparedFunctionData, error)**
+- **EncodeWithPrepared(prepared *PreparedFunctionData, args ...any) ([]byte, error)**
+
+**PreparedFunctionData** has **Abi** (slice with the matched function), **FunctionSelector** ([4]byte), **FunctionName** (string).
+
+## Go notes
+
+- **FormatAbiItem** and **FormatAbiItemWithArgs** accept **Function**, **Event**, or **Error** (or pointers).
+
+## See also
+
+- [Introduction](/docs/contract/abi-introduction/) — ABI struct, Function/Event/Error types
+- [Get Abi Item](/docs/abi/get-abi-item/) — generic lookup by name or selector
+- [Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData, EncodeEventTopics
+- [Decoding](/docs/contract/abi-decoding/) — DecodeEventLog, DecodeFunctionData

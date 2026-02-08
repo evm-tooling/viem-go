@@ -1,0 +1,89 @@
+---
+title: Get Abi Item
+description: Look up a function, event, or error by name or selector from a parsed ABI in viem-go
+---
+
+**GetAbiItem** finds a function, event, or error on a parsed ABI by **name** or **selector** (hex string). For overloaded functions, pass **Args** to disambiguate. Use the direct lookups (**GetFunction**, **GetEvent**, **GetError**, **GetFunctionBySelector**, **GetEventByTopic**, **GetErrorBySelector**) when you already know the kind of item or the key.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## GetAbiItem
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+// parsed is *abi.ABI from abi.Parse(...)
+
+// By name
+item, err := parsed.GetAbiItem("transfer", nil)
+
+// By selector (4-byte hex or 32-byte event topic hex)
+item, err := parsed.GetAbiItem("0xa9059cbb", nil)
+
+// Overloaded function: disambiguate with args
+item, err := parsed.GetAbiItem("foo", &abi.GetAbiItemOptions{
+    Args: []any{common.HexToAddress("0x..."), big.NewInt(1)},
+})
+
+// Type-assert to Function, Event, or Error (or pointer)
+switch v := item.(type) {
+case abi.Function:
+    fmt.Println(v.Signature)
+case abi.Event:
+    fmt.Println(v.Topic.Hex())
+case abi.Error:
+    fmt.Println(v.Selector)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Signature:** `(a *ABI) GetAbiItem(nameOrSelector string, opts *GetAbiItemOptions) (AbiItem, error)`
+- **GetAbiItemOptions**: **Args []any** — used to resolve overloads when multiple items share a name.
+- With a 32-byte hex string, matches events by topic; with 8-char hex, matches function/error selectors.
+
+## Direct lookups
+
+When you know the item kind or key, use:
+
+- **GetFunction(name string) (*Function, error)** — by function name.
+- **GetEvent(name string) (*Event, error)** — by event name.
+- **GetError(name string) (*Error, error)** — by error name.
+- **GetFunctionBySelector(selector [4]byte) (*Function, error)** — by 4-byte selector.
+- **GetEventByTopic(topic common.Hash) (*Event, error)** — by event topic.
+- **GetErrorBySelector(selector [4]byte) (*Error, error)** — by 4-byte selector.
+
+```go
+fn, err := parsed.GetFunction("transfer")
+ev, err := parsed.GetEventByTopic(topic)
+errItem, err := parsed.GetErrorBySelector(selector)
+```
+
+## Go notes
+
+- **AbiItem** is an interface; the concrete value returned may be **Function**, **Event**, or **Error** (value types from the ABI maps). **FormatAbiItem** and **FormatAbiItemWithArgs** accept both value and pointer types.
+
+## See also
+
+- [Parse ABI](/docs/abi/parse/) — get a parsed ABI
+- [Contract Selectors & Items](/docs/contract/abi-selectors/) — FormatAbiItem, ParseEventLogs, ComputeSelector on a contract ABI

@@ -53,6 +53,16 @@ export const docsNav: NavItem[] = [
     ],
   },
   {
+    label: "ABI",
+    items: [
+      { label: "Parse", slug: "abi/parse" },
+      { label: "Encode Parameters", slug: "abi/encode-parameters" },
+      { label: "Decode Parameters", slug: "abi/decode-parameters" },
+      { label: "Encode Packed", slug: "abi/encode-packed" },
+      { label: "Get Abi Item", slug: "abi/get-abi-item" },
+    ],
+  },
+  {
     label: "Contract",
     items: [
       { label: "Reading Contracts", slug: "contract/read-contract" },
@@ -60,9 +70,11 @@ export const docsNav: NavItem[] = [
       {
         label: "ABI",
         items: [
+          { label: "Introduction", slug: "contract/abi-introduction" },
           { label: "Encoding", slug: "contract/abi-encoding" },
           { label: "Decoding", slug: "contract/abi-decoding" },
           { label: "Types", slug: "contract/abi-types" },
+          { label: "Selectors & Items", slug: "contract/abi-selectors" },
         ],
       },
     ],

@@ -106,7 +106,7 @@ export default async function DocPage({ params }: PageProps) {
   const headings = extractHeadings(doc.content);
 
   return (
-    <div className="flex gap-0">
+    <div className="flex gap-0 ">
       <article className="flex-1 min-w-0 max-w-[80ch]">
         <h1 className="heading-1 mb-2">
           {doc.meta.title}
@@ -116,7 +116,7 @@ export default async function DocPage({ params }: PageProps) {
             {doc.meta.description}
           </p>
         )}
-        <div className="docs-prose">
+        <div className="docs-prose ">
           <MDXRemote
             source={doc.content}
             components={mdxComponents}

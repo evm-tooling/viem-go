@@ -1,56 +1,148 @@
 ---
 title: ABI Types
-description: Working with Solidity ABI types in viem-go
+description: AbiParam, Parameter, and Solidity-to-Go type mapping for encoding and decoding in viem-go
 ---
 
-# ABI Types
+The **abi** package uses two parameter representations: **AbiParam** for standalone encode/decode (e.g. `EncodeAbiParameters`, `DecodeAbiParameters`), and **Parameter** for items parsed from a JSON ABI (functions, events, errors). Solidity types map to specific Go types when encoding and decoding.
 
-viem-go maps Solidity types to Go types for encoding and decoding.
+## Import
 
-## Type Mapping
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-| Solidity Type | Go Type | Example |
-|--------------|---------|---------|
-| `address` | `common.Address` | `0xd8dA6BF...` |
-| `uint256` | `*big.Int` | `big.NewInt(100)` |
-| `int256` | `*big.Int` | `big.NewInt(-50)` |
-| `bool` | `bool` | `true` |
-| `string` | `string` | `"hello"` |
-| `bytes` | `[]byte` | `[]byte{0x01}` |
-| `bytes32` | `[32]byte` | Fixed-size bytes |
-| `uint8` | `uint8` | `255` |
+## AbiParam (standalone encode/decode)
 
-## Arrays and Tuples
+**AbiParam** is used with **EncodeAbiParameters**, **DecodeAbiParameters**, **DecodeAbiParametersInto**, and **DecodeWithSelector**. It does not require a parsed ABI.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **Name** | `string` | Optional; useful for documentation and DecodeAbiParametersInto struct fields. |
+| **Type** | `string` | Solidity type, e.g. `"address"`, `"uint256"`, `"tuple"`, `"uint256[]"`. |
+| **Components** | `[]AbiParam` | For `type: "tuple"`; nested parameter definitions. |
+
+Example:
 
 ```go
-// Dynamic array: uint256[]
-param := abi.Param{
-    Type: "uint256[]",
+params := []abi.AbiParam{
+    {Name: "owner", Type: "address"},
+    {Name: "amount", Type: "uint256"},
+    {Name: "tuple", Type: "tuple", Components: []abi.AbiParam{
+        {Name: "a", Type: "bool"},
+        {Name: "b", Type: "uint256"},
+    }},
 }
+```
 
-// Fixed array: uint256[3]
-param := abi.Param{
-    Type: "uint256[3]",
-}
+## Parameter (parsed ABI items)
 
-// Tuple (struct)
-param := abi.Param{
-    Type: "tuple",
-    Components: []abi.Param{
-        {Name: "to", Type: "address"},
-        {Name: "amount", Type: "uint256"},
+**Parameter** appears on **Function.Inputs/Outputs**, **Event.Inputs**, and **Error.Inputs** after parsing a JSON ABI with **abi.Parse**. It has the same shape as AbiParam plus **Indexed** for events.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **Name** | `string` | Parameter name from ABI. |
+| **Type** | `string` | Solidity type. |
+| **Indexed** | `bool` | For events: true if indexed. |
+| **Components** | `[]Parameter` | For tuple types. |
+
+You don’t construct **Parameter** manually for encoding/decoding; you get it from `parsed.Functions["fn"].Inputs` etc. For raw parameter lists (no ABI), use **AbiParam**.
+
+## Type mapping (Solidity → Go)
+
+Use these Go types when **encoding** (e.g. `EncodeAbiParameters`, `EncodeFunctionData`) or when **decoding** (e.g. `DecodeAbiParameters`, `DecodeFunctionResult`).
+
+### Basic types
+
+| Solidity | Go (encode/decode) | Notes |
+|----------|--------------------|--------|
+| `address` | `common.Address` or hex string | e.g. `common.HexToAddress("0x...")` |
+| `bool` | `bool` | |
+| `string` | `string` | |
+| `bytes` | `[]byte` | Dynamic bytes |
+| `bytes1`…`bytes32` | `[]byte` or hex string | Fixed-size; encoded as 32 bytes left-padded |
+| `uint8`…`uint256`, `int8`…`int256` | `*big.Int`, `int`, `int64`, `uint64`, etc. | Prefer `*big.Int` for uint256/int256 |
+
+### Integers
+
+- **Encoding:** `*big.Int`, `int`, `int64`, `uint64`, and similar numeric types are accepted; they are converted as needed.
+- **Decoding:** Small integers may be returned as **int64**; larger or full-range values as **\*big.Int**. See `normalizeDecodedValue` in the package.
+
+### Arrays and slices
+
+| Solidity | Go |
+|----------|-----|
+| `T[]` | `[]any` or slice of the element type (e.g. `[]*big.Int`) |
+| `T[k]` | Array or slice of length k |
+
+Example:
+
+```go
+// uint256[]
+param := abi.AbiParam{Type: "uint256[]"}
+values := []any{[]*big.Int{big.NewInt(1), big.NewInt(2)}}
+
+// address[2]
+param := abi.AbiParam{Type: "address[2]"}
+values := []any{[]common.Address{addr1, addr2}}
+```
+
+### Tuples (structs)
+
+Use **Type: "tuple"** and **Components** for nested structure. Values can be **map[string]any** (with component names) or **[]any** (by position).
+
+```go
+params := []abi.AbiParam{
+    {
+        Name: "item",
+        Type: "tuple",
+        Components: []abi.AbiParam{
+            {Name: "to", Type: "address"},
+            {Name: "amount", Type: "uint256"},
+        },
     },
+}
+values := []any{
+    map[string]any{"to": recipient, "amount": big.NewInt(100)},
+    // or []any{recipient, big.NewInt(100)}
 }
 ```
 
 ## Parsing ABI JSON
 
+viem-go does not support human-readable ABI strings like viem’s `parseAbi("function balanceOf(address) returns (uint256)")`. Use **Parse** (or **ParseFromString** / **MustParse**) with **JSON ABI bytes**:
+
 ```go
 import "github.com/ChefBingbong/viem-go/abi"
 
-// Parse a full contract ABI from JSON
-contractABI, err := abi.ParseABI(abiJSON)
-
-// Parse a single human-readable ABI item
-item, err := abi.ParseABIItem("function balanceOf(address) view returns (uint256)")
+jsonABI := []byte(`[{"type":"function","name":"balanceOf","inputs":[{"name":"account","type":"address"}],"outputs":[{"type":"uint256"}]}]`)
+parsed, err := abi.Parse(jsonABI)
+if err != nil {
+    log.Fatal(err)
+}
+// parsed.Functions["balanceOf"].Inputs are []Parameter
 ```
+
+To inspect raw items without the typed ABI map, use **ParseItems(jsonABI)** which returns **[]ABIItem**.
+
+## Go notes
+
+- **AbiParam** is for standalone encode/decode; **Parameter** is for parsed ABI items. Both have **Name**, **Type**, and **Components** (and **Parameter** has **Indexed**).
+- Fixed-size bytes (`bytes1`–`bytes32`) can be passed as **[]byte** (correct length) or hex string; decoding may return hex string or **[]byte** depending on size.
+- For **DecodeAbiParametersInto**, pass a pointer to a struct; field order (or names) should match the **AbiParam** list.
+
+## See also
+
+- [Introduction](/docs/contract/abi-introduction/) — Parse, ABI struct, Function/Event/Error
+- [Encoding](/docs/contract/abi-encoding/) — EncodeAbiParameters
+- [Decoding](/docs/contract/abi-decoding/) — DecodeAbiParameters, DecodeAbiParametersInto

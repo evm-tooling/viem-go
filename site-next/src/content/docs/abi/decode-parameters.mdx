@@ -1,0 +1,112 @@
+---
+title: Decode ABI Parameters
+description: Decode raw ABI-encoded bytes using parameter definitions without a parsed contract ABI in viem-go
+---
+
+**DecodeAbiParameters** (and **DecodeAbiParametersInto**, **DecodeWithSelector**) decode ABI-encoded bytes using a list of **AbiParam** definitions. They are **standalone** functions: no parsed ABI required.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "encoding/hex"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { decodeAbiParameters } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## DecodeAbiParameters
+
+Decode raw ABI-encoded bytes using **AbiParam** definitions. Returns a slice of decoded values in order.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "encoding/hex"
+    "github.com/ChefBingbong/viem-go/abi"
+)
+
+params := []abi.AbiParam{
+    {Name: "x", Type: "string"},
+    {Name: "y", Type: "uint256"},
+    {Name: "z", Type: "bool"},
+}
+data, _ := hex.DecodeString("...") // ABI-encoded bytes
+
+values, err := abi.DecodeAbiParameters(params, data)
+if err != nil {
+    log.Fatal(err)
+}
+// values[0] string, values[1] *big.Int or int64, values[2] bool`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const values = decodeAbiParameters(
+  [
+    { name: 'x', type: 'string' },
+    { name: 'y', type: 'uint256' },
+    { name: 'z', type: 'bool' },
+  ],
+  data
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Signature:** `DecodeAbiParameters(params []AbiParam, data []byte) ([]any, error)`
+- Decoded types match [ABI Types](/docs/contract/abi-types/) (address → `common.Address`, uint256 → `*big.Int` or int64, etc.).
+
+## DecodeAbiParametersInto
+
+Decode into a provided struct or slice (pointer). Useful for typed results.
+
+```go
+var out struct {
+    X string
+    Y *big.Int
+    Z bool
+}
+err := abi.DecodeAbiParameters(params, data, &out)
+```
+
+- **Signature:** `DecodeAbiParametersInto(params []AbiParam, data []byte, output any) error`
+- **output** must be a pointer to a struct (fields by position) or a slice.
+
+## DecodeWithSelector
+
+Decode data that starts with a 4-byte selector: returns the selector and decoded parameters (data after the selector).
+
+```go
+selector, values, err := abi.DecodeWithSelector(params, data)
+// selector is [4]byte, values is []any from data[4:]
+```
+
+- **Signature:** `DecodeWithSelector(params []AbiParam, data []byte) ([4]byte, []any, error)`
+
+## Go notes
+
+- For decoding **function calldata** or **return data** with a parsed ABI, use contract-level [DecodeFunctionData](/docs/contract/abi-decoding/#decodefunctiondata) and [DecodeFunctionResult](/docs/contract/abi-decoding/#decodefunctionresult).
+
+## See also
+
+- [Encode Parameters](/docs/abi/encode-parameters/) — EncodeAbiParameters
+- [Parse ABI](/docs/abi/parse/) — get a parsed ABI for contract decoding
+- [Types](/docs/contract/abi-types/) — AbiParam and type mapping

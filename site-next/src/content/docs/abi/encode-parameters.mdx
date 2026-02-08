@@ -1,0 +1,85 @@
+---
+title: Encode ABI Parameters
+description: Encode values from ABI parameter definitions without a parsed contract ABI in viem-go
+---
+
+**EncodeAbiParameters** encodes values from a list of ABI parameter definitions. It is a **standalone** function: no parsed ABI required. Use **AbiParam** for each parameter (Name optional, Type required, Components for tuples).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { encodeAbiParameters } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## EncodeAbiParameters
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ChefBingbong/viem-go/abi"
+)
+
+params := []abi.AbiParam{
+    {Name: "x", Type: "string"},
+    {Name: "y", Type: "uint256"},
+    {Name: "z", Type: "bool"},
+}
+values := []any{"wagmi", big.NewInt(420), true}
+
+encoded, err := abi.EncodeAbiParameters(params, values)
+if err != nil {
+    log.Fatal(err)
+}
+// encoded is []byte; use hex.EncodeToString(encoded) for 0x...`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const encodedData = encodeAbiParameters(
+  [
+    { name: 'x', type: 'string' },
+    { name: 'y', type: 'uint' },
+    { name: 'z', type: 'bool' },
+  ],
+  ['wagmi', 420n, true]
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Signature:** `EncodeAbiParameters(params []AbiParam, values []any) ([]byte, error)`
+- **Params** and **values** must have the same length.
+- See [ABI Types](/docs/contract/abi-types/) for **AbiParam** and Solidity → Go type mapping.
+
+## Go notes
+
+- All encode functions return **[]byte**; prefix with `0x` when you need a hex string.
+- For encoding **function calldata** (selector + args) with a parsed ABI, use contract-level [EncodeFunctionData](/docs/contract/abi-encoding/#encodefunctiondata).
+
+## See also
+
+- [Decode Parameters](/docs/abi/decode-parameters/) — DecodeAbiParameters
+- [Parse ABI](/docs/abi/parse/) — get a parsed ABI for contract encoding
+- [Types](/docs/contract/abi-types/) — AbiParam and type mapping

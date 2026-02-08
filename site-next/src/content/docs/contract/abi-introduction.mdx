@@ -1,0 +1,104 @@
+---
+title: ABI Introduction
+description: Contract ABI: using a parsed ABI for encoding and decoding contract calls, events, and errors in viem-go
+---
+
+This section covers **contract-level** ABI usage: encoding function calldata, event topics, and errors, and decoding function results and event logs using a **parsed ABI**. To get a parsed ABI, use **abi.Parse(jsonABI)** — see [Parse ABI](/docs/abi/parse/) for full parsing docs.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "encoding/hex"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ethereum/go-ethereum/common"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { encodeFunctionData, decodeFunctionResult } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## ABI type
+
+After parsing, you get an **ABI** struct:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **Functions** | `map[string]Function` | Function name → definition. |
+| **Events** | `map[string]Event` | Event name → definition. |
+| **Errors** | `map[string]Error` | Error name → definition. |
+
+Helper methods:
+
+- **GethABI() *abi.ABI** — underlying go-ethereum ABI.
+- **Raw() []byte** — original JSON bytes.
+- **HasFunction(name string) bool**
+- **HasEvent(name string) bool**
+- **FunctionNames() []string**
+- **EventNames() []string**
+
+## Function type
+
+Each **Function** has:
+
+- **Name** — function name.
+- **Inputs** — `[]Parameter` (name, type, components for tuples).
+- **Outputs** — `[]Parameter`.
+- **StateMutability** — `Pure`, `View`, `NonPayable`, `Payable`.
+- **Selector** — `[4]byte` (first 4 bytes of keccak256(signature)).
+- **Signature** — e.g. `"transfer(address,uint256)"`.
+- **IsReadOnly() bool** — true for Pure/View.
+
+## Event type
+
+Each **Event** has:
+
+- **Name** — event name.
+- **Inputs** — `[]Parameter` (each may be **Indexed**).
+- **Anonymous** — whether the event is anonymous.
+- **Topic** — `common.Hash` (keccak256 of event signature).
+- **Signature** — e.g. `"Transfer(address,address,uint256)"`.
+
+## Error type
+
+Each **Error** has:
+
+- **Name** — error name.
+- **Inputs** — `[]Parameter`.
+- **Selector** — `[4]byte` (first 4 bytes of keccak256(signature)).
+- **Signature** — e.g. `"InsufficientBalance(uint256,uint256)"`.
+
+## Parameter type
+
+**Parameter** (used in function/event/error inputs/outputs):
+
+- **Name** — parameter name.
+- **Type** — Solidity type string (e.g. `"address"`, `"uint256"`, `"tuple"`).
+- **Indexed** — for events, whether the parameter is indexed.
+- **Components** — for tuple types, nested parameters.
+
+## State mutability
+
+Constants: **Pure**, **View**, **NonPayable**, **Payable**. Use **ParseStateMutability(s string)** to parse a string.
+
+## Go notes
+
+- The ABI struct is built from go-ethereum’s parser; **MarshalJSON** / **UnmarshalJSON** are implemented so the ABI can be serialized as the original JSON.
+
+## See also
+
+- [Parse ABI](/docs/abi/parse/) — Parse, ParseFromString, MustParse, ParseItems
+- [Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData, EncodeEventTopics, EncodeErrorResult
+- [Decoding](/docs/contract/abi-decoding/) — DecodeFunctionData, DecodeFunctionResult, DecodeEventLog, DecodeErrorResult
+- [Types](/docs/contract/abi-types/) — AbiParam, Parameter, type mapping
+- [Selectors & items](/docs/contract/abi-selectors/) — ComputeSelector, FormatAbiItem, ParseEventLogs

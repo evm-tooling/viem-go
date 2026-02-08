@@ -1,309 +1,204 @@
 ---
-title: ABI Encoding & Decoding
-description: Encode and decode data according to the Ethereum ABI specification
+title: ABI Encoding
+description: Encode function data, event topics, errors, and return values for contract calls in viem-go
 ---
 
+Encode function calldata (with selector), event topics, custom errors, and function return values using a **parsed ABI**. For standalone parameter encoding without a contract ABI, see [Encode Parameters](/docs/abi/encode-parameters/) and [Encode Packed](/docs/abi/encode-packed/).
 
-viem-go provides utilities for encoding and decoding data according to the Ethereum ABI specification.
+## Import
 
-## Parsing ABIs
-
-Parse a JSON ABI into a usable structure:
-
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `import "github.com/ChefBingbong/viem-go/abi"
-
-// Parse from JSON string
-parsed, err := abi.Parse([]byte(\`[
-    {
-        "name": "transfer",
-        "type": "function",
-        "inputs": [
-            {"name": "to", "type": "address"},
-            {"name": "amount", "type": "uint256"}
-        ],
-        "outputs": [{"type": "bool"}]
-    },
-    {
-        "name": "Transfer",
-        "type": "event",
-        "inputs": [
-            {"name": "from", "type": "address", "indexed": true},
-            {"name": "to", "type": "address", "indexed": true},
-            {"name": "value", "type": "uint256", "indexed": false}
-        ]
-    }
-]\`))
-if err != nil {
-    log.Fatal(err)
-}
-
-// Access functions
-transferFunc := parsed.Functions["transfer"]
-fmt.Println("Selector:", hex.EncodeToString(transferFunc.Selector[:]))
-
-// Access events
-transferEvent := parsed.Events["Transfer"]
-fmt.Println("Topic:", transferEvent.Topic.Hex())`
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { parseAbi, parseAbiItem } from 'viem'
-
-// Parse multiple ABI items
-const abi = parseAbi([
-  'function transfer(address to, uint256 amount) returns (bool)',
-  'event Transfer(address indexed from, address indexed to, uint256 value)',
-])
-
-// Parse single item
-const func = parseAbiItem('function transfer(address to, uint256 amount)')`
+      code: `import { encodeFunctionData, encodeEventTopics } from 'viem'`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Encoding Function Calls
+## EncodeFunctionData
 
-### encodeFunctionData
+Encode a function call including the 4-byte selector. Use a **parsed ABI** and the function name plus arguments.
 
-Encode a function call for use in a transaction's `data` field:
-
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `// Using parsed ABI
-data, err := parsed.EncodeCall("transfer",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)
+
+// parsed is *abi.ABI from abi.Parse(...)
+data, err := parsed.EncodeFunctionData("transfer",
     common.HexToAddress("0xRecipient..."),
     big.NewInt(1000000),
 )
-fmt.Printf("Encoded: 0x%x\\n", data)
-
-// Or using EncodeFunctionData helper
-data, err := client.EncodeFunctionData(client.EncodeFunctionDataOptions{
-    ABI:          abiJSON,
-    FunctionName: "transfer",
-    Args:         []any{recipient, amount},
-})`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { encodeFunctionData } from 'viem'
-
-const data = encodeFunctionData({
-  abi,
-  functionName: 'transfer',
-  args: [recipient, amount],
-})`
-    }
-  ]}
-/>
-
-### Encoding with Different Types
-
-```go
-// Address
-addr := common.HexToAddress("0x...")
-
-// Uint256
-amount := big.NewInt(1000000)
-
-// Bytes
-data := []byte{0x01, 0x02, 0x03}
-
-// Bytes32
-var fixedBytes [32]byte
-copy(fixedBytes[:], someHash)
-
-// String
-name := "Hello"
-
-// Bool
-approved := true
-
-// Array
-addresses := []common.Address{addr1, addr2, addr3}
-
-// Tuple/Struct
-type Order struct {
-    Maker  common.Address
-    Amount *big.Int
-}
-order := Order{Maker: addr, Amount: amount}
-```
-
-## Decoding Function Results
-
-### decodeFunctionResult
-
-Decode the return value from a contract call:
-
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `// Decode using parsed ABI
-results, err := parsed.DecodeFunctionResult("balanceOf", resultData)
 if err != nil {
     log.Fatal(err)
 }
-balance := results[0].(*big.Int)
-
-// Or using DecodeFunctionResult helper
-results, err := client.DecodeFunctionResult(client.DecodeFunctionResultOptions{
-    ABI:          abiJSON,
-    FunctionName: "balanceOf",
-    Data:         resultData,
-})`
+// data is []byte (selector + ABI-encoded args); use as tx data`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { decodeFunctionResult } from 'viem'
-
-const balance = decodeFunctionResult({
+      code: `const data = encodeFunctionData({
   abi,
-  functionName: 'balanceOf',
-  data: resultData,
-})`
+  functionName: 'transfer',
+  args: [recipient, amount],
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Encoding Event Topics
+- **Signature:** `(a *ABI) EncodeFunctionData(functionName string, args ...any) ([]byte, error)`
+- Returns **selector (4 bytes) + ABI-encoded arguments**. Use for transaction `data`.
 
-Encode event topics for filtering logs:
+### EncodeFunctionArgs
 
-```go
-// Get event topic (function signature hash)
-topic := parsed.Events["Transfer"].Topic
-fmt.Println("Topic:", topic.Hex())
-// 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
-
-// Filter logs by event
-logs, err := publicClient.GetLogs(ctx, types.FilterQuery{
-    Topics: [][]common.Hash{{topic}},
-})
-```
-
-## Decoding Event Logs
-
-Decode log data back into structured values:
+Encode only the arguments (no selector). Useful for constructor args or when you prepend a custom selector.
 
 ```go
-// Assuming you have a log from GetLogs
-log := logs[0]
-
-// The indexed parameters are in Topics[1:]
-from := common.BytesToAddress(log.Topics[1].Bytes())
-to := common.BytesToAddress(log.Topics[2].Bytes())
-
-// Non-indexed parameters are in Data
-value := new(big.Int).SetBytes(log.Data)
-
-fmt.Printf("Transfer: %s -> %s: %s\n", from.Hex(), to.Hex(), value.String())
+argsOnly, err := parsed.EncodeFunctionArgs("transfer", to, amount)
 ```
 
-## Function Selectors
+### EncodeFunctionDataWithSelector
 
-Get the 4-byte function selector:
+Encode arguments and prepend a custom 4-byte selector:
 
-<CodeGroup 
+```go
+var customSelector [4]byte
+copy(customSelector[:], ...)
+data, err := parsed.EncodeFunctionDataWithSelector(customSelector, "transfer", to, amount)
+```
 
+### EncodeConstructor
+
+Encode constructor arguments (no selector):
+
+```go
+ctorData, err := parsed.EncodeConstructor(arg1, arg2)
+```
+
+## EncodeEventTopics
+
+Encode indexed event parameters as topic hashes. First topic is the event signature (unless anonymous); then one topic per indexed argument.
+
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)
 
-// From function signature
-selector := hash.ToFunctionSelector("transfer(address,uint256)")
-fmt.Printf("Selector: 0x%x\\n", selector) // 0xa9059cbb
-
-// From parsed ABI
-selector := parsed.Functions["transfer"].Selector`
+// Event Transfer(address indexed from, address indexed to, uint256 value)
+topics, err := parsed.EncodeEventTopics("Transfer",
+    common.HexToAddress("0xFrom..."),
+    common.HexToAddress("0xTo..."),
+)
+if err != nil {
+    log.Fatal(err)
+}
+// topics[0] = event sig, topics[1]=from, topics[2]=to
+// Use topics for eth_getLogs filter`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { toFunctionSelector } from 'viem'
-
-const selector = toFunctionSelector('function transfer(address, uint256)')
-// 0xa9059cbb`
+      code: `const topics = encodeEventTopics({
+  abi,
+  eventName: 'Transfer',
+  args: [from, to],
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Event Signatures
+- **Signature:** `(a *ABI) EncodeEventTopics(eventName string, indexedArgs ...any) ([][]byte, error)`
+- Pass **nil** for an indexed argument to mean “match any” (wildcard).
 
-Get the event topic hash:
+## EncodeErrorResult
 
-<CodeGroup 
+Encode a custom error (selector + arguments). Used when building revert data.
 
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `import "github.com/ChefBingbong/viem-go/utils/hash"
-
-// From event signature
-topic := hash.ToEventSelector("Transfer(address,address,uint256)")
-fmt.Printf("Topic: %s\\n", topic.Hex())
-
-// From parsed ABI
-topic := parsed.Events["Transfer"].Topic`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { toEventSelector } from 'viem'
-
-const topic = toEventSelector('event Transfer(address, address, uint256)')`
-    }
-  ]}
-/>
-
-## Packed Encoding
-
-For non-standard encoding (e.g., `abi.encodePacked` in Solidity):
-
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/abi"
 
-// encodePacked equivalent
-packed, err := abi.EncodePacked(
-    []abi.PackedValue{
-        {Type: "address", Value: common.HexToAddress("0x...")},
-        {Type: "uint256", Value: big.NewInt(1000)},
-        {Type: "string", Value: "hello"},
-    },
-)`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { encodePacked } from 'viem'
-
-const packed = encodePacked(
-  ['address', 'uint256', 'string'],
-  ['0x...', 1000n, 'hello']
-)`
+// Error InsufficientBalance(uint256 balance, uint256 required)
+encoded, err := parsed.EncodeErrorResult("InsufficientBalance", balance, required)
+if err != nil {
+    log.Fatal(err)
+}
+// encoded = selector + ABI-encoded args`,
+      showLineNumbers: false
     }
   ]}
 />
+
+- **Signature:** `(a *ABI) EncodeErrorResult(errorName string, args ...any) ([]byte, error)`
+- Errors with no inputs return only the 4-byte selector.
+
+## EncodeFunctionResult
+
+Encode return values for a function (e.g. for testing or off-chain simulation). Inverse of **DecodeFunctionResult**.
+
+```go
+encoded, err := parsed.EncodeFunctionResult("balanceOf", big.NewInt(1000))
+```
+
+- **Signature:** `(a *ABI) EncodeFunctionResult(functionName string, values ...any) ([]byte, error)`
+
+## PrepareEncodeFunctionData
+
+Resolve an overloaded function by name and arguments, and get the selector and resolved name. Useful before encoding the same function many times.
+
+```go
+prepared, err := parsed.PrepareEncodeFunctionData("transfer", to, amount)
+if err != nil {
+    log.Fatal(err)
+}
+// prepared.FunctionName, prepared.FunctionSelector
+data, err := parsed.EncodeWithPrepared(prepared, to, amount)
+```
+
+- **PrepareEncodeFunctionData(functionName string, args ...any) (*PreparedFunctionData, error)**
+- **PrepareEncodeFunctionDataBySelector(selector [4]byte) (*PreparedFunctionData, error)**
+- **EncodeWithPrepared(prepared *PreparedFunctionData, args ...any) ([]byte, error)**
+
+## Go notes
+
+- All encode functions return **[]byte**; prefix with `0x` when you need a hex string.
+- **EncodeFunctionData** and **Pack** are equivalent; **EncodeFunctionData** is the preferred name.
+- Addresses: use **common.Address** or a hex string; the package converts as needed for encoding.
+
+## See also
+
+- [Decoding](/docs/contract/abi-decoding/) — decode calldata, return data, events, errors
+- [Encode Parameters](/docs/abi/encode-parameters/) — standalone EncodeAbiParameters
+- [Encode Packed](/docs/abi/encode-packed/) — standalone EncodePacked
+- [Types](/docs/contract/abi-types/) — AbiParam and Solidity → Go type mapping

@@ -1,0 +1,138 @@
+---
+title: Parse ABI
+description: Parse JSON ABIs into an ABI struct or into raw items in viem-go
+---
+
+The **abi** package parses Ethereum JSON ABIs so you can encode/decode contract calls, events, and errors. Use **Parse** (or **ParseFromString** / **MustParse**) to get an **\*abi.ABI**; use **ParseItems** to get a slice of raw items for inspection without the typed maps.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "encoding/hex"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ethereum/go-ethereum/common"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { parseAbi } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parse
+
+Parse a JSON ABI (bytes) into an **\*abi.ABI** that exposes **Functions**, **Events**, and **Errors** maps.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+jsonABI := []byte(\`[
+    {
+        "name": "transfer",
+        "type": "function",
+        "inputs": [
+            {"name": "to", "type": "address"},
+            {"name": "amount", "type": "uint256"}
+        ],
+        "outputs": [{"type": "bool"}]
+    },
+    {
+        "name": "Transfer",
+        "type": "event",
+        "inputs": [
+            {"name": "from", "type": "address", "indexed": true},
+            {"name": "to", "type": "address", "indexed": true},
+            {"name": "value", "type": "uint256", "indexed": false}
+        ]
+    }
+]\`)
+
+parsed, err := abi.Parse(jsonABI)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Access by name
+transferFn := parsed.Functions["transfer"]
+fmt.Println("Selector:", hex.EncodeToString(transferFn.Selector[:]))
+
+transferEv := parsed.Events["Transfer"]
+fmt.Println("Topic:", transferEv.Topic.Hex())`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const abi = parseAbi([
+  'function transfer(address to, uint256 amount) returns (bool)',
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
+])`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Parse(jsonABI []byte) (*ABI, error)** — parse from JSON bytes.
+- **ParseFromString(jsonABI string) (*ABI, error)** — parse from string.
+- **MustParse(jsonABI []byte) *ABI** — panic on error.
+
+## ABI type
+
+After parsing, you get an **ABI** struct:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **Functions** | `map[string]Function` | Function name → definition. |
+| **Events** | `map[string]Event` | Event name → definition. |
+| **Errors** | `map[string]Error` | Error name → definition. |
+
+Helper methods:
+
+- **GethABI() *abi.ABI** — underlying go-ethereum ABI.
+- **Raw() []byte** — original JSON bytes.
+- **HasFunction(name string) bool**
+- **HasEvent(name string) bool**
+- **FunctionNames() []string**
+- **EventNames() []string**
+
+## ParseItems
+
+Parse the JSON ABI into a slice of **ABIItem** structs for inspection. Each item has **Type**, **Name**, **Inputs**, **Outputs**, **StateMutability**, **Anonymous**. Does not build the typed **Functions** / **Events** / **Errors** maps.
+
+```go
+items, err := abi.ParseItems(jsonABI)
+if err != nil {
+    log.Fatal(err)
+}
+for _, item := range items {
+    fmt.Println(item.Type, item.Name)
+}
+```
+
+- **ParseItems(jsonABI []byte) ([]ABIItem, error)**
+- **ABIItem** has: **Type** (e.g. `"function"`, `"event"`), **Name**, **Inputs** (`[]ABIInput`), **Outputs**, **StateMutability**, **Anonymous**.
+
+## Go notes
+
+- viem-go has no human-readable ABI strings like viem’s `parseAbi("function transfer(...)")`; use **Parse** with JSON ABI bytes.
+- The ABI struct is built from go-ethereum’s parser; **MarshalJSON** / **UnmarshalJSON** are implemented so the ABI can be serialized as the original JSON.
+
+## See also
+
+- [Encode Parameters](/docs/abi/encode-parameters/) — EncodeAbiParameters
+- [Decode Parameters](/docs/abi/decode-parameters/) — DecodeAbiParameters
+- [Get Abi Item](/docs/abi/get-abi-item/) — lookup by name or selector
+- [Contract ABI Introduction](/docs/contract/abi-introduction/) — using a parsed ABI for contract encoding/decoding

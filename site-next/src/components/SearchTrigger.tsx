@@ -71,7 +71,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 min-w-[300px] h-10 px-3 rounded-[12px] border border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-200 hover:border-primary/40 hover:text-gray-2 hover-glow hover-glow-lg"
+        className="flex py-2 items-center gap-2 min-w-[300px] h-12 px-3 rounded-[16px] border border-[1px] border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-200 hover:border-primary/40 hover:text-gray-2 hover:opacity-65"
       >
         <svg
           className="w-4 h-4 shrink-0"

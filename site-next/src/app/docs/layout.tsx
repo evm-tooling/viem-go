@@ -12,7 +12,7 @@ export default function DocsLayout({
       <Header />
       <div className="flex h-[calc(100vh-3rem)] bg-dark-deep/50">
         <DocsSidebar />
-        <main className="flex-1  g-dark-deep/50 min-w-0 overflow-y-auto bg-dark-bg relative z-10 lg:rounded-tl-2xl lg:border-l lg:border-t lg:border-accent/10 lg:-ml-px">
+        <main className="flex-1 bg-dark-deep/50 min-w-0 overflow-y-auto bg-dark-bg relative z-10 lg:rounded-tl-3xl lg:border-l lg:border-t lg:border-[1px] lg:border-accent/10 lg:-ml-px">
           <div className="py-8 px-6 lg:px-12 lg:pr-16">
             {children}
           </div>

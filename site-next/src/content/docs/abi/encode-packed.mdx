@@ -1,0 +1,81 @@
+---
+title: Encode Packed
+description: Non-padded ABI encoding (abi.encodePacked) in viem-go
+---
+
+**EncodePacked** performs non-padded encoding (like Solidity’s `abi.encodePacked`): values are concatenated without 32-byte padding. It is a **standalone** function and does not require a parsed ABI.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { encodePacked } from 'viem'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## EncodePacked
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/abi"
+)
+
+types := []string{"address", "uint256", "string"}
+values := []any{
+    common.HexToAddress("0x14dC79964da2C08b23698B3D3cc7Ca32193d9955"),
+    big.NewInt(420),
+    "hello",
+}
+
+packed, err := abi.EncodePacked(types, values)
+if err != nil {
+    log.Fatal(err)
+}
+// packed is []byte`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const packed = encodePacked(
+  ['address', 'uint256', 'string'],
+  ['0x...', 420n, 'hello']
+)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Signature:** `EncodePacked(types []string, values []any) ([]byte, error)`
+- **types** and **values** must have the same length.
+- Supports address, string, bytes, bool, int/uint, fixed bytes, and arrays.
+
+## Go notes
+
+- Use standard ABI encoding (32-byte padded) for contract calls; use **EncodePacked** when you need packed hashes or compact encoding (e.g. EIP-712, custom hashing).
+
+## See also
+
+- [Encode Parameters](/docs/abi/encode-parameters/) — padded ABI parameter encoding
+- [Contract Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData for calldata
