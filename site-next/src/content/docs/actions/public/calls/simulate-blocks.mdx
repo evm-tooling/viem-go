@@ -1,0 +1,220 @@
+---
+title: simulateBlocks
+description: Simulates multiple blocks and returns their results
+---
+
+# simulateBlocks
+
+Simulates multiple blocks and returns their results.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0x...")
+calldata := common.FromHex("0x...")
+
+result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks: []public.SimulateBlock{ // [!code focus:5]
+        {
+            Calls: []public.SimulateBlockCall{
+                {
+                    To:   &contractAddr,
+                    Data: calldata,
+                },
+            },
+        },
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Simulated %d blocks", len(result))`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]BlockResult`
+
+An array of block results, each containing:
+- `Block formatters.Block` - The simulated block data
+- `Calls []CallResult` - The results of each call in the block
+
+## Parameters
+
+### Blocks (required)
+
+- **Type:** `[]SimulateBlock`
+
+The blocks to simulate.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks: []public.SimulateBlock{ // [!code focus:5]
+        {
+            Calls: []public.SimulateBlockCall{
+                {
+                    To:   &contractAddr,
+                    Data: calldata,
+                },
+            },
+        },
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to simulate at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks:      []public.SimulateBlock{...},
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to simulate at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks:   []public.SimulateBlock{...},
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ReturnFullTransactions (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Whether to return full transaction objects.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks:                []public.SimulateBlock{...},
+    ReturnFullTransactions: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### TraceTransfers (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables transfer tracing.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks:        []public.SimulateBlock{...},
+    TraceTransfers: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Validation (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables validation mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksParameters{
+    Blocks:     []public.SimulateBlock{...},
+    Validation: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+Uses [`eth_simulateV1`](https://github.com/ethereum/execution-apis/blob/main/src/engine/simulation.md) (if supported) for block simulation.

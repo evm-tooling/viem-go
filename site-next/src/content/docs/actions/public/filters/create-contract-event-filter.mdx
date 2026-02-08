@@ -1,0 +1,308 @@
+---
+title: createContractEventFilter
+description: Creates a filter to retrieve contract event logs with ABI decoding
+---
+
+# createContractEventFilter
+
+Creates a filter to retrieve contract event logs that can be used with `GetFilterChanges` or `GetFilterLogs`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+erc20ABI, _ := abi.ParseABI(\`[{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]\`)
+
+filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr, // [!code focus]
+    ABI:       erc20ABI, // [!code focus]
+    EventName: "Transfer", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+// Use filter.ID with GetFilterChanges or GetFilterLogs
+logs, err := public.GetFilterLogs(ctx, publicClient, public.GetFilterLogsParameters{
+    Filter: filter,
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createContractEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  abi: erc20ABI,
+  eventName: 'Transfer',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*CreateContractEventFilterReturnType`
+
+A filter object containing:
+- `ID FilterID` - The filter identifier
+- `Type string` - Always `"event"` for event filters
+- `ABI *abi.ABI` - The parsed ABI for decoding logs later
+- `EventName string` - The filtered event name (empty if filtering all events)
+- `Args []any` - The indexed args used for filtering
+- `Strict bool` - Whether strict mode is enabled
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+
+The contract address(es) to filter logs from.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr, // [!code focus]
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ABI (required)
+
+- **Type:** `any` (accepts `*abi.ABI`, JSON bytes, or string)
+
+The contract ABI for decoding event logs.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+erc20ABI, _ := abi.ParseABI(\`[{"anonymous":false,"inputs":[...],"name":"Transfer",...}]\`)
+filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI, // [!code focus]
+    EventName: "Transfer",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### EventName (optional)
+
+- **Type:** `string`
+
+Filters logs to a specific event. If omitted, all events from the ABI are matched.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Args (optional)
+
+- **Type:** `[]any`
+
+Filters logs by indexed event parameters. Provide indexed args in order (use nil for "any" match).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `senderAddr := common.HexToAddress("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")
+filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Args:      []any{senderAddr, nil}, // from=specific, to=any // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FromBlock (optional)
+
+- **Type:** `*uint64`
+
+The block number to start filtering from. Mutually exclusive with `FromBlockTag`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `fromBlock := uint64(16330000)
+filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    FromBlock: &fromBlock, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FromBlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to start filtering from. Mutually exclusive with `FromBlock`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:      contractAddr,
+    ABI:          erc20ABI,
+    EventName:    "Transfer",
+    FromBlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ToBlock (optional)
+
+- **Type:** `*uint64`
+
+The block number to stop filtering at. Mutually exclusive with `ToBlockTag`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `toBlock := uint64(16330050)
+filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    ToBlock:   &toBlock, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ToBlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    ToBlockTag: public.BlockTagLatest, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Strict (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Filters out logs that don't match the indexed/non-indexed arguments in the event ABI.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateContractEventFilter(ctx, publicClient, public.CreateContractEventFilterParameters{
+    Address:   contractAddr,
+    ABI:       erc20ABI,
+    EventName: "Transfer",
+    Strict:    true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter)

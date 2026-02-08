@@ -1,0 +1,189 @@
+---
+title: getFeeHistory
+description: Returns a collection of historical gas information
+---
+
+# getFeeHistory
+
+Returns a collection of historical gas information.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+history, err := public.GetFeeHistory(ctx, publicClient, public.GetFeeHistoryParameters{
+    BlockCount:        4, // [!code focus]
+    RewardPercentiles: []float64{25, 75}, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Fee history: %d blocks", len(history.Reward))`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const history = await publicClient.getFeeHistory({
+  blockCount: 4,
+  rewardPercentiles: [25, 75],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`formatters.FeeHistory`
+
+A formatted fee history containing:
+- `BaseFeePerGas []*big.Int` - Base fee per gas for each block
+- `GasUsedRatio []float64` - Gas used ratio for each block
+- `OldestBlock uint64` - Oldest block number in the range
+- `Reward [][]*big.Int` - Reward percentiles for each block
+
+## Parameters
+
+### BlockCount (required)
+
+- **Type:** `uint64`
+
+The number of blocks in the requested range. Between 1 and 1024 blocks can be requested in a single query.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `history, err := public.GetFeeHistory(ctx, publicClient, public.GetFeeHistoryParameters{
+    BlockCount:        4, // [!code focus]
+    RewardPercentiles: []float64{25, 75},
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const history = await publicClient.getFeeHistory({
+  blockCount: 4, // [!code focus]
+  rewardPercentiles: [25, 75],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### RewardPercentiles (required)
+
+- **Type:** `[]float64`
+
+A monotonically increasing list of percentile values to sample from each block's effective priority fees per gas in ascending order, weighted by gas used.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `history, err := public.GetFeeHistory(ctx, publicClient, public.GetFeeHistoryParameters{
+    BlockCount:        4,
+    RewardPercentiles: []float64{25, 75}, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const history = await publicClient.getFeeHistory({
+  blockCount: 4,
+  rewardPercentiles: [25, 75], // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The highest block number of the requested range.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+history, err := public.GetFeeHistory(ctx, publicClient, public.GetFeeHistoryParameters{
+    BlockCount:        4,
+    RewardPercentiles: []float64{25, 75},
+    BlockNumber:       &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+
+The highest block tag of the requested range (e.g., "latest").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `history, err := public.GetFeeHistory(ctx, publicClient, public.GetFeeHistoryParameters{
+    BlockCount:        4,
+    RewardPercentiles: []float64{25, 75},
+    BlockTag:          public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_feeHistory`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_feehistory)

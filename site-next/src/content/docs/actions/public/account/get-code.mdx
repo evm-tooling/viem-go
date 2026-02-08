@@ -1,0 +1,148 @@
+---
+title: getCode
+description: Retrieves the bytecode at an address
+---
+
+# getCode
+
+Retrieves the bytecode at an address.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+if code == nil {
+    log.Println("No contract deployed at this address")
+} else {
+    log.Printf("Contract bytecode length: %d bytes", len(code))
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]byte`
+
+The contract bytecode. Returns `nil` if no code exists at the address (empty account).
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+The contract address to retrieve bytecode for.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to get the code at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(12345)
+code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
+    Address:     common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+
+The block tag to get the code at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
+    Address:  common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_getCode`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getcode)

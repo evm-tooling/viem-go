@@ -10,7 +10,7 @@ export default function Hero() {
     <section className="relative pt-28 pb-6">
       {/* Background image overlay */}
       <div
-        className="absolute top-2 left-[45%] -translate-x-1/2 w-[110vw] bottom-0 bg-no-repeat bg-[center_top] bg-cover opacity-25 z-0 pointer-events-none scale-110"
+        className="absolute top-2 left-[45%] -translate-x-1/2 w-[110vw] bottom-0  bg-cover opacity-25 z-0 pointer-events-none scale-110"
         style={{
           backgroundImage: "url('/svg/hero-bg.svg')",
           maskImage:
@@ -19,6 +19,10 @@ export default function Hero() {
             "linear-gradient(to bottom, black 0%, black 30%, transparent 100%)",
         }}
       />
+            {/* <div
+        className="absolute top-5 left-[45%] -translate-x-1/2 w-[110vw] bottom-0  bg-cover opacity-25 z-0 pointer-events-none scale-110 bg-secondary"
+        
+      /> */}
 
       <div className="relative z-10 flex justify-between items-stretch gap-12 mb-20 mt-6 max-lg:flex-col max-lg:items-center max-lg:text-center">
         {/* Left - text content */}

@@ -1,0 +1,340 @@
+---
+title: estimateGas
+description: Estimates the gas necessary to complete a transaction without submitting it to the network
+---
+
+# estimateGas
+
+Estimates the gas necessary to complete a transaction without submitting it to the network.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+calldata := common.FromHex("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+senderAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account: &senderAddr, // [!code focus]
+    To:      &contractAddr, // [!code focus]
+    Data:    calldata, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Estimated gas: %d", gas)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const gas = await publicClient.estimateGas({
+  account,
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`uint64`
+
+The estimated gas amount in units of gas.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+
+The account attached to the transaction (msg.sender).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+senderAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account: &senderAddr, // [!code focus]
+    To:      &contractAddr,
+    Data:    calldata,
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const gas = await publicClient.estimateGas({
+  account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', // [!code focus]
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### To (optional)
+
+- **Type:** `*common.Address`
+
+The recipient address. If nil, this is treated as a deployment transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `contractAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account: &senderAddr,
+    To:      &contractAddr, // [!code focus]
+    Data:    calldata,
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const gas = await publicClient.estimateGas({
+  account,
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8', // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Data (optional)
+
+- **Type:** `[]byte`
+
+The calldata to send.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `calldata := common.FromHex("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account: &senderAddr,
+    To:      &contractAddr,
+    Data:    calldata, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const gas = await publicClient.estimateGas({
+  account,
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // [!code focus]
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+The amount of wei to send.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account: &senderAddr,
+    To:      &contractAddr,
+    Data:    calldata,
+    Value:   big.NewInt(1000000000000000000), // 1 ETH // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Gas (optional)
+
+- **Type:** `*uint64`
+
+The gas limit for the transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `gasLimit := uint64(21000)
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account: &senderAddr,
+    To:      &contractAddr,
+    Data:    calldata,
+    Gas:     &gasLimit, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+The max fee per gas (EIP-1559).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+maxFeePerGas := big.NewInt(20000000000) // 20 gwei
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account:       &senderAddr,
+    To:            &contractAddr,
+    Data:          calldata,
+    MaxFeePerGas:  maxFeePerGas, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxPriorityFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+The max priority fee per gas (EIP-1559).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+maxPriorityFeePerGas := big.NewInt(2000000000) // 2 gwei
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account:             &senderAddr,
+    To:                  &contractAddr,
+    Data:                calldata,
+    MaxPriorityFeePerGas: maxPriorityFeePerGas, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to estimate at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account:     &senderAddr,
+    To:          &contractAddr,
+    Data:        calldata,
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to estimate at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
+    Account:  &senderAddr,
+    To:       &contractAddr,
+    Data:     calldata,
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### StateOverride (optional)
+
+- **Type:** `types.StateOverride`
+
+State overrides for the estimation.
+
+## JSON-RPC Method
+
+[`eth_estimateGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_estimategas)

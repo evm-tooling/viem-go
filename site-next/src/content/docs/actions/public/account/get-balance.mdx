@@ -1,0 +1,183 @@
+---
+title: getBalance
+description: Returns the balance of an address in wei
+---
+
+# getBalance
+
+Returns the balance of an address in wei.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Balance: %s wei", balance.String())`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.getBalance({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+})
+// @log: > 10000000000000000000000n (wei)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*big.Int`
+
+The balance of the address in wei.
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+The address of the account.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.getBalance({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e', // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The balance of the account at a block number.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(69420)
+balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters{
+    Address:     common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.getBalance({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+  blockNumber: 69420n  // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The balance of the account at a block tag.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters{
+    Address:  common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.getBalance({
+  address: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+  blockTag: 'safe'  // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Tips
+
+- You can convert the balance to ether units using utility functions from your math library.
+
+## JSON-RPC Method
+
+[`eth_getBalance`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getbalance)

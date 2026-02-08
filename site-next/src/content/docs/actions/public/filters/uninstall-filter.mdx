@@ -1,0 +1,119 @@
+---
+title: uninstallFilter
+description: Destroys a filter and frees server resources
+---
+
+# uninstallFilter
+
+Destroys a filter and frees server resources.
+
+Filters timeout when they aren't requested with `eth_getFilterChanges` for a period of time, so this is mainly useful for cleanup when you're done with a filter early.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+filter, err := public.CreatePendingTransactionFilter(ctx, publicClient)
+if err != nil {
+    log.Fatal(err)
+}
+
+success, err := public.UninstallFilter(ctx, publicClient, filter.ID) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+if success {
+    log.Println("Filter successfully uninstalled")
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createPendingTransactionFilter()
+const uninstalled = await publicClient.uninstallFilter({ filter })
+// true`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`bool`
+
+A boolean indicating if the filter was successfully uninstalled.
+
+## Parameters
+
+### FilterID (required)
+
+- **Type:** `FilterID`
+
+The filter identifier to uninstall.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreatePendingTransactionFilter(ctx, publicClient)
+if err != nil {
+    log.Fatal(err)
+}
+
+success, err := public.UninstallFilter(ctx, publicClient, filter.ID) // [!code focus]`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createPendingTransactionFilter()
+const uninstalled = await publicClient.uninstallFilter({
+  filter // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_uninstallFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_uninstallfilter)

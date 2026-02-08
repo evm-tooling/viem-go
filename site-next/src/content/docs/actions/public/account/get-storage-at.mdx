@@ -1,0 +1,173 @@
+---
+title: getStorageAt
+description: Returns the value from a storage slot at a given address
+---
+
+# getStorageAt
+
+Returns the value from a storage slot at a given address.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+    Slot:    common.HexToHash("0x0"), // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Storage value: %x", value)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]byte`
+
+The raw 32-byte storage value. Returns `nil` if the storage slot is zero/empty.
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+The contract/account address to read storage from.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"), // [!code focus]
+    Slot:    common.HexToHash("0x0"),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Slot (required)
+
+- **Type:** `common.Hash`
+
+The 32-byte storage slot key.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParameters{
+    Address: common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    Slot:    common.HexToHash("0x0"), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to read the storage at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(12345)
+value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParameters{
+    Address:     common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    Slot:        common.HexToHash("0x0"),
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+
+The block tag to read the storage at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParameters{
+    Address:  common.HexToAddress("0xA0Cf798816D4b9b9866b5330EEa46a18382f251e"),
+    Slot:     common.HexToHash("0x0"),
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_getStorageAt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat)

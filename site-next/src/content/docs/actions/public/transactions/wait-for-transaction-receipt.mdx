@@ -1,0 +1,318 @@
+---
+title: waitForTransactionReceipt
+description: Waits for the transaction to be included on a block and returns the transaction receipt
+---
+
+# waitForTransactionReceipt
+
+Waits for the transaction to be included on a block (one confirmation), and then returns the transaction receipt.
+
+The `waitForTransactionReceipt` action additionally supports replacement detection (e.g., sped up transactions). Transactions can be replaced when a user modifies their transaction in their wallet (to speed up or cancel). Transactions are replaced when they are sent from the same nonce.
+
+There are 3 types of transaction replacement reasons:
+- **repriced**: The gas price has been modified (e.g., different maxFeePerGas)
+- **canceled**: The transaction has been canceled (e.g., value === 0, sent to self)
+- **replaced**: The transaction has been replaced (e.g., different value or data)
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "time"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
+defer cancel()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+txHash := common.HexToHash("0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d")
+receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash: txHash, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction mined in block %d", receipt.BlockNumber)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.waitForTransactionReceipt({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d'
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*types.Receipt`
+
+The transaction receipt.
+
+## Parameters
+
+### Hash (required)
+
+- **Type:** `common.Hash`
+
+The hash of the transaction to wait for.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+txHash := common.HexToHash("0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d")
+receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash: txHash, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.waitForTransactionReceipt({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d' // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Confirmations (optional)
+
+- **Type:** `uint64`
+- **Default:** `1`
+
+The number of confirmations (blocks that have passed) to wait before resolving.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash:          txHash,
+    Confirmations: 5, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.waitForTransactionReceipt({
+  confirmations: 5, // [!code focus]
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d'
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### CheckReplacement (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+
+Whether to check for transaction replacements.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `checkReplacement := false
+receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash:             txHash,
+    CheckReplacement: &checkReplacement, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### OnReplaced (optional)
+
+- **Type:** `func(ReplacementInfo)`
+
+Optional callback to emit if the transaction has been replaced.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash: txHash,
+    OnReplaced: func(info public.ReplacementInfo) { // [!code focus:3]
+        log.Printf("Transaction replaced: %s", info.Reason)
+    },
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.waitForTransactionReceipt({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d',
+  onReplaced: replacement => console.log(replacement) // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `4 seconds`
+
+Polling frequency.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash:            txHash,
+    PollingInterval: 12 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.waitForTransactionReceipt({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d',
+  pollingInterval: 12_000, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### RetryCount (optional)
+
+- **Type:** `int`
+- **Default:** `6`
+
+Number of times to retry if the transaction or block is not found.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash:       txHash,
+    RetryCount: 3, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### RetryDelay (optional)
+
+- **Type:** `func(int) time.Duration`
+- **Default:** Exponential backoff: `(1 << count) * 200ms`
+
+Time to wait between retries.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash: txHash,
+    RetryDelay: func(count int) time.Duration { // [!code focus:2]
+        return 10 * time.Second
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `180 seconds`
+
+Optional timeout to wait before stopping polling.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitForTransactionReceiptParameters{
+    Hash:    txHash,
+    Timeout: 60 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transaction = await publicClient.waitForTransactionReceipt({
+  hash: '0x4ca7ee652d57678f26e887c149ab0735f41de37bcad58c9f6d3ed5824f15b74d',
+  timeout: 60_000, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+Polls [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt) on each block until it has been processed. If a transaction has been replaced, calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) to find the replacement.

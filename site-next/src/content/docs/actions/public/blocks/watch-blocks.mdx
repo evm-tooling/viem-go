@@ -1,0 +1,260 @@
+---
+title: watchBlocks
+description: Watches and returns information for incoming blocks
+---
+
+# watchBlocks
+
+Watches and returns information for incoming blocks.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+Watch actions return a channel of events. Cancel the context to stop watching.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "fmt"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{}) // [!code focus]
+
+for event := range events { // [!code focus:5]
+    if event.Error != nil {
+        log.Printf("error: %v", event.Error)
+        continue
+    }
+    fmt.Printf("Block %d: %d transactions\n", event.Block.Number, len(event.Block.Transactions))
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`<-chan WatchBlocksEvent`
+
+A channel that emits `WatchBlocksEvent` structs containing:
+- `Block *types.Block` - The current block
+- `PrevBlock *types.Block` - The previous block (nil for first event)
+- `Error error` - Any error that occurred while fetching the block
+
+## Parameters
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+
+The block tag to watch.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchBlocks({
+  blockTag: 'safe', // [!code focus]
+  onBlock: block => console.log(block),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### EmitOnBegin (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Whether or not to emit the current block immediately when the watcher starts.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{
+    EmitOnBegin: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchBlocks({
+  emitOnBegin: true, // [!code focus]
+  onBlock: block => console.log(block),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### EmitMissed (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Whether or not to emit missed blocks to the channel.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{
+    EmitMissed: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchBlocks({
+  emitMissed: true, // [!code focus]
+  onBlock: block => console.log(block),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### IncludeTransactions (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Whether or not to include full transaction objects in the block data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{
+    IncludeTransactions: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchBlocks({
+  includeTransactions: true, // [!code focus]
+  onBlock: block => console.log(block),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Poll (optional)
+
+- **Type:** `*bool`
+- **Default:** `false` for WebSocket Transports, `true` for non-WebSocket Transports
+
+Whether or not to use a polling mechanism instead of a WebSocket subscription.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `poll := true
+events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{
+    Poll: &poll, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchBlocks({
+  poll: true, // [!code focus]
+  onBlock: block => console.log(block),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** Client's `PollingInterval`
+
+The interval between polls when using polling mode.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+events := public.WatchBlocks(ctx, publicClient, public.WatchBlocksParameters{
+    PollingInterval: 5 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const unwatch = publicClient.watchBlocks({
+  pollingInterval: 5_000, // [!code focus]
+  onBlock: block => console.log(block),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- When polling: calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) on a polling interval
+- When subscribing: uses [`eth_subscribe`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_subscribe) with `"newHeads"` event, then fetches full block

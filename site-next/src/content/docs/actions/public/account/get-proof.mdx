@@ -1,0 +1,184 @@
+---
+title: getProof
+description: Returns the account and storage values of the specified account including the Merkle-proof
+---
+
+# getProof
+
+Returns the account and storage values of the specified account including the Merkle-proof.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
+    Address:     common.HexToAddress("0x4200000000000000000000000000000000000016"), // [!code focus]
+    StorageKeys: []common.Hash{ // [!code focus:2]
+        common.HexToHash("0x4a932049252365b3eedbc5190e18949f2ec11f39d3bef2d259764799a1b27d99"),
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Account proof: %d account proof entries", len(proof.AccountProof))`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`formatters.Proof`
+
+Proof data containing:
+- `Address common.Address` - The account address
+- `AccountProof []string` - The account proof
+- `Balance *big.Int` - The account balance
+- `CodeHash common.Hash` - The code hash
+- `Nonce *int` - The account nonce
+- `StorageHash common.Hash` - The storage hash
+- `StorageProof []StorageProof` - Storage proofs for each requested key
+
+## Parameters
+
+### Address (required)
+
+- **Type:** `common.Address`
+
+Account address.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
+    Address:     common.HexToAddress("0x4200000000000000000000000000000000000016"), // [!code focus]
+    StorageKeys: []common.Hash{common.HexToHash("0x0")},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### StorageKeys (required)
+
+- **Type:** `[]common.Hash`
+
+Array of storage keys that should be proofed and included.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
+    Address: common.HexToAddress("0x4200000000000000000000000000000000000016"),
+    StorageKeys: []common.Hash{ // [!code focus:2]
+        common.HexToHash("0x4a932049252365b3eedbc5190e18949f2ec11f39d3bef2d259764799a1b27d99"),
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+Proof at a given block number.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(42069)
+proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
+    Address:     common.HexToAddress("0x4200000000000000000000000000000000000016"),
+    StorageKeys: []common.Hash{common.HexToHash("0x0")},
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+- **Default:** `"latest"`
+
+Proof at a given block tag.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
+    Address:     common.HexToAddress("0x4200000000000000000000000000000000000016"),
+    StorageKeys: []common.Hash{common.HexToHash("0x0")},
+    BlockTag:    public.BlockTagLatest, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+Calls [`eth_getProof`](https://eips.ethereum.org/EIPS/eip-1186) (EIP-1186).

@@ -1,0 +1,189 @@
+---
+title: getTransactionConfirmations
+description: Returns the number of blocks passed since the transaction was processed on a block
+---
+
+# getTransactionConfirmations
+
+Returns the number of blocks passed (confirmations) since the transaction was processed on a block.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+You can fetch confirmations by transaction hash:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+txHash := common.HexToHash("0x...")
+confirmations, err := public.GetTransactionConfirmations(ctx, publicClient, public.GetTransactionConfirmationsParameters{
+    Hash: &txHash, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Confirmations: %d", confirmations)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const confirmations = await publicClient.getTransactionConfirmations({
+  hash: '0x...'
+})
+// @log: 15n`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+Or using an existing transaction receipt:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `receipt, err := public.GetTransactionReceipt(ctx, publicClient, public.GetTransactionReceiptParameters{
+    Hash: txHash,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+confirmations, err := public.GetTransactionConfirmations(ctx, publicClient, public.GetTransactionConfirmationsParameters{
+    TransactionReceipt: receipt, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Confirmations: %d", confirmations)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const transactionReceipt = await publicClient.getTransactionReceipt({ hash: '...' })
+const confirmations = await publicClient.getTransactionConfirmations({
+  transactionReceipt
+})
+// 15n`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`uint64`
+
+The number of blocks passed since the transaction was processed. If confirmations is `0`, then the transaction has not been confirmed & processed yet.
+
+## Parameters
+
+### Hash (optional)
+
+- **Type:** `*common.Hash`
+
+The hash of the transaction. Optional if `TransactionReceipt` is provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+txHash := common.HexToHash("0x...")
+confirmations, err := public.GetTransactionConfirmations(ctx, publicClient, public.GetTransactionConfirmationsParameters{
+    Hash: &txHash, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.getTransactionConfirmations({
+  hash: '0x...'  // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### TransactionReceipt (optional)
+
+- **Type:** `*types.Receipt`
+
+The transaction receipt. Optional if `Hash` is provided.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `receipt, err := public.GetTransactionReceipt(ctx, publicClient, public.GetTransactionReceiptParameters{
+    Hash: txHash,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+confirmations, err := public.GetTransactionConfirmations(ctx, publicClient, public.GetTransactionConfirmationsParameters{
+    TransactionReceipt: receipt, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const balance = await publicClient.getTransactionConfirmations({
+  transactionReceipt: { ... }, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+Uses [`eth_getBlockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber) and [`eth_getTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByHash) or [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt) to calculate confirmations.

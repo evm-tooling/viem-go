@@ -1,0 +1,320 @@
+---
+title: fillTransaction
+description: Fills a transaction request with the necessary fields to be signed over
+---
+
+# fillTransaction
+
+Fills a transaction request with the necessary fields to be signed over.
+
+The function fills in missing fields like nonce, gas, gasPrice/maxFeePerGas, and returns both the raw transaction data and the filled transaction object.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+senderAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+recipientAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &senderAddr, // [!code focus]
+    To:      &recipientAddr, // [!code focus]
+    Value:   big.NewInt(1000000000000000000), // 1 ETH // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Nonce: %d, Gas: %d", result.Transaction.Nonce, result.Transaction.Gas)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*FillTransactionReturnType`
+
+An object containing:
+- `Raw []byte` - The RLP-encoded transaction ready to be signed
+- `Transaction *FilledTransaction` - The filled transaction with all fields populated
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+
+The account to fill the transaction for (msg.sender).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+account := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &account, // [!code focus]
+    To:      &recipientAddr,
+    Value:   big.NewInt(1000000000000000000),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### To (optional)
+
+- **Type:** `*common.Address`
+
+The recipient address.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `to := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &senderAddr,
+    To:      &to, // [!code focus]
+    Value:   big.NewInt(1000000000000000000),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Data (optional)
+
+- **Type:** `[]byte`
+
+Transaction data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &senderAddr,
+    To:      &recipientAddr,
+    Data:    []byte{0xc0, 0x2a, 0xaa, 0x39}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+The amount of wei to send.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &senderAddr,
+    To:      &recipientAddr,
+    Value:   big.NewInt(1000000000000000000), // 1 ETH // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Nonce (optional)
+
+- **Type:** `*uint64`
+
+The nonce for the transaction. If nil, will be filled by the RPC.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `nonce := uint64(42)
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &senderAddr,
+    To:      &recipientAddr,
+    Nonce:   &nonce, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Gas (optional)
+
+- **Type:** `*uint64`
+
+The gas limit. If nil, will be estimated.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `gas := uint64(21000)
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account: &senderAddr,
+    To:      &recipientAddr,
+    Gas:     &gas, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### GasPrice (optional)
+
+- **Type:** `*big.Int`
+
+The gas price (legacy transactions). If nil, will be estimated.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+gasPrice := big.NewInt(20000000000) // 20 gwei
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account:  &senderAddr,
+    To:       &recipientAddr,
+    GasPrice: gasPrice, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+The max fee per gas (EIP-1559). If nil, will be estimated.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+maxFeePerGas := big.NewInt(20000000000) // 20 gwei
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account:       &senderAddr,
+    To:            &recipientAddr,
+    MaxFeePerGas:  maxFeePerGas, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxPriorityFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+The max priority fee per gas (EIP-1559). If nil, will be estimated.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+maxPriorityFeePerGas := big.NewInt(2000000000) // 2 gwei
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account:             &senderAddr,
+    To:                  &recipientAddr,
+    MaxPriorityFeePerGas: maxPriorityFeePerGas, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BaseFeeMultiplier (optional)
+
+- **Type:** `*float64`
+- **Default:** `1.2` (20% buffer)
+
+The multiplier for the base fee.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `multiplier := 1.5
+result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionParameters{
+    Account:          &senderAddr,
+    To:               &recipientAddr,
+    BaseFeeMultiplier: &multiplier, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Notes
+
+- Not all Ethereum nodes support `eth_fillTransaction`. This is primarily supported by Geth-based nodes. If your node doesn't support this method, you may need to manually fill the transaction using `getTransactionCount`, `estimateGas`, and `getGasPrice`/`getMaxPriorityFeePerGas`.
+
+## JSON-RPC Method
+
+[`eth_fillTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_filltransaction)

@@ -1,0 +1,368 @@
+---
+title: multicall
+description: Batches multiple contract function calls into a single RPC call using the multicall3 contract
+---
+
+# multicall
+
+Batches multiple contract function calls into a single RPC call using the multicall3 contract.
+
+When the client has `Batch.Multicall` configured, concurrent `Multicall()` calls within the Wait window are automatically aggregated into a single larger multicall RPC call. This mirrors viem's `batch: { multicall: { ... } }` behavior.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+tokenAddr := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+userAddr := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+erc20ABI, _ := abi.ParseABI(\`[{"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}]\`)
+
+results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts: []public.MulticallContract{ // [!code focus:10]
+        {
+            Address:      tokenAddr,
+            ABI:          erc20ABI,
+            FunctionName: "balanceOf",
+            Args:         []any{userAddr},
+        },
+        {
+            Address:      tokenAddr,
+            ABI:          erc20ABI,
+            FunctionName: "totalSupply",
+        },
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+for i, result := range results {
+    if result.Status == "success" {
+        log.Printf("Call %d succeeded: %v", i, result.Result)
+    } else {
+        log.Printf("Call %d failed: %v", i, result.Error)
+    }
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const results = await publicClient.multicall({
+  contracts: [
+    {
+      address: tokenAddress,
+      abi: erc20ABI,
+      functionName: 'balanceOf',
+      args: [userAddress],
+    },
+    {
+      address: tokenAddress,
+      abi: erc20ABI,
+      functionName: 'totalSupply',
+    },
+  ],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`[]MulticallResult`
+
+An array of results, each containing:
+- `Status string` - Either `"success"` or `"failure"`
+- `Result any` - The decoded return value(s) if Status is `"success"`
+- `Error error` - The error if Status is `"failure"`
+
+## Parameters
+
+### Contracts (required)
+
+- **Type:** `[]MulticallContract`
+
+The list of contract calls to execute.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts: []public.MulticallContract{ // [!code focus:10]
+        {
+            Address:      tokenAddr,
+            ABI:          erc20ABI,
+            FunctionName: "balanceOf",
+            Args:         []any{userAddr},
+        },
+        {
+            Address:      tokenAddr,
+            ABI:          erc20ABI,
+            FunctionName: "totalSupply",
+        },
+    },
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const results = await publicClient.multicall({
+  contracts: [ // [!code focus:10]
+    {
+      address: tokenAddress,
+      abi: erc20ABI,
+      functionName: 'balanceOf',
+      args: [userAddress],
+    },
+    {
+      address: tokenAddress,
+      abi: erc20ABI,
+      functionName: 'totalSupply',
+    },
+  ],
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### AllowFailure (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+
+Determines whether to continue if individual calls fail. If true, failed calls will be marked with status "failure" but won't stop the entire multicall.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `allowFailure := false
+results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts:     []public.MulticallContract{...},
+    AllowFailure:  &allowFailure, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const results = await publicClient.multicall({
+  contracts: [...],
+  allowFailure: false, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BatchSize (optional)
+
+- **Type:** `int`
+- **Default:** `1024` bytes
+
+The maximum size in bytes for each batch of calls. Calls are chunked into batches based on their calldata size.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts: []public.MulticallContract{...},
+    BatchSize: 2048, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const results = await publicClient.multicall({
+  contracts: [...],
+  batchSize: 2048, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Deployless (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables deployless multicall using bytecode execution. This allows multicall on chains without a deployed multicall3 contract.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts:  []public.MulticallContract{...},
+    Deployless: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ShouldBatch (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Enables automatic batching of concurrent multicall calls when the client has batch configuration enabled.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts:   []public.MulticallContract{...},
+    ShouldBatch: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MulticallAddress (optional)
+
+- **Type:** `*common.Address`
+
+Overrides the default multicall3 contract address.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `customAddr := common.HexToAddress("0x...")
+results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts:       []public.MulticallContract{...},
+    MulticallAddress: &customAddr, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to execute the calls at. Mutually exclusive with `BlockTag`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts:   []public.MulticallContract{...},
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to execute the calls at. Mutually exclusive with `BlockNumber`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts: []public.MulticallContract{...},
+    BlockTag:  public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxConcurrentChunks (optional)
+
+- **Type:** `int`
+- **Default:** `4`
+
+Limits the number of concurrent chunk executions. This prevents overwhelming RPC endpoints. Set to 0 or negative for unlimited concurrency.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
+    Contracts:          []public.MulticallContract{...},
+    MaxConcurrentChunks: 8, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Tips
+
+- Multicall automatically chunks large batches of calls to avoid RPC size limits
+- Use `AllowFailure: true` to continue processing even if some calls fail
+- Enable `ShouldBatch` to automatically batch concurrent multicall calls
+- Use `Deployless: true` for chains without a deployed multicall3 contract
+
+## JSON-RPC Method
+
+Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) to execute calls via the multicall3 contract's `aggregate3` function.

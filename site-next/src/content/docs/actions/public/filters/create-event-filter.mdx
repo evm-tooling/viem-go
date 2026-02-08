@@ -1,0 +1,227 @@
+---
+title: createEventFilter
+description: Creates a filter to listen for new events
+---
+
+# createEventFilter
+
+Creates a filter object to receive logs matching the specified criteria.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+transferTopic := common.HexToHash("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
+
+filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr, // [!code focus]
+    Topics:  []any{transferTopic}, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+// Use filter.ID with GetFilterChanges to get new logs
+changes, err := public.GetFilterChangesLogs(ctx, publicClient, filter.ID)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  event: parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)'),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*CreateEventFilterReturnType`
+
+A filter object containing:
+- `ID FilterID` - The filter identifier
+- `Type string` - Always `"event"` for event filters
+
+## Parameters
+
+### Address (optional)
+
+- **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+
+The contract address(es) to filter logs from. Can be a single address or a slice of addresses.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Topics (optional)
+
+- **Type:** `[]any`
+
+The indexed event topics to filter. Each topic can be a single value or an array of values (OR condition).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `transferTopic := common.HexToHash("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
+filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr,
+    Topics:  []any{transferTopic}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FromBlock (optional)
+
+- **Type:** `*uint64`
+
+The block number to start filtering from. Mutually exclusive with `FromBlockTag`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `fromBlock := uint64(16330000)
+filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address:   contractAddr,
+    FromBlock: &fromBlock, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FromBlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to start filtering from. Mutually exclusive with `FromBlock`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address:      contractAddr,
+    FromBlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ToBlock (optional)
+
+- **Type:** `*uint64`
+
+The block number to stop filtering at. Mutually exclusive with `ToBlockTag`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `toBlock := uint64(16330050)
+filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr,
+    ToBlock: &toBlock, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ToBlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address:    contractAddr,
+    ToBlockTag: public.BlockTagLatest, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter)

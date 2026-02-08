@@ -1,0 +1,168 @@
+---
+title: getFilterChanges
+description: Returns a list of logs or hashes based on a filter since the last time it was called
+---
+
+# getFilterChanges
+
+Returns a list of logs or hashes based on a filter since the last time it was called.
+
+A filter can be created from:
+- [`createBlockFilter`](/docs/actions/public/blocks/create-block-filter)
+- [`createContractEventFilter`](/docs/actions/public/filters/create-contract-event-filter)
+- [`createEventFilter`](/docs/actions/public/filters/create-event-filter)
+- [`createPendingTransactionFilter`](/docs/actions/public/filters/create-pending-transaction-filter)
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+### Event Logs
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+filter, _ := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr,
+})
+
+logs, err := public.GetFilterChangesLogs(ctx, publicClient, filter.ID) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Found %d new logs", len(logs))`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+})
+const logs = await publicClient.getFilterChanges({ filter })`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Block Hashes
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, _ := public.CreateBlockFilter(ctx, publicClient)
+
+blockHashes, err := public.GetFilterChangesBlocks(ctx, publicClient, filter.ID) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Found %d new blocks", len(blockHashes))`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Pending Transaction Hashes
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, _ := public.CreatePendingTransactionFilter(ctx, publicClient)
+
+txHashes, err := public.GetFilterChangesTransactions(ctx, publicClient, filter.ID) // [!code focus]
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Found %d new pending transactions", len(txHashes))`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+The return type depends on the filter type:
+- `[]formatters.Log` - For event filters (via `GetFilterChangesLogs`)
+- `[]common.Hash` - For block filters (via `GetFilterChangesBlocks`)
+- `[]common.Hash` - For pending transaction filters (via `GetFilterChangesTransactions`)
+
+## Parameters
+
+### FilterID (required)
+
+- **Type:** `FilterID`
+
+The filter identifier returned by `CreateEventFilter`, `CreateBlockFilter`, or `CreatePendingTransactionFilter`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFilterParameters{
+    Address: contractAddr,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+logs, err := public.GetFilterChangesLogs(ctx, publicClient, filter.ID) // [!code focus]`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const filter = await publicClient.createEventFilter({
+  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+})
+const logs = await publicClient.getFilterChanges({
+  filter // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges)

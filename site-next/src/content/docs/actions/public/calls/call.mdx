@@ -1,0 +1,418 @@
+---
+title: call
+description: Executes a new message call immediately without submitting a transaction to the network
+---
+
+# call
+
+Executes a new message call immediately without submitting a transaction to the network.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+contractAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+calldata := common.FromHex("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:   &contractAddr, // [!code focus]
+    Data: calldata, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Call result: %x", result.Data)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const data = await publicClient.call({
+  account,
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Deployless Calls
+
+It is possible to call a function on a contract that has not been deployed yet. For instance, we may want to call a function on an [ERC-4337 Smart Account](https://eips.ethereum.org/EIPS/eip-4337) contract which has not been deployed.
+
+Viem-go offers two ways of performing a Deployless Call, via:
+- **Bytecode**: Execute code directly without deploying
+- **Deploy Factory**: "Temporarily deploys" a contract with a provided Deploy Factory, and calls the function on the deployed contract
+
+#### Bytecode
+
+The example below demonstrates how we can utilize a Deployless Call **via Bytecode**:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+contractBytecode := common.FromHex("0x...") // Contract bytecode
+calldata := common.FromHex("0x...") // Function call data
+
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    Code: contractBytecode, // [!code focus]
+    Data: calldata, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+#### Deploy Factory
+
+The example below demonstrates how we can utilize a Deployless Call **via a Deploy Factory**:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+factoryAddr := common.HexToAddress("0xE8Df82fA4E10e6A12a9Dab552bceA2acd26De9bb")
+contractAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+factoryCalldata := common.FromHex("0x...") // Factory deployment calldata
+contractCalldata := common.FromHex("0x...") // Contract function call
+
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    Factory:     &factoryAddr, // [!code focus]
+    FactoryData: factoryCalldata, // [!code focus]
+    To:          &contractAddr, // [!code focus]
+    Data:        contractCalldata, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*CallReturnType`
+
+An object containing:
+- `Data []byte` - The return data from the call, or nil if the call returned empty
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+
+The account attached to the call (msg.sender).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+account := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    Account: &account, // [!code focus]
+    To:      &contractAddr,
+    Data:    calldata,
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const data = await publicClient.call({
+  account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', // [!code focus]
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### To (optional)
+
+- **Type:** `*common.Address`
+
+The contract address to call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `contractAddr := common.HexToAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:   &contractAddr, // [!code focus]
+    Data: calldata,
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const data = await publicClient.call({
+  account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8', // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Data (optional)
+
+- **Type:** `[]byte`
+
+The calldata to send.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `calldata := common.FromHex("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:   &contractAddr,
+    Data: calldata, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const data = await publicClient.call({
+  account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  data: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // [!code focus]
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+The amount of wei to send with the call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:    &contractAddr,
+    Data:  calldata,
+    Value: big.NewInt(1000000000000000000), // 1 ETH // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to execute the call at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `blockNum := uint64(12345)
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:          &contractAddr,
+    Data:        calldata,
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to execute the call at (e.g., "latest", "pending").
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:       &contractAddr,
+    Data:     calldata,
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Code (optional)
+
+- **Type:** `[]byte`
+
+Bytecode for deployless calls (call code without deploying). Mutually exclusive with `Factory`/`FactoryData`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `contractBytecode := common.FromHex("0x...")
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    Code: contractBytecode, // [!code focus]
+    Data: calldata,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Factory (optional)
+
+- **Type:** `*common.Address`
+
+The contract deployment factory address (e.g., Create2 factory). Used with `FactoryData` for deployless calls via factory.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `factoryAddr := common.HexToAddress("0xE8Df82fA4E10e6A12a9Dab552bceA2acd26De9bb")
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    Factory:     &factoryAddr, // [!code focus]
+    FactoryData: factoryCalldata,
+    To:          &contractAddr,
+    Data:        calldata,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FactoryData (optional)
+
+- **Type:** `[]byte`
+
+The calldata to execute on the factory to deploy the contract. Used with `Factory` for deployless calls via factory.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := public.Call(ctx, publicClient, public.CallParameters{
+    Factory:     &factoryAddr,
+    FactoryData: factoryCalldata, // [!code focus]
+    To:          &contractAddr,
+    Data:        calldata,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Batch (optional)
+
+- **Type:** `*bool`
+
+Enables multicall batching for this call. If nil, uses client's batch setting.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `batch := true
+result, err := public.Call(ctx, publicClient, public.CallParameters{
+    To:    &contractAddr,
+    Data:  calldata,
+    Batch: &batch, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### StateOverride (optional)
+
+- **Type:** `types.StateOverride`
+
+State overrides for the call.
+
+### BlockOverrides (optional)
+
+- **Type:** `*types.BlockOverrides`
+
+Block-level overrides (baseFeePerGas, gasLimit, etc.).
+
+## JSON-RPC Method
+
+[`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call)

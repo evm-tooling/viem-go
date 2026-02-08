@@ -1,0 +1,197 @@
+---
+title: createAccessList
+description: Creates an access list for a transaction
+---
+
+# createAccessList
+
+Creates an access list for a transaction.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = publicClient.Close() }()
+
+accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
+    To:   common.HexToAddress("0x..."), // [!code focus]
+    Data: []byte{0x12, 0x34, 0x56}, // [!code focus]
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const accessList = await publicClient.createAccessList({
+  to: '0x...',
+  data: '0x123456',
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*CreateAccessListReturnType`
+
+An access list object containing:
+- `AccessList types.AccessList` - The access list
+- `GasUsed *big.Int` - The gas used
+
+## Parameters
+
+### To (optional)
+
+- **Type:** `*common.Address`
+
+The transaction recipient.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+to := common.HexToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
+accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
+    To: &to, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Data (optional)
+
+- **Type:** `[]byte`
+
+Transaction data.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
+    Data: []byte{0xc0, 0x2a, 0xaa, 0x39}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Account (optional)
+
+- **Type:** `*common.Address`
+
+The account to execute the transaction from.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/public"
+)
+
+account := common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
+    Account: &account, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockNumber (optional)
+
+- **Type:** `*uint64`
+
+The block number to create the access list at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+blockNum := uint64(12345)
+accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
+    BlockNumber: &blockNum, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlockTag (optional)
+
+- **Type:** `BlockTag`
+
+The block tag to create the access list at.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/public"
+
+accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
+    BlockTag: public.BlockTagSafe, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+[`eth_createAccessList`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_createaccesslist)
