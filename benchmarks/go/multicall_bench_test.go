@@ -346,7 +346,7 @@ func BenchmarkMulticall_10000Calls_SingleRPC(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err := public.Multicall(benchCtx, benchClient, params)
+		_, err := public.MulticallConcurrent(benchCtx, benchClient, params)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -376,7 +376,7 @@ func BenchmarkMulticall_10000Calls_Chunked(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err := public.Multicall(benchCtx, benchClient, params)
+		_, err := public.MulticallConcurrent(benchCtx, benchClient, params)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -406,7 +406,7 @@ func BenchmarkMulticall_10000Calls_AggressiveChunking(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err := public.Multicall(benchCtx, benchClient, params)
+		_, err := public.MulticallConcurrent(benchCtx, benchClient, params)
 		if err != nil {
 			b.Fatal(err)
 		}

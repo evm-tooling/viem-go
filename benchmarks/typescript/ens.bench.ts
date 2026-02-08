@@ -10,10 +10,13 @@
 import { bench, describe } from 'vitest'
 import { namehash, labelhash, normalize } from 'viem/ens'
 
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
 const benchOptions = {
-  time: 2000,
+  time: 0,
   warmupTime: 0,
   warmupIterations: 0,
+  iterations,
 }
 
 describe('Ens', () => {

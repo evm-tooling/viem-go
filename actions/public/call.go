@@ -393,7 +393,9 @@ func scheduleMulticall(ctx context.Context, client Client, req callRequest, bloc
 	target := common.HexToAddress(req.To)
 	callData := common.FromHex(req.Data)
 
-	calls := make([]Call3, 1)
+	// NOTE: `calls` must be length 1 (not length 2 with a zero-value element).
+	// We only want to encode a single aggregate3 call.
+	calls := make([]Call3, 0, 1)
 	calls = append(calls, Call3{target, true, callData})
 
 	// Encode a single Call3 struct: (address, bool, bytes)
@@ -454,6 +456,10 @@ func scheduleMulticall(ctx context.Context, client Client, req callRequest, bloc
 	decodedResults, decodeErr := decodeAggregate3Result(resultData)
 	if decodeErr != nil {
 		return nil, fmt.Errorf("failed to decode multicall result: %w", decodeErr)
+	}
+
+	if len(decodedResults) == 0 {
+		return &CallReturnType{Data: nil}, nil
 	}
 
 	callReturn := CallReturnType{Data: decodedResults[0].ReturnData}

@@ -25,10 +25,13 @@ const transferTopics = [
 // ABI-encoded uint256 value: 1000000
 const transferData = '0x00000000000000000000000000000000000000000000000000000000000f4240' as Hex
 
+const iterations = Number(process.env.BENCH_ITERATIONS ?? '100')
+
 const benchOptions = {
-  time: 2000,
+  time: 0,
   warmupTime: 0,
   warmupIterations: 0,
+  iterations,
 }
 
 describe('Event', () => {

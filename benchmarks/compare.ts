@@ -39,10 +39,12 @@ interface ComparisonResult {
   benchmark: string
   suite: string
   category: string
+  goIterations: number
   goNsPerOp: number
   goOpsPerSec: number
   goBytesPerOp: number
   goAllocsPerOp: number
+  tsSamples: number
   tsNsPerOp: number
   tsOpsPerSec: number
   winner: 'go' | 'ts' | 'tie'
@@ -389,10 +391,12 @@ function compareResults(
       benchmark: benchName,
       suite: goBench.suite,
       category: categorizeBenchmark(benchName),
+      goIterations: goBench.iterations,
       goNsPerOp: goBench.nsPerOp,
       goOpsPerSec,
       goBytesPerOp: goBench.bytesPerOp,
       goAllocsPerOp: goBench.allocsPerOp,
+      tsSamples: tsBench.samples,
       tsNsPerOp,
       tsOpsPerSec,
       winner,
@@ -565,13 +569,33 @@ function generateConsoleReport(comparisons: ComparisonResult[], stats: OverallSt
   console.log('─'.repeat(100))
   console.log(
     '| Benchmark'.padEnd(32) +
+      '| Go iters'.padEnd(12) +
       '| Go (ns/op)'.padEnd(14) +
+      '| TS samples'.padEnd(13) +
       '| TS (ns/op)'.padEnd(14) +
       '| Go (ops/s)'.padEnd(12) +
       '| TS (ops/s)'.padEnd(12) +
       '| Result'.padEnd(20) + '|'
   )
-  console.log('|' + '-'.repeat(31) + '|' + '-'.repeat(13) + '|' + '-'.repeat(13) + '|' + '-'.repeat(11) + '|' + '-'.repeat(11) + '|' + '-'.repeat(19) + '|')
+  console.log(
+    '|' +
+      '-'.repeat(31) +
+      '|' +
+      '-'.repeat(11) +
+      '|' +
+      '-'.repeat(13) +
+      '|' +
+      '-'.repeat(12) +
+      '|' +
+      '-'.repeat(13) +
+      '|' +
+      '-'.repeat(11) +
+      '|' +
+      '-'.repeat(11) +
+      '|' +
+      '-'.repeat(19) +
+      '|'
+  )
 
   // Group by suite
   const suites = [...new Set(comparisons.map(c => c.suite))]
@@ -583,7 +607,11 @@ function generateConsoleReport(comparisons: ComparisonResult[], stats: OverallSt
         '| ' +
           c.benchmark.padEnd(30) +
           '| ' +
+          formatNumber(c.goIterations, 0).padEnd(10) +
+          '| ' +
           formatNumber(c.goNsPerOp, 0).padEnd(12) +
+          '| ' +
+          formatNumber(c.tsSamples, 0).padEnd(11) +
           '| ' +
           formatNumber(c.tsNsPerOp, 0).padEnd(12) +
           '| ' +
@@ -663,12 +691,12 @@ function generateMarkdownReport(comparisons: ComparisonResult[], stats: OverallS
 
   // Detailed Results
   md += '## Detailed Results\n\n'
-  md += '| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |\n'
-  md += '|-----------|------------|------------|------------|------------|--------|\n'
+  md += '| Benchmark | Go iters | Go (ns/op) | TS samples | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |\n'
+  md += '|-----------|----------|------------|------------|------------|------------|------------|--------|\n'
 
   for (const c of comparisons) {
     const resultIcon = c.winner === 'go' ? '🟢' : c.winner === 'ts' ? '🔵' : '⚪'
-    md += `| ${c.benchmark} | ${formatNumber(c.goNsPerOp, 0)} | ${formatNumber(c.tsNsPerOp, 0)} | ${formatNumber(c.goOpsPerSec, 0)} | ${formatNumber(c.tsOpsPerSec, 0)} | ${resultIcon} ${c.speedupStr} |\n`
+    md += `| ${c.benchmark} | ${formatNumber(c.goIterations, 0)} | ${formatNumber(c.goNsPerOp, 0)} | ${formatNumber(c.tsSamples, 0)} | ${formatNumber(c.tsNsPerOp, 0)} | ${formatNumber(c.goOpsPerSec, 0)} | ${formatNumber(c.tsOpsPerSec, 0)} | ${resultIcon} ${c.speedupStr} |\n`
   }
 
   // Win Summary
@@ -735,13 +763,13 @@ function generateFullReport(comparisons: ComparisonResult[], stats: OverallStats
     md += `### ${suite.suite.charAt(0).toUpperCase() + suite.suite.slice(1)} Suite\n\n`
     md += `**Result:** ${icon} ${suite.summary}\n\n`
     
-    md += '| Benchmark | Go | TS | Diff | Winner |\n'
-    md += '|-----------|----|----|------|--------|\n'
+    md += '| Benchmark | Go iters | Go | TS samples | TS | Diff | Winner |\n'
+    md += '|-----------|----------|----|------------|----|------|--------|\n'
     
     for (const c of suiteComparisons) {
       const resultIcon = c.winner === 'go' ? '🟢' : c.winner === 'ts' ? '🔵' : '⚪'
       const variant = c.benchmark.replace(`${suite.suite}_`, '').replace(suite.suite.charAt(0).toUpperCase() + suite.suite.slice(1) + '_', '')
-      md += `| ${variant} | ${formatDuration(c.goNsPerOp)} | ${formatDuration(c.tsNsPerOp)} | ${c.speedup.toFixed(2)}x | ${resultIcon} |\n`
+      md += `| ${variant} | ${formatNumber(c.goIterations, 0)} | ${formatDuration(c.goNsPerOp)} | ${formatNumber(c.tsSamples, 0)} | ${formatDuration(c.tsNsPerOp)} | ${c.speedup.toFixed(2)}x | ${resultIcon} |\n`
     }
     
     md += '\n'
@@ -793,12 +821,12 @@ function generateFullReport(comparisons: ComparisonResult[], stats: OverallStats
   // Detailed Raw Data
   md += '---\n\n'
   md += '## Detailed Raw Data\n\n'
-  md += '| Benchmark | Suite | Go ns/op | TS ns/op | Go ops/s | TS ops/s | Ratio | Winner |\n'
-  md += '|-----------|-------|----------|----------|----------|----------|-------|--------|\n'
+  md += '| Benchmark | Suite | Go iters | Go ns/op | TS samples | TS ns/op | Go ops/s | TS ops/s | Ratio | Winner |\n'
+  md += '|-----------|-------|----------|----------|------------|----------|----------|----------|-------|--------|\n'
   
   for (const c of comparisons) {
     const icon = c.winner === 'go' ? '🟢' : c.winner === 'ts' ? '🔵' : '⚪'
-    md += `| ${c.benchmark} | ${c.suite} | ${formatNumber(c.goNsPerOp, 0)} | ${formatNumber(c.tsNsPerOp, 0)} | ${formatNumber(c.goOpsPerSec, 0)} | ${formatNumber(c.tsOpsPerSec, 0)} | ${c.ratio.toFixed(3)} | ${icon} |\n`
+    md += `| ${c.benchmark} | ${c.suite} | ${formatNumber(c.goIterations, 0)} | ${formatNumber(c.goNsPerOp, 0)} | ${formatNumber(c.tsSamples, 0)} | ${formatNumber(c.tsNsPerOp, 0)} | ${formatNumber(c.goOpsPerSec, 0)} | ${formatNumber(c.tsOpsPerSec, 0)} | ${c.ratio.toFixed(3)} | ${icon} |\n`
   }
 
   // Methodology
@@ -812,6 +840,8 @@ function generateFullReport(comparisons: ComparisonResult[], stats: OverallStats
   md += '### Measurement Notes\n\n'
   md += '- **ns/op:** Nanoseconds per operation (lower is better)\n'
   md += '- **ops/s:** Operations per second (higher is better)\n'
+  md += '- **Go iters:** Iteration count from `go test -bench` output\n'
+  md += '- **TS samples:** Sample/iteration count from `vitest bench` output\n'
   md += '- **Ratio:** Go time / TS time (>1 means TS is faster)\n'
   md += '- **Tie:** Within 5% of each other\n\n'
   

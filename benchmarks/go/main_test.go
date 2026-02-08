@@ -42,6 +42,21 @@ var (
 	balanceOfVitalikData []byte
 )
 
+var rpcURL = os.Getenv("ANVIL_RPC_URL")
+
+
+// Create the public client
+var cl, err = client.CreatePublicClient(client.PublicClientConfig{
+	Chain:     &definitions.Mainnet,
+	Transport: transport.HTTP(rpcURL),
+	Batch: &client.BatchOptions{
+		Multicall: &client.MulticallBatchOptions{
+			BatchSize: 8192,
+			Wait:      16 * time.Millisecond,
+		},
+	},
+})
+
 func init() {
 	// Pre-encode balanceOf(vitalikAddress) calldata
 	balanceOfVitalikData = append(
@@ -55,39 +70,30 @@ func init() {
 // falling back to localhost:8545 if not set.
 func TestMain(m *testing.M) {
 	// Get RPC URL from environment or use default
-	rpcURL := os.Getenv("ANVIL_RPC_URL")
-	if rpcURL == "" {
-		rpcURL = "http://127.0.0.1:8545"
-	}
 
-	// Create the public client
-	var err error
-	benchClient, err = client.CreatePublicClient(client.PublicClientConfig{
-		Chain:     &definitions.Mainnet,
-		Transport: transport.HTTP(rpcURL),
-		Batch: &client.BatchOptions{
-			Multicall: &client.MulticallBatchOptions{
-				BatchSize: 1024,
-				Wait:      16 * time.Millisecond,
-			},
-		},
-	})
-	if err != nil {
-		panic("failed to create benchmark client: " + err.Error())
-	}
+if rpcURL == "" {
+	rpcURL = "http://127.0.0.1:8545"
+}
+if err != nil {
+	panic("failed to create benchmark client: " + err.Error())
+}
+
+benchClient = cl
 
 	// Create shared context
 	benchCtx = context.Background()
 
-	// Verify connection by getting block number
-	blockNum, err := benchClient.GetBlockNumber(benchCtx)
-	if err != nil {
-		panic("failed to connect to Anvil: " + err.Error())
-	}
+	// Verify connection by getting block number.
+	// NOTE: We intentionally do not do any "warmup" calls here. Anvil warmup is
+	// handled centrally by benchmarks/bench.sh for fairness across runtimes.
+	// blockNum, err := benchClient.GetBlockNumber(benchCtx)
+	// if err != nil {
+	// 	panic("failed to connect to Anvil: " + err.Error())
+	// }
 
 	// Log connection info (visible with -v flag)
-	println("Benchmark client connected to:", rpcURL)
-	println("Current block number:", blockNum)
+	// println("Benchmark client connected to:", rpcURL)
+	// println("Current block number:", blockNum)
 
 	// Run benchmarks
 	code := m.Run()
