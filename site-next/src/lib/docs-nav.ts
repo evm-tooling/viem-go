@@ -46,6 +46,7 @@ export const docsNav: NavItem[] = [
           { label: "Private Key", slug: "accounts/private-key" },
           { label: "Mnemonic", slug: "accounts/mnemonic" },
           { label: "HD Wallet", slug: "accounts/hd-wallet" },
+          { label: "Custom & address-only", slug: "accounts/custom" },
         ],
       },
     ],

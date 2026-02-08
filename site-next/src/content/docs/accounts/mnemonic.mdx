@@ -1,15 +1,36 @@
 ---
 title: Mnemonic Account
-description: Create an account from a BIP-39 mnemonic phrase (seed phrase)
+description: Create an account from a BIP-39 mnemonic phrase with optional HD path and passphrase
 ---
 
+A **Mnemonic Account** is an [HD Account](/docs/accounts/hd-wallet/) derived from a [BIP-39 mnemonic phrase](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) and an optional HD path. It can sign transactions and messages with the private key derived from that path.
 
-Create an account from a BIP-39 mnemonic phrase (seed phrase).
+viem-go uses [go-bip39](https://github.com/tyler-smith/go-bip39) and [go-bip32](https://github.com/tyler-smith/go-bip32) for BIP-39 and BIP-32 HD derivation.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { mnemonicToAccount } from 'viem/accounts'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
 ## Usage
 
-<CodeGroup 
+Pass a BIP-39 mnemonic phrase. By default the path `m/44'/60'/0'/0/0` is used. Optionally pass `MnemonicToAccountOptions` for path, passphrase, or index overrides.
 
+<CodeGroup
   tabs={[
     {
       title: "Go",
@@ -18,14 +39,14 @@ Create an account from a BIP-39 mnemonic phrase (seed phrase).
 
 account, err := accounts.MnemonicToAccount(
     "test test test test test test test test test test test junk",
-    nil, // Use default HD path: m/44'/60'/0'/0/0
 )
 if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Address: %s\\n", account.Address)
-// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+fmt.Printf("Address: %s\n", account.GetAddress())
+// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`,
+      showLineNumbers: false
     },
     {
       title: "viem",
@@ -37,61 +58,165 @@ const account = mnemonicToAccount(
 )
 
 console.log('Address:', account.address)
-// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Custom Derivation Path
+<Aside type="warning">
+The mnemonic in the example is for testing only. Do not use it for real funds.
+</Aside>
 
-Derive different accounts by specifying the HD path:
+## Parameters
 
-<CodeGroup 
+### mnemonic
 
+- **Type:** `string`
+- **Format:** BIP-39 mnemonic phrase (e.g. 12 or 24 words from the wordlist).
+
+Must be valid BIP-39; use `ValidateMnemonic(mnemonic)` to check.
+
+### options (optional)
+
+- **Type:** `MnemonicToAccountOptions` (Go) / options object (viem)
+
+Embedded fields match [HDOptions](/docs/accounts/hd-wallet/#parameters): path indices or full path, plus BIP-39 passphrase.
+
+#### options.passphrase
+
+- **Type:** `string`
+- **Default:** `""`
+
+BIP-39 passphrase used to derive the seed from the mnemonic.
+
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `// Default path (first account): m/44'/60'/0'/0/0
-account0, _ := accounts.MnemonicToAccount(mnemonic, nil)
-
-// Second account: m/44'/60'/0'/0/1
-account1, _ := accounts.MnemonicToAccount(mnemonic, &accounts.HDOptions{
-    Path: "m/44'/60'/0'/0/1",
-})
-
-// Third account: m/44'/60'/0'/0/2
-account2, _ := accounts.MnemonicToAccount(mnemonic, &accounts.HDOptions{
-    Path: "m/44'/60'/0'/0/2",
-})
-
-fmt.Printf("Account 0: %s\\n", account0.Address)
-fmt.Printf("Account 1: %s\\n", account1.Address)
-fmt.Printf("Account 2: %s\\n", account2.Address)`
+      code: `account, err := accounts.MnemonicToAccount(mnemonic, accounts.MnemonicToAccountOptions{
+    Passphrase: "my-secret-passphrase",
+})`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `// Default (first account)
-const account0 = mnemonicToAccount(mnemonic)
-
-// Second account
-const account1 = mnemonicToAccount(mnemonic, { addressIndex: 1 })
-
-// Third account  
-const account2 = mnemonicToAccount(mnemonic, { addressIndex: 2 })
-
-// Or with full custom path
-const customAccount = mnemonicToAccount(mnemonic, {
-  path: "m/44'/60'/0'/0/5"
-})`
+      code: `const account = mnemonicToAccount(mnemonic, {
+  passphrase: 'passphrase',
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## HD Path Explanation
+#### options.accountIndex
 
-The standard Ethereum HD path `m/44'/60'/0'/0/0` breaks down as:
+- **Type:** `int` (Go) / `number` (viem)
+- **Default:** `0`
+
+Account index in the path segment `m/44'/60'/{accountIndex}'/0/0`.
+
+#### options.addressIndex
+
+- **Type:** `int` (Go) / `number` (viem)
+- **Default:** `0`
+
+Address index in the path segment `m/44'/60'/0'/0/{addressIndex}`.
+
+#### options.changeIndex
+
+- **Type:** `int` (Go) / `number` (viem)
+- **Default:** `0`
+
+Change index in the path segment `m/44'/60'/0'/{changeIndex}/0`.
+
+#### options.path
+
+- **Type:** `string`
+- **Format:** `m/44'/60'/${string}` (e.g. `m/44'/60'/5'/0/2`)
+
+When set, overrides the index-based path. Use this for a fully custom derivation path.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Default: m/44'/60'/0'/0/0
+account0, _ := accounts.MnemonicToAccount(mnemonic)
+
+// Second address: m/44'/60'/0'/0/1
+account1, _ := accounts.MnemonicToAccount(mnemonic, &accounts.MnemonicToAccountOptions{
+    HDOptions: accounts.HDOptions{AddressIndex: 1},
+})
+
+// Custom path
+account, _ := accounts.MnemonicToAccount(mnemonic, &accounts.MnemonicToAccountOptions{
+    HDOptions: accounts.HDOptions{Path: "m/44'/60'/5'/0/2"},
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const account0 = mnemonicToAccount(mnemonic)
+
+const account1 = mnemonicToAccount(mnemonic, { addressIndex: 1 })
+
+const account = mnemonicToAccount(mnemonic, {
+  path: "m/44'/60'/5'/0/2",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Generating mnemonics
+
+Generate a BIP-39 mnemonic with `GenerateMnemonic`. Strength is specified via `GenerateMnemonicOptions{Strength: ...}`; strength must be 128, 160, 192, 224, or 256 (bits of entropy). Default is 128 (12 words); use `accounts.Mnemonic256` for 24 words.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+// 12-word mnemonic (128 bits)
+mnemonic12, err := accounts.GenerateMnemonic()
+if err != nil {
+    log.Fatal(err)
+}
+
+// 24-word mnemonic (256 bits)
+mnemonic24, err := accounts.GenerateMnemonic(accounts.GenerateMnemonicOptions{
+    Strength: accounts.Mnemonic256,
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+// Must variant (panics on error)
+mnemonic := accounts.MustGenerateMnemonic()`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { english, generateMnemonic } from 'viem/accounts'
+
+const mnemonic = generateMnemonic(english)
+// Strength 128–256 (multiple of 32) as second argument`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## HD path explanation
+
+The standard Ethereum path `m/44'/60'/0'/0/0`:
 
 | Component | Meaning |
 |-----------|---------|
@@ -99,77 +224,79 @@ The standard Ethereum HD path `m/44'/60'/0'/0/0` breaks down as:
 | `44'` | BIP-44 purpose (hardened) |
 | `60'` | Ethereum coin type (hardened) |
 | `0'` | Account index (hardened) |
-| `0` | Change (external = 0, internal = 1) |
+| `0` | Change (0 = external, 1 = internal) |
 | `0` | Address index |
 
-Most wallets increment the last number for multiple addresses.
+Use `accounts.DefaultHDPath(accountIndex, changeIndex, addressIndex)` to build the path string in Go.
 
-## Generating a Mnemonic
+## Signing and capabilities
 
-Generate a new cryptographically secure mnemonic:
+Mnemonic-derived accounts support the same operations as [Private Key Account](/docs/accounts/private-key/): `Sign`, `SignMessage`, `SignTransaction`, `SignTypedData`, `SignAuthorization`. See that page for examples.
 
-```go
-// Generate 12-word mnemonic (128 bits entropy)
-mnemonic12, err := accounts.GenerateMnemonic(12)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println("12 words:", mnemonic12)
+## Deriving multiple accounts
 
-// Generate 24-word mnemonic (256 bits entropy)  
-mnemonic24, err := accounts.GenerateMnemonic(24)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println("24 words:", mnemonic24)
-```
+Derive several addresses from one mnemonic by varying `AddressIndex` or `Path`:
 
-## Signing Operations
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `mnemonic := "test test test test test test test test test test test junk"
 
-Mnemonic accounts have all the same signing capabilities as private key accounts:
-
-```go
-// Sign a message
-sig, err := account.SignMessage(signature.SignableMessage{
-    Raw: []byte("Hello!"),
-})
-
-// Sign a transaction
-signedTx, err := account.SignTransaction(tx)
-
-// Sign typed data
-sig, err := account.SignTypedData(typedData)
-```
-
-See [Private Key Account](/docs/accounts/private-key/) for detailed signing examples.
-
-## Deriving Multiple Accounts
-
-For deriving many accounts efficiently:
-
-```go
-mnemonic := "test test test test test test test test test test test junk"
-
-// Derive accounts 0-9
 accounts := make([]*accounts.HDAccount, 10)
 for i := 0; i < 10; i++ {
-    path := fmt.Sprintf("m/44'/60'/0'/0/%d", i)
-    accounts[i], _ = accounts.MnemonicToAccount(mnemonic, &accounts.HDOptions{
-        Path: path,
+    accounts[i], _ = accounts.MnemonicToAccount(mnemonic, &accounts.MnemonicToAccountOptions{
+        HDOptions: accounts.HDOptions{AddressIndex: i},
     })
-    fmt.Printf("Account %d: %s\n", i, accounts[i].Address)
-}
-```
+    fmt.Printf("Account %d: %s\n", i, accounts[i].GetAddress())
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const accounts = []
+for (let i = 0; i < 10; i++) {
+  accounts.push(mnemonicToAccount(mnemonic, { addressIndex: i }))
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-## Wordlists
+## Validation and wordlists
 
-viem-go supports the standard BIP-39 English wordlist. The mnemonic must use valid words from this list.
+- **ValidateMnemonic(mnemonic string) bool** — returns whether the phrase is valid BIP-39.
+- **GetWordlist(name string)** — returns a wordlist by name (e.g. `"english"`). viem-go ships with the English wordlist; use `accounts.English` or get by name for validation/display.
 
-```go
-// Validate a mnemonic
-isValid := accounts.ValidateMnemonic("test test test test test test test test test test test junk")
-fmt.Println("Valid:", isValid) // true
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `valid := accounts.ValidateMnemonic("test test test test test test test test test test test junk")
+fmt.Println(valid) // true
 
-isValid = accounts.ValidateMnemonic("invalid words here")
-fmt.Println("Valid:", isValid) // false
-```
+valid = accounts.ValidateMnemonic("invalid words here")
+fmt.Println(valid) // false`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Return type
+
+- **Go:** `MnemonicToAccount(mnemonic string, opts ...MnemonicToAccountOptions) (*HDAccount, error)`
+- **Must variant:** `MustMnemonicToAccount(mnemonic string, opts ...MnemonicToAccountOptions) *HDAccount`
+
+## Error handling
+
+- **ErrInvalidMnemonic** — mnemonic phrase is not valid BIP-39.
+- **ErrInvalidHDPath** — derivation path is invalid or derivation failed.
+
+## Go-only helpers
+
+- **MnemonicToSeed(mnemonic, passphrase string) []byte** — raw BIP-39 seed.
+- **SeedToHDKey(seed []byte) (HDKey, error)** — master HD key from seed; then use [HDKeyToAccount](/docs/accounts/hd-wallet/) with a path.
+- **MnemonicToEntropy** / **EntropyToMnemonic** — convert between mnemonic and entropy bytes.

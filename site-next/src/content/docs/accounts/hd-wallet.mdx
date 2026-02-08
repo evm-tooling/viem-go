@@ -1,178 +1,287 @@
 ---
 title: HD Wallet Account
-description: Create accounts using Hierarchical Deterministic (HD) keys for advanced key derivation
+description: Create accounts from Hierarchical Deterministic (HD) keys and custom derivation paths
 ---
 
+A **Hierarchical Deterministic (HD) Account** is derived from an [HD Key](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#abstract) and an optional HD path. It can sign transactions and messages with the private key derived at that path.
 
-Create accounts using Hierarchical Deterministic (HD) keys for advanced key derivation scenarios.
+viem-go uses [go-bip32](https://github.com/tyler-smith/go-bip32) for BIP-32 HD derivation. The `HDKey` interface exposes `Derive(path)`, `PrivateKey()`, and `PublicKey()`.
 
-## Overview
+## Import
 
-HD wallets allow deriving multiple keys from a single seed. This is useful when you need:
-- Multiple accounts from one mnemonic
-- Custom derivation paths
-- Access to the underlying HD key for advanced operations
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { HDKey, hdKeyToAccount } from 'viem/accounts'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-## From Mnemonic to HD Key
+In viem (TypeScript), `HDKey` is re-exported from `@scure/bip32`. In viem-go, you obtain an `HDKey` from `accounts.SeedToHDKey(seed)` or from a key that implements the `accounts.HDKey` interface.
 
-<CodeGroup 
+## Usage
 
+### From mnemonic (recommended)
+
+For most use cases, derive an account directly from a mnemonic with [MnemonicToAccount](/docs/accounts/mnemonic/) and optional path. That path is applied internally via HD derivation.
+
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/accounts"
 
-// First, derive an HD key from a mnemonic
 mnemonic := "test test test test test test test test test test test junk"
-path := "m/44'/60'/0'/0/0"
 
-hdKey, err := accounts.MnemonicToHDKey(mnemonic, path)
-if err != nil {
-    log.Fatal(err)
-}
+// Default path m/44'/60'/0'/0/0
+account, err := accounts.MnemonicToAccount(mnemonic)
 
-// Then create an account from the HD key
-account, err := accounts.HDKeyToAccount(hdKey)
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Address: %s\\n", account.Address)`
+// Custom path
+account, err := accounts.MnemonicToAccount(mnemonic, &accounts.MnemonicToAccountOptions{
+    HDOptions: accounts.HDOptions{Path: "m/44'/60'/0'/0/5"},
+})`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { hdKeyToAccount } from 'viem/accounts'
-import { HDKey } from '@scure/bip32'
-import { mnemonicToSeedSync } from '@scure/bip39'
+      code: `import { mnemonicToAccount } from 'viem/accounts'
 
-const seed = mnemonicToSeedSync(
-  'test test test test test test test test test test test junk'
-)
-const hdKey = HDKey.fromMasterSeed(seed).derive("m/44'/60'/0'/0/0")
-const account = hdKeyToAccount(hdKey)
+const account = mnemonicToAccount(mnemonic)
 
-console.log('Address:', account.address)`
+const account2 = mnemonicToAccount(mnemonic, { path: "m/44'/60'/0'/0/5" })`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Accessing HD Key Properties
+### From HD key (seed or custom source)
 
-The HD account provides access to the underlying key:
+When you already have a seed (or another HD key source), create a master `HDKey` with `SeedToHDKey`, derive at the desired path, then call `HDKeyToAccount`:
 
-```go
-// Get the HD key from the account
-hdKey := account.GetHdKey()
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
 
-// HD key properties
-fmt.Printf("Public Key: %x\n", hdKey.PublicKey)
-fmt.Printf("Chain Code: %x\n", hdKey.ChainCode)
-fmt.Printf("Depth: %d\n", hdKey.Depth)
-```
+seed := accounts.MnemonicToSeed(mnemonic, "")
 
-## Deriving Child Keys
+masterKey, err := accounts.SeedToHDKey(seed)
+if err != nil {
+    log.Fatal(err)
+}
 
-Derive child keys from a parent HD key:
+derivedKey, err := masterKey.Derive("m/44'/60'/0'/0/0")
+if err != nil {
+    log.Fatal(err)
+}
 
-```go
-// Start from master
-masterKey, _ := accounts.MnemonicToHDKey(mnemonic, "m")
+account, err := accounts.HDKeyToAccount(derivedKey)
+if err != nil {
+    log.Fatal(err)
+}
 
-// Derive the Ethereum path manually
-purposeKey, _ := masterKey.Derive(44 + 0x80000000) // Hardened 44
-coinKey, _ := purposeKey.Derive(60 + 0x80000000)   // Hardened 60 (ETH)
-accountKey, _ := coinKey.Derive(0 + 0x80000000)    // Hardened 0
-changeKey, _ := accountKey.Derive(0)                // External chain
-addressKey, _ := changeKey.Derive(0)                // First address
+fmt.Printf("Address: %s\n", account.GetAddress())`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { HDKey, hdKeyToAccount } from 'viem/accounts'
+import { mnemonicToSeedSync } from '@scure/bip39'
 
-account, _ := accounts.HDKeyToAccount(addressKey)
-```
+const seed = mnemonicToSeedSync(mnemonic)
+const hdKey = HDKey.fromMasterSeed(seed).derive("m/44'/60'/0'/0/0")
+const account = hdKeyToAccount(hdKey)
 
-## Batch Account Generation
-
-Generate multiple accounts efficiently:
-
-```go
-func GenerateAccounts(mnemonic string, count int) ([]*accounts.HDAccount, error) {
-    accts := make([]*accounts.HDAccount, count)
-    
-    for i := 0; i < count; i++ {
-        path := fmt.Sprintf("m/44'/60'/0'/0/%d", i)
-        hdKey, err := accounts.MnemonicToHDKey(mnemonic, path)
-        if err != nil {
-            return nil, err
-        }
-        
-        accts[i], err = accounts.HDKeyToAccount(hdKey)
-        if err != nil {
-            return nil, err
-        }
+console.log('Address:', account.address)`,
+      showLineNumbers: false
     }
-    
-    return accts, nil
-}
+  ]}
+/>
 
-// Usage
-accounts, _ := GenerateAccounts(mnemonic, 10)
-for i, acc := range accounts {
-    fmt.Printf("Account %d: %s\n", i, acc.Address)
-}
-```
+In viem (TypeScript), `HDKey` has static methods like `fromMasterSeed`, `fromExtendedKey`, `fromJSON`. In viem-go, the main entry point from raw seed is `SeedToHDKey(seed)`; the resulting key’s `Derive(path)` parses BIP-32 path strings (e.g. `m/44'/60'/0'/0/0`).
 
-## HD Paths
+## Parameters
 
-Common derivation paths:
+### hdKey
+
+- **Type:** `accounts.HDKey` (Go) / `HDKey` (viem)
+
+Interface in Go:
+
+- `Derive(path string) (HDKey, error)`
+- `PrivateKey() []byte`
+- `PublicKey() []byte`
+
+The key must be derived at the desired path (or pass path via options; see below). viem-go does not expose a separate “mnemonic to HD key” helper; use `MnemonicToSeed` + `SeedToHDKey` or `MnemonicToAccount` with path.
+
+### opts (optional)
+
+- **Type:** `HDKeyToAccountOptions` (Go), which embeds `HDOptions`.
+
+#### options.accountIndex
+
+- **Type:** `int` (Go) / `number` (viem)
+- **Default:** `0`
+
+Account index in path `m/44'/60'/{accountIndex}'/0/0`.
+
+#### options.addressIndex
+
+- **Type:** `int` (Go) / `number` (viem)
+- **Default:** `0`
+
+Address index in path `m/44'/60'/0'/0/{addressIndex}`.
+
+#### options.changeIndex
+
+- **Type:** `int` (Go) / `number` (viem)
+- **Default:** `0`
+
+Change index in path `m/44'/60'/0'/{changeIndex}/0`.
+
+#### options.path
+
+- **Type:** `string`
+- **Format:** e.g. `m/44'/60'/5'/0/2`
+
+When set, this path is used for derivation instead of building from indices. If the `hdKey` is already derived to the correct node, you can pass empty options or a path that matches.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `// Default path m/44'/60'/0'/0/0
+account, err := accounts.HDKeyToAccount(hdKey)
+
+// Custom path
+account, err := accounts.HDKeyToAccount(hdKey, accounts.HDKeyToAccountOptions{
+    HDOptions: accounts.HDOptions{Path: "m/44'/60'/5'/0/2"},
+})
+
+// Or use indices
+account, err := accounts.HDKeyToAccount(hdKey, accounts.HDKeyToAccountOptions{
+    HDOptions: accounts.HDOptions{
+        AccountIndex: 1,
+        AddressIndex: 6,
+        ChangeIndex:  0,
+    },
+})`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const account = hdKeyToAccount(hdKey)
+
+const account2 = hdKeyToAccount(hdKey, { path: "m/44'/60'/5'/0/2" })
+
+const account3 = hdKeyToAccount(hdKey, {
+  accountIndex: 1,
+  addressIndex: 6,
+  changeIndex: 0,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## HD path reference
 
 | Path | Description |
 |------|-------------|
-| `m/44'/60'/0'/0/0` | Standard Ethereum (Metamask, etc.) |
-| `m/44'/60'/0'/0/n` | nth account |
-| `m/44'/60'/0'/1/n` | Internal (change) addresses |
-| `m/44'/60'/n'/0/0` | Different "accounts" (hardened) |
+| `m/44'/60'/0'/0/0` | Standard first Ethereum address |
+| `m/44'/60'/0'/0/n` | nth address (same account) |
+| `m/44'/60'/0'/1/n` | Internal/change addresses |
+| `m/44'/60'/n'/0/0` | Different “accounts” (hardened) |
 
-### Hardened vs Non-Hardened
+Path parsing in viem-go supports `m/` prefix, `'` or `h` for hardened, and numeric segments. Use `accounts.DefaultHDPath(accountIndex, changeIndex, addressIndex)` to build the default path string.
 
-- Hardened derivation (`'` suffix): More secure, can't derive parent from child
-- Non-hardened: Allows deriving child public keys from parent public key
+## Accessing the HD key (Go)
+
+`HDKeyToAccount` returns an `*HDAccount`, which embeds a local account and exposes the underlying key:
 
 ```go
-// Hardened (recommended for account level)
-path := "m/44'/60'/0'"
+hdAccount, _ := accounts.HDKeyToAccount(derivedKey)
 
-// Non-hardened (ok for address derivation)
-path := "m/44'/60'/0'/0/0"
+address := hdAccount.GetAddress()
+hdKey := hdAccount.GetHdKey()
+
+// Derive another path from the same parent if you kept a reference
+child, _ := parentKey.Derive("m/44'/60'/0'/0/1")
 ```
 
-## Signing with HD Accounts
+## Signing
 
-HD accounts have full signing capabilities:
+HD accounts support the same signing methods as [Private Key Account](/docs/accounts/private-key/): `Sign`, `SignMessage`, `SignTransaction`, `SignTypedData`, `SignAuthorization`.
 
 ```go
-// Sign message
-sig, _ := account.SignMessage(signature.SignableMessage{
-    Raw: []byte("Hello!"),
-})
-
-// Sign transaction
-signedTx, _ := account.SignTransaction(tx)
-
-// Sign typed data
-sig, _ := account.SignTypedData(typedData)
-
-// Sign authorization (EIP-7702)
-signedAuth, _ := account.SignAuthorization(authRequest)
+sig, err := account.SignMessage(signature.NewSignableMessage("Hello"))
+signedTx, err := account.SignTransaction(tx)
+sig, err := account.SignTypedData(typedData)
+signedAuth, err := account.SignAuthorization(authRequest)
 ```
 
-## Account Sources
+## Batch account generation
 
-The account tracks its origin:
+Generate multiple accounts from one mnemonic by iterating the path (e.g. address index):
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `func deriveAccounts(mnemonic string, count int) ([]*accounts.HDAccount, error) {
+    out := make([]*accounts.HDAccount, count)
+    for i := 0; i < count; i++ {
+        acc, err := accounts.MnemonicToAccount(mnemonic, &accounts.MnemonicToAccountOptions{
+            HDOptions: accounts.HDOptions{AddressIndex: i},
+        })
+        if err != nil {
+            return nil, err
+        }
+        out[i] = acc
+    }
+    return out, nil
+}
+
+accounts, _ := deriveAccounts(mnemonic, 10)
+for i, acc := range accounts {
+    fmt.Printf("Account %d: %s\n", i, acc.GetAddress())
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Return type
+
+- **Go:** `HDKeyToAccount(hdKey HDKey, opts ...HDKeyToAccountOptions) (*HDAccount, error)`
+- **Must variant:** `MustHDKeyToAccount(hdKey HDKey, opts ...HDKeyToAccountOptions) *HDAccount`
+
+## Error handling
+
+- **ErrInvalidHDPath** — path string is invalid or derivation failed (e.g. invalid segment).
+
+## Account source
+
+The account’s source is set to `AccountSourceHD` when created via `HDKeyToAccount`, and `AccountSourceMnemonic` when created via `MnemonicToAccount`:
 
 ```go
-fmt.Printf("Source: %s\n", account.Source)
-// Output: "hd" (for HD-derived accounts)
-
-fmt.Printf("Type: %s\n", account.Type)
-// Output: "local"
+fmt.Println(account.GetSource()) // "hd" or "mnemonic"
+fmt.Println(account.GetType())  // "local"
 ```

@@ -3,13 +3,32 @@ title: Private Key Account
 description: Create an account from a private key for signing transactions and messages locally
 ---
 
+A **Private Key Account** is an account that can sign transactions and messages with a given private key. In viem-go, signing uses [go-ethereum/crypto](https://pkg.go.dev/github.com/ethereum/go-ethereum/crypto) (secp256k1).
 
-Create an account from a private key for signing transactions and messages locally.
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { privateKeyToAccount } from 'viem/accounts'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
 ## Usage
 
-<CodeGroup 
+Pass a 32-byte hex private key (with or without `0x` prefix) to `PrivateKeyToAccount`:
 
+<CodeGroup
   tabs={[
     {
       title: "Go",
@@ -23,8 +42,10 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Address: %s\\n", account.Address)
-// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+fmt.Printf("Address: %s\n", account.GetAddress())
+// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+fmt.Printf("Public Key: %s\n", account.GetPublicKey())`,
+      showLineNumbers: false
     },
     {
       title: "viem",
@@ -36,31 +57,70 @@ const account = privateKeyToAccount(
 )
 
 console.log('Address:', account.address)
-// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+// Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+console.log('Public Key:', account.publicKey)`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Signing Messages
+<Aside type="warning">
+The key in the example is valid for testing only. Do not use it for real funds.
+</Aside>
+
+## Generating private keys
+
+Generate a cryptographically secure random private key with `GeneratePrivateKey`. It returns a hex string (no error); it panics only on a broken RNG.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+privateKey := accounts.GeneratePrivateKey()
+// "0x..." (64 hex characters)
+
+account, err := accounts.PrivateKeyToAccount(privateKey)
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { generatePrivateKey } from 'viem/accounts'
+
+const privateKey = generatePrivateKey()
+
+const account = privateKeyToAccount(privateKey)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+For deterministic tests, use `GeneratePrivateKeyWithEntropy(entropy []byte)` — it returns an error if the 32-byte entropy is not a valid secp256k1 private key.
+
+## Signing messages
 
 Sign an EIP-191 personal message:
 
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/utils/signature"
 
-sig, err := account.SignMessage(signature.SignableMessage{
-    Raw: []byte("Hello, Ethereum!"),
-})
+msg := signature.NewSignableMessage("Hello, Ethereum!")
+sig, err := account.SignMessage(msg)
 if err != nil {
     log.Fatal(err)
 }
-
-fmt.Printf("Signature: %s\\n", sig)`
+fmt.Printf("Signature: %s\n", sig)`,
+      showLineNumbers: false
     },
     {
       title: "viem",
@@ -69,15 +129,19 @@ fmt.Printf("Signature: %s\\n", sig)`
   message: 'Hello, Ethereum!',
 })
 
-console.log('Signature:', signature)`
+console.log('Signature:', signature)`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Signing Transactions
+For raw bytes use `signature.NewSignableMessageRaw(bytes)` or `signature.NewSignableMessageRawHex(hexString)`.
 
-<CodeGroup 
+## Signing transactions
 
+Sign a transaction (legacy, EIP-2930, EIP-1559, etc.). The account returns the serialized signed transaction ready for broadcast.
+
+<CodeGroup
   tabs={[
     {
       title: "Go",
@@ -88,80 +152,73 @@ console.log('Signature:', signature)`
 )
 
 tx := &transaction.Transaction{
-    To:       &recipientAddress,
-    Value:    big.NewInt(1e18), // 1 ETH
+    To:       "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    Value:    big.NewInt(1e18),
     Gas:      21000,
-    GasPrice: big.NewInt(20e9), // 20 gwei
+    GasPrice: big.NewInt(20e9),
     Nonce:    0,
-    ChainID:  big.NewInt(1), // Mainnet
+    ChainId:  1,
 }
 
 signedTx, err := account.SignTransaction(tx)
 if err != nil {
     log.Fatal(err)
 }
-
-// signedTx is the serialized signed transaction ready to broadcast
-fmt.Printf("Signed TX: %s\\n", signedTx)`
+// signedTx is hex-encoded (e.g. 0x02...) ready for eth_sendRawTransaction`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
       code: `const signature = await account.signTransaction({
-  to: recipientAddress,
+  to: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
   value: parseEther('1'),
   gas: 21000n,
   gasPrice: parseGwei('20'),
   nonce: 0,
   chainId: 1,
-})`
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Signing Typed Data (EIP-712)
+## Signing typed data (EIP-712)
 
-<CodeGroup 
-
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+      code: `import (
+    "github.com/ChefBingbong/viem-go/utils/signature"
+    "math/big"
+)
 
 typedData := signature.TypedDataDefinition{
     Domain: signature.TypedDataDomain{
         Name:              "Ether Mail",
         Version:           "1",
         ChainId:           big.NewInt(1),
-        VerifyingContract: common.HexToAddress("0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"),
+        VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
     },
     Types: map[string][]signature.TypedDataField{
-        "Person": {
-            {Name: "name", Type: "string"},
-            {Name: "wallet", Type: "address"},
-        },
-        "Mail": {
-            {Name: "from", Type: "Person"},
-            {Name: "to", Type: "Person"},
-            {Name: "contents", Type: "string"},
-        },
+        "Person": {{Name: "name", Type: "string"}, {Name: "wallet", Type: "address"}},
+        "Mail":   {{Name: "from", Type: "Person"}, {Name: "to", Type: "Person"}, {Name: "contents", Type: "string"}},
     },
     PrimaryType: "Mail",
     Message: map[string]any{
-        "from": map[string]any{
-            "name":   "Alice",
-            "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
-        },
-        "to": map[string]any{
-            "name":   "Bob",
-            "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
-        },
+        "from":     map[string]any{"name": "Alice", "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"},
+        "to":       map[string]any{"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"},
         "contents": "Hello, Bob!",
     },
 }
 
-sig, err := account.SignTypedData(typedData)`
+sig, err := account.SignTypedData(typedData)
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
     },
     {
       title: "viem",
@@ -190,40 +247,81 @@ sig, err := account.SignTypedData(typedData)`
     to: { name: 'Bob', wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB' },
     contents: 'Hello, Bob!',
   },
-})`
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Generating a Private Key
+## Signing authorizations (EIP-7702)
 
-Generate a cryptographically secure random private key:
+Private key accounts can sign EIP-7702 authorization requests via `SignAuthorization`:
 
 ```go
-privateKey, err := accounts.GeneratePrivateKey()
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Generated: %s\n", privateKey)
-// 0x... (64 hex characters)
-
-account, _ := accounts.PrivateKeyToAccount(privateKey)
+signedAuth, err := account.SignAuthorization(accounts.AuthorizationRequest{
+    Address: account.GetAddress(),
+    ChainId: 1,
+    Nonce:   0,
+})
 ```
 
-## Error Handling
+## Parameters
 
-```go
-account, err := accounts.PrivateKeyToAccount(privateKey)
-if err != nil {
-    switch {
-    case err == accounts.ErrInvalidPrivateKey:
-        log.Println("Invalid private key format")
-    case err == accounts.ErrPrivateKeyLength:
-        log.Println("Private key must be 32 bytes")
-    default:
-        log.Printf("Unknown error: %v", err)
+### privateKey
+
+- **Type:** `string`
+- **Format:** 32-byte hex, with or without `0x` prefix (64 hex characters after optional prefix).
+
+The private key must be valid secp256k1 (e.g. not zero, in range).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `account, err := accounts.PrivateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+// or
+account, err := accounts.PrivateKeyToAccount("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const account = privateKeyToAccount('0x...' as Hex)`,
+      showLineNumbers: false
     }
-    return
-}
-```
+  ]}
+/>
+
+### opts (optional)
+
+- **Type:** `...PrivateKeyToAccountOptions`
+
+In viem-go, `PrivateKeyToAccountOptions` is a struct that can be extended later (e.g. nonce manager). Currently you can omit it or pass an empty struct.
+
+## Return type
+
+- **Go:** `PrivateKeyToAccount(privateKey string, opts ...PrivateKeyToAccountOptions) (*PrivateKeyAccount, error)`
+- **Must variant:** `MustPrivateKeyToAccount(privateKey string, opts ...PrivateKeyToAccountOptions) *PrivateKeyAccount` — panics on error.
+
+## Error handling
+
+Possible errors: `ErrInvalidPrivateKey` (invalid format or not valid secp256k1). viem-go does not define a separate `ErrPrivateKeyLength`; invalid length is reported as `ErrInvalidPrivateKey`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `account, err := accounts.PrivateKeyToAccount(privateKey)
+if err != nil {
+    if errors.Is(err, accounts.ErrInvalidPrivateKey) {
+        log.Println("Invalid private key format or value")
+        return
+    }
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>

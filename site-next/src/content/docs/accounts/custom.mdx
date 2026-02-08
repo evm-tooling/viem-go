@@ -1,0 +1,190 @@
+---
+title: Custom & address-only accounts
+description: JSON-RPC accounts from an address and local accounts from custom signing implementations
+---
+
+Besides [private key](/docs/accounts/private-key/), [mnemonic](/docs/accounts/mnemonic/), and [HD](/docs/accounts/hd-wallet/) accounts, viem-go supports:
+
+- **Address-only (JSON-RPC) accounts** — no local signing; the address is used with a Wallet Client that defers signing to the node/wallet over JSON-RPC.
+- **Custom local accounts** — you supply the address and implementations for signing (message, transaction, typed data, optional hash and authorization). Useful for hardware wallets, KMS, or other backends.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+For address-only usage with the Wallet Client you also use `client.NewAddressAccount`; see [Wallet Client](/docs/clients/wallet/).
+
+## ToAccountFromAddress (JSON-RPC account)
+
+Creates a **JSON-RPC account** from a valid 20-byte hex address. The returned account has type `AccountTypeJSONRPC` and only exposes `GetAddress()` and `GetType()`. No signing is done locally; when used with a Wallet Client, signing is delegated to the transport (e.g. node or injected wallet).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+account, err := accounts.ToAccountFromAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Println(account.GetAddress())
+fmt.Println(account.GetType()) // "json-rpc"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Address format:** `0x` followed by 40 hex characters (checksummed or not).
+- **Return type:** `(*JsonRpcAccount, error)`.
+- **Errors:** `ErrInvalidAddress` if the string is not a valid 40-hex address.
+
+For use with the Wallet Client, you typically wrap the address in `client.NewAddressAccount(common.HexToAddress(addr))` and pass that as the client’s `Account`; the client then uses JSON-RPC methods like `eth_sendTransaction` for signing. The accounts package’s `ToAccountFromAddress` is useful when you need an `accounts.Account` (e.g. for APIs that accept the interface).
+
+## ToAccount (custom local account)
+
+Creates a **local account** from a `CustomSource`: you provide the address and function implementations for signing. Any optional signer can be `nil`; if a wallet action calls a missing signer, the account returns `ErrSigningNotSupported`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+    "github.com/ChefBingbong/viem-go/utils/transaction"
+)
+
+account, err := accounts.ToAccount(accounts.CustomSource{
+    Address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    SignMessage: func(message signature.SignableMessage) (string, error) {
+        // e.g. call hardware wallet or KMS
+        return "0x...", nil
+    },
+    SignTransaction: func(tx *transaction.Transaction) (string, error) {
+        return "0x...", nil
+    },
+    SignTypedData: func(data signature.TypedDataDefinition) (string, error) {
+        return "0x...", nil
+    },
+    // Optional: Sign for raw hash, SignAuthorization for EIP-7702
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### CustomSource fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| **Address** | `string` | Yes | Valid 0x-prefixed 40-hex address. |
+| **Sign** | `SignHashFunc` | No | `func(hash string) (string, error)` — signs a 32-byte hash. |
+| **SignMessage** | `SignMessageFunc` | No | Signs EIP-191 message. |
+| **SignTransaction** | `SignTransactionFunc` | No | Signs a transaction; returns serialized signed tx. |
+| **SignTypedData** | `SignTypedDataFunc` | No | Signs EIP-712 typed data. |
+| **SignAuthorization** | `SignAuthorizationFunc` | No | Signs EIP-7702 authorization. |
+
+At least one signing function should be provided for the account to be useful with wallet actions. The returned account has `GetSource() == AccountSourceCustom` and `GetType() == AccountTypeLocal`. `GetPublicKey()` is empty for custom accounts unless you extend the type elsewhere.
+
+- **Return type:** `(*LocalAccount, error)`.
+- **Errors:** `ErrInvalidAddress` if `Address` is not valid.
+
+## ToAccountGeneric (address or custom)
+
+Accepts either an address string or a `CustomSource` and returns the appropriate account type. Useful when the account source is dynamic (e.g. config or user input).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"
+
+// From address string -> *JsonRpcAccount
+account, err := accounts.ToAccountGeneric("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+
+// From CustomSource -> *LocalAccount
+account, err := accounts.ToAccountGeneric(accounts.CustomSource{
+    Address:         "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    SignMessage:     mySignMessage,
+    SignTransaction: mySignTransaction,
+    SignTypedData:   mySignTypedData,
+})
+
+// Return type is accounts.Account (interface)
+addr := account.GetAddress()
+typ := account.GetType()`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+- **Return type:** `(Account, error)` where `Account` is the interface with `GetAddress() string` and `GetType() AccountType`.
+- **Errors:** `ErrInvalidAddress` for invalid address or unsupported source type; for `*CustomSource` nil pointer, also `ErrInvalidAddress`.
+
+## JSON-RPC account with Wallet Client
+
+To use an address-only account with the Wallet Client (signing delegated to the node or injected provider), use the client’s address account helper rather than the accounts package directly:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+account := client.NewAddressAccount(common.HexToAddress("0x..."))
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account,
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer walletClient.Close()
+
+// Sends via eth_sendTransaction; node/wallet signs
+hash, err := walletClient.SendTransaction(ctx, wallet.SendTransactionParameters{
+    Account: walletClient.Account(),
+    Chain:   definitions.Mainnet,
+    To:      "0x...",
+    Value:   big.NewInt(1e18),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Error handling
+
+All three functions can return `ErrInvalidAddress` when:
+
+- The address string is not 40 hex characters (after optional `0x`).
+- `ToAccount(CustomSource{})`: `Address` is invalid.
+- `ToAccountGeneric`: source is not a valid address string or `CustomSource`, or pointer to `CustomSource` is nil.
+
+Always check `error` and use `errors.Is(err, accounts.ErrInvalidAddress)` when you need to distinguish invalid address from other failures.

@@ -1,192 +1,270 @@
 ---
-title: Accounts
-description: Handle key management and signing operations in viem-go
+title: Local Accounts
+description: Private key, mnemonic, and HD accounts for signing transactions and messages locally
 ---
 
+A **Local Account** is an account whose signing keys are stored on the consuming application's machine. It performs signing of transactions and messages with a private key **before** broadcasting over JSON-RPC.
 
-Accounts in viem-go handle key management and signing operations. There are two main account types:
+There are three types of Local Accounts in viem-go:
 
-- **Local Accounts**: Keys are managed in your application (private key, mnemonic, HD wallet)
-- **JSON-RPC Accounts**: Keys are managed by an external wallet/node
+- [Private Key Account](/docs/accounts/private-key/) — `PrivateKeyToAccount`
+- [Mnemonic Account](/docs/accounts/mnemonic/) — `MnemonicToAccount`
+- [Hierarchical Deterministic (HD) Account](/docs/accounts/hd-wallet/) — `HDKeyToAccount`
 
-## Local Accounts
+For address-only (JSON-RPC) or custom signing sources, see [Custom & address-only accounts](/docs/accounts/custom/).
 
-Local accounts keep the private key in memory and can sign transactions, messages, and typed data directly.
+## Import
 
-### From Private Key
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/accounts"`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { privateKeyToAccount } from 'viem/accounts'`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-<CodeGroup 
+Common imports when using accounts with a Wallet Client:
 
+- **accounts**: Account constructors (`PrivateKeyToAccount`, `MnemonicToAccount`, `HDKeyToAccount`, `ToAccountFromAddress`, `ToAccount`) and types (`CustomSource`, `HDOptions`).
+- **client** / **transport** / **chain**: When wiring the account into a [Wallet Client](/docs/clients/wallet/).
+
+## Instantiation
+
+### 1. Initialize a Wallet Client
+
+Set up a [Wallet Client](/docs/clients/wallet/) with a [Chain](/docs/clients/intro/) and [Transport](/docs/clients/transports/http/) (e.g. `transport.HTTP`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer walletClient.Close()`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { createWalletClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const client = createWalletClient({
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### 2. Set up your Local Account
+
+Create a Private Key Account (or use [Mnemonic](/docs/accounts/mnemonic/) / [HD](/docs/accounts/hd-wallet/)).
+
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/accounts"
 
-account, err := accounts.PrivateKeyToAccount(
-    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-)
+account, err := accounts.PrivateKeyToAccount("0x...")
 if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Address: %s\\n", account.Address)
-fmt.Printf("Public Key: %s\\n", account.PublicKey)`
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account,
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
       code: `import { privateKeyToAccount } from 'viem/accounts'
 
-const account = privateKeyToAccount(
-  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-)
+const account = privateKeyToAccount('0x...')
 
-console.log('Address:', account.address)
-console.log('Public Key:', account.publicKey)`
+const client = createWalletClient({
+  account,
+  chain: mainnet,
+  transport: http(),
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-### From Mnemonic
+### 3. Consume Wallet Actions
 
-<CodeGroup 
+Use the account in [Wallet Actions](/docs/clients/wallet/) that require a signature (e.g. `SendTransaction`, `SignMessage`, `SignTypedData`).
 
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `account, err := accounts.MnemonicToAccount(
-    "test test test test test test test test test test test junk",
-    nil, // Use default HD path
+      code: `import (
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
 )
 
-// With custom HD path
-account, err := accounts.MnemonicToAccount(
-    "test test test test test test test test test test test junk",
-    &accounts.HDOptions{
-        Path: "m/44'/60'/0'/0/1", // Second account
-    },
-)`
+hash, err := walletClient.SendTransaction(ctx, wallet.SendTransactionParameters{
+    Account: walletClient.Account(),
+    Chain:   definitions.Mainnet,
+    To:      "0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC",
+    Value:   big.NewInt(1e15), // 0.001 ETH
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { mnemonicToAccount } from 'viem/accounts'
+      code: `import { parseEther } from 'viem'
 
-const account = mnemonicToAccount(
-  'test test test test test test test test test test test junk'
-)
-
-// With custom path
-const account2 = mnemonicToAccount(
-  'test test test test test test test test test test test junk',
-  { addressIndex: 1 }
-)`
+const hash = await client.sendTransaction({
+  account,
+  to: '0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC',
+  value: parseEther('0.001'),
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-### From HD Key
+### 4. Optional: Hoist the Account
 
-<CodeGroup 
+You can pass the account once when creating the Wallet Client so you don't pass it to every action. Use `walletClient.Account()` where an account is required.
 
+<CodeGroup
   tabs={[
     {
       title: "Go",
       language: "go",
-      code: `import "github.com/ChefBingbong/viem-go/accounts"
+      code: `account, _ := accounts.PrivateKeyToAccount("0x...")
 
-// First derive the HD key from a mnemonic
-hdKey, err := accounts.MnemonicToHDKey(mnemonic, "m/44'/60'/0'/0/0")
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account, // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
 if err != nil {
     log.Fatal(err)
 }
 
-// Then create an account from the HD key
-account, err := accounts.HDKeyToAccount(hdKey)`
+// Later: use walletClient.Account() in actions
+hash, err := walletClient.SendTransaction(ctx, wallet.SendTransactionParameters{
+    Account: walletClient.Account(),
+    To:      "0x...",
+    Value:   big.NewInt(1e15),
+})`,
+      showLineNumbers: false
     },
     {
       title: "viem",
       language: "ts",
-      code: `import { hdKeyToAccount } from 'viem/accounts'
-import { HDKey } from '@scure/bip32'
+      code: `const account = privateKeyToAccount('0x...')
 
-const hdKey = HDKey.fromMasterSeed(seed).derive("m/44'/60'/0'/0/0")
-const account = hdKeyToAccount(hdKey)`
+const client = createWalletClient({
+  account,
+  chain: mainnet,
+  transport: http(),
+})
+
+const hash = await client.sendTransaction({
+  to: '0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC',
+  value: parseEther('0.001'),
+})`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Account Capabilities
+### 5. Optional: Use with Public Client
+
+When using a Local Account, you often need both read (e.g. balance, nonce) and write (send transaction). In viem-go you can use a [Public Client](/docs/clients/public/) for reads and the Wallet Client for writes, or extend your flow with public actions as needed.
+
+<Aside type="note">
+<span className="text-tertiary">With a local account, the client signs transactions locally and sends them via <b className="text-foreground">eth_sendRawTransaction</b> — private keys are never sent to the RPC node.</span>
+</Aside>
+
+## Account types
+
+| Type | Description |
+|------|-------------|
+| **Local** | Private key (or derived key) held in process; signs before sending (Private Key, Mnemonic, HD, Custom). |
+| **JSON-RPC** | Address only; signing is delegated to the node/wallet over JSON-RPC. Use [ToAccountFromAddress](/docs/accounts/custom/) or `client.NewAddressAccount` for Wallet Client. |
+
+## Local account capabilities
 
 Local accounts can:
 
 | Operation | Method |
 |-----------|--------|
 | Sign hash | `account.Sign(hash)` |
-| Sign message | `account.SignMessage(message)` |
+| Sign message (EIP-191) | `account.SignMessage(message)` |
 | Sign transaction | `account.SignTransaction(tx)` |
-| Sign typed data | `account.SignTypedData(data)` |
-| Sign authorization | `account.SignAuthorization(auth)` |
+| Sign typed data (EIP-712) | `account.SignTypedData(data)` |
+| Sign authorization (EIP-7702) | `account.SignAuthorization(auth)` |
 
-## Generating Keys
-
-### Generate Private Key
+## Account properties (Go)
 
 ```go
-import "github.com/ChefBingbong/viem-go/accounts"
+// LocalAccount (and *PrivateKeyAccount, *HDAccount)
+account.GetAddress()  // "0x..." — checksummed address
+account.Addr          // same as GetAddress(), struct field
+account.GetPublicKey() // "0x04..." — uncompressed public key (empty for custom without key)
+account.GetSource()   // "privateKey", "hd", "mnemonic", "custom"
+account.GetType()     // "local"
 
-// Generate a random private key
-privateKey, err := accounts.GeneratePrivateKey()
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Private Key: %s\n", privateKey)
-// 0x... (64 hex characters)
+// HDAccount only
+hdAccount.GetHdKey()  // underlying HDKey for derivation
 ```
 
-### Generate Mnemonic
+## Go notes
 
-```go
-// Generate a 12-word mnemonic (128 bits entropy)
-mnemonic, err := accounts.GenerateMnemonic(12)
+- **Errors:** Account constructors return `(account, error)`. Use `Must*` variants (e.g. `MustPrivateKeyToAccount`) to panic on error.
+- **Context:** Wallet actions take `context.Context` as the first argument for cancellation and timeouts.
 
-// Generate a 24-word mnemonic (256 bits entropy)
-mnemonic, err := accounts.GenerateMnemonic(24)
-
-fmt.Println("Mnemonic:", mnemonic)
-// "word1 word2 word3 ..."
-```
-
-## Account Properties
-
-```go
-// LocalAccount fields
-account.Address   // "0x..." - checksummed address
-account.PublicKey // "0x..." - compressed public key
-account.Source    // "privateKey", "mnemonic", etc.
-account.Type      // "local"
-
-// HDAccount additional fields
-hdAccount.GetHdKey() // Returns the underlying HD key
-```
-
-## Security Considerations
+## Security
 
 <Aside type="caution">
-Never commit private keys or mnemonics to source control. Use environment variables or secure key management systems in production.
+Never commit private keys or mnemonics to source control. Use environment variables or a secure key management system in production.
 </Aside>
 
 ```go
 import "os"
 
-// Load from environment
 privateKey := os.Getenv("PRIVATE_KEY")
 if privateKey == "" {
     log.Fatal("PRIVATE_KEY not set")
 }
-
-account, _ := accounts.PrivateKeyToAccount(privateKey)
+account, err := accounts.PrivateKeyToAccount(privateKey)
 ```
