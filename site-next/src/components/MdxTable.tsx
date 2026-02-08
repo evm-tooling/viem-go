@@ -24,7 +24,7 @@ export function Tr({ children }: { children?: React.ReactNode }) {
 
 export function Th({ children }: { children?: React.ReactNode }) {
   return (
-    <th className="px-4 py-2.5 text-left text-[0.8125rem] font-semibold text-white bg-gray-6/80 border-b border-accent/20">
+    <th className="px-4 py-2.5 text-left text-[0.8125rem] font-semibold text-gray-1 bg-gray-6/80 border-b border-accent/20">
       {children}
     </th>
   );

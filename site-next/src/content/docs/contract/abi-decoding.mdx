@@ -1,0 +1,60 @@
+---
+title: ABI Decoding
+description: Decode ABI-encoded data in viem-go
+---
+
+# ABI Decoding
+
+Decode ABI-encoded data returned from contract calls and events.
+
+## Decode Function Result
+
+```go
+import "github.com/ChefBingbong/viem-go/abi"
+
+// Decode the return value of a function call
+result, err := abi.DecodeFunctionResult(abi.DecodeFunctionResultArgs{
+    ABI:          contractABI,
+    FunctionName: "balanceOf",
+    Data:         resultData,
+})
+```
+
+## Decode Event Log
+
+```go
+// Decode an event log
+event, err := abi.DecodeEventLog(abi.DecodeEventLogArgs{
+    ABI:       contractABI,
+    EventName: "Transfer",
+    Data:      log.Data,
+    Topics:    log.Topics,
+})
+```
+
+## Decode ABI Parameters
+
+```go
+// Decode raw ABI parameters
+values, err := abi.DecodeABIParameters(
+    []abi.Param{
+        {Type: "address"},
+        {Type: "uint256"},
+    },
+    encodedData,
+)
+```
+
+## Error Handling
+
+<Aside type="note">
+Always check for decoding errors — invalid data or mismatched ABI definitions will return descriptive error messages.
+</Aside>
+
+```go
+result, err := abi.DecodeFunctionResult(args)
+if err != nil {
+    // Handle: "abi: cannot decode into type..."
+    log.Printf("decode error: %v", err)
+}
+```

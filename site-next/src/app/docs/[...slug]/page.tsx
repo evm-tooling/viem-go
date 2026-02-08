@@ -31,8 +31,9 @@ function createHeading(level: 2 | 3 | 4) {
     const id = slugify(text);
     return (
       <Tag id={id}>
-        <a href={`#${id}`} className="no-underline text-inherit hover:text-inherit">
+        <a href={`#${id}`} className="heading-anchor">
           {children}
+          <span className="anchor-icon" aria-hidden="true">#</span>
         </a>
       </Tag>
     );
@@ -106,16 +107,16 @@ export default async function DocPage({ params }: PageProps) {
 
   return (
     <div className="flex gap-0">
-      <article className="flex-1 min-w-0 max-w-[75ch]">
-        <h1 className="text-3xl font-bold text-white mb-2">
+      <article className="flex-1 min-w-0 max-w-[80ch]">
+        <h1 className="heading-1 mb-2">
           {doc.meta.title}
         </h1>
         {doc.meta.description && (
-          <p className="text-lg text-gray-3 mb-8 leading-relaxed">
+          <p className="text-lead mb-8">
             {doc.meta.description}
           </p>
         )}
-        <div className="docs-prose pr-12">
+        <div className="docs-prose">
           <MDXRemote
             source={doc.content}
             components={mdxComponents}

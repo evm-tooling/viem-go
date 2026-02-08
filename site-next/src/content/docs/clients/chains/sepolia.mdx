@@ -1,0 +1,38 @@
+---
+title: Sepolia
+description: Connect to Sepolia testnet with viem-go
+---
+
+# Sepolia
+
+Connect to the Sepolia testnet for development and testing.
+
+## Usage
+
+```go
+import (
+    "github.com/ChefBingbong/viem-go/chains"
+    "github.com/ChefBingbong/viem-go/client"
+)
+
+c, err := client.NewPublicClient(client.PublicClientConfig{
+    Chain:     chains.Sepolia,
+    Transport: transport.HTTP("https://rpc.sepolia.org"),
+})
+```
+
+## Chain Properties
+
+| Property | Value |
+|----------|-------|
+| Chain ID | `11155111` |
+| Currency | SepoliaETH |
+| Explorer | [sepolia.etherscan.io](https://sepolia.etherscan.io) |
+| RPC | `https://rpc.sepolia.org` |
+
+## Faucets
+
+Get testnet ETH from these faucets:
+
+- [Alchemy Sepolia Faucet](https://sepoliafaucet.com)
+- [Infura Sepolia Faucet](https://www.infura.io/faucet/sepolia)

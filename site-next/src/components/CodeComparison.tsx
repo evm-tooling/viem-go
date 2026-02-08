@@ -3,8 +3,8 @@ import { CodeGroup } from "./CodePanel";
 export default function CodeComparison() {
   return (
     <section className="max-w-[70ch] mx-auto my-16">
-      <h2 className="text-[2.5rem] font-semibold mb-4 text-white">Overview</h2>
-      <p className="mb-6 text-[1.1rem] text-gray-2 leading-relaxed">
+      <h2 className="heading-2 mb-4">Overview</h2>
+      <p className="text-lead mb-6">
         viem-go brings the developer experience of{" "}
         <a href="https://viem.sh" className="text-accent hover:underline">
           viem

@@ -26,15 +26,28 @@ export const docsNav: NavItem[] = [
           { label: "WebSocket", slug: "clients/transports/websocket" },
         ],
       },
+      {
+        label: "Chains",
+        items: [
+          { label: "Mainnet", slug: "clients/chains/mainnet" },
+          { label: "Sepolia", slug: "clients/chains/sepolia" },
+          { label: "Custom Chains", slug: "clients/chains/custom" },
+        ],
+      },
     ],
   },
   {
     label: "Accounts",
     items: [
       { label: "Overview", slug: "accounts/overview" },
-      { label: "Private Key", slug: "accounts/private-key" },
-      { label: "Mnemonic", slug: "accounts/mnemonic" },
-      { label: "HD Wallet", slug: "accounts/hd-wallet" },
+      {
+        label: "Key Types",
+        items: [
+          { label: "Private Key", slug: "accounts/private-key" },
+          { label: "Mnemonic", slug: "accounts/mnemonic" },
+          { label: "HD Wallet", slug: "accounts/hd-wallet" },
+        ],
+      },
     ],
   },
   {
@@ -42,7 +55,14 @@ export const docsNav: NavItem[] = [
     items: [
       { label: "Reading Contracts", slug: "contract/read-contract" },
       { label: "Writing Contracts", slug: "contract/write-contract" },
-      { label: "ABI Encoding", slug: "contract/abi-encoding" },
+      {
+        label: "ABI",
+        items: [
+          { label: "Encoding", slug: "contract/abi-encoding" },
+          { label: "Decoding", slug: "contract/abi-decoding" },
+          { label: "Types", slug: "contract/abi-types" },
+        ],
+      },
     ],
   },
   {
@@ -50,8 +70,13 @@ export const docsNav: NavItem[] = [
     items: [
       { label: "Units", slug: "utilities/units" },
       { label: "Hashing", slug: "utilities/hashing" },
-      { label: "Signatures", slug: "utilities/signatures" },
-      { label: "Addresses", slug: "utilities/addresses" },
+      {
+        label: "Crypto",
+        items: [
+          { label: "Signatures", slug: "utilities/signatures" },
+          { label: "Addresses", slug: "utilities/addresses" },
+        ],
+      },
     ],
   },
 ];

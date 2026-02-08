@@ -16,7 +16,7 @@ const features = [
 
 const doubled = [...features, ...features];
 
-const FeaturesGrid = () => (
+const FeaturesStrip = () => (
   <section className="relative overflow-hidden py-10">
     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
@@ -47,4 +47,4 @@ const FeaturesGrid = () => (
   </section>
 );
 
-export default FeaturesGrid;
+export default FeaturesStrip;

@@ -149,13 +149,13 @@ export default function ReadContractDemo({
   }, [rpcUrl, tokenAddress, userAddress]);
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-[rgba(16,19,27,0.8)]">
-      <div className="flex items-center justify-between h-10 bg-[rgba(23,26,38,0.75)] border-b border-accent/10 px-2">
+    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-gray-6/50">
+      <div className="flex items-center justify-between h-10 bg-dark-deep/60 border-b border-accent/10 px-2">
         <div className="flex items-stretch min-w-0">
           <div className="flex items-center gap-2 px-3 border-r border-accent/10 text-[0.75rem] text-gray-4">
             <span className="font-medium text-gray-2 truncate">{title}</span>
           </div>
-          <div className="flex items-center px-3 text-[0.8125rem] font-medium text-white bg-white/5 border-r border-accent/10">
+          <div className="flex items-center px-3 text-[0.8125rem] font-medium text-gray-1 bg-gray-6/40 border-r border-accent/10">
             <span className="text-[0.75rem] text-gray-4 mr-2">Go</span>
             <span className="truncate">{fileName}</span>
           </div>
@@ -209,7 +209,7 @@ export default function ReadContractDemo({
         />
       </div>
 
-      <div className="bg-[rgba(13,17,23,0.92)]">
+      <div className="bg-dark-deep/70">
         <div className="flex items-center justify-between px-3 py-2 border-b border-accent/10">
           <div className="flex items-center gap-2 text-[0.75rem] text-gray-4 min-w-0">
             <span className="font-medium text-gray-2">Terminal</span>
@@ -217,13 +217,13 @@ export default function ReadContractDemo({
             <span className="text-gray-4">docs runner</span>
             <span className="text-gray-4">•</span>
             <span className="text-gray-4">Command</span>
-            <code className="text-gray-2 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 font-normal truncate">
+            <code className="text-gray-2 bg-gray-6/40 border border-gray-5/40 rounded px-1.5 py-0.5 font-normal truncate">
               viem-go read-contract
             </code>
           </div>
           <button
             type="button"
-            className="h-[30px] px-3 rounded-md text-[0.75rem] font-medium bg-accent/30 hover:bg-accent/40 text-white border border-accent/40 disabled:opacity-60 active:scale-[0.99] transition"
+            className="h-[30px] px-3 rounded-md text-[0.75rem] font-medium bg-accent/30 hover:bg-accent/40 text-primary-foreground border border-accent/40 disabled:opacity-60 active:scale-[0.99] transition"
             onClick={run}
             disabled={running}
           >

@@ -24,19 +24,19 @@ export default function Footer() {
             </h4>
             <Link
               href="/docs/introduction"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               Documentation
             </Link>
             <Link
               href="/docs/getting-started"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               Getting Started
             </Link>
             <Link
               href="/docs/examples"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               Examples
             </Link>
@@ -49,7 +49,7 @@ export default function Footer() {
               href="https://github.com/ChefBingbong/viem-go"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               GitHub
             </a>
@@ -57,7 +57,7 @@ export default function Footer() {
               href="https://github.com/ChefBingbong/viem-go/discussions"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               Discussions
             </a>
@@ -65,7 +65,7 @@ export default function Footer() {
               href="https://twitter.com/ChefBingbong"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               Twitter
             </a>
@@ -78,7 +78,7 @@ export default function Footer() {
               href="https://viem.sh"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               viem (TypeScript)
             </a>
@@ -86,7 +86,7 @@ export default function Footer() {
               href="https://github.com/ethereum/go-ethereum"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               go-ethereum
             </a>
@@ -94,7 +94,7 @@ export default function Footer() {
               href="https://ethereum.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-2 no-underline text-[0.9rem] hover:text-white transition-colors"
+              className="text-gray-2 no-underline text-[0.9rem] hover:text-gray-1 transition-colors"
             >
               Ethereum
             </a>

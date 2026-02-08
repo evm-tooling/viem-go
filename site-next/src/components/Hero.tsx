@@ -3,6 +3,7 @@ import CopyButton from "./CopyButton";
 import TerminalTyping from "./TerminalTyping";
 import GitHubStats from "./GitHubStats";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
@@ -29,11 +30,11 @@ export default function Hero() {
             src="/svg/golem-logo-text-light.svg"
             alt="viem-go logo"
           />
-          <p className="text-[1.25rem] leading-relaxed text-gray-2">
+          <p className="text-lead">
             Build reliable blockchain apps & libraries with{" "}
-            <strong className="text-white font-semibold">idiomatic Go</strong>,{" "}
-            <strong className="text-white font-semibold">type-safe</strong>, and{" "}
-            <strong className="text-white font-semibold">composable</strong> modules that
+            <strong className="text-gray-1 font-semibold">idiomatic Go</strong>,{" "}
+            <strong className="text-gray-1 font-semibold">type-safe</strong>, and{" "}
+            <strong className="text-gray-1 font-semibold">composable</strong> modules that
             interface with Ethereum — inspired by{" "}
             <a
               href="https://viem.sh"
@@ -43,26 +44,21 @@ export default function Hero() {
             </a>
           </p>
           <div className="flex gap-2 flex-wrap max-lg:justify-center">
-            <Link
-              href="/docs/getting-started"
-              className="px-4 py-2.5 rounded-lg font-medium text-[1rem] bg-accent text-white hover:bg-accent-high transition-all no-underline"
-            >
-              Get started
-            </Link>
-            <Link
-              href="/docs/introduction"
-              className="px-4 py-2.5 rounded-lg font-medium text-[1rem] bg-transparent border border-gray-4 text-white hover:border-accent hover:text-accent transition-all no-underline"
-            >
-              Why viem-go?
-            </Link>
-            <a
-              href="https://github.com/ChefBingbong/viem-go"
-              className="px-4 py-2.5 rounded-lg font-medium text-[1rem] bg-transparent border border-gray-4 text-white hover:border-accent hover:text-accent transition-all no-underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </a>
+            <Button asChild size="lg">
+              <Link href="/docs/getting-started">Get started</Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <Link href="/docs/introduction">Why viem-go?</Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <a
+                href="https://github.com/ChefBingbong/viem-go"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </a>
+            </Button>
           </div>
         </div>
 
@@ -70,8 +66,8 @@ export default function Hero() {
         <div className="w-[520px] shrink-0 flex flex-col justify-start gap-4 max-lg:hidden">
           {/* Install terminal */}
           <div className="flex flex-col rounded-lg overflow-hidden border border-accent/20 bg-gray-6/80 min-h-[180px]">
-            <div className="flex justify-between items-center bg-dark-deep/60 border-b border-accent/15 pr-2">
-              <div className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium text-white bg-white/5 border-b-2 border-accent" style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}>
+            <div className="flex justify-between items-center bg-dark-deep/30 border-b border-accent/15 pr-2">
+              <div className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium text-gray-1 bg-gray-6/40 border-b-2 border-accent" style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}>
                 <svg
                   className="w-[18px] h-[18px] text-[#00ADD8]"
                   viewBox="0 0 24 24"

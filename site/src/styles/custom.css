@@ -609,15 +609,19 @@ a.stat-badge.stat-link:hover .stat-value {
   text-align: center;
 }
 
+.section-header h1,
 .section-header h2 {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: clamp(2.25rem, 1.8vw + 1.75rem, 3rem);
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--sl-color-white);
   margin: 0 0 0.75rem 0;
 }
 
 .section-header p {
-  font-size: 1.125rem;
+  font-size: clamp(1.35rem, 0.9vw + 1.05rem, 1.75rem);
+  line-height: 1.65;
   color: var(--sl-color-gray-3);
   margin: 0;
   max-width: 600px;
@@ -675,14 +679,14 @@ a.stat-badge.stat-link:hover .stat-value {
 }
 
 .info-card h3 {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--sl-color-white);
   margin: 0 0 0.5rem 0;
 }
 
 .info-card p {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: var(--sl-color-gray-3);
   margin: 0;
   line-height: 1.5;
@@ -969,7 +973,7 @@ body:has([data-has-hero]) {
 }
 
 .content-section h2 {
-  font-size: 1.5rem;
+  font-size: clamp(1.75rem, 1.2vw + 1.4rem, 2.25rem);
   font-weight: 600;
   margin-bottom: 1rem;
   color: #ffffff;

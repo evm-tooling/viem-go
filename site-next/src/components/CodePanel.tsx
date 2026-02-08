@@ -150,10 +150,10 @@ function parseCodeDirectives(code: string): ParsedCode {
 function lineClassName(meta: CodeLineMeta | undefined, hasFocus: boolean, active: boolean) {
   const classes: string[] = ["table-row", "m-0"];
 
-  if (hasFocus && !meta?.focused) classes.push("opacity-35");
-  if (active ) classes.push("opacity-100");
+  if (hasFocus && !meta?.focused) classes.push("opacity-35 bg-deep-dark");
+  if (active ) classes.push("opacity-100 bg-deep-dark/40");
 
-  if (hasFocus && meta?.focused) classes.push("opacity-100");
+  if (hasFocus && meta?.focused) classes.push("opacity-100 bg-deep-dark/40");
 
   if (meta?.focused) classes.push("font-semibold");
   if (meta?.highlighted) classes.push("font-semibold");
@@ -183,17 +183,17 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   if (tabs.length === 0) return null;
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-transparent ">
+    <div className="my-6 rounded-lg overflow-hidden border border-[#c678dd]/10 bg-[#151520]/20">
       <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <div className="flex items-center justify-between h-11 bg-[rgb(23,26,38,0.7)] border-b border-accent/10">
+        <div className="flex items-center justify-between h-11 bg-[#1a1a28]/25 border-b border-[#c678dd]/8">
           <TabList className="flex h-full items-stretch">
             {tabs.map((tab, index) => (
               <Tab
                 key={index}
                 className={`flex items-center justify-center px-3.5 text-[0.8125rem] font-medium cursor-pointer transition-all duration-150 h-11 border-b-2 outline-none ${
                   selectedIndex === index
-                    ? "text-white bg-white/5 border-accent"
-                    : "text-gray-3 bg-transparent border-transparent hover:text-white"
+                    ? "text-gray-1 bg-gray-6/40 border-accent"
+                    : "text-gray-3 bg-transparent border-transparent hover:text-gray-1 hover:bg-gray-5/10"
                 }`}
               >
                 {tab.title}
@@ -221,7 +221,7 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
                   {({ tokens, getLineProps, getTokenProps }) => (
                     <pre
                       style={{ fontFamily: viemMonoFontFamily }}
-                      className="!m-0 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed bg-transparent" 
+                      className="!m-0 !bg-dark-deep/20 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed " 
                       onMouseEnter={() => {
                         if (active) return
                         setActive(true)

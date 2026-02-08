@@ -21,7 +21,7 @@ export default function CopyButton({ text }: CopyButtonProps) {
 
   return (
     <button
-      className="flex items-center justify-center w-[30px] h-[30px] bg-transparent border-none rounded-md text-gray-4 cursor-pointer transition-colors duration-200 hover:text-white hover:bg-white/10 active:scale-95 shrink-0"
+      className="flex items-center justify-center w-[30px] h-[30px] bg-transparent border-none rounded-md text-gray-4 cursor-pointer transition-all duration-200 hover:text-gray-1 hover:bg-gray-5/20 hover:shadow-[0_0_10px_-2px_hsl(var(--primary)/0.2)] active:scale-95 shrink-0"
       onClick={handleCopy}
       title="Copy to clipboard"
       aria-label="Copy to clipboard"

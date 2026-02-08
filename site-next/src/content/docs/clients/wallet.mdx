@@ -196,8 +196,8 @@ const walletClient = createWalletClient({
   ]}
 />
 
-<Aside type="tip">
-<span className="text-[#D679F2]">By providing a local <b className="text-[#dbdfe7]">Account</b> (private key, mnemonic, or HD wallet), the client will sign transactions locally and send them via <b className="text-[#dbdfe7]">eth_sendRawTransaction</b> — no private keys are ever sent to the RPC node.</span>
+<Aside type="note">
+<span className="text-tertiary">By providing a local <b className="text-foreground">Account</b> (private key, mnemonic, or HD wallet), the client will sign transactions locally and send them via <b className="text-foreground">eth_sendRawTransaction</b> — no private keys are ever sent to the RPC node.</span>
 </Aside>
 
 #### 2: Consume Wallet Actions

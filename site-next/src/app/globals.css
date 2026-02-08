@@ -1,310 +1,588 @@
-@import "tailwindcss";
+/* ============================================================
+   MIDNIGHT EMBER THEME — Astro + Tailwind CSS v4
+   
+   Existing color names mapped to Midnight Ember palette.
+   No component class changes needed.
+   ============================================================ */
 
-@theme inline {
-  --color-brand-navy: #5a5785;
-  --color-brand-blue: #3991cd;
-  /* Lighter variant of --color-brand-blue for subtle UI accents (e.g. code blocks). */
-  --color-brand-blue-light: #7bbbe6;
-  /* --color-brand-blue-light: color-mix(in srgb, var(--color-brand-blue) 70%, white); */
-  --color-accent: #54b2f0;
-  --color-accent-low: #1a2942;
-  --color-accent-high: #7ecbf7;
+   @import "tailwindcss";
 
-  --color-gray-1: #e8eef4;
-  --color-gray-2: #b8c5d4;
-  --color-gray-3: #8494a8;
-  --color-gray-4: #5a6778;
-  --color-gray-5: #3a4555;
-  --color-gray-6: #252d3a;
-  --color-dark-bg: #171c24;
-  --color-dark-deep: #0d1117;
+   @theme inline {
+     /* ── Brand colors → Midnight Ember primary/tertiary ── */
+     --color-brand-navy: hsl(var(--primary-hover));       /* was #5a5785 → electric blue darker */
+     --color-brand-blue: hsl(var(--primary));              /* was #3991cd → electric blue */
+     --color-brand-blue-light: hsl(var(--accent-foreground)); /* was #7bbbe6 → lighter blue accent */
+     --color-accent: hsl(var(--primary));                  /* was #54b2f0 → primary blue */
+     --color-accent-low: hsl(var(--accent));               /* was #1a2942 → dark accent surface */
+     --color-accent-high: hsl(var(--primary-foreground));  /* was #7ecbf7 → bright on hover */
+   
+     /* ── Grays → Midnight Ember foreground scale ── */
+     --color-gray-1: hsl(var(--foreground));               /* was #e8eef4 → lightest text */
+     --color-gray-2: hsl(var(--foreground-secondary));     /* was #b8c5d4 → body text */
+     --color-gray-3: hsl(var(--foreground-muted));         /* was #8494a8 → muted text */
+     --color-gray-4: hsl(var(--muted-foreground));         /* was #5a6778 → dimmed text */
+     --color-gray-5: hsl(var(--border));                   /* was #3a4555 → borders/scrollbar */
+     --color-gray-6: hsl(var(--secondary));                /* was #252d3a → dark surface */
+     --color-dark-bg: hsl(var(--background));              /* was #171c24 → main background */
+     --color-dark-deep: hsl(var(--background));            /* was #0d1117 → deepest bg */
+   
+     /* ── Semantic colors (new, for components that want them) ── */
+     --color-background: hsl(var(--background));
+     --color-background-secondary: hsl(var(--background-secondary));
+     --color-background-tertiary: hsl(var(--background-tertiary));
+     --color-foreground: hsl(var(--foreground));
+     --color-foreground-secondary: hsl(var(--foreground-secondary));
+     --color-foreground-muted: hsl(var(--foreground-muted));
+     --color-primary: hsl(var(--primary));
+     --color-primary-foreground: hsl(var(--primary-foreground));
+     --color-primary-hover: hsl(var(--primary-hover));
+     --color-secondary: hsl(var(--secondary));
+     --color-secondary-foreground: hsl(var(--secondary-foreground));
+     --color-tertiary: hsl(var(--tertiary));
+     --color-tertiary-foreground: hsl(var(--tertiary-foreground));
+     --color-destructive: hsl(var(--destructive));
+     --color-destructive-foreground: hsl(var(--destructive-foreground));
+     --color-success: hsl(var(--success));
+     --color-success-foreground: hsl(var(--success-foreground));
+     --color-warning: hsl(var(--warning));
+     --color-warning-foreground: hsl(var(--warning-foreground));
+     --color-muted: hsl(var(--muted));
+     --color-muted-foreground: hsl(var(--muted-foreground));
+     --color-card: hsl(var(--card));
+     --color-card-foreground: hsl(var(--card-foreground));
+     --color-card-border: hsl(var(--card-border));
+     --color-code-bg: hsl(var(--code-bg));
+     --color-code-border: hsl(var(--code-border));
+     --color-border: hsl(var(--border));
+     --color-input: hsl(var(--input));
+     --color-ring: hsl(var(--ring));
+   
+     /* Font families */
+     --font-sans: var(--font-inter);
+     --font-mono: var(--font-jetbrains-mono);
+   
+     /* Border radius */
+     --radius-sm: calc(var(--radius) - 4px);
+     --radius-md: calc(var(--radius) - 2px);
+     --radius-lg: var(--radius);
+   }
+   
+   /* ── Animations ── */
+   @theme {
+     --animate-fade-up: fade-up 0.6s ease-out forwards;
+     --animate-fade-in: fade-in 0.5s ease-out forwards;
+     --animate-slide-in-left: slide-in-left 0.6s ease-out forwards;
+     --animate-slide-in-right: slide-in-right 0.6s ease-out forwards;
+     --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+     --animate-float: float 6s ease-in-out infinite;
+     --animate-accordion-down: accordion-down 0.2s ease-out;
+     --animate-accordion-up: accordion-up 0.2s ease-out;
+   
+     @keyframes fade-up {
+       0% { opacity: 0; transform: translateY(30px); }
+       100% { opacity: 1; transform: translateY(0); }
+     }
+     @keyframes fade-in {
+       0% { opacity: 0; }
+       100% { opacity: 1; }
+     }
+     @keyframes slide-in-left {
+       0% { opacity: 0; transform: translateX(-40px); }
+       100% { opacity: 1; transform: translateX(0); }
+     }
+     @keyframes slide-in-right {
+       0% { opacity: 0; transform: translateX(40px); }
+       100% { opacity: 1; transform: translateX(0); }
+     }
+     @keyframes glow-pulse {
+       0%, 100% { opacity: 0.4; }
+       50% { opacity: 1; }
+     }
+     @keyframes float {
+       0%, 100% { transform: translateY(0); }
+       50% { transform: translateY(-10px); }
+     }
+     @keyframes accordion-down {
+       from { height: 0; }
+       to { height: var(--radix-accordion-content-height); }
+     }
+     @keyframes accordion-up {
+       from { height: var(--radix-accordion-content-height); }
+       to { height: 0; }
+     }
+   }
+   
+   /* ============================================================
+      MIDNIGHT EMBER — HSL Token Definitions
+      ============================================================ */
+   
+   :root {
+     --background:           225 30% 6%;
+     --background-secondary: 225 25% 10%;
+     --background-tertiary:  225 22% 14%;
+     --foreground:           210 25% 90%;
+     --foreground-secondary: 220 18% 62%;
+     --foreground-muted:     220 12% 42%;
+     --primary:              215 85% 55%;
+     --primary-foreground:   0 0% 100%;
+     --primary-hover:        215 85% 48%;
+     --secondary:            225 25% 18%;
+     --secondary-foreground: 210 25% 85%;
+     --tertiary:             24 95% 55%;
+     --tertiary-foreground:  0 0% 100%;
+     --card:                 225 25% 10%;
+     --card-foreground:      210 25% 90%;
+     --card-border:          225 20% 18%;
+     --muted:                225 20% 15%;
+     --muted-foreground:     220 12% 48%;
+     --accent:               215 60% 18%;
+     --accent-foreground:    215 85% 70%;
+     --destructive:          0 75% 55%;
+     --destructive-foreground: 0 0% 100%;
+     --success:              145 65% 42%;
+     --success-foreground:   0 0% 100%;
+     --warning:              38 90% 55%;
+     --warning-foreground:   38 90% 10%;
+     --border:               225 20% 18%;
+     --input:                225 20% 15%;
+     --ring:                 215 85% 55%;
+     --radius:               0.5rem;
+     --code-bg:              225 30% 8%;
+     --code-border:          225 20% 16%;
 
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
-}
+    /* ============================================================
+       Typography scale (app-wide)
+       ============================================================ */
+    --fs-h1:2.25rem;
+    --fs-h2: 1.75rem;
+    --fs-h3: 1.5rem;
+    --fs-h4: 1.25rem;
+    --fs-body: 1rem;
+    --fs-lead: 1.125rem;
+    --fs-subtitle: 1.35rem;
+    --fs-small: 0.875rem;
+    --fs-fine: 0.8125rem;
+    --lh-heading: 1.15;
+    --lh-body: 1.75;
+    --tracking-heading: -0.02em;
+   }
 
-html {
-  color-scheme: dark;
-}
+  /* Light theme overrides (works with `html.light` or `[data-theme="light"]`). */
+  html.light,
+  [data-theme="light"] {
+    color-scheme: light;
+    --background:           210 40% 98%;
+    --background-secondary: 210 35% 96%;
+    --background-tertiary:  210 25% 93%;
+    --foreground:           225 15% 12%;
+    --foreground-secondary: 225 10% 30%;
+    --foreground-muted:     225 8% 45%;
+    --primary:              215 85% 45%;
+    --primary-foreground:   0 0% 100%;
+    --primary-hover:        215 85% 38%;
+    --secondary:            210 25% 92%;
+    --secondary-foreground: 225 15% 16%;
+    --tertiary:             24 90% 50%;
+    --tertiary-foreground:  0 0% 100%;
+    --card:                 0 0% 100%;
+    --card-foreground:      225 15% 12%;
+    --card-border:          220 18% 85%;
+    --muted:                210 25% 92%;
+    --muted-foreground:     225 8% 45%;
+    --accent:               215 55% 92%;
+    --accent-foreground:    215 85% 35%;
+    --destructive:          0 75% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success:              145 65% 35%;
+    --success-foreground:   0 0% 100%;
+    --warning:              38 90% 45%;
+    --warning-foreground:   38 90% 10%;
+    --border:               220 18% 85%;
+    --input:                220 18% 90%;
+    --ring:                 215 85% 45%;
+    --code-bg:              210 30% 96%;
+    --code-border:          220 18% 85%;
+  }
+   
+   /* ============================================================
+      BASE STYLES
+      ============================================================ */
+   
+   html {
+     color-scheme: dark;
+   }
+   
+   body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+     font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+   }
 
-body {
-  background: var(--color-dark-bg);
-  color: #e8eef4;
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
-}
+  /* ============================================
+     APP TYPOGRAPHY (outside `.docs-prose`)
+     ============================================ */
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-foreground);
+    font-weight: 650;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-heading);
+  }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+  h1 { font-size: var(--fs-h1); }
+  h2 { font-size: var(--fs-h2); }
+  h3 { font-size: var(--fs-h3); }
+  h4 { font-size: var(--fs-h4); }
 
-::-webkit-scrollbar-thumb {
-  background: var(--color-gray-5);
-  border-radius: 3px;
-}
+  p {
+    color: var(--color-foreground-secondary);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gray-4);
-}
+  small {
+    color: var(--color-foreground-muted);
+    font-size: var(--fs-fine);
+    line-height: 1.4;
+  }
 
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-gray-5) transparent;
-}
+  /* Utility classes for explicit typography roles */
+  @utility heading-1 {
+    font-size: var(--fs-h1);
+    font-weight: 750;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-heading);
+    color: var(--color-foreground);
+  }
 
-/* Cursor blink animation */
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
+  @utility heading-2 {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-heading);
+    color: var(--color-foreground);
+  }
 
-.animate-cursor-blink {
-  animation: cursorBlink 1s step-end infinite;
-}
+  @utility heading-3 {
+    font-size: var(--fs-h3);
+    font-weight: 650;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-heading);
+    color: var(--color-foreground);
+  }
 
-/* Sidebar slide-in animation */
-@keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
+  @utility heading-4 {
+    font-size: var(--fs-h4);
+    font-weight: 650;
+    line-height: var(--lh-heading);
+    color: var(--color-foreground);
+  }
 
-.animate-slide-in {
-  animation: slideIn 0.2s ease-out;
-}
+  @utility text-body {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-foreground-secondary);
+  }
 
-/* ============================================
-   DOCS PROSE STYLING
-   Matches the Astro/Starlight blue-tinted dark
-   theme for documentation content.
-   ============================================ */
+  @utility text-lead {
+    font-size: var(--fs-lead);
+    line-height: 1.7;
+    color: var(--color-foreground-secondary);
+  }
 
-.docs-prose {
-  color: var(--color-gray-2);
-  line-height: 1.75;
-  font-size: 1rem;
-}
+  @utility text-fine {
+    font-size: var(--fs-fine);
+    line-height: 1.4;
+    color: var(--color-foreground-muted);
+  }
+   
+   * {
+     border-color: var(--color-gray-5);
+   }
+   
+   /* Scrollbar styling */
+   ::-webkit-scrollbar { width: 6px; height: 6px; }
+   ::-webkit-scrollbar-track { background: transparent; }
+   ::-webkit-scrollbar-thumb { background: var(--color-gray-5); border-radius: 3px; }
+   ::-webkit-scrollbar-thumb:hover { background: var(--color-gray-4); }
+   * { scrollbar-width: thin; scrollbar-color: var(--color-gray-5) transparent; }
+   
+   /* Cursor blink animation */
+   @keyframes cursorBlink {
+     0%, 100% { opacity: 1; }
+     50% { opacity: 0; }
+   }
+   .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
+   
+   /* Sidebar slide-in */
+   @keyframes slideIn {
+     from { transform: translateX(-100%); }
+     to { transform: translateX(0); }
+   }
+   .animate-slide-in { animation: slideIn 0.2s ease-out; }
+   
+   /* ============================================
+      DOCS PROSE STYLING
+      ============================================ */
+   
+   .docs-prose {
+    color: var(--color-foreground-secondary);
+    line-height: var(--lh-body);
+    font-size: var(--fs-body);
+   }
+   
+   .docs-prose h1,
+   .docs-prose h2,
+   .docs-prose h3,
+   .docs-prose h4 {
+    color: var(--color-foreground);
+    font-weight: 700;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-heading);
+     scroll-margin-top: 4rem;
+   }
+   
+  .docs-prose h1 { font-size: var(--fs-h1); margin-top: 0; margin-bottom: 1rem; }
+   .docs-prose h2 {
+    font-size: var(--fs-h2); margin-top: 2.5rem; margin-bottom: 1rem;
+     padding-bottom: 0.5rem;
+    border-bottom: 1px solid hsl(var(--border) / 1);
+   }
+  .docs-prose h3 { font-size: var(--fs-h3); margin-top: 2rem; margin-bottom: 0.75rem; }
+  .docs-prose h4 { font-size: var(--fs-h4); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+   
+  .docs-prose p { margin-bottom: 1.25rem; color: var(--color-foreground-secondary); line-height: var(--lh-body); }
+   
+  .docs-prose a { color: var(--color-primary); text-decoration: none; transition: color 0.15s ease, text-shadow 0.15s ease; }
+  .docs-prose a:hover { text-decoration: underline; color: var(--color-primary-hover); text-shadow: 0 0 12px hsl(var(--primary) / 0.35); }
 
-/* Headings */
-.docs-prose h1,
-.docs-prose h2,
-.docs-prose h3,
-.docs-prose h4 {
-  color: #ffffff;
-  font-weight: 600;
-  line-height: 1.3;
-  scroll-margin-top: 4rem;
-}
+  /* Heading anchor icon (appears on hover) */
+  .docs-prose .heading-anchor { color: var(--color-foreground); text-decoration: none; transition: color 0.15s ease; }
+  .docs-prose .heading-anchor:hover { color: var(--color-foreground); text-decoration: none; text-shadow: none; }
+  .docs-prose .heading-anchor .anchor-icon {
+    opacity: 0;
+    margin-left: 0.35em;
+    color: var(--color-foreground-muted);
+    transition: opacity 0.15s ease, color 0.15s ease;
+    font-weight: 400;
+  }
+  .docs-prose h2:hover .anchor-icon,
+  .docs-prose h3:hover .anchor-icon,
+  .docs-prose h4:hover .anchor-icon {
+    opacity: 1;
+  }
+  .docs-prose .heading-anchor:hover .anchor-icon {
+    opacity: 1;
+    color: var(--color-primary);
+  }
+   
+  .docs-prose strong { color: var(--color-foreground); font-weight: 650; }
+   
+   .docs-prose ul, .docs-prose ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+   .docs-prose ul { list-style: disc; }
+   .docs-prose ol { list-style: decimal; }
+  .docs-prose li { margin-bottom: 0.375rem; color: var(--color-foreground-secondary); line-height: var(--lh-body); }
+  .docs-prose li::marker { color: var(--color-foreground-muted); }
+   
+   .docs-prose :not(pre) > code {
+    background: hsl(var(--muted) / 0.45);
+    border: 1px solid hsl(var(--border) / 1);
+    color: var(--color-accent-foreground);
+     padding: 0.15em 0.4em;
+     border-radius: 0.25rem;
+     font-size: 0.875em;
+     font-weight: 600;
+   }
+   
+   .docs-prose pre {
+    background: var(--color-code-bg);
+    border: 1px solid var(--color-code-border);
+     border-radius: 0.5rem;
+     padding: 1rem 1.25rem;
+     margin: 1.5rem 0;
+     overflow-x: auto;
+     font-size: 0.875rem;
+     line-height: 1.6;
+     font-family: var(--font-mono), ui-monospace, monospace;
+   }
+  .docs-prose pre code { background: transparent; border: none; padding: 0; font-size: inherit; color: var(--color-foreground); }
+   
+   .docs-prose blockquote {
+    border-left: 3px solid var(--color-primary);
+     padding: 0.5rem 1rem;
+     margin: 1.5rem 0;
+    background: hsl(var(--accent) / 0.35);
+     border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--color-foreground-muted);
+   }
+  .docs-prose blockquote p { margin-bottom: 0; color: var(--color-foreground-muted); }
+   
+   .docs-prose table {
+     display: table !important; width: 100% !important;
+     border-collapse: collapse !important; margin: 1.5rem 0 !important;
+    font-size: var(--fs-small);
+    border: 1px solid var(--color-card-border) !important;
+     border-radius: 0.5rem; overflow: hidden;
+   }
+   .docs-prose thead { display: table-header-group !important; }
+   .docs-prose tbody { display: table-row-group !important; }
+   .docs-prose tr { display: table-row !important; }
+   .docs-prose th, .docs-prose td {
+     display: table-cell !important; padding: 0.75rem 1rem !important;
+     text-align: left !important;
+    border-bottom: 1px solid hsl(var(--border) / 1) !important;
+     border-right: none !important; border-left: none !important; border-top: none !important;
+   }
+   .docs-prose tr:last-child td { border-bottom: none !important; }
+  .docs-prose th {
+    background: hsl(var(--background-tertiary) / 0.7) !important;
+    font-weight: 650 !important;
+    color: var(--color-foreground) !important;
+    border-bottom: 1px solid hsl(var(--border) / 1) !important;
+   }
+  .docs-prose td { color: var(--color-foreground-secondary); background: hsl(var(--background-secondary) / 0.6); }
+  .docs-prose tr:hover td { background: hsl(var(--background-secondary) / 0.9); }
+   
+  .docs-prose hr { border: none; border-top: 1px solid hsl(var(--border) / 1); margin: 2rem 0; }
+  .docs-prose img { border-radius: 0.5rem; border: 1px solid hsl(var(--border) / 1); margin: 1.5rem 0; max-width: 100%; }
+   
+   .docs-prose details {
+    background: var(--color-card);
+    border: 1px solid var(--color-card-border);
+     border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;
+   }
+  .docs-prose summary { cursor: pointer; color: var(--color-foreground); font-weight: 650; }
 
-.docs-prose h1 {
-  font-size: 2rem;
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
+  .docs-prose .docs-media {
+    margin: 1.5rem 0;
+  }
+  .docs-prose .docs-media--md {
+    max-width: 720px;
+  }
 
-.docs-prose h2 {
-  font-size: 1.5rem;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(57, 145, 205, 0.15);
-}
+  /* Feature list table used in some MDX files */
+  .docs-prose .docs-feature-table {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
 
-.docs-prose h3 {
-  font-size: 1.25rem;
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
-}
+  .docs-prose .docs-feature-table__header {
+    display: flex;
+    padding: 0.75rem 1.25rem;
+    background: hsl(var(--background-tertiary) / 0.55);
+    border-bottom: 1px solid hsl(var(--border) / 1);
+    font-weight: 700;
+    color: var(--color-foreground);
+    font-size: var(--fs-small);
+  }
 
-.docs-prose h4 {
-  font-size: 1.1rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-}
+  .docs-prose .docs-feature-table__row {
+    display: flex;
+    padding: 0.625rem 1.25rem;
+    border-bottom: 1px solid hsl(var(--border) / 0.6);
+    color: var(--color-foreground-secondary);
+    font-size: var(--fs-small);
+  }
+  .docs-prose .docs-feature-table__row:last-child { border-bottom: none; }
+  .docs-prose .docs-feature-table__name { flex: 1; }
+  .docs-prose .docs-feature-table__status { font-weight: 650; }
+  .docs-prose .docs-feature-table__status--complete { color: var(--color-success); }
 
-/* Paragraphs */
-.docs-prose p {
-  margin-bottom: 1.25rem;
-  color: var(--color-gray-2);
-  line-height: 1.7;
-}
+  /* Splash/landing MDX (scoped so it can't affect app pages) */
+  .docs-prose .landing-container {
+    color: var(--color-foreground-secondary);
+  }
+  /* Landing section headers should read like H1 + subtitle */
+  .docs-prose .landing-container .section-header h1,
+  .docs-prose .landing-container .section-header h2 {
+    font-size: var(--fs-h1);
+    margin: 0 0 0.75rem 0;
+    text-align: center;
+  }
+  :where(.docs-prose .landing-container .section-header p) {
+    font-size: var(--fs-subtitle);
+    line-height: 1.65;
+    color: var(--color-foreground-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .docs-prose .landing-container h3 { font-size: var(--fs-h4); }
+  .docs-prose .landing-container p { color: var(--color-foreground-secondary); }
 
-/* Links */
-.docs-prose a {
-  color: var(--color-accent);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
+  .docs-prose .landing-container a.primary,
+  .docs-prose .landing-container a.secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    font-weight: 650;
+    text-decoration: none;
+    padding: 0.65rem 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .docs-prose .landing-container a.primary {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+  .docs-prose .landing-container a.primary:hover { background: var(--color-primary-hover); }
+  .docs-prose .landing-container a.secondary {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+  }
+  .docs-prose .landing-container a.secondary:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: hsl(var(--background-tertiary) / 0.4);
+  }
 
-.docs-prose a:hover {
-  text-decoration: underline;
-  color: var(--color-accent-high);
-}
+  .docs-prose .landing-container .feature-box,
+  .docs-prose .landing-container .info-card,
+  .docs-prose .landing-container .comparison-card,
+  .docs-prose .landing-container a.info-card.link-card,
+  .docs-prose .landing-container a.support-link {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+   
+   /* ============================================================
+      CUSTOM UTILITIES
+      ============================================================ */
+   
+  @utility text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--tertiary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-/* Strong / Bold */
-.docs-prose strong {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-/* Lists */
-.docs-prose ul,
-.docs-prose ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1.25rem;
-}
-
-.docs-prose ul {
-  list-style: disc;
-}
-
-.docs-prose ol {
-  list-style: decimal;
-}
-
-.docs-prose li {
-  margin-bottom: 0.375rem;
-  color: var(--color-gray-2);
-  line-height: 1.7;
-}
-
-.docs-prose li::marker {
-  color: var(--color-gray-4);
-}
-
-/* Inline code */
-.docs-prose :not(pre) > code {
-  background: rgba(100, 109, 125, 0.2);
-  border: 1px solid rgba(57, 145, 205, 0.15);
-  color: var(--color-brand-blue-light);
-  padding: 0.15em 0.4em;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
-  font-weight: "semibold";
-}
-
-/* Code blocks (pre) -- for raw markdown fences */
-.docs-prose pre {
-  background: rgb(16, 19, 27, 0.8);
-  border: 1px solid rgba(57, 145, 205, 0.2);
-  border-radius: 0.5rem;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  font-family: var(--font-mono), ui-monospace, monospace;
-}
-
-.docs-prose pre code {
-  background: transparent;
-  border: none;
-  padding: 0;
-  font-size: inherit;
-  color: var(--color-gray-1);
-}
-
-/* Blockquotes */
-.docs-prose blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding: 0.5rem 1rem;
-  margin: 1.5rem 0;
-  background: rgba(57, 145, 205, 0.05);
-  border-radius: 0 0.5rem 0.5rem 0;
-  color: var(--color-gray-3);
-}
-
-.docs-prose blockquote p {
-  margin-bottom: 0;
-  color: var(--color-gray-3);
-}
-
-/* Tables -- use !important to override Tailwind preflight resets */
-.docs-prose table {
-  display: table !important;
-  width: 100% !important;
-  border-collapse: collapse !important;
-  margin: 1.5rem 0 !important;
-  font-size: 0.9375rem;
-  border: 1px solid rgba(57, 145, 205, 0.15) !important;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.docs-prose thead {
-  display: table-header-group !important;
-}
-
-.docs-prose tbody {
-  display: table-row-group !important;
-}
-
-.docs-prose tr {
-  display: table-row !important;
-}
-
-.docs-prose th,
-.docs-prose td {
-  display: table-cell !important;
-  padding: 0.75rem 1rem !important;
-  text-align: left !important;
-  border-bottom: 1px solid rgba(57, 145, 205, 0.12) !important;
-  border-right: none !important;
-  border-left: none !important;
-  border-top: none !important;
-}
-
-.docs-prose tr:last-child td {
-  border-bottom: none !important;
-}
-
-.docs-prose th {
-  background: var(--color-gray-6) !important;
-  font-weight: 600 !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid rgba(57, 145, 205, 0.25) !important;
-}
-
-.docs-prose td {
-  color: var(--color-gray-2);
-  background: rgba(37, 45, 58, 0.3);
-}
-
-.docs-prose tr:hover td {
-  background: rgba(37, 45, 58, 0.6);
-}
-
-/* Horizontal rules */
-.docs-prose hr {
-  border: none;
-  border-top: 1px solid rgba(57, 145, 205, 0.15);
-  margin: 2rem 0;
-}
-
-/* Images */
-.docs-prose img {
-  border-radius: 0.5rem;
-  border: 1px solid rgba(57, 145, 205, 0.15);
-  margin: 1.5rem 0;
-  max-width: 100%;
-}
-
-/* Definition lists / details */
-.docs-prose details {
-  background: rgba(37, 45, 58, 0.5);
-  border: 1px solid rgba(57, 145, 205, 0.15);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 1rem 0;
-}
-
-.docs-prose summary {
-  cursor: pointer;
-  color: #ffffff;
-  font-weight: 500;
-}
+  /* ── Hover glow for interactive elements ── */
+  @utility hover-glow {
+    transition: box-shadow 0.2s ease;
+  }
+  @utility hover-glow-sm {
+    &:hover {
+      box-shadow: 0 0 12px -3px hsl(var(--primary) / 0.2);
+    }
+  }
+  @utility hover-glow-md {
+    &:hover {
+      box-shadow: 0 0 20px -4px hsl(var(--primary) / 0.25);
+    }
+  }
+  @utility hover-glow-lg {
+    &:hover {
+      box-shadow: 0 0 20px -2px hsl(var(--primary) / 0.3), 0 0 0 1px hsl(var(--primary) / 0.15);
+    }
+  }
+   

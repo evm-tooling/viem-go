@@ -179,7 +179,7 @@ The table below averages each suite’s detailed rows (arithmetic mean for ns/op
 
 </details>
 
-<div style={{ maxWidth: 720, margin: "1.5rem 0" }}>
+<div className="docs-media docs-media--md">
   <img src="/benchmarks/summary.svg" alt="viem-go benchmark summary" />
 </div>
 
@@ -248,9 +248,9 @@ The test suite runs against actual Ethereum nodes (via Anvil) to ensure real-wor
 
 viem-go is under active development. Current features include:
 
-<div style={{background: 'rgba(37,45,58,0.5)', border: '1px solid rgba(57,145,205,0.2)', borderRadius: '0.75rem', overflow: 'hidden', margin: '1.5rem 0'}}>
-  <div style={{display: 'flex', padding: '0.75rem 1.25rem', background: 'rgba(23,28,36,0.6)', borderBottom: '1px solid rgba(57,145,205,0.15)', fontWeight: 600, color: '#ffffff', fontSize: '0.9375rem'}}>
-    <span style={{flex: 1}}>Feature</span>
+<div className="docs-feature-table">
+  <div className="docs-feature-table__header">
+    <span style={{ flex: 1 }}>Feature</span>
     <span>Status</span>
   </div>
   {[
@@ -266,9 +266,9 @@ viem-go is under active development. Current features include:
     'Signature Utilities',
     'ERC20/721/1155 Bindings',
   ].map((feature) => (
-    <div key={feature} style={{display: 'flex', padding: '0.625rem 1.25rem', borderBottom: '1px solid rgba(57,145,205,0.08)', color: '#b8c5d4', fontSize: '0.9375rem'}}>
-      <span style={{flex: 1}}>{feature}</span>
-      <span style={{color: '#4ade80'}}>✅ Complete</span>
+    <div key={feature} className="docs-feature-table__row">
+      <span className="docs-feature-table__name">{feature}</span>
+      <span className="docs-feature-table__status docs-feature-table__status--complete">✅ Complete</span>
     </div>
   ))}
 </div>

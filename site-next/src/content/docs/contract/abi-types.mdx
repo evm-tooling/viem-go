@@ -1,0 +1,56 @@
+---
+title: ABI Types
+description: Working with Solidity ABI types in viem-go
+---
+
+# ABI Types
+
+viem-go maps Solidity types to Go types for encoding and decoding.
+
+## Type Mapping
+
+| Solidity Type | Go Type | Example |
+|--------------|---------|---------|
+| `address` | `common.Address` | `0xd8dA6BF...` |
+| `uint256` | `*big.Int` | `big.NewInt(100)` |
+| `int256` | `*big.Int` | `big.NewInt(-50)` |
+| `bool` | `bool` | `true` |
+| `string` | `string` | `"hello"` |
+| `bytes` | `[]byte` | `[]byte{0x01}` |
+| `bytes32` | `[32]byte` | Fixed-size bytes |
+| `uint8` | `uint8` | `255` |
+
+## Arrays and Tuples
+
+```go
+// Dynamic array: uint256[]
+param := abi.Param{
+    Type: "uint256[]",
+}
+
+// Fixed array: uint256[3]
+param := abi.Param{
+    Type: "uint256[3]",
+}
+
+// Tuple (struct)
+param := abi.Param{
+    Type: "tuple",
+    Components: []abi.Param{
+        {Name: "to", Type: "address"},
+        {Name: "amount", Type: "uint256"},
+    },
+}
+```
+
+## Parsing ABI JSON
+
+```go
+import "github.com/ChefBingbong/viem-go/abi"
+
+// Parse a full contract ABI from JSON
+contractABI, err := abi.ParseABI(abiJSON)
+
+// Parse a single human-readable ABI item
+item, err := abi.ParseABIItem("function balanceOf(address) view returns (uint256)")
+```

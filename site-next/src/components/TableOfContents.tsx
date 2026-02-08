@@ -75,8 +75,8 @@ export default function TableOfContents({
   if (headings.length === 0) return null;
 
   return (
-    <aside className="hidden xl:block w-[220px] shrink-0 sticky top-0 self-start h-[calc(100vh-3rem)] border-l border-accent/10">
-      <div className="py-8 pl-4 pr-2 overflow-y-auto h-full">
+    <aside className="hidden xl:block w-[280px] shrink-0 sticky top-0 self-start h-[calc(100vh)] ">
+      <div className="pl-10 pr-2 overflow-y-auto h-full">
         <p className="text-[0.8125rem] font-semibold text-gray-3 uppercase tracking-wider mb-2">
           On this page
         </p>
@@ -104,12 +104,12 @@ export default function TableOfContents({
                     history.pushState(null, "", `#${heading.id}`);
                   }
                 }}
-                className={`block text-[0.875rem] leading-snug no-underline py-1.5 transition-colors border-l-2 ${
-                  heading.depth === 3 ? "pl-5" : "pl-3"
+                className={`block text-[0.875rem] leading-snug no-underline py-1.5 transition-all duration-150 border-l-2 ${
+                  heading.depth === 3 ? "pl-12" : "pl-8 text-[0.98rem] "
                 } ${
                   isActive
                     ? "text-accent border-accent"
-                    : "text-gray-4 border-transparent hover:text-gray-2 hover:border-gray-5"
+                    : "text-gray-4 border-transparent hover:text-gray-1 hover:border-gray-4"
                 }`}
               >
                 {heading.text}

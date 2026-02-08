@@ -1,0 +1,39 @@
+---
+title: Mainnet
+description: Connect to Ethereum mainnet with viem-go
+---
+
+# Mainnet
+
+Connect to Ethereum mainnet using viem-go's built-in chain definitions.
+
+## Usage
+
+```go
+import (
+    "github.com/ChefBingbong/viem-go/chains"
+    "github.com/ChefBingbong/viem-go/client"
+)
+
+c, err := client.NewPublicClient(client.PublicClientConfig{
+    Chain:     chains.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+```
+
+## Chain Properties
+
+| Property | Value |
+|----------|-------|
+| Chain ID | `1` |
+| Currency | ETH |
+| Explorer | [etherscan.io](https://etherscan.io) |
+| RPC | `https://eth.llamarpc.com` |
+
+## Block Explorer Links
+
+```go
+// Get a transaction URL
+url := chains.Mainnet.BlockExplorers.Default.URL
+// "https://etherscan.io"
+```

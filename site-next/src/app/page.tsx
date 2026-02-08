@@ -18,10 +18,10 @@ export default function Home() {
           <Hero />
           <FeaturesGrid />
         </div>
-        <CodeComparison />
+        {/* <CodeComparison /> */}
+        <ComparisonSection />
         <WhyGoSection />
         <FeaturesSection />
-        <ComparisonSection />
         <CommunitySection />
         <SupportSection />
       </main>

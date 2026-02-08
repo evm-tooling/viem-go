@@ -2,14 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import SearchModal from "./SearchModal";
+import { Button } from "@/components/ui/button";
 
 export default function SearchTrigger({ compact }: { compact?: boolean }) {
   const [open, setOpen] = useState(false);
-  const [isMac, setIsMac] = useState(true);
-
-  useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
-  }, []);
+  const isMac =
+    typeof navigator !== "undefined" &&
+    navigator.platform.toUpperCase().includes("MAC");
 
   /* Global Cmd+K / Ctrl+K listener */
   useEffect(() => {
@@ -40,9 +39,12 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
   if (compact) {
     return (
       <>
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => setOpen(true)}
-          className="flex items-center justify-center w-12 h-9 rounded-lg text-gray-3 hover:text-white hover:bg-white/[0.08] transition-colors"
+          className="w-12 h-9 p-0 rounded-lg text-gray-3 hover:text-gray-1"
           aria-label="Search"
         >
           <svg
@@ -59,8 +61,8 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
               d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
             />
           </svg>
-        </button>
-        <SearchModal open={open} onClose={handleClose} />
+        </Button>
+        {open ? <SearchModal onClose={handleClose} /> : null}
       </>
     );
   }
@@ -69,7 +71,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 min-w-[300px] h-10 px-3 rounded-[12px] border border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-150 hover:border-gray-4 hover:text-gray-3"
+        className="flex items-center gap-2 min-w-[300px] h-10 px-3 rounded-[12px] border border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-200 hover:border-primary/40 hover:text-gray-2 hover-glow hover-glow-lg"
       >
         <svg
           className="w-4 h-4 shrink-0"
@@ -90,7 +92,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
           {isMac ? "⌘" : "Ctrl"}K
         </kbd>
       </button>
-      <SearchModal open={open} onClose={handleClose} />
+      {open ? <SearchModal onClose={handleClose} /> : null}
     </>
   );
 }

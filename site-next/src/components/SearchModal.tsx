@@ -18,20 +18,13 @@ interface SearchEntry {
 }
 
 interface SearchResult extends SearchEntry {
-  /** matched snippet from content (with query highlighted) */
   snippet: string;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Fuzzy matching helpers                                             */
-/* ------------------------------------------------------------------ */
 
 function fuzzyMatch(text: string, query: string): boolean {
   const lower = text.toLowerCase();
   const q = query.toLowerCase();
-  // simple substring match plus word-start matching
   if (lower.includes(q)) return true;
-  // check if every word in the query appears somewhere
   const words = q.split(/\s+/).filter(Boolean);
   return words.every((w) => lower.includes(w));
 }
@@ -59,7 +52,7 @@ function highlightMatch(text: string, query: string): React.ReactNode[] {
   const parts = text.split(regex);
   return parts.map((part, i) =>
     regex.test(part) ? (
-      <mark key={i} className="bg-accent/25 text-white rounded-sm px-px">
+      <mark key={i} className="bg-accent/25 text-gray-1 rounded-sm px-px">
         {part}
       </mark>
     ) : (
@@ -68,15 +61,9 @@ function highlightMatch(text: string, query: string): React.ReactNode[] {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Main component                                                     */
-/* ------------------------------------------------------------------ */
-
 export default function SearchModal({
-  open,
   onClose,
 }: {
-  open: boolean;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -87,30 +74,22 @@ export default function SearchModal({
   const [activeIndex, setActiveIndex] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
-  /* Load search index on first open */
   useEffect(() => {
-    if (open && !loaded) {
-      fetch("/api/search")
-        .then((r) => r.json())
-        .then((data: SearchEntry[]) => {
-          setIndex(data);
-          setLoaded(true);
-        })
-        .catch(console.error);
-    }
-  }, [open, loaded]);
+    if (loaded) return;
+    fetch("/api/search")
+      .then((r) => r.json())
+      .then((data: SearchEntry[]) => {
+        setIndex(data);
+        setLoaded(true);
+        setActiveIndex(0);
+      })
+      .catch(console.error);
+  }, [loaded]);
 
-  /* Auto-focus input when modal opens */
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setActiveIndex(0);
-      // small delay so the modal finishes rendering
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
-  }, [open]);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }, []);
 
-  /* Compute results */
   const results: SearchResult[] = useMemo(() => {
     if (!query.trim()) return [];
     return index
@@ -127,7 +106,6 @@ export default function SearchModal({
       .slice(0, 20);
   }, [query, index]);
 
-  /* Group results by section */
   const grouped = useMemo(() => {
     const map = new Map<string, SearchResult[]>();
     for (const r of results) {
@@ -138,10 +116,8 @@ export default function SearchModal({
     return map;
   }, [results]);
 
-  /* Flat result list for keyboard navigation */
   const flatResults = results;
 
-  /* Navigate to a result */
   const goTo = useCallback(
     (slug: string) => {
       onClose();
@@ -150,9 +126,9 @@ export default function SearchModal({
     [onClose, router]
   );
 
-  /* Keyboard navigation */
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (flatResults.length === 0) return;
       if (e.key === "ArrowDown") {
         e.preventDefault();
         setActiveIndex((prev) => Math.min(prev + 1, flatResults.length - 1));
@@ -172,27 +148,17 @@ export default function SearchModal({
     [flatResults, activeIndex, goTo, onClose]
   );
 
-  /* Scroll active item into view */
   useEffect(() => {
     const el = listRef.current?.querySelector(`[data-idx="${activeIndex}"]`);
     el?.scrollIntoView({ block: "nearest" });
   }, [activeIndex]);
 
-  /* Reset active index when results change */
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [results]);
-
-  if (!open) return null;
-
   return (
     <>
-      {/* Backdrop + centering wrapper -- single element covers full viewport */}
       <div
-        className="fixed top-0 left-0 right-0 bottom-0 z-[100] h-[100vh] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-[min(15vh,120px)] px-4 overflow-y-auto"
+        className="fixed top-0 left-0 right-0 bottom-0 z-[100] h-[100vh] bg-dark-deep/60 backdrop-blur-sm flex items-start justify-center pt-[min(15vh,120px)] px-4 overflow-y-auto"
         onClick={onClose}
       >
-        {/* Modal card -- stop clicks from bubbling to backdrop */}
         <div
           className="w-full max-w-[640px] bg-dark-deep border border-gray-5 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[min(70vh,600px)] my-auto mt-0 mb-auto"
           role="dialog"
@@ -202,7 +168,6 @@ export default function SearchModal({
         >
           {/* Search input */}
           <div className="flex items-center gap-3 px-4 border-b border-gray-5">
-            {/* Search icon */}
             <svg
               className="w-5 h-5 text-gray-4 shrink-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -221,9 +186,12 @@ export default function SearchModal({
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setActiveIndex(0);
+              }}
               placeholder="Search docs..."
-              className="flex-1 bg-transparent border-none outline-none text-white text-base py-4 placeholder:text-gray-4"
+              className="flex-1 bg-transparent border-none outline-none text-gray-1 text-base py-4 placeholder:text-gray-4"
               autoComplete="off"
               spellCheck={false}
             />
@@ -238,23 +206,20 @@ export default function SearchModal({
             className="flex-1 overflow-y-auto overscroll-contain"
           >
             {query.trim() === "" ? (
-              /* Empty state -- no query */
               <div className="px-6 py-12 text-center text-gray-4 text-sm bg-gray-6/80">
                 Type to search the documentation
               </div>
             ) : flatResults.length === 0 ? (
-              /* No results */
               <div className="px-6 py-12 text-center">
                 <p className="text-gray-3 text-sm">
                   No results for &ldquo;
-                  <span className="text-white">{query}</span>&rdquo;
+                  <span className="text-gray-1">{query}</span>&rdquo;
                 </p>
                 <p className="text-gray-4 text-xs mt-1">
                   Try a different search term
                 </p>
               </div>
             ) : (
-              /* Result groups */
               <div className="py-2">
                 {Array.from(grouped.entries()).map(
                   ([section, sectionResults]) => (
@@ -276,10 +241,9 @@ export default function SearchModal({
                             className={`w-full text-left px-4 py-2.5 flex items-start gap-3 cursor-pointer transition-colors ${
                               isActive
                                 ? "bg-accent/10"
-                                : "hover:bg-white/[0.03]"
+                                : "hover:bg-gray-5/20"
                             }`}
                           >
-                            {/* Document icon */}
                             <svg
                               className={`w-5 h-5 mt-0.5 shrink-0 ${
                                 isActive ? "text-accent" : "text-gray-4"
@@ -299,7 +263,7 @@ export default function SearchModal({
                             <div className="min-w-0 flex-1">
                               <div
                                 className={`text-sm font-medium truncate ${
-                                  isActive ? "text-accent" : "text-white"
+                                  isActive ? "text-accent" : "text-gray-1"
                                 }`}
                               >
                                 {highlightMatch(result.title, query)}
@@ -313,7 +277,6 @@ export default function SearchModal({
                                 {highlightMatch(result.snippet, query)}
                               </div>
                             </div>
-                            {/* Arrow indicator for active */}
                             {isActive && (
                               <svg
                                 className="w-4 h-4 text-accent mt-1 shrink-0"
@@ -340,7 +303,7 @@ export default function SearchModal({
             )}
           </div>
 
-          {/* Footer with keyboard hints */}
+          {/* Footer */}
           <div className="flex items-center gap-4 px-4 py-2.5 border-t border-gray-5 text-[11px] text-gray-4">
             <span className="flex items-center gap-1">
               <kbd className="bg-gray-6 border border-gray-5 rounded px-1 py-px font-mono">

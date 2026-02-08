@@ -91,13 +91,13 @@ export default function GoPlayground({
   }, [initialCode]);
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-[rgba(16,19,27,0.8)]">
-      <div className="flex items-center justify-between h-10 bg-[rgba(23,26,38,0.75)] border-b border-accent/10 px-2">
+    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-gray-6/50">
+      <div className="flex items-center justify-between h-10 bg-dark-deep/60 border-b border-accent/10 px-2">
         <div className="flex items-stretch min-w-0">
           <div className="flex items-center gap-2 px-3 border-r border-accent/10 text-[0.75rem] text-gray-4">
             <span className="font-medium text-gray-2 truncate">{title}</span>
           </div>
-          <div className="flex items-center px-3 text-[0.8125rem] font-medium text-white bg-white/5 border-r border-accent/10">
+          <div className="flex items-center px-3 text-[0.8125rem] font-medium text-gray-1 bg-gray-6/40 border-r border-accent/10">
             <span className="text-[0.75rem] text-gray-4 mr-2">Go</span>
             <span className="truncate">{fileName}</span>
           </div>
@@ -108,7 +108,7 @@ export default function GoPlayground({
 
           <button
             type="button"
-            className="h-[30px] px-2.5 rounded-md text-[0.75rem] font-medium bg-white/5 hover:bg-white/10 text-white border border-white/10 active:scale-[0.99] transition"
+            className="h-[30px] px-2.5 rounded-md text-[0.75rem] font-medium bg-gray-6/40 hover:bg-gray-6/60 text-gray-1 border border-gray-5/40 active:scale-[0.99] transition"
             onClick={reset}
             disabled={running}
           >
@@ -117,7 +117,7 @@ export default function GoPlayground({
 
           <button
             type="button"
-            className="h-[30px] px-3 rounded-md text-[0.75rem] font-medium bg-accent/30 hover:bg-accent/40 text-white border border-accent/40 disabled:opacity-60 active:scale-[0.99] transition"
+            className="h-[30px] px-3 rounded-md text-[0.75rem] font-medium bg-accent/30 hover:bg-accent/40 text-primary-foreground border border-accent/40 disabled:opacity-60 active:scale-[0.99] transition"
             onClick={run}
             disabled={running}
           >
@@ -176,7 +176,7 @@ export default function GoPlayground({
           />
         </div>
 
-        <div className="bg-[rgba(13,17,23,0.92)]">
+        <div className="bg-dark-deep/70">
           <div className="flex items-center justify-between px-3 py-2 border-b border-accent/10">
             <div className="flex items-center gap-2 text-[0.75rem] text-gray-4">
               <span className="font-medium text-gray-2">Terminal</span>

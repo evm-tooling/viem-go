@@ -35,27 +35,26 @@ const styles: Record<
   { border: string; bg: string; accent: string; content?: string }
 > = {
   note: {
-    border: "border-accent/20",
-    bg: "bg-accent/[0.07]",
-    accent: "text-accent",
+    border: "border-[#c678dd]/20",
+    bg: "bg-[#c678dd]/[0.35]",
+    accent: "text-[#c678dd]",
+    content: "text-[#d4b0e8]",
   },
   tip: {
-    // Match the code snippet theme's purple keyword color.
-    border: "border-[#c678dd]/35",
-    bg: "bg-[#c678dd]/[0.10]",
+    border: "border-[#c678dd]/25",
+    bg: "bg-[#c678dd]/10",
     accent: "text-[#c678dd]",
-    // Make highlighted/inline code words white inside the tip.
-    content: "[&_:not(pre)>code]:text-white",
+    content: "[&_:not(pre)>code]:text-[#c678dd]",
   },
   caution: {
-    border: "border-[#fbbf24]/20",
-    bg: "bg-[#fbbf24]/[0.07]",
-    accent: "text-[#fbbf24]",
+    border: "border-warning/25",
+    bg: "bg-warning/10",
+    accent: "text-warning",
   },
   danger: {
-    border: "border-[#f87171]/20",
-    bg: "bg-[#f87171]/[0.07]",
-    accent: "text-[#f87171]",
+    border: "border-destructive/25",
+    bg: "bg-destructive/10",
+    accent: "text-destructive",
   },
 };
 
@@ -73,7 +72,7 @@ export default function Aside({
     >
       <span className={`mt-0.5 shrink-0 ${style.accent}`}>{icon}</span>
       <div
-        className={`text-sm text-gray-2 leading-relaxed [&>p]:mb-0 ${style.content || ""}`}
+        className={`text-sm leading-relaxed [&>p]:mb-0 ${style.content || "text-gray-2"}`}
       >
         {children}
       </div>

@@ -25,16 +25,15 @@ const SidebarContext = createContext<SidebarContextValue>({
 });
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  return <SidebarProviderInner key={pathname}>{children}</SidebarProviderInner>;
+}
+
+function SidebarProviderInner({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
 
   const toggle = useCallback(() => setOpen((prev) => !prev), []);
   const close = useCallback(() => setOpen(false), []);
-
-  /* Close sidebar on route change (mobile) */
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   /* Lock body scroll when sidebar overlay is open */
   useEffect(() => {
