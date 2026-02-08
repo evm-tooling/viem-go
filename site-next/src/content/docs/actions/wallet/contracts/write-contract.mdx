@@ -1,0 +1,236 @@
+---
+title: writeContract
+description: Executes a write function on a contract
+---
+
+# writeContract
+
+Executes a write function on a contract.
+
+A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a Transaction is needed to be broadcast in order to change the state.
+
+Internally, encodes the function call using the ABI and delegates to [sendTransaction](/docs/actions/wallet/transactions/send-transaction) with the ABI-encoded data.
+
+:::warning
+This internally sends a transaction – it does not validate if the contract write will succeed. It is highly recommended to simulate the contract write first.
+:::
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    Address:      "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2", // [!code focus]
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{toAddress, amount},
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction hash: %s", hash)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`string`
+
+The transaction hash as a hex string.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to send from. If nil, uses the client's account.
+
+### Address (required)
+
+- **Type:** `string`
+
+The contract address to call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    Address:      "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2", // [!code focus]
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{toAddress, amount},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ABI (required)
+
+- **Type:** `any` ([]byte, string, or *abi.ABI)
+
+The contract ABI as JSON bytes, string, or a pre-parsed *abi.ABI.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/abi"
+
+// Option 1: Pre-parsed ABI
+parsedABI, _ := abi.Parse([]byte(` + "`" + `[{"type":"function",...}]` + "`" + `))
+hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    ABI: parsedABI, // [!code focus]
+    // ...
+})
+
+// Option 2: JSON string
+hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    ABI: ` + "`" + `[{"type":"function",...}]` + "`" + `, // [!code focus]
+    // ...
+})
+
+// Option 3: JSON bytes
+hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    ABI: []byte(` + "`" + `[{"type":"function",...}]` + "`" + `), // [!code focus]
+    // ...
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### FunctionName (required)
+
+- **Type:** `string`
+
+The name of the function to call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    Address:      "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+    ABI:          erc20ABI,
+    FunctionName: "transfer", // [!code focus]
+    Args:         []any{toAddress, amount},
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Args (optional)
+
+- **Type:** `[]any`
+
+The function arguments.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    Address:      "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+    ABI:          erc20ABI,
+    FunctionName: "transfer",
+    Args:         []any{toAddress, amount}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+The amount of ETH to send with the transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParameters{
+    Address:      "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+    ABI:          contractABI,
+    FunctionName: "deposit",
+    Value:        big.NewInt(1000000000000000000), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Transaction Fields
+
+All transaction fields from [sendTransaction](/docs/actions/wallet/transactions/send-transaction) are supported:
+
+- `Chain` - The target chain
+- `AssertChainID` - Whether to assert chain ID matches
+- `DataSuffix` - Data to append to the end of the calldata
+- `Gas` - Gas limit
+- `GasPrice` - Gas price (Legacy transactions)
+- `MaxFeePerGas` - Max fee per gas (EIP-1559)
+- `MaxPriorityFeePerGas` - Max priority fee per gas (EIP-1559)
+- `Nonce` - Transaction nonce
+- `Type` - Transaction type
+- `AccessList` - Access list (EIP-2930)
+- `AuthorizationList` - Authorization list (EIP-7702)
+- `Blobs` - Blobs (EIP-4844)
+- `BlobVersionedHashes` - Blob versioned hashes (EIP-4844)
+- `MaxFeePerBlobGas` - Max fee per blob gas (EIP-4844)
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
+- Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

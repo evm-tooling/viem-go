@@ -1,0 +1,472 @@
+---
+title: sendTransaction
+description: Creates, signs, and sends a new transaction to the network
+---
+
+# sendTransaction
+
+Creates, signs, and sends a new transaction to the network.
+
+- For JSON-RPC accounts (or when no local signer is available), sends via `eth_sendTransaction`.
+- For local accounts (implementing TransactionSignableAccount), prepares, signs locally, and sends via `eth_sendRawTransaction`.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // [!code focus]
+    Value: big.NewInt(1000000000000000000),
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction hash: %s", hash)`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const hash = await walletClient.sendTransaction({
+  to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+  value: 1000000000000000000n
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Account Hoisting
+
+If you do not wish to pass an `account` to every `sendTransaction`, you can also hoist the Account on the Wallet Client.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account, // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    Value: big.NewInt(1000000000000000000),
+    // Account is automatically used from the client
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`string`
+
+The transaction hash as a hex string.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to send from. If nil, uses the client's account.
+
+Accepts a [JSON-RPC Account](/docs/clients/wallet) or [Local Account](/docs/accounts/overview).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+)
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Account: account, // [!code focus]
+    To:      "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    Value:   big.NewInt(1000000000000000000),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### To (optional)
+
+- **Type:** `string`
+
+The transaction recipient or contract address.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", // [!code focus]
+    Value: big.NewInt(1000000000000000000),
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+Value in wei sent with this transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    Value: big.NewInt(1000000000000000000), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Data (optional)
+
+- **Type:** `string`
+
+A contract hashed method call with encoded args.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Data: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // [!code focus]
+    To:   "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Gas (optional)
+
+- **Type:** `*big.Int`
+
+The gas limit of the transaction. If missing, it will be estimated.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Gas: big.NewInt(21000), // [!code focus]
+    To:  "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### GasPrice (optional)
+
+- **Type:** `*big.Int`
+
+The price (in wei) to pay per gas. Only applies to Legacy Transactions.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    GasPrice: big.NewInt(20000000000), // [!code focus]
+    To:       "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+Total fee per gas (in wei), inclusive of `maxPriorityFeePerGas`. Only applies to EIP-1559 Transactions.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    MaxFeePerGas: big.NewInt(20000000000), // [!code focus]
+    To:           "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### MaxPriorityFeePerGas (optional)
+
+- **Type:** `*big.Int`
+
+Max priority fee per gas (in wei). Only applies to EIP-1559 Transactions.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    MaxFeePerGas:         big.NewInt(20000000000),
+    MaxPriorityFeePerGas: big.NewInt(1000000000), // [!code focus]
+    To:                   "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Nonce (optional)
+
+- **Type:** `*int`
+
+Unique number identifying this transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `nonce := 69
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Nonce: &nonce, // [!code focus]
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Type (optional)
+
+- **Type:** `formatters.TransactionType`
+
+The transaction type. Can be `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/formatters"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Type: formatters.TransactionTypeEIP1559, // [!code focus]
+    To:   "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### AccessList (optional)
+
+- **Type:** `[]formatters.AccessListItem`
+
+The access list for EIP-2930 transactions.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/formatters"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    AccessList: []formatters.AccessListItem{ // [!code focus:5]
+        {
+            Address:     "0x1",
+            StorageKeys: []string{"0x1"},
+        },
+    },
+    To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### AuthorizationList (optional)
+
+- **Type:** `[]transaction.SignedAuthorization`
+
+Signed EIP-7702 Authorization list.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/transaction"
+
+authorization, err := wallet.SignAuthorization(ctx, walletClient, wallet.SignAuthorizationParameters{
+    ContractAddress: "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+})
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    AuthorizationList: []transaction.SignedAuthorization{authorization}, // [!code focus]
+    To:                "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Blobs (optional)
+
+- **Type:** `[]string`
+
+Blobs for Blob Transactions (EIP-4844).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Blobs: []string{"0x..."}, // [!code focus]
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### BlobVersionedHashes (optional)
+
+- **Type:** `[]string`
+
+Blob versioned hashes for Blob Transactions (EIP-4844).
+
+### MaxFeePerBlobGas (optional)
+
+- **Type:** `*big.Int`
+
+Max fee per blob gas for Blob Transactions (EIP-4844).
+
+### Chain (optional)
+
+- **Type:** `*chain.Chain`
+
+The target chain. If there is a mismatch between the wallet's current chain & the target chain, an error will be thrown.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/chain/definitions"
+
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    Chain: definitions.Optimism, // [!code focus]
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### AssertChainID (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+
+When true, asserts the chain ID matches. Default: true.
+
+### DataSuffix (optional)
+
+- **Type:** `string`
+
+Data to append to the end of the calldata. Takes precedence over client.DataSuffix().
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
+- Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

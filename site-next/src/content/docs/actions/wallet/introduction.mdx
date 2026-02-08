@@ -1,0 +1,132 @@
+---
+title: Introduction to Wallet Actions
+description: A brief introduction on what Wallet Actions are in viem-go
+---
+
+# Introduction to Wallet Actions
+
+A Wallet Action is an action that maps one-to-one with a "wallet" or "signable" Ethereum RPC method (`eth_requestAccounts`, `eth_sendTransaction`, `personal_sign`, etc). They are used with a [Wallet Client](/docs/clients/wallet).
+
+Wallet Actions require special permissions and provide signing capabilities to the user. Examples of Wallet Actions include [sending a transaction](/docs/actions/wallet/transactions/send-transaction), [signing a message](/docs/actions/wallet/signing/sign-message), [writing to a contract](/docs/actions/wallet/contracts/write-contract), and [retrieving account addresses](/docs/actions/wallet/account/get-addresses).
+
+Wallet Actions provide a secure and flexible way to access the user's accounts and perform actions on the Ethereum network. They are commonly used by dapps and other applications that need to execute transactions, interact with smart contracts, or sign messages.
+
+## Account Types
+
+Wallet Actions work with two types of accounts:
+
+- **Local Accounts** - Accounts whose signing keys are stored locally (e.g., private key accounts). These accounts sign transactions and messages locally before sending them over JSON-RPC.
+- **JSON-RPC Accounts** - Accounts whose signing keys are stored on an external wallet (e.g., browser extension wallets). These accounts defer signing to the wallet over JSON-RPC.
+
+## Organization
+
+Wallet Actions in viem-go are organized into logical groups:
+
+- **[Transactions](/docs/actions/wallet/transactions/send-transaction)** - Send transactions and prepare transaction requests
+- **[Signing](/docs/actions/wallet/signing/sign-message)** - Sign messages, transactions, typed data, and authorizations
+- **[Contracts](/docs/actions/wallet/contracts/write-contract)** - Write to contracts and deploy contracts
+- **[EIP-5792 Calls](/docs/actions/wallet/calls/send-calls)** - Send batches of calls and manage call status
+- **[Account Management](/docs/actions/wallet/account/get-addresses)** - Get and request account addresses and permissions
+- **[Chain Management](/docs/actions/wallet/chain/add-chain)** - Add chains, switch chains, and watch assets
+
+## Usage Pattern
+
+All Wallet Actions follow a consistent pattern:
+
+1. Accept `context.Context` as the first parameter for cancellation and timeouts
+2. Accept a `Client` as the second parameter
+3. Accept a `Parameters` struct containing all options (including optional `Account`)
+4. Return a result value and an error
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+    "time"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+defer cancel()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+// Example: Send a transaction
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    Value: big.NewInt(1000000000000000000),
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction hash: %s", hash)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Account Hoisting
+
+If you do not wish to pass an `account` to every Wallet Action, you can hoist the Account on the Wallet Client. This is especially useful when using a single account throughout your application.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/accounts"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+account, err := accounts.PrivateKeyToAccount("0x...")
+if err != nil {
+    log.Fatal(err)
+}
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Account:   account, // [!code focus]
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+
+// Now you can call actions without passing account
+hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionParameters{
+    To:    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    Value: big.NewInt(1000000000000000000),
+    // Account is automatically used from the client
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Error Handling
+
+All Wallet Actions return errors that should be checked. Common error patterns include:
+
+- Network errors (connection failures, timeouts)
+- RPC errors (invalid parameters, method not supported, user rejection)
+- Account errors (account not found, account type not supported)
+- Validation errors (invalid transaction parameters, chain mismatch)
+- Permission errors (permissions not granted)
+
+Always handle errors appropriately in your application, especially user rejection errors which are common when interacting with external wallets.

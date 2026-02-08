@@ -1,0 +1,190 @@
+---
+title: deployContract
+description: Deploys a contract to the network
+---
+
+# deployContract
+
+Deploys a contract to the network, given bytecode and constructor arguments.
+
+Internally, encodes the deploy data (bytecode + ABI-encoded constructor args) and delegates to [sendTransaction](/docs/actions/wallet/transactions/send-transaction) with no `to` address (contract creation).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+hash, err := wallet.DeployContract(ctx, walletClient, wallet.DeployContractParameters{
+    ABI:      contractABI, // [!code focus]
+    Bytecode: "0x608060405260405161083e38038061083e833981016040819052610...",
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Deployment transaction hash: %s", hash)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### With Constructor Arguments
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.DeployContract(ctx, walletClient, wallet.DeployContractParameters{
+    ABI:      contractABI,
+    Bytecode: "0x608060405260405161083e38038061083e833981016040819052610...",
+    Args:     []any{"MyToken", "MTK", uint8(18)}, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`string`
+
+The transaction hash as a hex string.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to deploy from. If nil, uses the client's account.
+
+### ABI (required)
+
+- **Type:** `any` ([]byte, string, or *abi.ABI)
+
+The contract ABI as JSON bytes, string, or a pre-parsed *abi.ABI. Required for encoding constructor arguments.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.DeployContract(ctx, walletClient, wallet.DeployContractParameters{
+    ABI:      contractABI, // [!code focus]
+    Bytecode: "0x608060405260405161083e38038061083e833981016040819052610...",
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Bytecode (required)
+
+- **Type:** `string`
+
+The contract bytecode as a hex string (with or without 0x prefix).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.DeployContract(ctx, walletClient, wallet.DeployContractParameters{
+    ABI:      contractABI,
+    Bytecode: "0x608060405260405161083e38038061083e833981016040819052610...", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Args (optional)
+
+- **Type:** `[]any`
+
+The constructor arguments.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `hash, err := wallet.DeployContract(ctx, walletClient, wallet.DeployContractParameters{
+    ABI:      contractABI,
+    Bytecode: "0x608060405260405161083e38038061083e833981016040819052610...",
+    Args:     []any{"MyToken", "MTK", uint8(18)}, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Value (optional)
+
+- **Type:** `*big.Int`
+
+The amount of ETH to send with the deployment transaction.
+
+### Transaction Fields
+
+All transaction fields from [sendTransaction](/docs/actions/wallet/transactions/send-transaction) are supported:
+
+- `Chain` - The target chain
+- `AssertChainID` - Whether to assert chain ID matches
+- `DataSuffix` - Data to append to the end of the calldata
+- `Gas` - Gas limit
+- `GasPrice` - Gas price (Legacy transactions)
+- `MaxFeePerGas` - Max fee per gas (EIP-1559)
+- `MaxPriorityFeePerGas` - Max priority fee per gas (EIP-1559)
+- `Nonce` - Transaction nonce
+- `Type` - Transaction type
+- `AuthorizationList` - Authorization list (EIP-7702)
+- `Blobs` - Blobs (EIP-4844)
+- `BlobVersionedHashes` - Blob versioned hashes (EIP-4844)
+- `MaxFeePerBlobGas` - Max fee per blob gas (EIP-4844)
+
+Note: `To` is not used for contract deployment (it's intentionally empty for contract creation).
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
+- Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

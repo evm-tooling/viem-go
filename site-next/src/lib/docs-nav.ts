@@ -129,6 +129,68 @@ export const docsNav: NavItem[] = [
         ],
       },
   {
+    label: "Wallet Actions",
+    items: [
+      { label: "Introduction", slug: "actions/wallet/introduction" },
+      {
+        label: "Transactions",
+        items: [
+          { label: "sendTransaction", slug: "actions/wallet/transactions/send-transaction" },
+          { label: "sendTransactionSync", slug: "actions/wallet/transactions/send-transaction-sync" },
+          { label: "sendRawTransaction", slug: "actions/wallet/transactions/send-raw-transaction" },
+          { label: "sendRawTransactionSync", slug: "actions/wallet/transactions/send-raw-transaction-sync" },
+          { label: "prepareTransactionRequest", slug: "actions/wallet/transactions/prepare-transaction-request" },
+        ],
+      },
+      {
+        label: "Signing",
+        items: [
+          { label: "signMessage", slug: "actions/wallet/signing/sign-message" },
+          { label: "signTransaction", slug: "actions/wallet/signing/sign-transaction" },
+          { label: "signTypedData", slug: "actions/wallet/signing/sign-typed-data" },
+          { label: "signAuthorization", slug: "actions/wallet/signing/sign-authorization" },
+          { label: "prepareAuthorization", slug: "actions/wallet/signing/prepare-authorization" },
+        ],
+      },
+      {
+        label: "Contracts",
+        items: [
+          { label: "writeContract", slug: "actions/wallet/contracts/write-contract" },
+          { label: "writeContractSync", slug: "actions/wallet/contracts/write-contract-sync" },
+          { label: "deployContract", slug: "actions/wallet/contracts/deploy-contract" },
+        ],
+      },
+      {
+        label: "EIP-5792 Calls",
+        items: [
+          { label: "sendCalls", slug: "actions/wallet/calls/send-calls" },
+          { label: "sendCallsSync", slug: "actions/wallet/calls/send-calls-sync" },
+          { label: "getCallsStatus", slug: "actions/wallet/calls/get-calls-status" },
+          { label: "showCallsStatus", slug: "actions/wallet/calls/show-calls-status" },
+          { label: "waitForCallsStatus", slug: "actions/wallet/calls/wait-for-calls-status" },
+        ],
+      },
+      {
+        label: "Account Management",
+        items: [
+          { label: "getAddresses", slug: "actions/wallet/account/get-addresses" },
+          { label: "requestAddresses", slug: "actions/wallet/account/request-addresses" },
+          { label: "getPermissions", slug: "actions/wallet/account/get-permissions" },
+          { label: "requestPermissions", slug: "actions/wallet/account/request-permissions" },
+          { label: "getCapabilities", slug: "actions/wallet/account/get-capabilities" },
+        ],
+      },
+      {
+        label: "Chain Management",
+        items: [
+          { label: "addChain", slug: "actions/wallet/chain/add-chain" },
+          { label: "switchChain", slug: "actions/wallet/chain/switch-chain" },
+          { label: "watchAsset", slug: "actions/wallet/chain/watch-asset" },
+        ],
+      },
+    ],
+  },
+  {
     label: "Chains",
     items: [
       { label: "Introduction", slug: "chains/introduction" },

@@ -1,0 +1,101 @@
+---
+title: addChain
+description: Adds an EVM chain to the wallet
+---
+
+# addChain
+
+Adds an EVM chain to the wallet.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+err := wallet.AddChain(ctx, walletClient, wallet.AddChainParameters{
+    Chain: definitions.Optimism, // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `import { avalanche } from 'viem/chains'
+
+await walletClient.addChain({ chain: avalanche })`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`error`
+
+Returns an error if the request fails.
+
+## Parameters
+
+### Chain (required)
+
+- **Type:** `*chain.Chain`
+
+The chain to add to the wallet.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/chain/definitions"
+
+err := wallet.AddChain(ctx, walletClient, wallet.AddChainParameters{
+    Chain: definitions.Optimism, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- [`wallet_addEthereumChain`](https://eips.ethereum.org/EIPS/eip-3085) (EIP-3085)

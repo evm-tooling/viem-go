@@ -1,0 +1,93 @@
+---
+title: showCallsStatus
+description: Shows call status in wallet UI (EIP-5792)
+---
+
+# showCallsStatus
+
+Requests the wallet to show information about a call batch that was sent via [sendCalls](/docs/actions/wallet/calls/send-calls) in the wallet's UI.
+
+This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+err := wallet.ShowCallsStatus(ctx, walletClient, wallet.ShowCallsStatusParameters{
+    ID: "0xdeadbeef", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`error`
+
+Returns an error if the request fails.
+
+## Parameters
+
+### ID (required)
+
+- **Type:** `string`
+
+The identifier of the call batch (returned from [sendCalls](/docs/actions/wallet/calls/send-calls)).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `err := wallet.ShowCallsStatus(ctx, walletClient, wallet.ShowCallsStatusParameters{
+    ID: "0xdeadbeef", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- [`wallet_showCallsStatus`](https://eips.ethereum.org/EIPS/eip-5792#wallet_showcallsstatus) (EIP-5792)

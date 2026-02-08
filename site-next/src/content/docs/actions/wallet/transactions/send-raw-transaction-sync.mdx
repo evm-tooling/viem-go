@@ -1,0 +1,135 @@
+---
+title: sendRawTransactionSync
+description: Sends a signed transaction to the network synchronously
+---
+
+# sendRawTransactionSync
+
+Sends a **signed** transaction to the network synchronously, and waits for the transaction to be included in a block. Returns the transaction receipt.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+receipt, err := wallet.SendRawTransactionSync(ctx, walletClient, wallet.SendRawTransactionSyncParameters{
+    SerializedTransaction: "0x02f850018203118080825208808080c080a04012522854168b27e5dc3d5839bab5e6b39e1a0ffd343901ce1622e3d64b48f1a04e00902ae0502c4728cbf12156290df99c3ed7de85b1dbfe20b5c36931733a33", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Transaction receipt: %+v", receipt)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*formatters.TransactionReceipt`
+
+The transaction receipt after the transaction is included in a block.
+
+## Parameters
+
+### SerializedTransaction (required)
+
+- **Type:** `string`
+
+The signed serialized transaction hex string.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `receipt, err := wallet.SendRawTransactionSync(ctx, walletClient, wallet.SendRawTransactionSyncParameters{
+    SerializedTransaction: "0x02f850018203118080825208808080c080a04012522854168b27e5dc3d5839bab5e6b39e1a0ffd343901ce1622e3d64b48f1a04e00902ae0502c4728cbf12156290df99c3ed7de85b1dbfe20b5c36931733a33", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ThrowOnReceiptRevert (optional)
+
+- **Type:** `*bool`
+- **Default:** `true`
+
+When true, throws an error if the transaction was detected as reverted.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `throwOnRevert := true
+receipt, err := wallet.SendRawTransactionSync(ctx, walletClient, wallet.SendRawTransactionSyncParameters{
+    SerializedTransaction: "0x02f850...",
+    ThrowOnReceiptRevert:  &throwOnRevert, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `*int64`
+
+The timeout (in milliseconds) for the transaction.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `timeout := int64(20000) // 20 seconds in milliseconds
+receipt, err := wallet.SendRawTransactionSync(ctx, walletClient, wallet.SendRawTransactionSyncParameters{
+    SerializedTransaction: "0x02f850...",
+    Timeout:               &timeout, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Method
+
+- [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

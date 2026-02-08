@@ -1,0 +1,175 @@
+---
+title: sendCallsSync
+description: Sends a batch of calls synchronously (EIP-5792)
+---
+
+# sendCallsSync
+
+Requests the connected wallet to send a batch of calls, and waits for the calls to be included in a block. Returns the call status.
+
+This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParameters{
+    SendCallsParameters: wallet.SendCallsParameters{
+        Calls: []wallet.Call{ // [!code focus:4]
+            {Data: "0xdeadbeef", To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8"},
+            {To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", Value: big.NewInt(69420)},
+        },
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Call status: %+v", status)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*GetCallsStatusReturnType`
+
+The call status with receipts after the calls are included in a block.
+
+## Parameters
+
+All parameters from [sendCalls](/docs/actions/wallet/calls/send-calls) are supported, plus:
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `client.PollingInterval()`
+
+The polling interval to poll for the calls status.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParameters{
+    SendCallsParameters: wallet.SendCallsParameters{Calls: []wallet.Call{...}},
+    PollingInterval:    1 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Status (optional)
+
+- **Type:** `func(*GetCallsStatusReturnType) bool`
+- **Default:** `statusCode == 200 || statusCode >= 300`
+
+A function that determines whether to stop polling.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParameters{
+    SendCallsParameters: wallet.SendCallsParameters{Calls: []wallet.Call{...}},
+    Status: func(result *wallet.GetCallsStatusReturnType) bool { // [!code focus:3]
+        return result.StatusCode == 200 // Only stop on success
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ThrowOnFailure (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+When true, returns an error if the call bundle fails.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParameters{
+    SendCallsParameters: wallet.SendCallsParameters{Calls: []wallet.Call{...}},
+    ThrowOnFailure:     true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `*time.Duration`
+- **Default:** `max(chain.blockTime * 3, 5000ms)`
+
+The timeout (in milliseconds) to wait for calls to be included in a block.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+timeout := 20 * time.Second
+status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParameters{
+    SendCallsParameters: wallet.SendCallsParameters{Calls: []wallet.Call{...}},
+    Timeout:             &timeout, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Methods
+
+- [`wallet_sendCalls`](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls) (EIP-5792)
+- [`wallet_getCallsStatus`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcallsstatus) (EIP-5792) — polled repeatedly

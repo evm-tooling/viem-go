@@ -1,0 +1,239 @@
+---
+title: sendCalls
+description: Sends a batch of calls (EIP-5792)
+---
+
+# sendCalls
+
+Requests the connected wallet to send a batch of calls. This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
+
+[Read more about EIP-5792](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls)
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
+    Calls: []wallet.Call{ // [!code focus:4]
+        {Data: "0xdeadbeef", To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8"},
+        {To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", Value: big.NewInt(69420)},
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Call batch ID: %s", result.ID)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Contract Calls
+
+The `Calls` property also accepts contract calls with ABI encoding:
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "github.com/ChefBingbong/viem-go/abi"
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+)
+
+parsedABI, _ := abi.Parse([]byte(` + "`" + `[{"type":"function","name":"approve",...}]` + "`" + `))
+
+result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
+    Calls: []wallet.Call{
+        {
+            To:           "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+            ABI:          parsedABI, // [!code focus:4]
+            FunctionName: "approve",
+            Args:         []any{"0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC", big.NewInt(100)},
+        },
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*SendCallsReturnType`
+
+An object containing:
+- `ID` - The identifier for the call batch
+- `Capabilities` - The wallet capabilities (optional)
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+The account to send from. If nil, uses the client's account.
+
+### Calls (required)
+
+- **Type:** `[]wallet.Call`
+
+An array of calls to be signed and broadcasted.
+
+Each call can have:
+- `To` - Recipient address (optional)
+- `Data` - Calldata (optional, or use ABI encoding)
+- `Value` - Amount of ETH to send (optional)
+- `ABI` - Contract ABI for encoding (optional)
+- `FunctionName` - Function name (used with ABI)
+- `Args` - Function arguments (used with ABI)
+- `DataSuffix` - Data to append to the end of calldata (optional)
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "math/big"
+
+result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
+    Calls: []wallet.Call{ // [!code focus:4]
+        {Data: "0xdeadbeef", To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8"},
+        {To: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", Value: big.NewInt(69420)},
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ForceAtomic (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+Force the calls to be executed atomically.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
+    Calls: []wallet.Call{...},
+    ForceAtomic: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ID (optional)
+
+- **Type:** `string`
+
+An optional identifier for the call batch.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
+    Calls: []wallet.Call{...},
+    ID:    "<my-batch-id>", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Version (optional)
+
+- **Type:** `string`
+- **Default:** `"2.0.0"`
+
+The EIP-5792 version.
+
+### Capabilities (optional)
+
+- **Type:** `map[string]any`
+
+Capability metadata for the calls (e.g. specifying a paymaster).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
+    Calls: []wallet.Call{...},
+    Capabilities: map[string]any{ // [!code focus:3]
+        "paymasterService": map[string]any{"url": "https://..."},
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ExperimentalFallback (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+When true, falls back to `eth_sendTransaction` if `wallet_sendCalls` is not supported.
+
+:::warning
+When using `ExperimentalFallback` with a wallet that does not support EIP-5792, viem-go will return a custom bundle identifier (`id`). While this identifier works with viem-go's [`getCallsStatus`](/docs/actions/wallet/calls/get-calls-status) action, it cannot be used with the native `wallet_getCallsStatus` RPC method.
+:::
+
+### ExperimentalFallbackDelay (optional)
+
+- **Type:** `*int`
+- **Default:** `32ms`
+
+The delay (in milliseconds) between fallback transactions when using `ExperimentalFallback`.
+
+## JSON-RPC Method
+
+- [`wallet_sendCalls`](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls) (EIP-5792)

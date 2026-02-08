@@ -1,0 +1,198 @@
+---
+title: waitForCallsStatus
+description: Waits for call batch status (EIP-5792)
+---
+
+# waitForCallsStatus
+
+Waits for the status & receipts of a call bundle that was sent via [sendCalls](/docs/actions/wallet/calls/send-calls).
+
+This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+status, err := wallet.WaitForCallsStatus(ctx, walletClient, wallet.WaitForCallsStatusParameters{
+    ID: "0xdeadbeef", // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Status: %s (code: %d)", status.Status, status.StatusCode)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`*GetCallsStatusReturnType`
+
+The call status with receipts after the calls are included in a block or the status check function returns true.
+
+## Parameters
+
+### ID (required)
+
+- **Type:** `string`
+
+The identifier of the call batch to wait for (returned from [sendCalls](/docs/actions/wallet/calls/send-calls)).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `status, err := wallet.WaitForCallsStatus(ctx, walletClient, wallet.WaitForCallsStatusParameters{
+    ID: "0xdeadbeef", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PollingInterval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `client.PollingInterval()`
+
+The polling frequency.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+status, err := wallet.WaitForCallsStatus(ctx, walletClient, wallet.WaitForCallsStatusParameters{
+    ID:              "0xdeadbeef",
+    PollingInterval: 1 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Status (optional)
+
+- **Type:** `func(*GetCallsStatusReturnType) bool`
+- **Default:** `statusCode == 200 || statusCode >= 300`
+
+A function that determines whether to stop polling based on the status.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `status, err := wallet.WaitForCallsStatus(ctx, walletClient, wallet.WaitForCallsStatusParameters{
+    ID: "0xdeadbeef",
+    Status: func(result *wallet.GetCallsStatusReturnType) bool { // [!code focus:3]
+        return result.StatusCode == 200 // Only stop on success
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### ThrowOnFailure (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+When true, returns an error if the call bundle fails.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `status, err := wallet.WaitForCallsStatus(ctx, walletClient, wallet.WaitForCallsStatusParameters{
+    ID:             "0xdeadbeef",
+    ThrowOnFailure: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `60 seconds`
+
+The maximum time to wait before stopping polling.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "time"
+
+status, err := wallet.WaitForCallsStatus(ctx, walletClient, wallet.WaitForCallsStatusParameters{
+    ID:      "0xdeadbeef",
+    Timeout: 30 * time.Second, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### RetryCount (optional)
+
+- **Type:** `*int`
+- **Default:** `4`
+
+The number of times to retry if the call bundle request fails.
+
+### RetryDelay (optional)
+
+- **Type:** `func(int) time.Duration`
+- **Default:** Exponential backoff: `(1 << count) * 200ms`
+
+A function that returns the delay between retries.
+
+## JSON-RPC Method
+
+- [`wallet_getCallsStatus`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcallsstatus) (EIP-5792) — polled repeatedly

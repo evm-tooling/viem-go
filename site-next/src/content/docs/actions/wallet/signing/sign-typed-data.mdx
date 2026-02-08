@@ -1,0 +1,213 @@
+---
+title: signTypedData
+description: Signs typed data with the Account's private key
+---
+
+# signTypedData
+
+Signs typed data and calculates an Ethereum-specific signature in [EIP-712 format](https://eips.ethereum.org/EIPS/eip-712): `sign(keccak256("\x19\x01" ‖ domainSeparator ‖ hashStruct(message)))`.
+
+- For local accounts (implementing TypedDataSignableAccount), signs locally without an RPC call.
+- For JSON-RPC accounts, delegates to the `eth_signTypedData_v4` RPC method.
+
+## Import
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/actions/wallet"`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "context"
+    "log"
+    "math/big"
+
+    "github.com/ChefBingbong/viem-go/actions/wallet"
+    "github.com/ChefBingbong/viem-go/client"
+    "github.com/ChefBingbong/viem-go/client/transport"
+    "github.com/ChefBingbong/viem-go/chain/definitions"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+)
+
+ctx := context.Background()
+
+walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
+    Chain:     definitions.Mainnet,
+    Transport: transport.HTTP("https://eth.llamarpc.com"),
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer func() { _ = walletClient.Close() }()
+
+sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParameters{
+    Domain: signature.TypedDataDomain{ // [!code focus:5]
+        Name:              "Ether Mail",
+        Version:           "1",
+        ChainId:           big.NewInt(1),
+        VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    },
+    Types: map[string][]signature.TypedDataField{
+        "Person": {
+            {Name: "name", Type: "string"},
+            {Name: "wallet", Type: "address"},
+        },
+        "Mail": {
+            {Name: "from", Type: "Person"},
+            {Name: "to", Type: "Person"},
+            {Name: "contents", Type: "string"},
+        },
+    },
+    PrimaryType: "Mail",
+    Message: map[string]any{
+        "from": map[string]any{"name": "Cow", "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"},
+        "to":   map[string]any{"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"},
+        "contents": "Hello, Bob!",
+    },
+})
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Signature: %s", sig)`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Returns
+
+`string`
+
+The signed data as a hex string.
+
+## Parameters
+
+### Account (optional)
+
+- **Type:** `Account`
+
+Account to use for signing. If nil, uses the client's account.
+
+### Domain (required)
+
+- **Type:** `signature.TypedDataDomain`
+
+The typed data domain. All properties are optional.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import (
+    "math/big"
+    "github.com/ChefBingbong/viem-go/utils/signature"
+)
+
+sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParameters{
+    Domain: signature.TypedDataDomain{ // [!code focus:5]
+        Name:              "Ether Mail",
+        Version:           "1",
+        ChainId:           big.NewInt(1),
+        VerifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    },
+    // ... types, primaryType, message
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Types (required)
+
+- **Type:** `map[string][]signature.TypedDataField`
+
+The type definitions for the typed data (excluding EIP712Domain, which is auto-generated).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `import "github.com/ChefBingbong/viem-go/utils/signature"
+
+sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParameters{
+    Types: map[string][]signature.TypedDataField{ // [!code focus:11]
+        "Person": {
+            {Name: "name", Type: "string"},
+            {Name: "wallet", Type: "address"},
+        },
+        "Mail": {
+            {Name: "from", Type: "Person"},
+            {Name: "to", Type: "Person"},
+            {Name: "contents", Type: "string"},
+        },
+    },
+    // ... domain, primaryType, message
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### PrimaryType (required)
+
+- **Type:** `string`
+
+The primary type to extract from `types` and use in `message`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParameters{
+    PrimaryType: "Mail", // [!code focus]
+    // ... domain, types, message
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Message (required)
+
+- **Type:** `map[string]any`
+
+The structured message to sign, matching the `PrimaryType` structure.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParameters{
+    Message: map[string]any{ // [!code focus:4]
+        "from":     map[string]any{"name": "Cow", "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"},
+        "to":       map[string]any{"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"},
+        "contents": "Hello, Bob!",
+    },
+    // ... domain, types, primaryType
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## JSON-RPC Methods
+
+- JSON-RPC Accounts: [`eth_signTypedData_v4`](https://docs.metamask.io/guide/signing-data#signtypeddata-v4)
+- Local Accounts: Signs locally. No JSON-RPC request.
