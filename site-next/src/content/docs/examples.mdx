@@ -6,84 +6,6 @@ description: Real-world examples showing viem-go in action, with TypeScript comp
 
 ## Basic Examples
 
-### Get Block Number
-
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `package main
-
-import (
-    "context"
-    "fmt"
-    
-    "github.com/ChefBingbong/viem-go/client"
-    "github.com/ChefBingbong/viem-go/client/transport"
-)
-
-func main() {
-    c, _ := client.CreatePublicClient(client.PublicClientConfig{
-        Transport: transport.HTTP("https://eth.llamarpc.com"),
-    })
-    defer c.Close()
-
-    blockNumber, _ := c.GetBlockNumber(context.Background())
-    fmt.Println("Current block:", blockNumber)
-}`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { createPublicClient, http } from 'viem'
-
-const client = createPublicClient({
-  transport: http('https://eth.llamarpc.com'),
-})
-
-const blockNumber = await client.getBlockNumber()
-console.log('Current block:', blockNumber)`
-    }
-  ]}
-/>
-
-### Get Account Balance
-
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `import (
-    "github.com/ethereum/go-ethereum/common"
-    "github.com/ChefBingbong/viem-go/utils/unit"
-)
-
-address := common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
-
-balance, _ := c.GetBalance(context.Background(), address)
-
-// Format as ETH
-ethBalance := unit.FormatEther(balance)
-fmt.Printf("Balance: %s ETH\\n", ethBalance)`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { formatEther } from 'viem'
-
-const balance = await client.getBalance({
-  address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
-})
-
-console.log('Balance:', formatEther(balance), 'ETH')`
-    }
-  ]}
-/>
-
 ### Get Transaction Receipt
 
 <CodeGroup 
@@ -94,7 +16,7 @@ console.log('Balance:', formatEther(balance), 'ETH')`
       language: "go",
       code: `txHash := common.HexToHash("0x...")
 
-receipt, err := c.GetTransactionReceipt(context.Background(), txHash)
+receipt, err := c.GetTransactionReceipt(context.Background(), txHash) // [!code focus]
 if err != nil {
     log.Fatal(err)
 }
@@ -129,7 +51,7 @@ console.log('Block:', receipt.blockNumber)`
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/contracts/erc20"
 
-usdcAddress := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+usdcAddress := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48") // [!code focus]
 token, _ := erc20.New(usdcAddress, publicClient)
 
 name, _ := token.Name(context.Background())
@@ -172,7 +94,7 @@ console.log(\`Total Supply: \${formatUnits(totalSupply, decimals)}\`)`
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/abi"
 
-parsed, _ := abi.Parse([]byte(\`[{
+parsed, _ := abi.Parse([]byte(\`[{ // [!code focus:7]
     "name": "transfer",
     "type": "function",
     "inputs": [
@@ -181,7 +103,7 @@ parsed, _ := abi.Parse([]byte(\`[{
     ]
 }]\`))
 
-data, _ := parsed.EncodeFunctionData("transfer",
+data, _ := parsed.EncodeFunctionData("transfer", // [!code focus:3]
     common.HexToAddress("0x..."),
     big.NewInt(1000000),
 )
@@ -216,7 +138,7 @@ console.log('Encoded:', data)`
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/accounts"
 
-account, _ := accounts.PrivateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+account, _ := accounts.PrivateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80") // [!code focus]
 
 fmt.Printf("Address: %s\\n", account.Address)
 fmt.Printf("Public Key: %s\\n", account.PublicKey)`
@@ -244,7 +166,7 @@ console.log('Public Key:', account.publicKey)`
       language: "go",
       code: `import "github.com/ChefBingbong/viem-go/accounts"
 
-mnemonic := "test test test test test test test test test test test junk"
+mnemonic := "test test test test test test test test test test test junk" // [!code focus:3]
 
 account, _ := accounts.MnemonicToAccount(mnemonic, nil)
 
@@ -277,15 +199,15 @@ console.log('Address:', account.address)`
       code: `import "github.com/ChefBingbong/viem-go/utils/unit"
 
 // Parse ETH to wei
-wei, _ := unit.ParseEther("1.5")
+wei, _ := unit.ParseEther("1.5") // [!code focus]
 fmt.Println("Wei:", wei) // 1500000000000000000
 
 // Parse USDC (6 decimals)
-usdcAmount, _ := unit.ParseUnits("100", 6)
+usdcAmount, _ := unit.ParseUnits("100", 6) // [!code focus]
 fmt.Println("USDC:", usdcAmount) // 100000000
 
 // Format back
-ethString := unit.FormatEther(wei)
+ethString := unit.FormatEther(wei) // [!code focus]
 fmt.Println("ETH:", ethString) // 1.5`
     },
     {
@@ -322,15 +244,15 @@ console.log('ETH:', ethString) // "1.5"`
 )
 
 // Keccak256 hash
-h := hash.Keccak256([]byte("hello"))
+h := hash.Keccak256([]byte("hello")) // [!code focus]
 fmt.Printf("Hash: 0x%x\\n", h)
 
 // Hash a message for signing (EIP-191)
-messageHash := signature.HashMessage("hello world")
+messageHash := signature.HashMessage("hello world") // [!code focus]
 fmt.Printf("Message Hash: 0x%x\\n", messageHash)
 
 // Recover address from signature
-address, _ := signature.RecoverMessageAddress("hello world", sig)
+address, _ := signature.RecoverMessageAddress("hello world", sig) // [!code focus]
 fmt.Printf("Recovered: %s\\n", address)`
     },
     {
@@ -355,3 +277,230 @@ console.log('Recovered:', address)`
     }
   ]}
 />
+
+## Real-world (Advanced): UniswapV2 extractor in Go
+
+These snippets are cherry-picked from the Go implementation in [`viem-go-extractor-demo`](https://github.com/ChefBingbong/viem-go-extractor-demo/tree/main) — a real UniswapV2 pool extractor that heavily exercises **multicall batching**, **concurrent fan-out**, **reorg-aware log watching**, and **on-disk caching**.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Batched multicall",
+      language: "go",
+      code: `// mini-extractor-go/extractor/univ2_extractor.go
+// Batch thousands of getReserves calls via Multicall3.
+func (ext *UniV2Extractor) batchGetReserves(ctx context.Context, addresses []common.Address) map[string][2]*big.Int {
+	pairABI := univ2pair.MustParsedABI()
+	results := make(map[string][2]*big.Int)
+
+	for i := 0; i < len(addresses); i += multicallBatchSize {
+		end := i + multicallBatchSize
+		if end > len(addresses) {
+			end = len(addresses)
+		}
+		chunk := addresses[i:end]
+
+		contracts := make([]public.MulticallContract, len(chunk))
+		for j, addr := range chunk {
+			contracts[j] = public.MulticallContract{
+				Address:      addr,
+				ABI:          pairABI,
+				FunctionName: "getReserves",
+			}
+		}
+
+		mcResults, err := public.Multicall(ctx, ext.client, public.MulticallParameters{
+			Contracts:    contracts,
+			AllowFailure: boolPtr(true),
+		})
+		if err != nil {
+			lib.ExtractorError("batchGetReserves multicall error", "error", err)
+			continue
+		}
+
+		for j, r := range mcResults {
+			addrL := strings.ToLower(chunk[j].Hex())
+			if r.Status == "success" {
+				if vals, ok := r.Result.([]any); ok && len(vals) >= 2 {
+					r0, _ := vals[0].(*big.Int)
+					r1, _ := vals[1].(*big.Int)
+					if r0 != nil && r1 != nil {
+						results[addrL] = [2]*big.Int{r0, r1}
+					}
+				}
+			}
+		}
+	}
+	return results
+}`,
+    },
+    {
+      title: "Log indexer",
+      language: "go",
+      code: `// mini-extractor-go/extractor/log_filter.go
+// Watch block numbers, fetch blocks, then schedule log fetching/processing.
+func (lf *LogFilter2) AddFilter(topics []string, onNewLogs FilterCallback) {
+	lf.topicsAll = append(lf.topicsAll, topics...)
+	lf.filters = append(lf.filters, FilterMy{Topics: topics, OnNewLogs: onNewLogs})
+}
+
+func (lf *LogFilter2) Start() {
+	if lf.cancelWatch != nil {
+		return
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	lf.cancelWatch = cancel
+
+	if lf.logType == LogFilterNative {
+		// Not widely supported — use OneCall as fallback
+		lf.logType = LogFilterOneCall
+	}
+
+	events := lf.client.WatchBlockNumber(ctx, public.WatchBlockNumberParameters{})
+
+	go func() {
+		for event := range events {
+			if event.Error != nil {
+				lib.ExtractorError("watchBlockNumber error", "error", event.Error)
+				lf.Restart()
+				return
+			}
+
+			blockNum := event.BlockNumber
+			block, err := lf.client.GetBlockByNumber(ctx, blockNum, false)
+			if err != nil || block == nil {
+				continue
+			}
+
+			bp := &BlockParams{
+				Hash:       block.Hash,
+				Number:     &block.Number,
+				ParentHash: block.ParentHash,
+				Timestamp:  block.Timestamp,
+			}
+
+			lf.addBlock(ctx, bp, block, true)
+
+			// Notify subscribers
+			select {
+			case lf.blockCh <- block.Number:
+			default:
+			}
+		}
+	}()
+}
+
+// ... later: depth frames + per-block log fetching + sorting + callbacks ...`,
+    },
+    {
+      title: "Concurrent Multicall",
+      language: "go",
+      code: `// mini-extractor-go/extractor/token_manager.go
+// Resolve token metadata via multicall, dedupe concurrent lookups, and fall back
+// to bytes32 for tokens that don't return string().
+func (tm *TokenManager) FindToken(ctx context.Context, address common.Address) (*lib.Token, error) {
+	addr := strings.ToLower(address.Hex())
+
+	// Check cache first
+	if t := tm.GetKnownToken(address); t != nil {
+		return t, nil
+	}
+
+	// Singleflight: deduplicate concurrent requests for the same token
+	tm.inflightMu.Lock()
+	if flight, ok := tm.inflight[addr]; ok {
+		tm.inflightMu.Unlock()
+		<-flight.done
+		return flight.token, flight.err
+	}
+	flight := &tokenFlight{done: make(chan struct{})}
+	tm.inflight[addr] = flight
+	tm.inflightMu.Unlock()
+
+	token, err := tm.fetchToken(ctx, address)
+
+	flight.token = token
+	flight.err = err
+	close(flight.done)
+
+	tm.inflightMu.Lock()
+	delete(tm.inflight, addr)
+	tm.inflightMu.Unlock()
+
+	return token, err
+}
+
+func (tm *TokenManager) fetchToken(ctx context.Context, address common.Address) (*lib.Token, error) {
+	erc20ABI, err := getERC20ABI()
+	if err != nil {
+		return nil, err
+	}
+
+	// Called from fan-out goroutines → lets the batcher merge concurrent calls.
+	results, err := public.MulticallConcurrent(ctx, tm.client, public.MulticallParameters{
+		Contracts: []public.MulticallContract{
+			{Address: address, ABI: erc20ABI, FunctionName: "decimals"},
+			{Address: address, ABI: erc20ABI, FunctionName: "symbol"},
+			{Address: address, ABI: erc20ABI, FunctionName: "name"},
+		},
+		AllowFailure: boolPtr(true),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	decimalsR, symbolR, nameR := results[0], results[1], results[2]
+	if decimalsR.Status == "failure" {
+		return nil, nil
+	}
+	if symbolR.Status == "failure" || nameR.Status == "failure" {
+		return tm.fetchTokenBytes32(ctx, address)
+	}
+
+	token := &lib.Token{
+		ChainID:  tm.chainID,
+		Address:  address,
+		Decimals: toInt(decimalsR.Result),
+		Symbol:   toString(symbolR.Result),
+		Name:     toString(nameR.Result),
+	}
+	tm.addToken(token, true)
+	return token, nil
+}`,
+    },
+    {
+      title: "Permanent cache",
+      language: "go",
+      code: `// mini-extractor-go/extractor/permanent_cache.go
+// JSONL-based append-only cache + in-memory dedup.
+type PermanentCache[T any] struct {
+	filePath     string
+	mu           sync.Mutex
+	knownEntries map[string]struct{}
+}
+
+func NewPermanentCache[T any](paths ...string) *PermanentCache[T] {
+	fp := ""
+	if len(paths) > 0 && paths[0] != "" {
+		fp = filepath.Join(paths...)
+	}
+	return &PermanentCache[T]{filePath: fp, knownEntries: make(map[string]struct{})}
+}
+
+func (c *PermanentCache[T]) GetAllRecords() ([]T, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	// ... read JSONL, populate knownEntries ...
+	return records, nil
+}
+
+func (c *PermanentCache[T]) Add(record T) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	// ... marshal → dedupe → mkdir → append line ...
+}`,
+    },
+  ]}
+/>
+

@@ -3,13 +3,13 @@ title: WebSocket Transport
 description: Persistent connection to Ethereum nodes for real-time subscriptions
 ---
 
-
 The WebSocket transport provides a persistent connection to Ethereum nodes, enabling real-time subscriptions and lower latency for high-frequency requests.
 
-## Usage
+The `transport.WebSocket(...)` function returns a `transport.TransportFactory` that you pass into a client config (e.g. `client.PublicClientConfig`).
 
-<CodeGroup 
+## Import
 
+<CodeGroup
   tabs={[
     {
       title: "Go",
@@ -17,122 +17,441 @@ The WebSocket transport provides a persistent connection to Ethereum nodes, enab
       code: `import (
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
-)
-
-publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
-    Transport: transport.WebSocket("wss://eth.llamarpc.com"),
-})
-if err != nil {
-    log.Fatal(err)
-}
-defer publicClient.Close()`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { createPublicClient, webSocket } from 'viem'
-
-const client = createPublicClient({
-  transport: webSocket('wss://eth.llamarpc.com'),
-})`
+)`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Configuration
+These are the most common imports for using the WebSocket transport:
 
-### WebSocketTransportConfig
+- **transport**: WebSocket transport factory and config types (e.g. `transport.WebSocket`, `transport.WebSocketTransportConfig`).
+- **client**: Client constructors/config (e.g. `client.CreatePublicClient`, `client.PublicClientConfig`).
 
-```go
-transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
-    // Reconnect on connection loss
-    Reconnect: true,
-    
-    // Delay between reconnection attempts
-    ReconnectDelay: 2 * time.Second,
-    
-    // Max reconnection attempts (0 = infinite)
-    ReconnectAttempts: 10,
-    
-    // Ping interval to keep connection alive
-    KeepAliveInterval: 30 * time.Second,
+## Go notes
+
+#### Transport factories
+
+`transport.WebSocket(...)` creates a factory, not an immediate connection. The client constructs the transport internally when you create the client.
+
+#### Closing the client
+
+Close the client when you're done: `defer publicClient.Close()`. This closes the underlying WebSocket connection.
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.WebSocket("wss://eth.llamarpc.com"), // [!code focus]
 })
-```
+if err != nil {
+    log.Fatal(err)
+}
+defer publicClient.Close()`,
+      showLineNumbers: false
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `const publicClient = createPublicClient({
+  transport: webSocket('wss://eth.llamarpc.com'), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-### Options
+## Subscriptions (brief)
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `Reconnect` | `bool` | `true` | Auto-reconnect on disconnect |
-| `ReconnectDelay` | `time.Duration` | `2s` | Delay between reconnect attempts |
-| `ReconnectAttempts` | `int` | `0` | Max reconnect attempts (0 = infinite) |
-| `KeepAliveInterval` | `time.Duration` | `30s` | Ping interval for keep-alive |
+WebSocket transports support JSON-RPC subscriptions via `eth_subscribe`.
 
-## When to Use WebSocket
+On a `PublicClient`, watch actions can choose between polling and subscriptions based on the transport type. See [Public Client](/docs/clients/public/).
 
-**Use WebSocket when:**
-- You need real-time event subscriptions
-- Making many rapid requests
-- Building trading bots or monitoring systems
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `sub, err := publicClient.Subscribe(
+    transport.NewHeadsSubscribeParams(), // [!code focus]
+    func(data json.RawMessage) {
+        // ...
+    },
+    func(err error) {
+        // ...
+    },
+)
+if err != nil {
+    log.Fatal(err)
+}
+defer sub.Unsubscribe()`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-**Use HTTP when:**
-- Making occasional requests
-- Running in serverless environments
-- Connection persistence isn't needed
+## Parameters
 
-## Subscriptions (Coming Soon)
+### URL (optional)
 
-WebSocket enables real-time subscriptions:
+- **Type:** `string`
 
-```go
-// Subscribe to new block headers
-sub, err := publicClient.SubscribeNewHeads(ctx, func(header *types.Header) {
-    fmt.Printf("New block: %d\n", header.Number)
+The WebSocket RPC endpoint URL.
+
+URL resolution order is:
+- **Function argument**: `transport.WebSocket(\"wss://...\")`
+- **Config**: `transport.WebSocket(\"\", transport.WebSocketTransportConfig{ URL: \"wss://...\" })`
+- **Chain default**: `params.Chain.RpcUrls[\"default\"].WebSocket[0]` (when a client provides a chain)
+
+If no URL can be resolved, client creation fails with `transport.ErrURLRequired`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com") // [!code focus]
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `10s`
+
+Request timeout for each JSON-RPC call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Timeout: 5 * time.Second, // [!code focus]
 })
-defer sub.Unsubscribe()
 
-// Subscribe to pending transactions
-sub, err := publicClient.SubscribePendingTransactions(ctx, func(txHash common.Hash) {
-    fmt.Printf("Pending tx: %s\n", txHash.Hex())
-})
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-// Subscribe to contract events
-sub, err := publicClient.SubscribeLogs(ctx, types.FilterQuery{
-    Addresses: []common.Address{contractAddress},
-    Topics:    [][]common.Hash{{eventTopic}},
-}, func(log types.Log) {
-    fmt.Printf("Event: %+v\n", log)
-})
-```
+### RetryCount (optional)
 
-## Connection Management
+- **Type:** `int`
+- **Default:** `3`
 
-The WebSocket transport handles connection lifecycle automatically:
+Maximum number of retry attempts for retryable errors.
 
-```go
-publicClient, _ := client.CreatePublicClient(client.PublicClientConfig{
-    Transport: transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
-        Reconnect:         true,
-        ReconnectAttempts: 5,
-    }),
-})
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    RetryCount: 5, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-// Always close when done
-defer publicClient.Close()
-```
+### RetryDelay (optional)
 
-## Combining with HTTP Fallback
+- **Type:** `time.Duration`
+- **Default:** `150ms`
 
-For production systems, consider using both transports:
+Base delay between retries. Retries use exponential backoff \(delay * 2^attempt\).
 
-```go
-// Primary: WebSocket for subscriptions
-wsClient, _ := client.CreatePublicClient(client.PublicClientConfig{
-    Transport: transport.WebSocket("wss://eth.llamarpc.com"),
-})
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    RetryDelay: 250 * time.Millisecond, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-// Fallback: HTTP for reliability
-httpClient, _ := client.CreatePublicClient(client.PublicClientConfig{
-    Transport: transport.HTTP("https://eth.llamarpc.com"),
-})
-```
+### KeepAlive (optional)
+
+- **Type:** `*transport.KeepAliveConfig`
+- **Default:** `{ Enabled: true, Interval: 30s }`
+
+Keep-alive ping configuration.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    KeepAlive: &transport.KeepAliveConfig{ // [!code focus:4]
+        Enabled:  true,
+        Interval: 30 * time.Second,
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### KeepAlive.Enabled (optional)
+
+- **Type:** `bool`
+- **Default:** `true`
+
+Whether keep-alive pings are enabled.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    KeepAlive: &transport.KeepAliveConfig{
+        Enabled: false, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### KeepAlive.Interval (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `30s`
+
+Interval between keep-alive pings.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    KeepAlive: &transport.KeepAliveConfig{
+        Enabled:  true,
+        Interval: 10 * time.Second, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Reconnect (optional)
+
+- **Type:** `*transport.ReconnectConfig`
+- **Default:** `{ Enabled: true, MaxAttempts: 5, Delay: 2s }`
+
+Automatic reconnection configuration.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Reconnect: &transport.ReconnectConfig{ // [!code focus:5]
+        Enabled:     true,
+        MaxAttempts: 5,
+        Delay:       2 * time.Second,
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Reconnect.Enabled (optional)
+
+- **Type:** `bool`
+- **Default:** `true`
+
+Whether reconnection is enabled.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Reconnect: &transport.ReconnectConfig{
+        Enabled: false, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Reconnect.MaxAttempts (optional)
+
+- **Type:** `int`
+- **Default:** `5`
+
+Maximum reconnection attempts.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Reconnect: &transport.ReconnectConfig{
+        Enabled:     true,
+        MaxAttempts: 10, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Reconnect.Delay (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `2s`
+
+Delay between reconnection attempts.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Reconnect: &transport.ReconnectConfig{
+        Enabled: true,
+        Delay:   5 * time.Second, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Methods (optional)
+
+- **Type:** `*transport.MethodFilter`
+
+Restrict which JSON-RPC methods can be called by this transport.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Methods: &transport.MethodFilter{ // [!code focus:5]
+        Include: []string{"eth_subscribe", "eth_unsubscribe"},
+        Exclude: []string{"eth_sendTransaction"},
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Methods.Include (optional)
+
+- **Type:** `[]string`
+
+If set, only methods in `Include` are allowed (except those blocked by `Exclude`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Methods: &transport.MethodFilter{
+        Include: []string{"eth_subscribe", "eth_unsubscribe"}, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Methods.Exclude (optional)
+
+- **Type:** `[]string`
+
+Methods to block (checked before `Include`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Methods: &transport.MethodFilter{
+        Exclude: []string{"eth_sendTransaction", "eth_sendRawTransaction"}, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Key (optional)
+
+- **Type:** `string`
+- **Default:** `"webSocket"`
+
+Transport identifier key.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Key: "foo", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Name (optional)
+
+- **Type:** `string`
+- **Default:** `"WebSocket JSON-RPC"`
+
+Human-readable transport name.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.WebSocket("wss://eth.llamarpc.com", transport.WebSocketTransportConfig{
+    Name: "Foo WebSocket Transport", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Return Type
+
+`transport.WebSocket(...)` returns a `transport.TransportFactory`.

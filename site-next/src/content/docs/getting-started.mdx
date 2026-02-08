@@ -8,9 +8,42 @@ description: Get up and running with viem-go in minutes
 
 ## Installation
 
-```bash
-go get github.com/ChefBingbong/viem-go
-```
+to start using vime-go in your project just run the install command below
+
+<CodeGroup 
+
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `go get github.com/ChefBingbong/viem-go`
+    },
+  ]}
+/>
+
+### Versions
+
+The viem-go library is in active development and is changing regulkarly as new features roll out. Because of this make signature
+that you are always on the latest version. to check and update tot he latest version, run.
+
+<CodeGroup 
+
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `
+      go get github.com/ChefBingbong/viem-go@latest
+  go mod tidy
+      `
+    },
+  ]}
+/>
+
+<Aside type="tip">
+<span className="text-[#D679F2]">Make sure to keep up with the latest changes and releases by checking out or changelogs and github releases here.</span>
+</Aside>
+
 
 ## Quick Start
 
@@ -40,7 +73,7 @@ import (
 
 func main() {
     // Create a public client
-    publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    publicClient, err := client.CreatePublicClient(client.PublicClientConfig{ // [!code focus:3]
         Chain:     definitions.Mainnet,
         Transport: transport.HTTP("https://eth.llamarpc.com"),
     })
@@ -58,7 +91,7 @@ func main() {
       code: `import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
-const publicClient = createPublicClient({
+const publicClient = createPublicClient({ // [!code focus:3]
   chain: mainnet,
   transport: http(),
 })
@@ -69,8 +102,9 @@ console.log('Client created successfully!')`
 />
 
 <Aside type="tip">
-In production, always use an authenticated RPC endpoint (Infura, Alchemy, etc.) instead of public endpoints.
+<span className="text-[#D679F2]">In production, always use an authenticated RPC endpoint (Infura, Alchemy, etc.) instead of public endpoints.</span>
 </Aside>
+
 
 ### 2. Read Blockchain Data
 
@@ -83,21 +117,25 @@ Once you have a client, you can query the blockchain:
       title: "Go",
       language: "go",
       code: `// Get the current block number
-blockNumber, err := publicClient.GetBlockNumber(context.Background())
+blockNumber, err := publicClient.GetBlockNumber(context.Background()) // [!code focus]
 if err != nil {
     log.Fatal(err)
 }
 fmt.Println("Block number:", blockNumber)
 
-// Get an account balance
-balance, err := publicClient.GetBalance(
-    context.Background(),
-    common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
-)
+// Read USDC balance
+result, err := publicClient.ReadContract(context.Background(), client.ReadContractOptions{ // [!code focus:5]
+    Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+    ABI:          \`[{"name":"balanceOf","type":"function","inputs":[{"name":"owner","type":"address"}],"outputs":[{"type":"uint256"}]}]\`,
+    FunctionName: "balanceOf",
+    Args:         []any{common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")},
+})
 if err != nil {
     log.Fatal(err)
 }
-fmt.Println("Balance:", balance)`
+
+balance := result.(*big.Int)
+fmt.Println("USDC Balance:", balance)`
     },
     {
       title: "viem",
@@ -115,112 +153,15 @@ console.log('Balance:', balance)`
   ]}
 />
 
-### 3. Read from a Contract
 
-Use `ReadContract` to call view/pure functions on smart contracts:
+## Interactive Demo
+the demo below is a runnable live example showing how to fetch balances from an ERC20 contract.
 
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `import (
-    "github.com/ethereum/go-ethereum/common"
-    "math/big"
-)
-
-// Read USDC balance
-result, err := publicClient.ReadContract(context.Background(), client.ReadContractOptions{
-    Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-    ABI:          \`[{"name":"balanceOf","type":"function","inputs":[{"name":"owner","type":"address"}],"outputs":[{"type":"uint256"}]}]\`,
-    FunctionName: "balanceOf",
-    Args:         []any{common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")},
-})
-if err != nil {
-    log.Fatal(err)
-}
-
-balance := result.(*big.Int)
-fmt.Println("USDC Balance:", balance)`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { parseAbi } from 'viem'
-
-// Read USDC balance
-const balance = await publicClient.readContract({
-  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  abi: parseAbi(['function balanceOf(address) view returns (uint256)']),
-  functionName: 'balanceOf',
-  args: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
-})
-
-console.log('USDC Balance:', balance)`
-    }
-  ]}
+<ReadContractDemo
+  editorHeight={850}
+  terminalHeight={250}
 />
 
-### 4. Using Pre-built Contract Bindings
-
-For common contracts like ERC20, use the typed bindings:
-
-<CodeGroup 
-
-  tabs={[
-    {
-      title: "Go",
-      language: "go",
-      code: `import "github.com/ChefBingbong/viem-go/contracts/erc20"
-
-// Create typed ERC20 instance
-usdc := common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
-token, err := erc20.New(usdc, publicClient)
-if err != nil {
-    log.Fatal(err)
-}
-
-// Call typed methods
-balance, err := token.BalanceOf(
-    context.Background(),
-    common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
-)
-fmt.Println("Balance:", balance)
-
-// Get token metadata
-name, _ := token.Name(context.Background())
-symbol, _ := token.Symbol(context.Background())
-decimals, _ := token.Decimals(context.Background())
-
-fmt.Printf("Token: %s (%s) - %d decimals\\n", name, symbol, decimals)`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { erc20Abi } from 'viem'
-
-const usdc = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-
-// Read using the standard ERC20 ABI
-const balance = await publicClient.readContract({
-  address: usdc,
-  abi: erc20Abi,
-  functionName: 'balanceOf',
-  args: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
-})
-
-const name = await publicClient.readContract({
-  address: usdc,
-  abi: erc20Abi,
-  functionName: 'name',
-})
-
-console.log('Balance:', balance)
-console.log('Name:', name)`
-    }
-  ]}
-/>
 
 ## Next Steps
 

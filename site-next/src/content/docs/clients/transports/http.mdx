@@ -3,13 +3,13 @@ title: HTTP Transport
 description: Connect to Ethereum nodes via standard JSON-RPC over HTTP/HTTPS
 ---
 
-
 The HTTP transport connects to Ethereum nodes via standard JSON-RPC over HTTP/HTTPS. It's the most common transport type.
 
-## Usage
+The `transport.HTTP(...)` function returns a `transport.TransportFactory` that you pass into a client config (e.g. `client.PublicClientConfig` or `client.WalletClientConfig`).
 
-<CodeGroup 
+## Import
 
+<CodeGroup
   tabs={[
     {
       title: "Go",
@@ -17,151 +17,425 @@ The HTTP transport connects to Ethereum nodes via standard JSON-RPC over HTTP/HT
       code: `import (
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
-)
-
-publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
-    Transport: transport.HTTP("https://eth.llamarpc.com"),
-})`
-    },
-    {
-      title: "viem",
-      language: "ts",
-      code: `import { createPublicClient, http } from 'viem'
-
-const client = createPublicClient({
-  transport: http('https://eth.llamarpc.com'),
-})`
+)`,
+      showLineNumbers: false
     }
   ]}
 />
 
-## Configuration
+These are the most common imports for using the HTTP transport:
 
-### HTTPTransportConfig
+- **transport**: HTTP transport factory and config types (e.g. `transport.HTTP`, `transport.HTTPTransportConfig`).
+- **client**: Client constructors/config (e.g. `client.CreatePublicClient`, `client.PublicClientConfig`).
 
-```go
-transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
-    // Timeout for each request
-    Timeout: 10 * time.Second,
-    
-    // Number of retry attempts
-    RetryCount: 3,
-    
-    // Base delay between retries (exponential backoff)
-    RetryDelay: 150 * time.Millisecond,
-    
-    // Custom HTTP headers
-    Headers: map[string]string{
-        "Authorization": "Bearer your-api-key",
+## Go notes
+
+#### Transport factories
+
+`transport.HTTP(...)` creates a factory, not an immediate connection. The client constructs the transport internally when you create the client.
+
+#### Closing the client
+
+Close the client when you're done: `defer publicClient.Close()`. This closes the underlying transport (and any batch scheduler if enabled).
+
+## Usage
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: transport.HTTP("https://eth.llamarpc.com"), // [!code focus]
+})
+if err != nil {
+    log.Fatal(err)
+}
+defer publicClient.Close()`,
+      showLineNumbers: false
     },
-    
-    // Enable request batching
-    Batch: &transport.BatchConfig{
+    {
+      title: "viem",
+      language: "ts",
+      code: `const publicClient = createPublicClient({
+  transport: http('https://eth.llamarpc.com'), // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Parameters
+
+### URL (optional)
+
+- **Type:** `string`
+
+The RPC endpoint URL.
+
+URL resolution order is:
+- **Function argument**: `transport.HTTP(\"https://...\")`
+- **Config**: `transport.HTTP(\"\", transport.HTTPTransportConfig{ URL: \"https://...\" })`
+- **Chain default**: `params.Chain.RpcUrls[\"default\"].HTTP[0]` (when a client provides a chain)
+
+If no URL can be resolved, client creation fails with `transport.ErrURLRequired`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com") // [!code focus]
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Timeout (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `10s`
+
+Request timeout for each JSON-RPC call.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Timeout: 5 * time.Second, // [!code focus]
+})
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### RetryCount (optional)
+
+- **Type:** `int`
+- **Default:** `3`
+
+Maximum number of retry attempts for retryable errors.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    RetryCount: 5, // [!code focus]
+})
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### RetryDelay (optional)
+
+- **Type:** `time.Duration`
+- **Default:** `150ms`
+
+Base delay between retries. Retries use exponential backoff \(delay * 2^attempt\).
+
+If a `Retry-After` header is present on an HTTP error, it will be used when possible.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    RetryDelay: 250 * time.Millisecond, // [!code focus]
+})
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Headers (optional)
+
+- **Type:** `map[string]string`
+
+Additional HTTP headers to include in requests (e.g. for authenticated endpoints).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Headers: map[string]string{ // [!code focus:4]
+        "Authorization": "Bearer YOUR_API_KEY",
+    },
+})
+
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Batch (optional)
+
+- **Type:** `*transport.BatchConfig`
+
+Enables JSON-RPC request batching at the transport layer.
+
+When enabled, concurrent requests may be grouped into a single HTTP request.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Batch: &transport.BatchConfig{ // [!code focus:5]
         Enabled:   true,
         BatchSize: 1000,
         Wait:      10 * time.Millisecond,
     },
 })
-```
 
-### Options
+publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
+    Transport: tr,
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `Timeout` | `time.Duration` | `10s` | Request timeout |
-| `RetryCount` | `int` | `3` | Max retry attempts |
-| `RetryDelay` | `time.Duration` | `150ms` | Base delay between retries |
-| `Headers` | `map[string]string` | `nil` | Custom HTTP headers |
-| `Batch` | `*BatchConfig` | `nil` | Request batching config |
-| `Methods` | `*MethodFilter` | `nil` | Allowed/blocked RPC methods |
+### Batch.Enabled (optional)
 
-## Request Batching
+- **Type:** `bool`
+- **Default:** `false`
 
-Enable batching to combine multiple RPC calls into a single HTTP request:
+Whether batching is enabled.
 
-```go
-publicClient, _ := client.CreatePublicClient(client.PublicClientConfig{
-    Transport: transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
-        Batch: &transport.BatchConfig{
-            Enabled:   true,
-            BatchSize: 1000,  // Max bytes per batch
-            Wait:      10 * time.Millisecond, // Wait time before sending
-        },
-    }),
-})
-```
-
-With batching enabled, concurrent requests will be automatically combined:
-
-```go
-// These will be batched into a single HTTP request
-var wg sync.WaitGroup
-var blockNumber uint64
-var balance *big.Int
-
-wg.Add(2)
-go func() {
-    defer wg.Done()
-    blockNumber, _ = publicClient.GetBlockNumber(ctx)
-}()
-go func() {
-    defer wg.Done()
-    balance, _ = publicClient.GetBalance(ctx, address)
-}()
-wg.Wait()
-```
-
-## Retry Logic
-
-The HTTP transport automatically retries failed requests with exponential backoff:
-
-- Retry on network errors
-- Retry on rate limiting (429 status)
-- Retry on server errors (5xx status)
-- Exponential backoff: `delay * 2^attempt`
-
-```go
-transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
-    RetryCount: 5,
-    RetryDelay: 200 * time.Millisecond,
-    // Delays: 200ms, 400ms, 800ms, 1600ms, 3200ms
-})
-```
-
-## Authentication
-
-For authenticated RPC endpoints:
-
-```go
-// API key in URL
-transport.HTTP("https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY")
-
-// Or via headers
-transport.HTTP("https://your-rpc-endpoint.com", transport.HTTPTransportConfig{
-    Headers: map[string]string{
-        "Authorization": "Bearer YOUR_API_KEY",
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Batch: &transport.BatchConfig{
+        Enabled: true, // [!code focus]
     },
-})
-```
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
 
-## Method Filtering
+### Batch.BatchSize (optional)
 
-Restrict which RPC methods can be called:
+- **Type:** `int`
+- **Default:** `1000`
 
-```go
-transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+Maximum number of requests per batch. If `0`, viem-go defaults it to `1000`.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Batch: &transport.BatchConfig{
+        Enabled:   true,
+        BatchSize: 500, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Batch.Wait (optional)
+
+- **Type:** `time.Duration`
+
+Maximum time to wait before sending a batch (gives more time for concurrent requests to coalesce).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Batch: &transport.BatchConfig{
+        Enabled: true,
+        Wait:    10 * time.Millisecond, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Methods (optional)
+
+- **Type:** `*transport.MethodFilter`
+
+Restrict which JSON-RPC methods can be called by this transport.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Methods: &transport.MethodFilter{ // [!code focus:5]
+        Include: []string{"eth_blockNumber", "eth_getBalance"},
+        Exclude: []string{"eth_sendTransaction"},
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Methods.Include (optional)
+
+- **Type:** `[]string`
+
+If set, only methods in `Include` are allowed (except those blocked by `Exclude`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
     Methods: &transport.MethodFilter{
-        // Only allow these methods
-        Allow: []string{
-            "eth_blockNumber",
-            "eth_getBalance",
-            "eth_call",
-        },
-        // Or block specific methods
-        Block: []string{
-            "eth_sendTransaction",
-            "eth_sendRawTransaction",
-        },
+        Include: []string{"eth_blockNumber", "eth_getBalance"}, // [!code focus]
     },
-})
-```
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Methods.Exclude (optional)
+
+- **Type:** `[]string`
+
+Methods to block (checked before `Include`).
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Methods: &transport.MethodFilter{
+        Exclude: []string{"eth_sendTransaction", "eth_sendRawTransaction"}, // [!code focus]
+    },
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Raw (optional)
+
+- **Type:** `bool`
+- **Default:** `false`
+
+When enabled, RPC error responses are returned as `(*transport.RPCResponse, nil)` instead of being wrapped into an error.
+
+This can be useful if you want to inspect `resp.Error` yourself.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Raw: true, // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### OnRequest (optional)
+
+- **Type:** `func(req any) error`
+
+Hook invoked before each request.
+
+<Aside type="note">
+This field exists on `HTTPTransportConfig`, but it is not currently invoked by the transport implementation.
+</Aside>
+
+### OnResponse (optional)
+
+- **Type:** `func(resp any) error`
+
+Hook invoked after each response.
+
+<Aside type="note">
+This field exists on `HTTPTransportConfig`, but it is not currently invoked by the transport implementation.
+</Aside>
+
+### Key (optional)
+
+- **Type:** `string`
+- **Default:** `"http"`
+
+Transport identifier key.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Key: "foo", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+### Name (optional)
+
+- **Type:** `string`
+- **Default:** `"HTTP JSON-RPC"`
+
+Human-readable transport name.
+
+<CodeGroup
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `tr := transport.HTTP("https://eth.llamarpc.com", transport.HTTPTransportConfig{
+    Name: "Foo HTTP Transport", // [!code focus]
+})`,
+      showLineNumbers: false
+    }
+  ]}
+/>
+
+## Return Type
+
+`transport.HTTP(...)` returns a `transport.TransportFactory`.

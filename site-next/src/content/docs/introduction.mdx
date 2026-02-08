@@ -6,15 +6,182 @@ description: Learn why viem-go provides a better developer experience for Ethere
 
 <div data-pagefind-weight="10">
 
-viem-go is a Go port of the popular TypeScript [viem](https://viem.sh) library. It provides idiomatic Go APIs for interacting with Ethereum, following viem's design philosophy while embracing Go conventions.
+viem-go brings a modern, high-level Ethereum developer experience to the Go ecosystem — inspired by the architecture and abstractions pioneered by TypeScript [viem](https://viem.sh).
 
-## The Goal
+If you want the deeper “how it works” view (call flows, package responsibilities, and where the benchmark wins come from), see **[Architecture](/docs/architecture/)**.
 
-If you've used viem in TypeScript, you know how pleasant the developer experience is. viem-go aims to bring that same experience to Go developers:
+## Why viem-go?
 
-- **Familiar patterns** — Same Client/Transport/Action architecture
-- **Readable code** — APIs that make sense without diving into docs
-- **Comprehensive** — From basic RPC calls to contract interactions
+- **Go lacks high-level Ethereum abstractions**: There isn’t a widely adopted, high-level Ethereum API abstraction in the Go ecosystem that makes common tasks feel straightforward.
+- **go-ethereum is low-level by design**: go-ethereum is excellent, but working directly with its lower-level APIs can be tedious and creates a higher barrier to entry for day-to-day EVM development in Go.
+- **viem is a familiar mental model**: Many web3 developers already know viem’s Client/Transport/Action patterns and are comfortable reading and writing that style of code.
+- **Bring viem’s patterns to Go**: viem-go takes the same composable abstractions (clients, transports, typed parameter structs) and adapts them into idiomatic Go to make EVM development more enjoyable.
+- **Unlock Go performance advantages**: Go can address performance bottlenecks common in TypeScript workloads using concurrency and goroutines.
+- **High-level without sacrificing performance**: viem-go aims to provide a high-level API without giving up performance relative to go-ethereum, and to build on efficiency advantages over TypeScript viem where possible.
+
+## Benchmarks
+
+Benchmarks are run against the same Anvil instance (mainnet fork) for a fair comparison.
+
+| Metric | Go (viem-go) | TypeScript (viem) |
+|--------|--------------|-------------------|
+| Geometric mean speedup | 7.12x | - |
+| Avg ns/op | 2,020,982 | 10,567,395 |
+| Avg ops/s | 495 | 95 |
+| Wins | 59/59 | 0/59 |
+
+### Suite averages (from detailed results)
+
+The table below averages each suite’s detailed rows (arithmetic mean for ns/op and ops/s). **Avg speedup** is computed as \(TS avg ns/op\) / \(Go avg ns/op\).
+
+| Suite | Benchmarks | Go avg (ns/op) | TS avg (ns/op) | Go avg (ops/s) | TS avg (ops/s) | Avg speedup |
+|------|-----------:|---------------:|---------------:|---------------:|---------------:|------------:|
+| abi | 6 | 428 | 4,275 | 3,445,808 | 626,605 | 10.00x |
+| address | 5 | 488 | 4,275 | 11,011,379 | 2,126,570 | 8.75x |
+| call | 6 | 196,058 | 15,262,714 | 5,230 | 741 | 77.85x |
+| ens | 5 | 1,271 | 14,653 | 1,446,853 | 336,587 | 11.53x |
+| event | 3 | 14,786 | 368,891 | 613,584 | 36,198 | 24.95x |
+| hash | 7 | 1,257 | 14,452 | 1,938,169 | 193,156 | 11.50x |
+| multicall | 16 | 7,371,364 | 32,964,665 | 2,258 | 1,092 | 4.47x |
+| signature | 5 | 10,942 | 627,205 | 1,443,857 | 158,895 | 57.32x |
+| unit | 6 | 94 | 208 | 11,370,705 | 5,193,740 | 2.21x |
+
+### Detailed results (by suite)
+
+<details>
+  <summary>Abi (6 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Abi_EncodeSimple | 215 | 6,827 | 4,659,832 | 146,473 | 🟢 Go 31.81x faster |
+| Abi_EncodeComplex | 544 | 7,677 | 1,838,235 | 130,262 | 🟢 Go 14.11x faster |
+| Abi_EncodeMultiArg | 685 | 8,318 | 1,459,002 | 120,224 | 🟢 Go 12.14x faster |
+| Abi_DecodeResult | 115 | 977 | 8,733,624 | 1,023,132 | 🟢 Go 8.54x faster |
+| Abi_EncodePacked | 523 | 670 | 1,912,046 | 1,492,562 | 🟢 Go 1.28x faster |
+| Abi_EncodePackedMulti | 483 | 1,181 | 2,072,109 | 846,977 | 🟢 Go 2.45x faster |
+
+</details>
+
+<details>
+  <summary>Address (5 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Address_IsAddress | 38 | 233 | 26,116,479 | 4,293,464 | 🟢 Go 6.08x faster |
+| Address_IsAddressLower | 59 | 239 | 17,044,486 | 4,178,762 | 🟢 Go 4.08x faster |
+| Address_Checksum | 99 | 514 | 10,112,246 | 1,945,403 | 🟢 Go 5.20x faster |
+| Address_Create | 1,167 | 7,163 | 856,898 | 139,611 | 🟢 Go 6.14x faster |
+| Address_Create2 | 1,079 | 13,226 | 926,784 | 75,610 | 🟢 Go 12.26x faster |
+
+</details>
+
+<details>
+  <summary>Call (6 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Call_Basic | 274,381 | 18,601,087 | 3,645 | 54 | 🟢 Go 67.79x faster |
+| Call_WithData | 187,542 | 18,737,540 | 5,332 | 53 | 🟢 Go 99.91x faster |
+| Call_WithAccount | 175,643 | 239,669 | 5,693 | 4,172 | 🟢 Go 1.36x faster |
+| Call_Decimals | 174,224 | 17,801,545 | 5,740 | 56 | 🟢 Go 102.18x faster |
+| Call_Symbol | 180,635 | 18,073,803 | 5,536 | 55 | 🟢 Go 100.06x faster |
+| Call_BalanceOfMultiple | 183,921 | 18,122,640 | 5,437 | 55 | 🟢 Go 98.53x faster |
+
+</details>
+
+<details>
+  <summary>Ens (5 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Ens_Namehash | 1,661 | 20,762 | 602,047 | 48,165 | 🟢 Go 12.50x faster |
+| Ens_NamehashDeep | 3,029 | 43,586 | 330,142 | 22,943 | 🟢 Go 14.39x faster |
+| Ens_Labelhash | 434 | 5,399 | 2,304,678 | 185,214 | 🟢 Go 12.44x faster |
+| Ens_Normalize | 349 | 966 | 2,864,509 | 1,034,895 | 🟢 Go 2.77x faster |
+| Ens_NormalizeLong | 883 | 2,553 | 1,132,888 | 391,720 | 🟢 Go 2.89x faster |
+
+</details>
+
+<details>
+  <summary>Event (3 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Event_DecodeTransfer | 639 | 10,210 | 1,564,456 | 97,939 | 🟢 Go 15.97x faster |
+| Event_DecodeBatch10 | 3,982 | 103,642 | 251,130 | 9,649 | 🟢 Go 26.03x faster |
+| Event_DecodeBatch100 | 39,738 | 992,822 | 25,165 | 1,007 | 🟢 Go 24.98x faster |
+
+</details>
+
+<details>
+  <summary>Hash (7 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Hash_Keccak256Short | 435 | 20,174 | 2,301,496 | 49,568 | 🟢 Go 46.43x faster |
+| Hash_Keccak256Long | 2,812 | 48,695 | 355,619 | 20,536 | 🟢 Go 17.32x faster |
+| Hash_Keccak256Hex | 460 | 5,264 | 2,175,332 | 189,971 | 🟢 Go 11.45x faster |
+| Hash_Sha256Short | 161 | 1,428 | 6,211,180 | 700,346 | 🟢 Go 8.87x faster |
+| Hash_Sha256Long | 632 | 12,863 | 1,582,028 | 77,740 | 🟢 Go 20.35x faster |
+| Hash_FunctionSelector | 1,920 | 6,319 | 520,833 | 158,242 | 🟢 Go 3.29x faster |
+| Hash_EventSelector | 2,377 | 6,423 | 420,698 | 155,691 | 🟢 Go 2.70x faster |
+
+</details>
+
+<details>
+  <summary>Multicall (16 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Multicall_Basic | 182,793 | 459,455 | 5,471 | 2,176 | 🟢 Go 2.51x faster |
+| Multicall_WithArgs | 189,193 | 364,049 | 5,286 | 2,747 | 🟢 Go 1.92x faster |
+| Multicall_MultiContract | 220,815 | 374,585 | 4,529 | 2,670 | 🟢 Go 1.70x faster |
+| Multicall_10Calls | 227,875 | 463,719 | 4,388 | 2,156 | 🟢 Go 2.03x faster |
+| Multicall_30Calls | 377,187 | 914,261 | 2,651 | 1,094 | 🟢 Go 2.42x faster |
+| Multicall_Deployless | 352,429 | 558,138 | 2,837 | 1,792 | 🟢 Go 1.58x faster |
+| Multicall_TokenMetadata | 202,770 | 372,581 | 4,932 | 2,684 | 🟢 Go 1.84x faster |
+| Multicall_50Calls | 484,157 | 1,253,997 | 2,065 | 797 | 🟢 Go 2.59x faster |
+| Multicall_100Calls | 869,667 | 2,150,954 | 1,150 | 465 | 🟢 Go 2.47x faster |
+| Multicall_200Calls | 1,410,831 | 4,344,237 | 709 | 230 | 🟢 Go 3.08x faster |
+| Multicall_500Calls | 2,172,946 | 8,864,462 | 460 | 113 | 🟢 Go 4.08x faster |
+| Multicall_MixedContracts_100 | 843,830 | 2,149,151 | 1,185 | 465 | 🟢 Go 2.55x faster |
+| Multicall_1000Calls | 2,909,357 | 16,605,503 | 344 | 60 | 🟢 Go 5.71x faster |
+| Multicall_10000Calls_SingleRPC | 66,612,371 | 162,662,459 | 15 | 6 | 🟢 Go 2.44x faster |
+| Multicall_10000Calls_Chunked | 18,517,578 | 164,741,932 | 54 | 6 | 🟢 Go 8.90x faster |
+| Multicall_10000Calls_AggressiveChunking | 22,368,029 | 161,155,160 | 45 | 6 | 🟢 Go 7.20x faster |
+
+</details>
+
+<details>
+  <summary>Signature (5 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Signature_HashMessage | 772 | 6,733 | 1,295,672 | 148,522 | 🟢 Go 8.72x faster |
+| Signature_HashMessageLong | 1,809 | 14,494 | 552,792 | 68,996 | 🟢 Go 8.01x faster |
+| Signature_RecoverAddress | 25,877 | 1,569,686 | 38,644 | 637 | 🟢 Go 60.66x faster |
+| Signature_VerifyMessage | 26,062 | 1,543,377 | 38,370 | 648 | 🟢 Go 59.22x faster |
+| Signature_ParseSignature | 189 | 1,737 | 5,293,806 | 575,671 | 🟢 Go 9.20x faster |
+
+</details>
+
+<details>
+  <summary>Unit (6 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Unit_ParseEther | 65 | 315 | 15,396,459 | 3,170,982 | 🟢 Go 4.86x faster |
+| Unit_ParseEtherLarge | 130 | 235 | 7,680,492 | 4,252,017 | 🟢 Go 1.81x faster |
+| Unit_FormatEther | 116 | 145 | 8,605,852 | 6,915,772 | 🟢 Go 1.24x faster |
+| Unit_ParseUnits6 | 89 | 211 | 11,196,954 | 4,737,299 | 🟢 Go 2.36x faster |
+| Unit_ParseGwei | 67 | 201 | 14,992,504 | 4,982,042 | 🟢 Go 3.01x faster |
+| Unit_FormatUnits | 97 | 141 | 10,351,967 | 7,104,329 | 🟢 Go 1.46x faster |
+
+</details>
+
+<div style={{ maxWidth: 720, margin: "1.5rem 0" }}>
+  <img src="/benchmarks/summary.svg" alt="viem-go benchmark summary" />
+</div>
 
 </div>
 

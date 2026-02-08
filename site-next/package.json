@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:next": "next dev",
+    "dev:runner": "cd .. && DOCS_RUNNER_ADDR=:8787 DOCS_RUNNER_ALLOW_ORIGIN=http://localhost:3000 go run ./cmd/docs-runner",
+    "dev": "concurrently -k -n runner,next -c magenta,cyan \"bun run dev:runner\" \"DOCS_RUNNER_URL=http://localhost:8787 bun run dev:next\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -11,9 +13,11 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
+    "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/typography": "^0.5.19",
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
+    "monaco-editor": "^0.55.1",
     "next": "16.1.6",
     "next-mdx-remote": "^5.0.0",
     "prism-react-renderer": "^2.4.1",
@@ -26,6 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",

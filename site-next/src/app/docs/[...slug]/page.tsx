@@ -7,6 +7,8 @@ import CopyButton from "@/components/CopyButton";
 import TerminalTyping from "@/components/TerminalTyping";
 import GitHubStats from "@/components/GitHubStats";
 import Aside from "@/components/Aside";
+import GoPlayground from "@/components/GoPlayground";
+import ReadContractDemo from "@/components/ReadContractDemo";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/MdxTable";
 import TableOfContents from "@/components/TableOfContents";
 
@@ -54,6 +56,8 @@ const mdxComponents = {
   TerminalTyping,
   GitHubStats,
   Aside,
+  GoPlayground,
+  ReadContractDemo,
   h2: createHeading(2),
   h3: createHeading(3),
   h4: createHeading(4),
