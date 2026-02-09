@@ -438,7 +438,7 @@ function SidebarContent({ pathname }: { pathname: string }) {
         <motion.nav
           ref={scrollRef}
           layoutScroll
-          className="flex-1 overflow-y-auto py-4 px-3"
+          className="flex-1 overflow-y-auto py-4 px-3 hide-scrollbar"
           onMouseLeave={() => setHoveredId(null)}
           onBlurCapture={() => setHoveredId(null)}
         >
@@ -467,7 +467,7 @@ export default function DocsSidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-[260px] xl:w-[320px] 2xl:w-[380px] pl-4 xl:pl-12 2xl:pl-20 shrink-0 h-full flex-col  bg-secondary/30 overflow-y-auto">
+      <aside className="hidden lg:flex w-[260px] xl:w-[320px] 2xl:w-[380px] pl-4 xl:pl-12 2xl:pl-20 shrink-0 h-full flex-col  bg-dark-bg overflow-y-auto">
         <SidebarContent pathname={pathname} />
       </aside>
 

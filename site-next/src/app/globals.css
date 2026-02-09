@@ -312,6 +312,10 @@
    ::-webkit-scrollbar-thumb:hover { background: var(--color-gray-4); }
    * { scrollbar-width: thin; scrollbar-color: var(--color-gray-5) transparent; }
    
+   /* Hide scrollbar utility */
+   .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+   .hide-scrollbar::-webkit-scrollbar { display: none; }
+
    /* Cursor blink animation */
    @keyframes cursorBlink {
      0%, 100% { opacity: 1; }

@@ -47,7 +47,7 @@ function NavLink({
 export default function Header() {
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-50 w-full   bg-background-secondary py-[5px] opacity-100">
+    <header className="sticky top-0 z-50 w-full   bg-dark-bg py-[5px] opacity-100">
       <div className="px-4 sm:px-6 h-12 flex items-center justify-between gap-3">
         {/* Left: logo area (matches sidebar width) + search (aligns with main content) */}
         <div className="flex items-center min-w-0">

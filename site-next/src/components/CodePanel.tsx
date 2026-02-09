@@ -183,17 +183,17 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   if (tabs.length === 0) return null;
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/15 bg-background-secondary/60">
+    <div className="my-6 rounded-lg overflow-hidden border border-accent/15 bg-dark-bg/80">
       <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <div className="flex items-center justify-between h-11 bg-background-tertiary/50 border-b border-accent/12">
+        <div className="flex items-center justify-between h-11 bg-dark-bg/50 border-b border-accent/12">
           <TabList className="flex h-full items-stretch">
             {tabs.map((tab, index) => (
               <Tab
                 key={index}
                 className={`flex items-center justify-center px-3.5 text-[0.8125rem] font-medium cursor-pointer transition-all duration-150 h-11 border-b-2 outline-none ${
                   selectedIndex === index
-                    ? "text-gray-1 bg-gray-6/40 border-accent"
-                    : "text-gray-3 bg-transparent border-transparent hover:text-gray-1 hover:bg-gray-5/10"
+                    ? "text-primary bg-dark-bg !border-primary"
+                    : "text-foreground-muted bg-transparent border-transparent hover:text-foreground-secondary hover:bg-dark-bg/30"
                 }`}
               >
                 {tab.title}
@@ -221,7 +221,7 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
                   {({ tokens, getLineProps, getTokenProps }) => (
                     <pre
                       style={{ fontFamily: viemMonoFontFamily }}
-                      className="!m-0 !bg-background-secondary/50 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed " 
+                      className="!m-0 !bg-dark-deep/20 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed " 
                       onMouseEnter={() => {
                         if (active) return
                         setActive(true)
