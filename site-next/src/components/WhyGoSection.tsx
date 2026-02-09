@@ -41,6 +41,18 @@ const WhyGoSection = () => (
       <circle cx="350" cy="50" r="100" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
     </svg>
 
+    {/* Bright centered glow behind cards */}
+    <div
+      aria-hidden
+      className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[50%] h-[400px] w-[1200px] rounded-full opacity-40 blur-[130px]"
+      style={{ background: "radial-gradient(ellipse, hsl(215 90% 55% / 0.5), transparent 70%)" }}
+    />
+    <div
+      aria-hidden
+      className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[30%] h-[280px] w-[400px] rounded-full opacity-25 blur-[80px]"
+      style={{ background: "radial-gradient(ellipse, hsl(215 90% 65% / 0.55), transparent 65%)" }}
+    />
+
     <div className="relative mx-auto max-w-7xl px-6">
       <AnimatedSection>
         <div className="mb-4 text-center">

@@ -9,7 +9,7 @@ Watches and returns emitted event logs.
 
 Watch actions return a channel of events. Cancel the context to stop watching.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ Watch actions return a channel of events. Cancel the context to stop watching.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -85,7 +85,7 @@ for event := range events { // [!code focus:6]
   ]}
 />
 
-## Returns
+### Returns
 
 `<-chan WatchEventEvent`
 
@@ -93,7 +93,7 @@ A channel that emits `WatchEventEvent` structs containing:
 - `Logs []formatters.Log` - The event logs (may contain multiple when `Batch` is true)
 - `Error error` - Any error that occurred
 
-## Parameters
+### Parameters
 
 ### Address (optional)
 
@@ -344,7 +344,7 @@ The number of workers for parallel log processing. Only used when decoding event
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - When polling with filter support:
   - Calls [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter) to create a filter

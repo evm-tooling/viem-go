@@ -5,7 +5,7 @@ description: Read a storage slot at an address with getStorageAt
 
 **GetStorageAt** returns the raw 32-byte value at a storage slot for a given address. Uses **eth_getStorageAt**. Useful for low-level storage layout inspection.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ description: Read a storage slot at an address with getStorageAt
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,7 +56,7 @@ if err != nil {
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -80,11 +80,11 @@ if err != nil {
 - **Default:** `"latest"`
 - Block tag. Mutually exclusive with **BlockNumber**.
 
-## Return type
+### Return type
 
 - **GetStorageAt** returns `([]byte, error)`. The value is the raw bytes at that slot (up to 32 bytes). `nil` means zero/empty.
 
-## See also
+### See also
 
 - [Get Code](/docs/contract/get-code/) — contract bytecode
 - [Reading Contracts](/docs/contract/read-contract/) — ABI-based reads

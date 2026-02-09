@@ -9,7 +9,7 @@ Batches multiple contract function calls into a single RPC call using the multic
 
 When the client has `Batch.Multicall` configured, concurrent `Multicall()` calls within the Wait window are automatically aggregated into a single larger multicall RPC call. This mirrors viem's `batch: { multicall: { ... } }` behavior.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ When the client has `Batch.Multicall` configured, concurrent `Multicall()` calls
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -108,7 +108,7 @@ for i, result := range results {
   ]}
 />
 
-## Returns
+### Returns
 
 `[]MulticallResult`
 
@@ -117,7 +117,7 @@ An array of results, each containing:
 - `Result any` - The decoded return value(s) if Status is `"success"`
 - `Error error` - The error if Status is `"failure"`
 
-## Parameters
+### Parameters
 
 ### Contracts (required)
 
@@ -356,13 +356,13 @@ Limits the number of concurrent chunk executions. This prevents overwhelming RPC
   ]}
 />
 
-## Tips
+### Tips
 
 - Multicall automatically chunks large batches of calls to avoid RPC size limits
 - Use `AllowFailure: true` to continue processing even if some calls fail
 - Enable `ShouldBatch` to automatically batch concurrent multicall calls
 - Use `Deployless: true` for chains without a deployed multicall3 contract
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) to execute calls via the multicall3 contract's `aggregate3` function.

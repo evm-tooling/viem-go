@@ -5,7 +5,7 @@ description: Run a contract call without sending a transaction
 
 **SimulateContract** executes a contract call via **eth_call** and returns the decoded return value (and optionally revert info). Use it to test state-changing calls or to validate arguments before sending a transaction. Works with both view and write functions.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ description: Run a contract call without sending a transaction
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -68,7 +68,7 @@ if err != nil {
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -119,11 +119,11 @@ if err != nil {
 
 - Optional tx-style fields for the simulation context.
 
-## Return type
+### Return type
 
 - **public.SimulateContract** returns `(*SimulateContractReturnType, error)`. **SimulateContractReturnType** has **Result** (`any` — decoded return value) and **Request** (**SimulateContractRequest** — can be used to build a writeContract call). On revert, returns an error (use **abi.DecodeErrorResult** to decode revert data). **PublicClient.SimulateContract** returns `([]any, error)` (decoded return values only).
 
-## See also
+### See also
 
 - [Reading Contracts](/docs/contract/read-contract/) — ReadContract (view/pure)
 - [Writing Contracts](/docs/contract/write-contract/) — WriteContract after simulating

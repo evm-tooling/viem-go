@@ -7,7 +7,7 @@ description: Serializes a transaction object to RLP-encoded hex
 
 Serializes a transaction object to RLP-encoded hex. Supports Legacy, EIP-2930, EIP-1559, EIP-4844, and EIP-7702 transactions.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "math/big"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -69,13 +69,13 @@ const serialized = serializeTransaction({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)`
 
 The serialized transaction as a hex string with transaction type prefix.
 
-## Parameters
+### Parameters
 
 ### transaction (required)
 
@@ -159,7 +159,7 @@ serialized, _ := transaction.SerializeTransaction(tx, sig)`,
   ]}
 />
 
-## Transaction Type Detection
+### Transaction Type Detection
 
 The transaction type is automatically determined from the fields:
 - **EIP-7702**: Has `AuthorizationList`
@@ -168,7 +168,7 @@ The transaction type is automatically determined from the fields:
 - **EIP-2930**: Has `GasPrice` and `AccessList`
 - **Legacy**: Has `GasPrice` without `AccessList`
 
-## Serialized Format
+### Serialized Format
 
 The serialized transaction format depends on the type:
 - **Legacy**: RLP-encoded without type prefix

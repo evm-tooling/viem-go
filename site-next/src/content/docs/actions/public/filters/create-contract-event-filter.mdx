@@ -7,7 +7,7 @@ description: Creates a filter to retrieve contract event logs with ABI decoding
 
 Creates a filter to retrieve contract event logs that can be used with `GetFilterChanges` or `GetFilterLogs`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Creates a filter to retrieve contract event logs that can be used with `GetFilte
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -81,7 +81,7 @@ logs, err := public.GetFilterLogs(ctx, publicClient, public.GetFilterLogsParamet
   ]}
 />
 
-## Returns
+### Returns
 
 `*CreateContractEventFilterReturnType`
 
@@ -93,7 +93,7 @@ A filter object containing:
 - `Args []any` - The indexed args used for filtering
 - `Strict bool` - Whether strict mode is enabled
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -303,6 +303,6 @@ Filters out logs that don't match the indexed/non-indexed arguments in the event
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter)

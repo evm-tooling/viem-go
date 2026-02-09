@@ -10,7 +10,7 @@ Calculates an Ethereum-specific signature in [EIP-191 format](https://eips.ether
 - For local accounts (implementing SignableAccount), signs locally without an RPC call.
 - For JSON-RPC accounts, delegates to the `personal_sign` RPC method.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -23,7 +23,7 @@ Calculates an Ethereum-specific signature in [EIP-191 format](https://eips.ether
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -72,13 +72,13 @@ log.Printf("Signature: %s", sig)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `string`
 
 The signed message as a hex string.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -154,7 +154,7 @@ sig, err := wallet.SignMessage(ctx, walletClient, wallet.SignMessageParameters{
   ]}
 />
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`personal_sign`](https://docs.metamask.io/guide/signing-data#personal-sign)
 - Local Accounts: Signs locally. No JSON-RPC request.

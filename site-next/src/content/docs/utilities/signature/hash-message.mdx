@@ -7,7 +7,7 @@ description: Hashes a message in EIP-191 format
 
 Calculates an Ethereum-specific hash in [EIP-191 format](https://eips.ethereum.org/EIPS/eip-191): `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Calculates an Ethereum-specific hash in [EIP-191 format](https://eips.ethereum.o
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ hashMessage({ raw: '0x68656c6c6f20776f726c64' })
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `string` for `HashMessage`, `[]byte` for `HashMessageBytes`
 
 The hashed message. `HashMessage` returns a hex string with `0x` prefix, `HashMessageBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### message (required)
 
@@ -93,7 +93,7 @@ hash = signature.HashMessage(signature.NewSignableMessageHex("0x68656c6c6f20776f
   ]}
 />
 
-## Functions
+### Functions
 
 ### HashMessage
 
@@ -113,7 +113,7 @@ hashBytes := signature.HashMessageBytes(signature.NewSignableMessage("hello worl
 // []byte{...}
 ```
 
-## Message Format
+### Message Format
 
 The message hash is computed as:
 ```

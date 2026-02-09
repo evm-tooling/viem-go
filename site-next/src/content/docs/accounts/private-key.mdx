@@ -5,7 +5,7 @@ description: Create an account from a private key for signing transactions and m
 
 A **Private Key Account** is an account that can sign transactions and messages with a given private key. In viem-go, signing uses [go-ethereum/crypto](https://pkg.go.dev/github.com/ethereum/go-ethereum/crypto) (secp256k1).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ A **Private Key Account** is an account that can sign transactions and messages 
   ]}
 />
 
-## Usage
+### Usage
 
 Pass a 32-byte hex private key (with or without `0x` prefix) to `PrivateKeyToAccount`:
 
@@ -68,7 +68,7 @@ console.log('Public Key:', account.publicKey)`,
 The key in the example is valid for testing only. Do not use it for real funds.
 </Aside>
 
-## Generating private keys
+### Generating private keys
 
 Generate a cryptographically secure random private key with `GeneratePrivateKey`. It returns a hex string (no error); it panics only on a broken RNG.
 
@@ -103,7 +103,7 @@ const account = privateKeyToAccount(privateKey)`,
 
 For deterministic tests, use `GeneratePrivateKeyWithEntropy(entropy []byte)` — it returns an error if the 32-byte entropy is not a valid secp256k1 private key.
 
-## Signing messages
+### Signing messages
 
 Sign an EIP-191 personal message:
 
@@ -137,7 +137,7 @@ console.log('Signature:', signature)`,
 
 For raw bytes use `signature.NewSignableMessageRaw(bytes)` or `signature.NewSignableMessageRawHex(hexString)`.
 
-## Signing transactions
+### Signing transactions
 
 Sign a transaction (legacy, EIP-2930, EIP-1559, etc.). The account returns the serialized signed transaction ready for broadcast.
 
@@ -183,7 +183,7 @@ if err != nil {
   ]}
 />
 
-## Signing typed data (EIP-712)
+### Signing typed data (EIP-712)
 
 <CodeGroup
   tabs={[
@@ -253,7 +253,7 @@ if err != nil {
   ]}
 />
 
-## Signing authorizations (EIP-7702)
+### Signing authorizations (EIP-7702)
 
 Private key accounts can sign EIP-7702 authorization requests via `SignAuthorization`:
 
@@ -265,7 +265,7 @@ signedAuth, err := account.SignAuthorization(accounts.AuthorizationRequest{
 })
 ```
 
-## Parameters
+### Parameters
 
 ### privateKey
 
@@ -299,12 +299,12 @@ account, err := accounts.PrivateKeyToAccount("ac0974bec39a17e36ba4a6b4d238ff944b
 
 In viem-go, `PrivateKeyToAccountOptions` is a struct that can be extended later (e.g. nonce manager). Currently you can omit it or pass an empty struct.
 
-## Return type
+### Return type
 
 - **Go:** `PrivateKeyToAccount(privateKey string, opts ...PrivateKeyToAccountOptions) (*PrivateKeyAccount, error)`
 - **Must variant:** `MustPrivateKeyToAccount(privateKey string, opts ...PrivateKeyToAccountOptions) *PrivateKeyAccount` — panics on error.
 
-## Error handling
+### Error handling
 
 Possible errors: `ErrInvalidPrivateKey` (invalid format or not valid secp256k1). viem-go does not define a separate `ErrPrivateKeyLength`; invalid length is reported as `ErrInvalidPrivateKey`.
 

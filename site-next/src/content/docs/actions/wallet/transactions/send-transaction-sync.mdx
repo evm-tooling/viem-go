@@ -14,7 +14,7 @@ Creates, signs, and sends a new transaction to the network synchronously. Return
 This Action is only recommended to be used on chains with low block times and fast finality (most chains apart from `mainnet`).
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ This Action is only recommended to be used on chains with low block times and fa
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -69,13 +69,13 @@ log.Printf("Transaction receipt: %+v", receipt)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*formatters.TransactionReceipt`
 
 The transaction receipt after the transaction is included in a block.
 
-## Parameters
+### Parameters
 
 All parameters from [sendTransaction](/docs/actions/wallet/transactions/send-transaction) are supported, plus:
 
@@ -148,7 +148,7 @@ receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransac
   ]}
 />
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

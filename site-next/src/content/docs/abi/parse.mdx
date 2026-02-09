@@ -5,7 +5,7 @@ description: Parse JSON ABIs into an ABI struct or into raw items in viem-go
 
 The **abi** package parses Ethereum JSON ABIs so you can encode/decode contract calls, events, and errors. Use **Parse** (or **ParseFromString** / **MustParse**) to get an **\*abi.ABI**; use **ParseItems** to get a slice of raw items for inspection without the typed maps.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ The **abi** package parses Ethereum JSON ABIs so you can encode/decode contract 
   ]}
 />
 
-## Parse
+### Parse
 
 Parse a JSON ABI (bytes) into an **\*abi.ABI** that exposes **Functions**, **Events**, and **Errors** maps.
 
@@ -89,7 +89,7 @@ fmt.Println("Topic:", transferEv.Topic.Hex())`,
 - **ParseFromString(jsonABI string) (*ABI, error)** — parse from string.
 - **MustParse(jsonABI []byte) *ABI** — panic on error.
 
-## ABI type
+### ABI type
 
 After parsing, you get an **ABI** struct:
 
@@ -108,7 +108,7 @@ Helper methods:
 - **FunctionNames() []string**
 - **EventNames() []string**
 
-## ParseItems
+### ParseItems
 
 Parse the JSON ABI into a slice of **ABIItem** structs for inspection. Each item has **Type**, **Name**, **Inputs**, **Outputs**, **StateMutability**, **Anonymous**. Does not build the typed **Functions** / **Events** / **Errors** maps.
 
@@ -125,12 +125,12 @@ for _, item := range items {
 - **ParseItems(jsonABI []byte) ([]ABIItem, error)**
 - **ABIItem** has: **Type** (e.g. `"function"`, `"event"`), **Name**, **Inputs** (`[]ABIInput`), **Outputs**, **StateMutability**, **Anonymous**.
 
-## Go notes
+### Go notes
 
 - viem-go has no human-readable ABI strings like viem’s `parseAbi("function transfer(...)")`; use **Parse** with JSON ABI bytes.
 - The ABI struct is built from go-ethereum’s parser; **MarshalJSON** / **UnmarshalJSON** are implemented so the ABI can be serialized as the original JSON.
 
-## See also
+### See also
 
 - [Encode Parameters](/docs/abi/encode-parameters/) — EncodeAbiParameters
 - [Decode Parameters](/docs/abi/decode-parameters/) — DecodeAbiParameters

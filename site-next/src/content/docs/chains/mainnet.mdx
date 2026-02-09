@@ -5,7 +5,7 @@ description: Ethereum mainnet chain definition and usage with Public and Wallet 
 
 **Ethereum mainnet** is available as `definitions.Mainnet`. Use it with [Public Client](/docs/clients/public/) or [Wallet Client](/docs/clients/wallet/) by passing `&definitions.Mainnet` as the chain config.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ description: Ethereum mainnet chain definition and usage with Public and Wallet 
   ]}
 />
 
-## Usage
+### Usage
 
 Pass a **pointer** to the chain when creating a client (`Chain: &definitions.Mainnet`).
 
@@ -76,7 +76,7 @@ const publicClient = createPublicClient({
   ]}
 />
 
-## Chain properties
+### Chain properties
 
 | Property | Value |
 |----------|--------|
@@ -89,7 +89,7 @@ const publicClient = createPublicClient({
 
 The built-in definition includes default RPC URL, Etherscan as block explorer (with API URL), and optional contracts (Multicall3, ENS Universal Resolver).
 
-## Accessing URLs and explorer
+### Accessing URLs and explorer
 
 Use the chain's maps with the `"default"` key, or the helper methods on `*chain.Chain`:
 
@@ -124,7 +124,7 @@ url := definitions.Mainnet.BlockExplorers["default"].URL`,
   ]}
 />
 
-## Contracts
+### Contracts
 
 The mainnet definition may include known contract addresses used by actions (e.g. multicall, ENS). Access them via `Contracts`:
 
@@ -135,13 +135,13 @@ if definitions.Mainnet.Contracts != nil && definitions.Mainnet.Contracts.Multica
 }
 ```
 
-## Parameters (client config)
+### Parameters (client config)
 
 When using Mainnet with a client:
 
 - **Chain:** `*chain.Chain` — pass `&definitions.Mainnet`.
 - **Transport:** Use an HTTP or WebSocket transport; you can use `definitions.Mainnet.DefaultRpcUrl()` or your own RPC URL.
 
-## Return type
+### Return type
 
 `definitions.Mainnet` is a value of type `chain.Chain` produced by `chain.DefineChain`. It is not a pointer; clients require `&definitions.Mainnet`.

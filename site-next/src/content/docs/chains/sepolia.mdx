@@ -5,7 +5,7 @@ description: Sepolia testnet chain definition and usage for development and test
 
 **Sepolia** is an Ethereum testnet used for development and testing. viem-go does not ship a built-in `definitions.Sepolia`; define it with [DefineChain](/docs/chains/custom/) and the same `chain.Chain` struct, then pass a pointer to your clients.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ description: Sepolia testnet chain definition and usage for development and test
   ]}
 />
 
-## Usage
+### Usage
 
 Define the Sepolia chain once (e.g. in an `init` or package var) and pass a pointer when creating clients.
 
@@ -98,7 +98,7 @@ const publicClient = createPublicClient({
   ]}
 />
 
-## Chain properties
+### Chain properties
 
 | Property | Value |
 |----------|--------|
@@ -109,19 +109,19 @@ const publicClient = createPublicClient({
 | **Default RPC** | `https://rpc.sepolia.org` (or your own endpoint) |
 | **Block explorer** | [sepolia.etherscan.io](https://sepolia.etherscan.io) |
 
-## Faucets
+### Faucets
 
 Get testnet ETH from public faucets, for example:
 
 - [Alchemy Sepolia Faucet](https://sepoliafaucet.com)
 - [Infura Sepolia Faucet](https://www.infura.io/faucet/sepolia)
 
-## Go notes
+### Go notes
 
 - **No built-in:** There is no `definitions.Sepolia` in viem-go. Use `chain.DefineChain(chain.Chain{...})` as above and keep the result (e.g. package-level var); pass `&Sepolia` to clients.
 - **RPC URL:** You can use `Sepolia.DefaultRpcUrl()` if your definition's `RpcUrls["default"].HTTP[0]` is set, or pass any Sepolia RPC URL to `transport.HTTP(...)`.
 
-## See also
+### See also
 
 - [Custom Chains](/docs/chains/custom/) — full `Chain` type and `DefineChain` options
 - [Chains](/docs/chains/introduction/) — overview of built-in chains and usage

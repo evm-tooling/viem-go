@@ -7,7 +7,7 @@ description: Returns the number of the most recent block seen
 
 Returns the number of the most recent block seen.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the number of the most recent block seen.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -65,13 +65,13 @@ log.Printf("Block number: %d", blockNumber)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `uint64`
 
 The number of the most recent block.
 
-## Parameters
+### Parameters
 
 ### CacheTime (optional)
 
@@ -114,6 +114,6 @@ By default, block numbers are cached for the period of the [Client's `CacheTime`
 - Setting a value above zero will make block number remain in the cache for that period.
 - Setting a value of `0` will disable the cache, and always retrieve a fresh block number.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_blockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber)

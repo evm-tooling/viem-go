@@ -5,7 +5,7 @@ description: Retrieve contract bytecode at an address with getCode
 
 **GetCode** returns the bytecode at a given address (e.g. contract deployment code). Uses **eth_getCode**. No ABI required.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ description: Retrieve contract bytecode at an address with getCode
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,7 +57,7 @@ fmt.Printf("Bytecode length: %d bytes\n", len(code))`,
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -76,11 +76,11 @@ fmt.Printf("Bytecode length: %d bytes\n", len(code))`,
 - **Default:** `"latest"`
 - Block tag to query. Mutually exclusive with **BlockNumber**.
 
-## Return type
+### Return type
 
 - **GetCode** returns `([]byte, error)`. `nil` slice means no code (empty account or EOA).
 
-## See also
+### See also
 
 - [Get Storage At](/docs/contract/get-storage-at/) — read storage slots
 - [Reading Contracts](/docs/contract/read-contract/) — call contract view functions

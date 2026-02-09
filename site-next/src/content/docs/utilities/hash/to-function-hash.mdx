@@ -7,7 +7,7 @@ description: Returns the full keccak256 hash of a function signature
 
 Returns the full keccak256 hash of a function signature. This is an alias for `ToSignatureHash` specifically for function definitions.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the full keccak256 hash of a function signature. This is an alias for `T
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -50,13 +50,13 @@ const hash = toFunctionHash('function transfer(address, uint256)')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `ToFunctionHash`, `([]byte, error)` for `ToFunctionHashBytes`
 
 The full 32-byte keccak256 hash of the function signature. `ToFunctionHash` returns a hex string with `0x` prefix, `ToFunctionHashBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### function (required)
 
@@ -83,7 +83,7 @@ The function definition string.
   ]}
 />
 
-## Functions
+### Functions
 
 ### ToFunctionHash
 
@@ -103,7 +103,7 @@ hashBytes, _ := hash.ToFunctionHashBytes("function transfer(address,uint256)")
 // []byte{0xa9, 0x05, 0x9c, ...}
 ```
 
-## Notes
+### Notes
 
 - This returns the full 32-byte hash, unlike `ToFunctionSelector` which returns only the first 4 bytes
 - The function signature is normalized before hashing

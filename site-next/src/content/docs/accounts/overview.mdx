@@ -13,7 +13,7 @@ There are three types of Local Accounts in viem-go:
 
 For address-only (JSON-RPC) or custom signing sources, see [Custom & address-only accounts](/docs/accounts/custom/).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -37,7 +37,7 @@ Common imports when using accounts with a Wallet Client:
 - **accounts**: Account constructors (`PrivateKeyToAccount`, `MnemonicToAccount`, `HDKeyToAccount`, `ToAccountFromAddress`, `ToAccount`) and types (`CustomSource`, `HDOptions`).
 - **client** / **transport** / **chain**: When wiring the account into a [Wallet Client](/docs/clients/wallet/).
 
-## Instantiation
+### Instantiation
 
 ### 1. Initialize a Wallet Client
 
@@ -215,14 +215,14 @@ When using a Local Account, you often need both read (e.g. balance, nonce) and w
 <span className="text-tertiary">With a local account, the client signs transactions locally and sends them via <b className="text-foreground">eth_sendRawTransaction</b> — private keys are never sent to the RPC node.</span>
 </Aside>
 
-## Account types
+### Account types
 
 | Type | Description |
 |------|-------------|
 | **Local** | Private key (or derived key) held in process; signs before sending (Private Key, Mnemonic, HD, Custom). |
 | **JSON-RPC** | Address only; signing is delegated to the node/wallet over JSON-RPC. Use [ToAccountFromAddress](/docs/accounts/custom/) or `client.NewAddressAccount` for Wallet Client. |
 
-## Local account capabilities
+### Local account capabilities
 
 Local accounts can:
 
@@ -234,7 +234,7 @@ Local accounts can:
 | Sign typed data (EIP-712) | `account.SignTypedData(data)` |
 | Sign authorization (EIP-7702) | `account.SignAuthorization(auth)` |
 
-## Account properties (Go)
+### Account properties (Go)
 
 ```go
 // LocalAccount (and *PrivateKeyAccount, *HDAccount)
@@ -248,12 +248,12 @@ account.GetType()     // "local"
 hdAccount.GetHdKey()  // underlying HDKey for derivation
 ```
 
-## Go notes
+### Go notes
 
 - **Errors:** Account constructors return `(account, error)`. Use `Must*` variants (e.g. `MustPrivateKeyToAccount`) to panic on error.
 - **Context:** Wallet actions take `context.Context` as the first argument for cancellation and timeouts.
 
-## Security
+### Security
 
 <Aside type="caution">
 Never commit private keys or mnemonics to source control. Use environment variables or a secure key management system in production.

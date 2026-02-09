@@ -7,7 +7,7 @@ description: Encodes a hash as an ENS encoded label
 
 Encodes a hash as an ENS encoded label. This is the inverse of `EncodedLabelToLabelhash`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Encodes a hash as an ENS encoded label. This is the inverse of `EncodedLabelToLa
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -41,13 +41,13 @@ encoded = ens.EncodeLabelhash("4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `string`
 
 The encoded label in the format `[<64 hex chars>]`.
 
-## Parameters
+### Parameters
 
 ### hash (required)
 
@@ -67,7 +67,7 @@ The hash to encode. Should be 64 hex characters (with or without `0x` prefix).
   ]}
 />
 
-## Encoded Label Format
+### Encoded Label Format
 
 Encoded labels are in the format:
 ```
@@ -76,7 +76,7 @@ Encoded labels are in the format:
 
 For example: `[4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0]`
 
-## Notes
+### Notes
 
 - Removes `0x` prefix if present
 - Used to represent labelhashes in ENS names

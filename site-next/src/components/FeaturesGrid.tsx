@@ -20,7 +20,7 @@ const FeaturesGrid = () => (
   <section className="relative overflow-hidden py-10">
     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
-    <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+    <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
       <motion.div
         className="flex shrink-0 gap-5"
         animate={{ x: ["0%", "-50%"] }}

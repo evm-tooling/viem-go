@@ -7,7 +7,7 @@ description: Encodes a value (string, hex, number, or boolean) to a byte array
 
 Encodes a value (string, hex, number, or boolean) to a byte array using a fluent API.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Encodes a value (string, hex, number, or boolean) to a byte array using a fluent
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -68,13 +68,13 @@ toBytes(true)
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]byte, error)`
 
 The byte array representation of the value.
 
-## Parameters
+### Parameters
 
 ### value (required)
 
@@ -151,7 +151,7 @@ bytes, _ := encoding.ToBytes(big.NewInt(-1)).WithSize(32).WithSigned().ToBytes()
   ]}
 />
 
-## Standalone Functions
+### Standalone Functions
 
 The encoding package also provides standalone conversion functions:
 

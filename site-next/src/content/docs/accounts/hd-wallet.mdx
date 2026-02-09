@@ -7,7 +7,7 @@ A **Hierarchical Deterministic (HD) Account** is derived from an [HD Key](https:
 
 viem-go uses [go-bip32](https://github.com/tyler-smith/go-bip32) for BIP-32 HD derivation. The `HDKey` interface exposes `Derive(path)`, `PrivateKey()`, and `PublicKey()`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ viem-go uses [go-bip32](https://github.com/tyler-smith/go-bip32) for BIP-32 HD d
 
 In viem (TypeScript), `HDKey` is re-exported from `@scure/bip32`. In viem-go, you obtain an `HDKey` from `accounts.SeedToHDKey(seed)` or from a key that implements the `accounts.HDKey` interface.
 
-## Usage
+### Usage
 
 ### From mnemonic (recommended)
 
@@ -114,7 +114,7 @@ console.log('Address:', account.address)`,
 
 In viem (TypeScript), `HDKey` has static methods like `fromMasterSeed`, `fromExtendedKey`, `fromJSON`. In viem-go, the main entry point from raw seed is `SeedToHDKey(seed)`; the resulting key’s `Derive(path)` parses BIP-32 path strings (e.g. `m/44'/60'/0'/0/0`).
 
-## Parameters
+### Parameters
 
 ### hdKey
 
@@ -200,7 +200,7 @@ const account3 = hdKeyToAccount(hdKey, {
   ]}
 />
 
-## HD path reference
+### HD path reference
 
 | Path | Description |
 |------|-------------|
@@ -211,7 +211,7 @@ const account3 = hdKeyToAccount(hdKey, {
 
 Path parsing in viem-go supports `m/` prefix, `'` or `h` for hardened, and numeric segments. Use `accounts.DefaultHDPath(accountIndex, changeIndex, addressIndex)` to build the default path string.
 
-## Accessing the HD key (Go)
+### Accessing the HD key (Go)
 
 `HDKeyToAccount` returns an `*HDAccount`, which embeds a local account and exposes the underlying key:
 
@@ -225,7 +225,7 @@ hdKey := hdAccount.GetHdKey()
 child, _ := parentKey.Derive("m/44'/60'/0'/0/1")
 ```
 
-## Signing
+### Signing
 
 HD accounts support the same signing methods as [Private Key Account](/docs/accounts/private-key/): `Sign`, `SignMessage`, `SignTransaction`, `SignTypedData`, `SignAuthorization`.
 
@@ -236,7 +236,7 @@ sig, err := account.SignTypedData(typedData)
 signedAuth, err := account.SignAuthorization(authRequest)
 ```
 
-## Batch account generation
+### Batch account generation
 
 Generate multiple accounts from one mnemonic by iterating the path (e.g. address index):
 
@@ -268,16 +268,16 @@ for i, acc := range accounts {
   ]}
 />
 
-## Return type
+### Return type
 
 - **Go:** `HDKeyToAccount(hdKey HDKey, opts ...HDKeyToAccountOptions) (*HDAccount, error)`
 - **Must variant:** `MustHDKeyToAccount(hdKey HDKey, opts ...HDKeyToAccountOptions) *HDAccount`
 
-## Error handling
+### Error handling
 
 - **ErrInvalidHDPath** — path string is invalid or derivation failed (e.g. invalid segment).
 
-## Account source
+### Account source
 
 The account’s source is set to `AccountSourceHD` when created via `HDKeyToAccount`, and `AccountSourceMnemonic` when created via `MnemonicToAccount`:
 

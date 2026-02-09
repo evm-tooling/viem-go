@@ -7,7 +7,7 @@ A **Mnemonic Account** is an [HD Account](/docs/accounts/hd-wallet/) derived fro
 
 viem-go uses [go-bip39](https://github.com/tyler-smith/go-bip39) and [go-bip32](https://github.com/tyler-smith/go-bip32) for BIP-39 and BIP-32 HD derivation.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -26,7 +26,7 @@ viem-go uses [go-bip39](https://github.com/tyler-smith/go-bip39) and [go-bip32](
   ]}
 />
 
-## Usage
+### Usage
 
 Pass a BIP-39 mnemonic phrase. By default the path `m/44'/60'/0'/0/0` is used. Optionally pass `MnemonicToAccountOptions` for path, passphrase, or index overrides.
 
@@ -68,7 +68,7 @@ console.log('Address:', account.address)
 The mnemonic in the example is for testing only. Do not use it for real funds.
 </Aside>
 
-## Parameters
+### Parameters
 
 ### mnemonic
 
@@ -173,7 +173,7 @@ const account = mnemonicToAccount(mnemonic, {
   ]}
 />
 
-## Generating mnemonics
+### Generating mnemonics
 
 Generate a BIP-39 mnemonic with `GenerateMnemonic`. Strength is specified via `GenerateMnemonicOptions{Strength: ...}`; strength must be 128, 160, 192, 224, or 256 (bits of entropy). Default is 128 (12 words); use `accounts.Mnemonic256` for 24 words.
 
@@ -214,7 +214,7 @@ const mnemonic = generateMnemonic(english)
   ]}
 />
 
-## HD path explanation
+### HD path explanation
 
 The standard Ethereum path `m/44'/60'/0'/0/0`:
 
@@ -229,11 +229,11 @@ The standard Ethereum path `m/44'/60'/0'/0/0`:
 
 Use `accounts.DefaultHDPath(accountIndex, changeIndex, addressIndex)` to build the path string in Go.
 
-## Signing and capabilities
+### Signing and capabilities
 
 Mnemonic-derived accounts support the same operations as [Private Key Account](/docs/accounts/private-key/): `Sign`, `SignMessage`, `SignTransaction`, `SignTypedData`, `SignAuthorization`. See that page for examples.
 
-## Deriving multiple accounts
+### Deriving multiple accounts
 
 Derive several addresses from one mnemonic by varying `AddressIndex` or `Path`:
 
@@ -265,7 +265,7 @@ for (let i = 0; i < 10; i++) {
   ]}
 />
 
-## Validation and wordlists
+### Validation and wordlists
 
 - **ValidateMnemonic(mnemonic string) bool** — returns whether the phrase is valid BIP-39.
 - **GetWordlist(name string)** — returns a wordlist by name (e.g. `"english"`). viem-go ships with the English wordlist; use `accounts.English` or get by name for validation/display.
@@ -285,17 +285,17 @@ fmt.Println(valid) // false`,
   ]}
 />
 
-## Return type
+### Return type
 
 - **Go:** `MnemonicToAccount(mnemonic string, opts ...MnemonicToAccountOptions) (*HDAccount, error)`
 - **Must variant:** `MustMnemonicToAccount(mnemonic string, opts ...MnemonicToAccountOptions) *HDAccount`
 
-## Error handling
+### Error handling
 
 - **ErrInvalidMnemonic** — mnemonic phrase is not valid BIP-39.
 - **ErrInvalidHDPath** — derivation path is invalid or derivation failed.
 
-## Go-only helpers
+### Go-only helpers
 
 - **MnemonicToSeed(mnemonic, passphrase string) []byte** — raw BIP-39 seed.
 - **SeedToHDKey(seed []byte) (HDKey, error)** — master HD key from seed; then use [HDKeyToAccount](/docs/accounts/hd-wallet/) with a path.

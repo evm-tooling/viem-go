@@ -7,7 +7,7 @@ description: Executes a new message call immediately without submitting a transa
 
 Executes a new message call immediately without submitting a transaction to the network.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Executes a new message call immediately without submitting a transaction to the 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -139,14 +139,14 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-## Returns
+### Returns
 
 `*CallReturnType`
 
 An object containing:
 - `Data []byte` - The return data from the call, or nil if the call returned empty
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -413,6 +413,6 @@ State overrides for the call.
 
 Block-level overrides (baseFeePerGas, gasLimit, etc.).
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call)

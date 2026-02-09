@@ -11,7 +11,7 @@ Transforms arbitrary data into blobs for [EIP-4844](https://eips.ethereum.org/EI
 This function transforms data into viem-go-shaped blobs. It is designed to be used with `FromBlobs` to convert back to the original data.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ This function transforms data into viem-go-shaped blobs. It is designed to be us
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -65,13 +65,13 @@ const blobs = toBlobs({ data: '0x...' })`,
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([][]byte, error)` for `ToBlobs`, `([]string, error)` for `ToBlobsHex`
 
 An array of blobs. Each blob is exactly 131,072 bytes (128 KB).
 
-## Parameters
+### Parameters
 
 ### data (required)
 
@@ -100,7 +100,7 @@ blobs, _ = blob.ToBlobsFromHex("0x68656c6c6f20776f726c64")`,
   ]}
 />
 
-## Encoding Format
+### Encoding Format
 
 The encoding follows EIP-4844 requirements:
 - Each field element (32 bytes) starts with a `0x00` byte to prevent overflow
@@ -108,7 +108,7 @@ The encoding follows EIP-4844 requirements:
 - A terminator byte (`0x80`) marks the end of the data
 - Each blob contains exactly 4,096 field elements (131,072 bytes total)
 
-## Functions
+### Functions
 
 ### ToBlobs
 
@@ -134,7 +134,7 @@ Transforms hex-encoded data into blobs:
 blobs, _ := blob.ToBlobsFromHex("0x68656c6c6f20776f726c64")
 ```
 
-## Notes
+### Notes
 
 - Maximum data size per transaction is 2,097,152 bytes (2 MB)
 - Data larger than 131,072 bytes will be split across multiple blobs

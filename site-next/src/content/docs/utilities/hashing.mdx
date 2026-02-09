@@ -6,7 +6,7 @@ description: Cryptographic hashing functions used throughout Ethereum
 
 Cryptographic hashing functions used throughout Ethereum.
 
-## keccak256
+### keccak256
 
 The primary hash function used in Ethereum:
 
@@ -35,7 +35,7 @@ console.log(hash)
   ]}
 />
 
-## sha256
+### sha256
 
 Standard SHA-256 hash:
 
@@ -60,7 +60,7 @@ console.log(hash)`
   ]}
 />
 
-## ripemd160
+### ripemd160
 
 RIPEMD-160 hash (used in Bitcoin addresses):
 
@@ -70,7 +70,7 @@ fmt.Printf("0x%x\n", h)
 // 0x108f07b8382412612c048d07d13f814118445acd
 ```
 
-## hashMessage
+### hashMessage
 
 Hash a message for EIP-191 personal sign:
 
@@ -102,7 +102,7 @@ The message hash is computed as:
 keccak256("\x19Ethereum Signed Message:\n" + len(message) + message)
 ```
 
-## hashTypedData
+### hashTypedData
 
 Hash EIP-712 typed structured data:
 
@@ -155,7 +155,7 @@ const hash = hashTypedData({
   ]}
 />
 
-## toFunctionSelector
+### toFunctionSelector
 
 Get the 4-byte function selector:
 
@@ -181,7 +181,7 @@ console.log(selector)
   ]}
 />
 
-## toEventSelector
+### toEventSelector
 
 Get the event topic hash:
 
@@ -207,7 +207,7 @@ console.log(topic)
   ]}
 />
 
-## isHash
+### isHash
 
 Check if a value is a valid hash:
 
@@ -237,7 +237,7 @@ isHash('0x123')
   ]}
 />
 
-## Common Use Cases
+### Common Use Cases
 
 ### Verify Contract Deployment
 

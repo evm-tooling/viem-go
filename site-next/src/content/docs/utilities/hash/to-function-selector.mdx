@@ -7,7 +7,7 @@ description: Returns the 4-byte function selector for a given function definitio
 
 Returns the 4-byte function selector for a given function definition. The selector is the first 4 bytes of the keccak256 hash of the function signature.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the 4-byte function selector for a given function definition. The select
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,13 +56,13 @@ const selector2 = toFunctionSelector('ownerOf(uint256)')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `ToFunctionSelector`, `([]byte, error)` for `ToFunctionSelectorBytes`
 
 The 4-byte function selector. `ToFunctionSelector` returns a hex string with `0x` prefix, `ToFunctionSelectorBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### function (required)
 
@@ -97,7 +97,7 @@ toFunctionSelector('ownerOf(uint256)')
   ]}
 />
 
-## Functions
+### Functions
 
 ### ToFunctionSelector
 
@@ -117,7 +117,7 @@ selectorBytes, _ := hash.ToFunctionSelectorBytes("function transfer(address,uint
 // []byte{0xa9, 0x05, 0x9c, 0xbb}
 ```
 
-## Notes
+### Notes
 
 - The function signature is normalized (spaces removed, parameter names removed) before hashing
 - Only the first 4 bytes of the keccak256 hash are used

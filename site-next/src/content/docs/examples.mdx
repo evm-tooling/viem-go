@@ -4,7 +4,7 @@ description: Real-world examples showing viem-go in action, with TypeScript comp
 ---
 
 
-## Basic Examples
+### Basic Examples
 
 ### Get Transaction Receipt
 
@@ -39,9 +39,9 @@ console.log('Block:', receipt.blockNumber)`
   ]}
 />
 
-## Contract Examples
+### Contract Examples
 
-### Read ERC20 Token Info
+#### Read ERC20 Token Info
 
 <CodeGroup 
 
@@ -126,7 +126,7 @@ console.log('Encoded:', data)`
   ]}
 />
 
-## Account Examples
+### Account Examples
 
 ### Create Account from Private Key
 
@@ -186,7 +186,7 @@ console.log('Address:', account.address)`
   ]}
 />
 
-## Utility Examples
+### Utility Examples
 
 ### Parse and Format Units
 
@@ -278,7 +278,7 @@ console.log('Recovered:', address)`
   ]}
 />
 
-## Real-world (Advanced): UniswapV2 extractor in Go
+### Real-world (Advanced): UniswapV2 extractor in Go
 
 These snippets are cherry-picked from the Go implementation in [`viem-go-extractor-demo`](https://github.com/ChefBingbong/viem-go-extractor-demo/tree/main) — a real UniswapV2 pool extractor that heavily exercises **multicall batching**, **concurrent fan-out**, **reorg-aware log watching**, and **on-disk caching**.
 

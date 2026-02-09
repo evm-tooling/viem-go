@@ -7,7 +7,7 @@ description: Estimates the gas necessary to complete a transaction without submi
 
 Estimates the gas necessary to complete a transaction without submitting it to the network.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Estimates the gas necessary to complete a transaction without submitting it to t
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -78,13 +78,13 @@ log.Printf("Estimated gas: %d", gas)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `uint64`
 
 The estimated gas amount in units of gas.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -335,6 +335,6 @@ The block tag to estimate at (e.g., "latest", "pending").
 
 State overrides for the estimation.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_estimateGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_estimategas)

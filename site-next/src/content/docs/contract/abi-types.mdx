@@ -5,7 +5,7 @@ description: AbiParam, Parameter, and Solidity-to-Go type mapping for encoding a
 
 The **abi** package uses two parameter representations: **AbiParam** for standalone encode/decode (e.g. `EncodeAbiParameters`, `DecodeAbiParameters`), and **Parameter** for items parsed from a JSON ABI (functions, events, errors). Solidity types map to specific Go types when encoding and decoding.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ The **abi** package uses two parameter representations: **AbiParam** for standal
   ]}
 />
 
-## AbiParam (standalone encode/decode)
+### AbiParam (standalone encode/decode)
 
 **AbiParam** is used with **EncodeAbiParameters**, **DecodeAbiParameters**, **DecodeAbiParametersInto**, and **DecodeWithSelector**. It does not require a parsed ABI.
 
@@ -45,7 +45,7 @@ params := []abi.AbiParam{
 }
 ```
 
-## Parameter (parsed ABI items)
+### Parameter (parsed ABI items)
 
 **Parameter** appears on **Function.Inputs/Outputs**, **Event.Inputs**, and **Error.Inputs** after parsing a JSON ABI with **abi.Parse**. It has the same shape as AbiParam plus **Indexed** for events.
 
@@ -58,7 +58,7 @@ params := []abi.AbiParam{
 
 You don’t construct **Parameter** manually for encoding/decoding; you get it from `parsed.Functions["fn"].Inputs` etc. For raw parameter lists (no ABI), use **AbiParam**.
 
-## Type mapping (Solidity → Go)
+### Type mapping (Solidity → Go)
 
 Use these Go types when **encoding** (e.g. `EncodeAbiParameters`, `EncodeFunctionData`) or when **decoding** (e.g. `DecodeAbiParameters`, `DecodeFunctionResult`).
 
@@ -118,7 +118,7 @@ values := []any{
 }
 ```
 
-## Parsing ABI JSON
+### Parsing ABI JSON
 
 viem-go does not support human-readable ABI strings like viem’s `parseAbi("function balanceOf(address) returns (uint256)")`. Use **Parse** (or **ParseFromString** / **MustParse**) with **JSON ABI bytes**:
 
@@ -135,13 +135,13 @@ if err != nil {
 
 To inspect raw items without the typed ABI map, use **ParseItems(jsonABI)** which returns **[]ABIItem**.
 
-## Go notes
+### Go notes
 
 - **AbiParam** is for standalone encode/decode; **Parameter** is for parsed ABI items. Both have **Name**, **Type**, and **Components** (and **Parameter** has **Indexed**).
 - Fixed-size bytes (`bytes1`–`bytes32`) can be passed as **[]byte** (correct length) or hex string; decoding may return hex string or **[]byte** depending on size.
 - For **DecodeAbiParametersInto**, pass a pointer to a struct; field order (or names) should match the **AbiParam** list.
 
-## See also
+### See also
 
 - [Introduction](/docs/contract/abi-introduction/) — Parse, ABI struct, Function/Event/Error
 - [Encoding](/docs/contract/abi-encoding/) — EncodeAbiParameters

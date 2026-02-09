@@ -7,7 +7,7 @@ description: Determines the transaction type based on transaction fields
 
 Determines the transaction type based on the transaction fields. Returns the transaction type string.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "math/big"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ const type = getTransactionType({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(transaction.TransactionType, error)`
 
 The transaction type: `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`.
 
-## Parameters
+### Parameters
 
 ### transaction (required)
 
@@ -94,7 +94,7 @@ txType, _ := transaction.GetTransactionType(tx)`,
   ]}
 />
 
-## Type Detection Logic
+### Type Detection Logic
 
 The transaction type is determined in the following order:
 
@@ -106,7 +106,7 @@ The transaction type is determined in the following order:
 6. **Legacy**: If `GasPrice` is present without `AccessList`
 7. **Error**: If none of the above conditions are met
 
-## Functions
+### Functions
 
 ### GetTransactionType
 

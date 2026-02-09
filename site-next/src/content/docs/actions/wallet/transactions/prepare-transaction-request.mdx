@@ -7,7 +7,7 @@ description: Prepares a transaction request for signing
 
 Prepares a transaction request for signing by populating a nonce, gas limit, fee values, and a transaction type.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Prepares a transaction request for signing by populating a nonce, gas limit, fee
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -62,13 +62,13 @@ log.Printf("Prepared transaction: %+v", prepared)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*PrepareTransactionRequestParameters`
 
 The fully-prepared transaction request with all required fields populated (nonce, chainId, gas, fees, type).
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 

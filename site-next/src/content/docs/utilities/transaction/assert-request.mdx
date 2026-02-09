@@ -7,7 +7,7 @@ description: Validates a transaction request and returns an error if invalid
 
 Validates a transaction request and returns an error if the request is invalid. Checks address validity and fee constraints.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "math/big"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -58,13 +58,13 @@ assertRequest({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `error`
 
 Returns `nil` if the request is valid, or an error describing the validation failure.
 
-## Parameters
+### Parameters
 
 ### params (required)
 
@@ -181,7 +181,7 @@ The maximum priority fee per gas. Must not exceed `MaxFeePerGas` if both are pro
   ]}
 />
 
-## Validations
+### Validations
 
 This function validates:
 1. **Account Address**: Must be a valid 40-character hex address with `0x` prefix (if provided)

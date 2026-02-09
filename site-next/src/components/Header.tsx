@@ -22,8 +22,8 @@ function NavLink({
   const base =
     "hidden sm:flex items-center text-sm font-medium no-underline px-3 py-1 transition-all duration-150 relative";
   const active = isActive
-    ? "text-accent after:absolute after:bottom-[-11px] after:left-0 after:right-0 after:h-[2px] after:bg-accent after:rounded-full"
-    : "text-gray-3 hover:text-gray-1";
+    ? "text-primary after:absolute after:bottom-[-11px] after:left-0 after:right-0 after:h-[2px] after:bg-primary after:rounded-full"
+    : "text-foreground-secondary hover:text-primary";
 
   if (external) {
     return (
@@ -47,7 +47,7 @@ function NavLink({
 export default function Header() {
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-50 w-full   bg-secondary/30 py-[5px]">
+    <header className="sticky top-0 z-50 w-full   bg-background-secondary py-[5px] opacity-100">
       <div className="px-4 sm:px-6 h-12 flex items-center justify-between gap-3">
         {/* Left: logo area (matches sidebar width) + search (aligns with main content) */}
         <div className="flex items-center min-w-0">
@@ -69,7 +69,7 @@ export default function Header() {
 
         {/* Right: nav links */}
         <nav className="flex items-center gap-2 shrink-0">
-          <NavLink href="/docs">Docs</NavLink>
+          <NavLink href="/docs/introduction">Docs</NavLink>
           <NavLink href="https://github.com/ChefBingbong/viem-go" external>
             GitHub
           </NavLink>
@@ -109,8 +109,8 @@ function VersionDropdown() {
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </Button>
-      <div className="absolute top-full right-0 mt-2 min-w-[160px] bg-gray-6 border border-gray-5 rounded-lg p-1 opacity-0 invisible -translate-y-1 transition-all group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
-        <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-gray-2">
+      <div className="absolute top-full right-0 mt-2 min-w-[160px] bg-card border border-card-border rounded-lg p-1 shadow-xl shadow-black/30 opacity-0 invisible -translate-y-1 transition-all group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+        <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
           <a
             href="https://github.com/ChefBingbong/viem-go/releases"
             target="_blank"
@@ -135,7 +135,7 @@ function VersionDropdown() {
             </svg>
           </a>
         </Button>
-        <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-gray-2">
+        <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
           <a
             href="https://github.com/ChefBingbong/viem-go/tree/main/examples"
             target="_blank"
@@ -160,7 +160,7 @@ function VersionDropdown() {
             </svg>
           </a>
         </Button>
-        <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-gray-2">
+        <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
           <a
             href="https://github.com/ChefBingbong/viem-go/blob/main/.github/CONTRIBUTING.md"
             target="_blank"

@@ -11,14 +11,14 @@ Wallet Actions require special permissions and provide signing capabilities to t
 
 Wallet Actions provide a secure and flexible way to access the user's accounts and perform actions on the Ethereum network. They are commonly used by dapps and other applications that need to execute transactions, interact with smart contracts, or sign messages.
 
-## Account Types
+### Account Types
 
 Wallet Actions work with two types of accounts:
 
 - **Local Accounts** - Accounts whose signing keys are stored locally (e.g., private key accounts). These accounts sign transactions and messages locally before sending them over JSON-RPC.
 - **JSON-RPC Accounts** - Accounts whose signing keys are stored on an external wallet (e.g., browser extension wallets). These accounts defer signing to the wallet over JSON-RPC.
 
-## Organization
+### Organization
 
 Wallet Actions in viem-go are organized into logical groups:
 
@@ -29,7 +29,7 @@ Wallet Actions in viem-go are organized into logical groups:
 - **[Account Management](/docs/actions/wallet/account/get-addresses)** - Get and request account addresses and permissions
 - **[Chain Management](/docs/actions/wallet/chain/add-chain)** - Add chains, switch chains, and watch assets
 
-## Usage Pattern
+### Usage Pattern
 
 All Wallet Actions follow a consistent pattern:
 
@@ -81,7 +81,7 @@ log.Printf("Transaction hash: %s", hash)`,
   ]}
 />
 
-## Account Hoisting
+### Account Hoisting
 
 If you do not wish to pass an `account` to every Wallet Action, you can hoist the Account on the Wallet Client. This is especially useful when using a single account throughout your application.
 
@@ -119,7 +119,7 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-## Error Handling
+### Error Handling
 
 All Wallet Actions return errors that should be checked. Common error patterns include:
 

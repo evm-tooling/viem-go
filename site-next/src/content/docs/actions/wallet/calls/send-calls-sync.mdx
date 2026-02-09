@@ -9,7 +9,7 @@ Requests the connected wallet to send a batch of calls, and waits for the calls 
 
 This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -68,13 +68,13 @@ log.Printf("Call status: %+v", status)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*GetCallsStatusReturnType`
 
 The call status with receipts after the calls are included in a block.
 
-## Parameters
+### Parameters
 
 All parameters from [sendCalls](/docs/actions/wallet/calls/send-calls) are supported, plus:
 
@@ -169,7 +169,7 @@ status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParam
   ]}
 />
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - [`wallet_sendCalls`](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls) (EIP-5792)
 - [`wallet_getCallsStatus`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcallsstatus) (EIP-5792) — polled repeatedly

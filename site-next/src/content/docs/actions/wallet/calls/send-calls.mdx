@@ -9,7 +9,7 @@ Requests the connected wallet to send a batch of calls. This implements [EIP-579
 
 [Read more about EIP-5792](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls)
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ Requests the connected wallet to send a batch of calls. This implements [EIP-579
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -97,7 +97,7 @@ result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
   ]}
 />
 
-## Returns
+### Returns
 
 `*SendCallsReturnType`
 
@@ -105,7 +105,7 @@ An object containing:
 - `ID` - The identifier for the call batch
 - `Capabilities` - The wallet capabilities (optional)
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -234,6 +234,6 @@ When using `ExperimentalFallback` with a wallet that does not support EIP-5792, 
 
 The delay (in milliseconds) between fallback transactions when using `ExperimentalFallback`.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`wallet_sendCalls`](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls) (EIP-5792)

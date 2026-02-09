@@ -77,7 +77,7 @@ export default function TableOfContents({
   return (
     <aside className="hidden xl:block w-[280px] shrink-0 sticky top-0 self-start h-[calc(100vh)] ">
       <div className="pl-10 pr-2 overflow-y-auto h-full">
-        <p className="text-[0.8125rem] font-semibold text-gray-3 uppercase tracking-wider mb-2">
+        <p className="text-[0.8125rem] font-semibold !text-white uppercase tracking-wider mb-2">
           On this page
         </p>
         <nav className="flex flex-col gap-0">
@@ -108,7 +108,7 @@ export default function TableOfContents({
                   heading.depth === 3 ? "pl-12" : "pl-8 text-[0.98rem] "
                 } ${
                   isActive
-                    ? "text-accent border-accent"
+                    ? "text-accent !border-brand-blue-light"
                     : "text-gray-4 border-transparent hover:text-gray-1 hover:border-gray-4"
                 }`}
               >

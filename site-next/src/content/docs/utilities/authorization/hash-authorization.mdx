@@ -7,7 +7,7 @@ description: Computes an Authorization hash in EIP-7702 format
 
 Computes an Authorization hash in [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702) format: `keccak256('0x05' || rlp([chain_id, address, nonce]))`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Computes an Authorization hash in [EIP-7702](https://eips.ethereum.org/EIPS/eip-
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,13 +56,13 @@ if err != nil {
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `HashAuthorization`/`HashAuthorizationHex`, `([]byte, error)` for `HashAuthorizationBytes`
 
 The authorization hash. `HashAuthorization`/`HashAuthorizationHex` returns a hex string with `0x` prefix, `HashAuthorizationBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### params (required)
 
@@ -174,7 +174,7 @@ The account nonce for this authorization.
   ]}
 />
 
-## Functions
+### Functions
 
 ### HashAuthorization
 
@@ -200,7 +200,7 @@ Computes the authorization hash and returns bytes:
 hashBytes, _ := authorization.HashAuthorizationBytes(authRequest)
 ```
 
-## Hash Format
+### Hash Format
 
 The authorization hash is computed as:
 ```
@@ -211,7 +211,7 @@ Where:
 - `0x05` is the EIP-7702 magic byte
 - The RLP-encoded list contains chain ID, address, and nonce
 
-## Notes
+### Notes
 
 - Used in EIP-7702 transactions for contract account authorization
 - The address field is required (cannot be empty)

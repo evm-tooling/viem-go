@@ -5,7 +5,7 @@ description: Create event filters, get contract events, and watch contract event
 
 Contract events are logged by the EVM and can be queried or watched. viem-go provides **CreateContractEventFilter** (for use with GetFilterChanges/GetFilterLogs), **GetContractEvents** (one-shot **eth_getLogs** with ABI decoding), and **WatchContractEvent** (streaming with decoding).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ Contract events are logged by the EVM and can be queried or watched. viem-go pro
   ]}
 />
 
-## GetContractEvents
+### GetContractEvents
 
 Fetch event logs for a contract (and optionally a specific event and indexed args) in one call. Uses **eth_getLogs** and decodes logs using the ABI.
 
@@ -68,7 +68,7 @@ for _, log := range logs {
 
 **Return type:** `[]ContractEventLog` — each has **EventName**, **DecodedArgs** (`map[string]any`), plus standard log fields (address, topics, data, blockNumber, etc.).
 
-## CreateContractEventFilter
+### CreateContractEventFilter
 
 Create a filter that can be polled with **GetFilterChanges** or **GetFilterLogs** (eth_newFilter). Use when you want to poll for new logs yourself.
 
@@ -106,7 +106,7 @@ if err != nil {
 
 **Return type:** **CreateContractEventFilterReturnType** — **ID** (FilterID), **Type** (`"event"`), **ABI**, **EventName**, **Args**, **Strict**. Use **ID** with GetFilterChanges/GetFilterLogs.
 
-## WatchContractEvent
+### WatchContractEvent
 
 Stream contract event logs with ABI decoding. Uses **eth_subscribe** (logs) when available, or polling (eth_newFilter + eth_getFilterChanges or eth_getLogs). Cancelling the context stops the stream.
 
@@ -157,7 +157,7 @@ for event := range events {
 
 **Return type:** channel of **WatchContractEventEvent** — **Logs** (slice of formatted logs), **Error**. Close context to stop.
 
-## See also
+### See also
 
 - [ABI Decoding](/docs/contract/abi-decoding/) — DecodeEventLog
 - [ABI Encoding](/docs/contract/abi-encoding/) — EncodeEventTopics

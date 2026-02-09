@@ -7,7 +7,7 @@ description: Returns a section of a byte slice or hex string given start/end byt
 
 Returns a section of a byte slice or hex string given start/end byte offsets.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns a section of a byte slice or hex string given start/end byte offsets.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ slice(new Uint8Array([69, 420]), 1)
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]byte, error)` for `SliceBytes`, `(string, error)` for `SliceHex`
 
 The sliced section. Returns an error if the start offset is out of bounds.
 
-## Parameters
+### Parameters
 
 ### value (required)
 
@@ -173,7 +173,7 @@ result, err := data.SliceBytes(
   ]}
 />
 
-## Convenience Functions
+### Convenience Functions
 
 ### SliceBytesStart
 

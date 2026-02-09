@@ -6,7 +6,7 @@ description: Send transactions to modify smart contract state
 
 Send transactions to modify smart contract state. Unlike read operations, writes require gas and must be signed.
 
-## Preparing a Contract Write
+### Preparing a Contract Write
 
 Use `PrepareContractWrite` to build a transaction for a contract call:
 
@@ -69,7 +69,7 @@ const hash = await walletClient.writeContract(request)`
   ]}
 />
 
-## Parameters
+### Parameters
 
 **PrepareContractWrite** uses **PrepareContractWriteOptions**. **wallet.WriteContract** uses **WriteContractParameters**; **WriteContractSync** uses **WriteContractSyncParameters** (embeds **WriteContractParameters** plus polling/timeout). **wallet.DeployContract** uses **DeployContractParameters**.
 
@@ -122,7 +122,7 @@ const hash = await walletClient.writeContract(request)`
 - **ThrowOnReceiptRevert:** `*bool` — if true, return error when receipt status is reverted. Default: true.
 - **Timeout:** `*time.Duration` — max wait for receipt. Default: derived from chain block time.
 
-## Signing and Sending
+### Signing and Sending
 
 After preparing, sign and send the transaction:
 
@@ -193,7 +193,7 @@ txHash, err := walletClient.SendTransaction(ctx, types.Transaction{
   ]}
 />
 
-## Using Typed Contract Bindings
+### Using Typed Contract Bindings
 
 The ERC20 binding includes write methods:
 
@@ -211,7 +211,7 @@ if err != nil {
 // Sign and send...
 ```
 
-## Payable Functions
+### Payable Functions
 
 For functions that accept ETH, use the `Value` parameter:
 
@@ -225,7 +225,7 @@ tx, err := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOpt
 })
 ```
 
-## Encoding Function Data
+### Encoding Function Data
 
 If you need just the calldata without a full transaction:
 
@@ -269,7 +269,7 @@ console.log('Calldata:', data)`
   ]}
 />
 
-## Gas Estimation
+### Gas Estimation
 
 Gas is automatically estimated, but you can override:
 
@@ -287,19 +287,19 @@ tx, _ := publicClient.PrepareContractWrite(ctx, client.PrepareContractWriteOptio
 })
 ```
 
-## DeployContract
+### DeployContract
 
 To deploy a new contract, use **wallet.DeployContract** with bytecode and optional constructor args. See [Deploy Contract](/docs/contract/deploy-contract/).
 
-## EstimateContractGas
+### EstimateContractGas
 
 Estimate gas for a write without sending: use **public.EstimateContractGas**. See [Estimate Contract Gas](/docs/contract/estimate-contract-gas/).
 
-## EncodeFunctionData
+### EncodeFunctionData
 
 **client.EncodeFunctionData(opts)** returns only the calldata (selector + encoded args) without building a full transaction. Useful for multicall or custom tx building. See [ABI Encoding](/docs/contract/abi-encoding/) for encoding with a parsed ABI.
 
-## Error handling
+### Error handling
 
 ```go
 tx, err := publicClient.PrepareContractWrite(ctx, opts)
@@ -311,7 +311,7 @@ if err != nil {
 }
 ```
 
-## See also
+### See also
 
 - [Reading Contracts](/docs/contract/read-contract/) — ReadContract, SimulateContract
 - [Deploy Contract](/docs/contract/deploy-contract/) — DeployContract

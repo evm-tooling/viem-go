@@ -9,7 +9,7 @@ Extracts capabilities that a connected wallet supports (e.g. paymasters, session
 
 This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -80,13 +80,13 @@ log.Printf("Mainnet capabilities: %+v", capabilities[chainID])`,
   ]}
 />
 
-## Returns
+### Returns
 
 `ChainIDToCapabilities` (map[int64]Capabilities)
 
 A map where keys are chain IDs and values are capability objects for that chain. If `ChainID` is provided, the map will only contain capabilities for that specific chain.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -128,6 +128,6 @@ capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabil
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`wallet_getCapabilities`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcapabilities) (EIP-5792)

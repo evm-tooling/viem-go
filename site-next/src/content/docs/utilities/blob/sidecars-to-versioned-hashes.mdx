@@ -7,7 +7,7 @@ description: Extracts versioned hashes from blob sidecars
 
 Extracts versioned hashes from blob sidecars by transforming their commitments.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "github.com/ChefBingbong/viem-go/utils/kzg"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -51,13 +51,13 @@ hexHashes := blob.SidecarsToVersionedHashesHex(sidecars, kzg.VersionedHashVersio
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `[][]byte` for `SidecarsToVersionedHashes`, `[]string` for `SidecarsToVersionedHashesHex`
 
 An array of versioned hashes, one for each sidecar. Each hash is 32 bytes.
 
-## Parameters
+### Parameters
 
 ### sidecars (required)
 
@@ -94,7 +94,7 @@ The version byte to use. For KZG commitments, use `kzg.VersionedHashVersionKzg` 
   ]}
 />
 
-## Functions
+### Functions
 
 ### SidecarsToVersionedHashes
 
@@ -136,7 +136,7 @@ Extracts versioned hashes from hex sidecars and returns hex strings:
 hexHashes, _ := blob.SidecarsHexToVersionedHashesHex(hexSidecars, kzg.VersionedHashVersionKzg)
 ```
 
-## Notes
+### Notes
 
 - Extracts versioned hashes from the commitments in each sidecar
 - Each versioned hash is 32 bytes (256 bits)

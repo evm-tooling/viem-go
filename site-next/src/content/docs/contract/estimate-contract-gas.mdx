@@ -5,7 +5,7 @@ description: Estimate gas for a contract write or deployment
 
 **EstimateContractGas** returns the estimated gas needed to execute a contract function call. Uses **eth_estimateGas** with ABI-encoded calldata. Use before sending a write transaction to set a gas limit or detect reverts.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ description: Estimate gas for a contract write or deployment
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -66,7 +66,7 @@ fmt.Printf("Estimated gas: %d\n", gas)`,
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -111,11 +111,11 @@ fmt.Printf("Estimated gas: %d\n", gas)`,
 
 - Optional hints or overrides for the estimation context.
 
-## Return type
+### Return type
 
 - **EstimateContractGas** returns `(uint64, error)` — estimated gas units. On revert, returns an error.
 
-## See also
+### See also
 
 - [Writing Contracts](/docs/contract/write-contract/) — PrepareContractWrite, WriteContract
 - [Simulate Contract](/docs/contract/simulate-contract/) — full simulation with return value

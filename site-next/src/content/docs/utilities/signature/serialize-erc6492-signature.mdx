@@ -7,7 +7,7 @@ description: Serializes an ERC-6492 flavored signature into hex format
 
 Serializes an ERC-6492 flavored signature into hex format. Used for counterfactual contract account verification.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Serializes an ERC-6492 flavored signature into hex format. Used for counterfactu
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -63,13 +63,13 @@ const hex = serializeErc6492Signature({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `SerializeErc6492Signature`, `([]byte, error)` for `SerializeErc6492SignatureBytes`
 
 The serialized ERC-6492 signature. `SerializeErc6492Signature` returns a hex string with `0x` prefix, `SerializeErc6492SignatureBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### params (required)
 
@@ -189,7 +189,7 @@ The original signature.
   ]}
 />
 
-## Functions
+### Functions
 
 ### SerializeErc6492Signature
 
@@ -207,7 +207,7 @@ Serializes an ERC-6492 signature to bytes:
 sigBytes, _ := signature.SerializeErc6492SignatureBytes(params)
 ```
 
-## Signature Format
+### Signature Format
 
 The ERC-6492 signature format is:
 ```
@@ -216,7 +216,7 @@ abi.encode(factoryAddress, factoryData, originalSignature) + magicBytes
 
 Where `magicBytes` is `0x6492649264926492649264926492649264926492649264926492649264926492`.
 
-## Notes
+### Notes
 
 - ERC-6492 signatures enable counterfactual contract account verification
 - Allows verification of signatures from accounts that haven't been deployed yet

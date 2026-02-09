@@ -183,9 +183,9 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   if (tabs.length === 0) return null;
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-[#c678dd]/10 bg-[#151520]/20">
+    <div className="my-6 rounded-lg overflow-hidden border border-accent/15 bg-background-secondary/60">
       <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <div className="flex items-center justify-between h-11 bg-[#1a1a28]/25 border-b border-[#c678dd]/8">
+        <div className="flex items-center justify-between h-11 bg-background-tertiary/50 border-b border-accent/12">
           <TabList className="flex h-full items-stretch">
             {tabs.map((tab, index) => (
               <Tab
@@ -221,7 +221,7 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
                   {({ tokens, getLineProps, getTokenProps }) => (
                     <pre
                       style={{ fontFamily: viemMonoFontFamily }}
-                      className="!m-0 !bg-dark-deep/20 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed " 
+                      className="!m-0 !bg-background-secondary/50 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed " 
                       onMouseEnter={() => {
                         if (active) return
                         setActive(true)

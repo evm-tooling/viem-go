@@ -7,7 +7,7 @@ description: Normalizes an ENS name according to ENSIP-15 (UTS-46)
 
 Normalizes an ENS name according to [ENSIP-15](https://github.com/ensdomains/docs/blob/9edf9443de4333a0ea7ec658a870672d5d180d53/ens-improvement-proposals/ensip-15-normalization-standard.md) (UTS-46). This handles Unicode normalization, case folding, and validation.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Normalizes an ENS name according to [ENSIP-15](https://github.com/ensdomains/doc
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -59,13 +59,13 @@ normalize('wevm.eth')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `Normalize`, `string` for `MustNormalize`
 
 The normalized ENS name. Empty string is returned for empty input.
 
-## Parameters
+### Parameters
 
 ### name (required)
 
@@ -92,7 +92,7 @@ The ENS name to normalize.
   ]}
 />
 
-## Normalization Process
+### Normalization Process
 
 The normalization process:
 1. Uses IDNA profile for ENS normalization (UTS-46 processing)
@@ -102,7 +102,7 @@ The normalization process:
 5. Processes each label separately
 6. Preserves encoded labelhashes (format: `[<64 hex chars>]`)
 
-## Functions
+### Functions
 
 ### Normalize
 
@@ -120,7 +120,7 @@ Normalizes an ENS name and panics on error:
 normalized := ens.MustNormalize("Vitalik.ETH")
 ```
 
-## Notes
+### Notes
 
 - Empty name returns empty string
 - Encoded labelhashes are preserved as-is (not normalized)

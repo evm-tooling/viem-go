@@ -10,7 +10,7 @@ Signs typed data and calculates an Ethereum-specific signature in [EIP-712 forma
 - For local accounts (implementing TypedDataSignableAccount), signs locally without an RPC call.
 - For JSON-RPC accounts, delegates to the `eth_signTypedData_v4` RPC method.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -23,7 +23,7 @@ Signs typed data and calculates an Ethereum-specific signature in [EIP-712 forma
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -87,13 +87,13 @@ log.Printf("Signature: %s", sig)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `string`
 
 The signed data as a hex string.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -207,7 +207,7 @@ The structured message to sign, matching the `PrimaryType` structure.
   ]}
 />
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_signTypedData_v4`](https://docs.metamask.io/guide/signing-data#signtypeddata-v4)
 - Local Accounts: Signs locally. No JSON-RPC request.

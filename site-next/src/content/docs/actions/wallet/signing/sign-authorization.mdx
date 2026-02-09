@@ -13,7 +13,7 @@ This action first prepares the authorization (filling in chainId and nonce if ne
 This action requires a local account that implements AuthorizationSignableAccount. JSON-RPC accounts are not supported for this action.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -26,7 +26,7 @@ This action requires a local account that implements AuthorizationSignableAccoun
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -73,13 +73,13 @@ log.Printf("Signed authorization: %+v", signed)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*types.SignedAuthorization`
 
 The signed EIP-7702 authorization.
 
-## Parameters
+### Parameters
 
 All parameters from [prepareAuthorization](/docs/actions/wallet/signing/prepare-authorization) are supported:
 
@@ -135,7 +135,7 @@ Specifies who will execute the EIP-7702 transaction:
 - `"self"`: the signing account will execute (nonce += 1)
 - `Account`: a specific account will execute (nonce += 1 if same as signing account)
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - Local Accounts: Signs locally. No JSON-RPC request.
 - JSON-RPC Accounts: Not supported.

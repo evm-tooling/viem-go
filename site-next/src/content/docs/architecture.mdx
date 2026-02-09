@@ -5,14 +5,14 @@ description: How viem-go is structured, how requests flow, and where the perform
 
 viem-go mirrors viem’s **Client → Transport → Actions** architecture, but implemented in idiomatic Go (contexts, channels, goroutines) with a strong focus on **reducing RPC round-trips** and **minimizing per-call overhead**.
 
-## The big idea (mental model)
+### The big idea (mental model)
 
 - **Clients** are configured runtimes (`PublicClient`, `WalletClient`) built on top of a shared `BaseClient`.
 - **Actions** are typed operations implemented in terms of `client.Request(...)`.
 - **Transports** implement JSON-RPC over HTTP/WebSocket (plus fallback/custom patterns).
 - **ABI/contract utilities** sit “above” actions to encode/decode calldata/logs and provide ergonomic typed APIs.
 
-## Component map
+### Component map
 
 ```
 Your code
@@ -44,7 +44,7 @@ Transport layer (client/transport/)
 Node/provider (JSON-RPC)
 ```
 
-## Main packages & responsibilities
+### Main packages & responsibilities
 
 | Package | What it’s for |
 |---|---|
@@ -61,7 +61,7 @@ Node/provider (JSON-RPC)
 | `utils/rpc` | Low-level HTTP + WebSocket JSON-RPC clients + batch scheduler |
 | `utils/observe`, `utils/poll` | Shared subscription dedupe + polling primitives (Go equivalents of viem utilities) |
 
-## How requests flow (3 common paths)
+### How requests flow (3 common paths)
 
 ### 1) Read contract (`eth_call`)
 
@@ -112,7 +112,7 @@ public.WatchBlockNumber(ctx, client, params) → <-chan events
 Plus: observer dedupe so multiple watchers share one source per client UID.
 ```
 
-## Where performance comes from
+### Where performance comes from
 
 ### A) The obvious win: fewer RPC round-trips
 
@@ -134,7 +134,7 @@ viem-go includes specialized fast paths where they pay off most.
 
 One concrete example is Multicall3 `aggregate3` encoding/decoding: viem-go includes a hand-rolled encoder/decoder that writes/reads directly to/from bytes (no reflection, minimal allocations) for large call arrays.
 
-## Benchmarks: viem-go vs viem (TypeScript)
+### Benchmarks: viem-go vs viem (TypeScript)
 
 You have an apples-to-apples benchmark harness in-repo under `benchmarks/` with generated reports in `benchmarks/results/`.
 
@@ -150,7 +150,7 @@ From `benchmarks/results/comparison.md`:
 
 The longer `benchmarks/results/full-report.md` also reports “average” speedups (different aggregation) but the direction is consistent: viem-go’s hot paths are substantially cheaper in your harness.
 
-## How to talk about go-ethereum comparison (accurately)
+### How to talk about go-ethereum comparison (accurately)
 
 go-ethereum is the foundation for much of the Go ecosystem and viem-go uses parts of it (eg. ABI parsing and common types). The difference is **layering and workload shape**:
 
@@ -166,7 +166,7 @@ So the strongest claim is:
 
 > viem-go is optimized for application workloads (lots of reads, lots of ABI work, batching, fan-out) by reducing round-trips and providing specialized fast paths where generic approaches become costly.
 
-## Further reading
+### Further reading
 
 - [Clients & Transports](/docs/clients/intro/)
 - [Public Client](/docs/clients/public/)

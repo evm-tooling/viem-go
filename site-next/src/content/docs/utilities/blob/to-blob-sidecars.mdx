@@ -7,7 +7,7 @@ description: Creates blob sidecars from data or pre-computed components
 
 Creates blob sidecars from data or pre-computed components (blobs, commitments, proofs). A sidecar contains a blob, its KZG commitment, and its proof.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "github.com/ChefBingbong/viem-go/utils/kzg"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ hexSidecars, err := blob.ToBlobSidecarsHex(blob.ToBlobSidecarsParams{
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]blob.BlobSidecar, error)` for `ToBlobSidecars`, `([]blob.BlobSidecarHex, error)` for `ToBlobSidecarsHex`
 
 An array of blob sidecars, each containing a blob, commitment, and proof.
 
-## Parameters
+### Parameters
 
 ### params (required)
 
@@ -190,7 +190,7 @@ KZG implementation for computing commitments and proofs. Required if `Data` is s
   ]}
 />
 
-## Functions
+### Functions
 
 ### ToBlobSidecars
 
@@ -208,7 +208,7 @@ Creates hex-encoded blob sidecars:
 hexSidecars, _ := blob.ToBlobSidecarsHex(params)
 ```
 
-## Sidecar Structure
+### Sidecar Structure
 
 Each sidecar contains:
 - **Blob**: The blob data (131,072 bytes)

@@ -19,7 +19,7 @@ This internally sends a transaction – it does not validate if the contract wri
 This Action is only recommended to be used on chains with low block times and fast finality (most chains apart from `mainnet`).
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -32,7 +32,7 @@ This Action is only recommended to be used on chains with low block times and fa
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -77,13 +77,13 @@ log.Printf("Transaction receipt: %+v", receipt)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*formatters.TransactionReceipt`
 
 The transaction receipt after the transaction is included in a block.
 
-## Parameters
+### Parameters
 
 All parameters from [writeContract](/docs/actions/wallet/contracts/write-contract) are supported, plus:
 
@@ -108,7 +108,7 @@ When true, throws an error if the transaction was detected as reverted.
 
 The timeout to wait for a response.
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

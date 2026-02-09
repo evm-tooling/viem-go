@@ -5,7 +5,7 @@ description: Use built-in chain definitions or define custom EVM-compatible chai
 
 The **chain** package provides chain metadata (ID, name, native currency, RPC URLs, block explorers, and optional contracts) used by [Public Client](/docs/clients/public/) and [Wallet Client](/docs/clients/wallet/). viem-go mirrors viem's chain concept but uses a single `Chain` struct and `DefineChain` instead of separate formatters/fees.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -33,7 +33,7 @@ import { mainnet } from 'viem/chains'`,
 - **chain**: `Chain` type, `DefineChain`, `ExtractChain`, `AssertCurrentChain`, and helpers (`DefaultRpcUrl`, `DefaultBlockExplorer`).
 - **definitions**: Prebuilt chain definitions (e.g. `definitions.Mainnet`, `definitions.Polygon`). Use with clients by passing a pointer: `Chain: &definitions.Mainnet`.
 
-## Usage
+### Usage
 
 Import a built-in chain from `chain/definitions` and pass it to the client config. The client expects a **pointer** to a chain (`*chain.Chain`).
 
@@ -73,7 +73,7 @@ const client = createPublicClient({
   ]}
 />
 
-## Built-in chains
+### Built-in chains
 
 viem-go ships with these chain definitions in `chain/definitions`:
 
@@ -88,18 +88,18 @@ viem-go ships with these chain definitions in `chain/definitions`:
 
 Testnets (e.g. Sepolia) are not included; define them with [DefineChain](/docs/chains/custom/) and the same struct.
 
-## Custom chains
+### Custom chains
 
 To support an EVM-compatible chain not in the list, define a chain with `chain.DefineChain(chain.Chain{...})` and pass a pointer to your client. See [Custom Chains](/docs/chains/custom/) for the full `Chain` type and examples (including Sepolia).
 
-## Go notes
+### Go notes
 
 - **Pointer:** Client config expects `Chain *chain.Chain`. Built-ins are values, so use `&definitions.Mainnet`. For a custom chain stored in a variable, use `&myChain`.
 - **DefineChain** returns a **value** (`chain.Chain`), not a pointer. It copies the config so the returned chain is independent. Store the result and pass `&myChain` to the client.
 - **Primary RPC/explorer:** Use the `"default"` key in `RpcUrls` and `BlockExplorers`. Helpers: `chain.DefaultRpcUrl()` and `chain.DefaultBlockExplorer()`.
 - **Block time:** When set, the client uses it to derive a default `PollingInterval` (e.g. for watch actions).
 
-## See also
+### See also
 
 - [Mainnet](/docs/chains/mainnet/) — Ethereum mainnet
 - [Sepolia](/docs/chains/sepolia/) — Sepolia testnet (custom definition)

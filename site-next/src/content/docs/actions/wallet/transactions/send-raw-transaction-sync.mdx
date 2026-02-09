@@ -7,7 +7,7 @@ description: Sends a signed transaction to the network synchronously
 
 Sends a **signed** transaction to the network synchronously, and waits for the transaction to be included in a block. Returns the transaction receipt.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Sends a **signed** transaction to the network synchronously, and waits for the t
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -60,13 +60,13 @@ log.Printf("Transaction receipt: %+v", receipt)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*formatters.TransactionReceipt`
 
 The transaction receipt after the transaction is included in a block.
 
-## Parameters
+### Parameters
 
 ### SerializedTransaction (required)
 
@@ -130,6 +130,6 @@ receipt, err := wallet.SendRawTransactionSync(ctx, walletClient, wallet.SendRawT
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

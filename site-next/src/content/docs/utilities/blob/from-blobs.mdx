@@ -11,7 +11,7 @@ Transforms blobs back into the original data. This reverses the encoding perform
 This function transforms data from viem-go-shaped blobs. It is designed to be used with `ToBlobs` to convert arbitrary data to blobs.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ This function transforms data from viem-go-shaped blobs. It is designed to be us
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -68,13 +68,13 @@ const data = fromBlobs({ blobs: ['0x...'] })`,
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]byte, error)` for `FromBlobs`, `(string, error)` for `FromBlobsHex`, `([]byte, error)` for `FromBlobsToBytes`
 
 The original data extracted from the blobs.
 
-## Parameters
+### Parameters
 
 ### blobs (required)
 
@@ -105,7 +105,7 @@ hexData, _ := blob.FromBlobsHex(hexBlobs)`,
   ]}
 />
 
-## Decoding Process
+### Decoding Process
 
 The decoding process:
 1. Reads each blob sequentially
@@ -113,7 +113,7 @@ The decoding process:
 3. Extracts data from the remaining 31 bytes
 4. Stops when encountering the terminator byte (`0x80`) followed by only padding
 
-## Functions
+### Functions
 
 ### FromBlobs
 
@@ -139,7 +139,7 @@ Transforms hex blobs back to bytes:
 data, _ := blob.FromBlobsToBytes(hexBlobs)
 ```
 
-## Notes
+### Notes
 
 - The decoding process automatically handles multiple blobs
 - Stops reading when the terminator byte is encountered

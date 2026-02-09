@@ -6,7 +6,7 @@ description: Read data from smart contracts using view and pure functions
 
 Read data from smart contracts using view and pure functions. These calls don't require gas since they don't modify state.
 
-## Basic Usage
+### Basic Usage
 
 <CodeGroup 
 
@@ -47,7 +47,7 @@ console.log('Total Supply:', totalSupply)`
   ]}
 />
 
-## Passing Arguments
+### Passing Arguments
 
 Pass function arguments using the `Args` slice:
 
@@ -86,7 +86,7 @@ balance := result.(*big.Int)`
   ]}
 />
 
-## Parameters
+### Parameters
 
 The Public Client’s **ReadContract** uses **ReadContractOptions**. The **contract** package’s **ReadContract[T]** uses **ReadContractParams**. Both support the same concepts (address, ABI, function name, args, block).
 
@@ -123,12 +123,12 @@ The Public Client’s **ReadContract** uses **ReadContractOptions**. The **contr
 - **Default:** latest
 - Block at which to execute the read (e.g. `client.BlockTagSafe`, hex block number).
 
-## Return type
+### Return type
 
 - **PublicClient.ReadContract(ctx, opts)** returns `(any, error)`. The decoded value is the first return value (e.g. `*big.Int`, `string`, `common.Address`). For multiple return values, use **contract.ReadContract** with a struct type or **SimulateContract** which returns `[]any`.
 - **contract.ReadContract[T](client, params)** returns `(T, error)` with type-safe result (e.g. `ReadContract[*big.Int]`, `ReadContract[string]`). Use **contract.ReadContractWithContext** when you need to pass a context.
 
-## SimulateContract
+### SimulateContract
 
 Use **SimulateContract** to run a contract call (including state-changing functions) without sending a transaction. Useful to check revert reasons or return values before writing. See [Simulate Contract](/docs/contract/simulate-contract/).
 
@@ -145,7 +145,7 @@ result, err := publicClient.SimulateContract(ctx, client.SimulateContractOptions
 })
 ```
 
-## Using Typed Contract Bindings
+### Using Typed Contract Bindings
 
 For frequently used contracts, viem-go provides pre-built typed bindings:
 
@@ -195,7 +195,7 @@ balance := result.(*big.Int)`
 | ERC721 | `contracts/erc721` | `BalanceOf`, `OwnerOf`, `Name`, `Symbol`, `TokenURI`, `GetApproved` |
 | ERC1155 | `contracts/erc1155` | `BalanceOf`, `BalanceOfBatch`, `URI`, `IsApprovedForAll` |
 
-## Reading at Specific Blocks
+### Reading at Specific Blocks
 
 Query contract state at a specific block:
 
@@ -217,7 +217,7 @@ result, err := publicClient.ReadContract(ctx, client.ReadContractOptions{
 })
 ```
 
-## Error Handling
+### Error Handling
 
 Contract calls can fail for various reasons:
 
@@ -242,7 +242,7 @@ if err != nil {
 }
 ```
 
-## See also
+### See also
 
 - [Writing Contracts](/docs/contract/write-contract/) — PrepareContractWrite, WriteContract
 - [Simulate Contract](/docs/contract/simulate-contract/) — SimulateContract
@@ -250,7 +250,7 @@ if err != nil {
 - [Multicall](/docs/contract/multicall/) — batch readContract calls
 - [ABI Decoding](/docs/contract/abi-decoding/) — DecodeFunctionResult
 
-## Type Conversions
+### Type Conversions
 
 The result type depends on the Solidity return type:
 

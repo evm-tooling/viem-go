@@ -11,7 +11,7 @@ Computes the keccak256 hash of an ENS label.
 ENS labels prohibit certain forbidden characters (e.g. underscore) and have other validation rules. You likely want to normalize ENS labels with UTS-46 normalization before passing them to labelhash. You can use the `Normalize` function for this.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ ENS labels prohibit certain forbidden characters (e.g. underscore) and have othe
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -60,13 +60,13 @@ labelhash('vitalik')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `string` for `Labelhash`, `[]byte` for `LabelhashBytes`
 
 The labelhash as a hex string with `0x` prefix (32 bytes) or raw bytes.
 
-## Parameters
+### Parameters
 
 ### label (required)
 
@@ -98,7 +98,7 @@ hash = ens.Labelhash("eth")`,
   ]}
 />
 
-## Algorithm
+### Algorithm
 
 The labelhash algorithm:
 1. If the label is empty, returns 32 zero bytes
@@ -106,7 +106,7 @@ The labelhash algorithm:
 3. Otherwise, computes keccak256 of the label bytes
 4. Returns the 32-byte hash
 
-## Functions
+### Functions
 
 ### Labelhash
 
@@ -124,7 +124,7 @@ Computes labelhash and returns raw bytes:
 hashBytes := ens.LabelhashBytes("eth")
 ```
 
-## Notes
+### Notes
 
 - Empty label returns 32 zero bytes
 - Handles encoded labelhashes (format: `[<64 hex chars>]`)

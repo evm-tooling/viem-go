@@ -9,7 +9,7 @@ Waits for the status & receipts of a call bundle that was sent via [sendCalls](/
 
 This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -62,13 +62,13 @@ log.Printf("Status: %s (code: %d)", status.Status, status.StatusCode)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*GetCallsStatusReturnType`
 
 The call status with receipts after the calls are included in a block or the status check function returns true.
 
-## Parameters
+### Parameters
 
 ### ID (required)
 
@@ -193,6 +193,6 @@ The number of times to retry if the call bundle request fails.
 
 A function that returns the delay between retries.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`wallet_getCallsStatus`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcallsstatus) (EIP-5792) — polled repeatedly

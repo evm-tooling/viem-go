@@ -7,7 +7,7 @@ description: Normalizes a function or event signature by removing parameter name
 
 Normalizes a function or event signature by removing parameter names, `indexed` keywords, and unnecessary whitespace, keeping only the types.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Normalizes a function or event signature by removing parameter names, `indexed` 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -45,13 +45,13 @@ sig, _ = hash.NormalizeSignature("ownerOf(uint256 tokenId)")
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)`
 
 The normalized signature string with parameter names and whitespace removed.
 
-## Parameters
+### Parameters
 
 ### signature (required)
 
@@ -74,7 +74,7 @@ sig, _ = hash.NormalizeSignature("event Transfer(address indexed from, address i
   ]}
 />
 
-## Notes
+### Notes
 
 - Removes the `function` and `event` keywords
 - Removes parameter names (keeps only types)

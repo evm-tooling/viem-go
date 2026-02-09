@@ -7,7 +7,7 @@ description: Creates a Kzg implementation from individual functions
 
 Creates a Kzg implementation from individual functions. This is useful when working with external KZG libraries that expose separate functions rather than a unified interface.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Creates a Kzg implementation from individual functions. This is useful when work
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ kzgImpl := kzg.DefineKzg(kzg.DefineKzgParams{
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `kzg.Kzg`
 
 A KZG implementation that can be used for blob operations.
 
-## Parameters
+### Parameters
 
 ### params (required)
 
@@ -143,7 +143,7 @@ Function that computes the KZG proof for a blob.
   ]}
 />
 
-## Functions
+### Functions
 
 ### DefineKzg
 
@@ -161,7 +161,7 @@ Wraps an existing Kzg implementation:
 kzgImpl := kzg.DefineKzgFromInterface(existingKzg)
 ```
 
-## Notes
+### Notes
 
 - This function does not load the trusted setup (use `SetupKzg` for that)
 - Useful for wrapping external KZG libraries

@@ -7,7 +7,7 @@ description: Simulates multiple blocks and returns their results
 
 Simulates multiple blocks and returns their results.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Simulates multiple blocks and returns their results.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -73,7 +73,7 @@ log.Printf("Simulated %d blocks", len(result))`,
   ]}
 />
 
-## Returns
+### Returns
 
 `[]BlockResult`
 
@@ -81,7 +81,7 @@ An array of block results, each containing:
 - `Block formatters.Block` - The simulated block data
 - `Calls []CallResult` - The results of each call in the block
 
-## Parameters
+### Parameters
 
 ### Blocks (required)
 
@@ -215,6 +215,6 @@ Enables validation mode.
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_simulateV1`](https://github.com/ethereum/execution-apis/blob/main/src/engine/simulation.md) (if supported) for block simulation.

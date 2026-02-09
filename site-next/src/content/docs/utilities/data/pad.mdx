@@ -7,7 +7,7 @@ description: Pads a byte slice or hex string with leading or trailing zeros
 
 Pads a byte slice or hex string with leading or trailing zeros to reach a target size.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Pads a byte slice or hex string with leading or trailing zeros to reach a target
   ]}
 />
 
-## Usage
+### Usage
 
 By default, `Pad` pads a value with leading zeros up to 32 bytes.
 
@@ -59,13 +59,13 @@ pad(new Uint8Array([1, 122, 51, 123]))
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]byte, error)` for `Pad`/`PadBytes`, `(string, error)` for `PadHex`
 
 The padded value. Returns an error if the input size exceeds the target size.
 
-## Parameters
+### Parameters
 
 ### bytes/hex (required)
 
@@ -162,7 +162,7 @@ hexResult, _ := data.PadHex("0xa4e12a45", data.PadLeft, 4)
   ]}
 />
 
-## Convenience Functions
+### Convenience Functions
 
 ### PadLeftBytes / PadRightBytes
 

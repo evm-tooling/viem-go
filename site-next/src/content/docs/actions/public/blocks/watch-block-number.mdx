@@ -7,7 +7,7 @@ description: Watches and returns incoming block numbers
 
 Watches and returns incoming block numbers.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Watches and returns incoming block numbers.
   ]}
 />
 
-## Usage
+### Usage
 
 Watch actions return a channel of events. Cancel the context to stop watching.
 
@@ -66,7 +66,7 @@ for event := range events { // [!code focus:5]
   ]}
 />
 
-## Returns
+### Returns
 
 `<-chan WatchBlockNumberEvent`
 
@@ -75,7 +75,7 @@ A channel that emits `WatchBlockNumberEvent` structs containing:
 - `PrevBlockNumber *uint64` - The previous block number (nil for first event)
 - `Error error` - Any error that occurred while fetching the block number
 
-## Parameters
+### Parameters
 
 ### EmitOnBegin (optional)
 
@@ -208,7 +208,7 @@ events := public.WatchBlockNumber(ctx, publicClient, public.WatchBlockNumberPara
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - When polling: calls [`eth_blockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber) on a polling interval
 - When subscribing: uses [`eth_subscribe`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_subscribe) with `"newHeads"` event

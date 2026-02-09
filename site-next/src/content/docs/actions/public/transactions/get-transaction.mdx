@@ -7,7 +7,7 @@ description: Returns information about a transaction given a hash or block ident
 
 Returns information about a transaction given a hash or block identifier.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns information about a transaction given a hash or block identifier.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -70,13 +70,13 @@ log.Printf("Transaction from: %s", tx.From.Hex())`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*TransactionResponse`
 
 The transaction information.
 
-## Parameters
+### Parameters
 
 ### Hash (optional)
 
@@ -244,7 +244,7 @@ tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParamet
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`eth_getTransactionByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByHash) for `hash`
 - [`eth_getTransactionByBlockHashAndIndex`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByBlockHashAndIndex) for `blockHash` + `index`

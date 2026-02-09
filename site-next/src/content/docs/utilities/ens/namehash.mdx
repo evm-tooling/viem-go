@@ -11,7 +11,7 @@ Computes the namehash of an ENS name according to [EIP-137](https://eips.ethereu
 ENS names prohibit certain forbidden characters (e.g. underscore) and have other validation rules. You likely want to normalize ENS names with UTS-46 normalization before passing them to namehash. You can use the `Normalize` function for this.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ ENS names prohibit certain forbidden characters (e.g. underscore) and have other
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -60,13 +60,13 @@ namehash('eth')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `string` for `Namehash`, `[]byte` for `NamehashBytes`
 
 The namehash as a hex string with `0x` prefix (32 bytes) or raw bytes.
 
-## Parameters
+### Parameters
 
 ### name (required)
 
@@ -98,7 +98,7 @@ hash = ens.Namehash("vitalik.eth")`,
   ]}
 />
 
-## Algorithm
+### Algorithm
 
 The namehash algorithm:
 1. Starts with 32 zero bytes
@@ -110,7 +110,7 @@ The namehash algorithm:
    - Hashes the concatenation with keccak256
 5. Returns the final 32-byte hash
 
-## Functions
+### Functions
 
 ### Namehash
 
@@ -128,7 +128,7 @@ Computes namehash and returns raw bytes:
 hashBytes := ens.NamehashBytes("vitalik.eth")
 ```
 
-## Notes
+### Notes
 
 - Empty name returns 32 zero bytes
 - Handles encoded labelhashes (format: `[<64 hex chars>]`)

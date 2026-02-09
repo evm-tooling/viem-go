@@ -7,7 +7,7 @@ description: Concatenates multiple byte slices or hex strings
 
 Concatenates multiple byte slices or hex strings into a single value.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Concatenates multiple byte slices or hex strings into a single value.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -53,13 +53,13 @@ concat([new Uint8Array([69]), new Uint8Array([420])])
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `[]byte` for `Concat`/`ConcatBytes`, `string` for `ConcatHex`
 
 The concatenated value. For byte slices, returns `[]byte`. For hex strings, returns a hex string with `0x` prefix.
 
-## Parameters
+### Parameters
 
 ### values (required)
 
@@ -99,7 +99,7 @@ hexResult := data.ConcatHex(
   ]}
 />
 
-## Functions
+### Functions
 
 ### Concat
 

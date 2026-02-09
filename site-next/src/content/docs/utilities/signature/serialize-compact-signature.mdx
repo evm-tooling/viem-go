@@ -7,7 +7,7 @@ description: Combines compact signature components into a hex string (EIP-2098)
 
 Combines compact signature components (`R` and `YParityAndS`) into a hex formatted compact signature string ([EIP-2098](https://eips.ethereum.org/EIPS/eip-2098)).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Combines compact signature components (`R` and `YParityAndS`) into a hex formatt
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -61,13 +61,13 @@ const hex = serializeCompactSignature({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `SerializeCompactSignature`, `([]byte, error)` for `SerializeCompactSignatureBytes`
 
 The serialized compact signature. `SerializeCompactSignature` returns a hex string with `0x` prefix (64 bytes), `SerializeCompactSignatureBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### signature (required)
 
@@ -140,7 +140,7 @@ The S component with yParity encoded in the top bit of the first byte (32 bytes 
   ]}
 />
 
-## Functions
+### Functions
 
 ### SerializeCompactSignature
 
@@ -160,7 +160,7 @@ sigBytes, _ := signature.SerializeCompactSignatureBytes(sig)
 // []byte{0x68, 0xa0, ...} (64 bytes)
 ```
 
-## Conversion Functions
+### Conversion Functions
 
 ### SignatureToCompactSignature
 
@@ -182,7 +182,7 @@ Converts a `CompactSignature` back to a regular `Signature`:
 sig, _ := signature.CompactSignatureToSignature(compact)
 ```
 
-## Notes
+### Notes
 
 - Compact signatures are 64 bytes instead of 65 bytes (saves 1 byte)
 - The yParity is encoded in the top bit (bit 7) of the first byte of S

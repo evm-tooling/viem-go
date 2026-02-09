@@ -6,7 +6,7 @@ description: Utilities for validating, formatting, and working with Ethereum add
 
 Utilities for validating, formatting, and working with Ethereum addresses.
 
-## isAddress
+### isAddress
 
 Check if a string is a valid Ethereum address:
 
@@ -41,7 +41,7 @@ isAddress('0xinvalid')
   ]}
 />
 
-## getAddress
+### getAddress
 
 Convert an address to its checksummed format (EIP-55):
 
@@ -69,7 +69,7 @@ const checksummed = getAddress('0xd8da6bf26964af9d7eed9e03e53415d37aa96045')
   ]}
 />
 
-## isAddressEqual
+### isAddressEqual
 
 Compare two addresses (case-insensitive):
 
@@ -99,7 +99,7 @@ isAddressEqual(
   ]}
 />
 
-## getContractAddress
+### getContractAddress
 
 Compute the address of a contract deployed with CREATE:
 
@@ -128,7 +128,7 @@ const address = getContractAddress({
   ]}
 />
 
-## getCreate2Address
+### getCreate2Address
 
 Compute the address of a contract deployed with CREATE2:
 
@@ -158,7 +158,7 @@ const address = getCreate2Address({
   ]}
 />
 
-## Working with go-ethereum
+### Working with go-ethereum
 
 viem-go uses `go-ethereum`'s `common.Address` type:
 
@@ -187,7 +187,7 @@ if addr == (common.Address{}) {
 }
 ```
 
-## Common Patterns
+### Common Patterns
 
 ### Validate User Input
 
@@ -240,7 +240,7 @@ predictedAddr := address.GetCreate2Address(address.GetCreate2AddressOptions{
 fmt.Printf("Deterministic address: %s\n", predictedAddr.Hex())
 ```
 
-## Zero Address
+### Zero Address
 
 The zero address (`0x0000000000000000000000000000000000000000`) is commonly used to represent:
 - Contract creation transactions (no `to` address)

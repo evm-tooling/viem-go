@@ -5,7 +5,7 @@ description: Decode function calldata, return data, event logs, and errors for c
 
 Decode function calldata (with selector), function return data, event logs, and revert errors using a **parsed ABI**. For standalone parameter decoding without a contract ABI, see [Decode Parameters](/docs/abi/decode-parameters/).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ Decode function calldata (with selector), function return data, event logs, and 
   ]}
 />
 
-## DecodeFunctionData
+### DecodeFunctionData
 
 Decode full calldata (selector + args) using a **parsed ABI**. Identifies the function by selector and returns name and arguments.
 
@@ -84,7 +84,7 @@ Decode only the arguments (no selector). Use when data is **only** the ABI-encod
 args, err := parsed.DecodeFunctionArgsFromData("transfer", dataWithoutSelector)
 ```
 
-## DecodeFunctionResult
+### DecodeFunctionResult
 
 Decode return data from a contract call using the function’s output definition. Use a **parsed ABI** and the function name.
 
@@ -138,7 +138,7 @@ err := parsed.DecodeFunctionResultInto("getReserves", returnData, &result)
 
 - **Signature:** `(a *ABI) DecodeFunctionResultInto(functionName string, data []byte, output any) error`
 
-## DecodeEventLog
+### DecodeEventLog
 
 Decode event log **topics** and **data** using a **parsed ABI**. Identifies the event by the first topic (event signature hash) and decodes indexed and non-indexed parameters.
 
@@ -189,7 +189,7 @@ Decode when you already know the event name:
 decoded, err := parsed.DecodeEventLogByName("Transfer", log.Topics, log.Data)
 ```
 
-## DecodeErrorResult
+### DecodeErrorResult
 
 Decode revert data: standard **Error(string)** and **Panic(uint256)** plus custom errors defined on the ABI.
 
@@ -228,7 +228,7 @@ fmt.Println(decoded.Selector) // [4]byte
 - **DecodedErrorResult** has **ErrorName**, **Args** (`[]any`), **Selector** (`[4]byte`), **AbiItem** (`*Error` or nil).
 - **DecodeErrorResultWithoutABI(data []byte)** decodes only **Error(string)** and **Panic(uint256)** without a parsed ABI.
 
-## Error handling
+### Error handling
 
 <Aside type="note">
 Always check decoding errors. Invalid data, wrong length, or mismatched ABI will return descriptive errors (e.g. "function with selector ... not found", "data too short").
@@ -242,13 +242,13 @@ if err != nil {
 }
 ```
 
-## Go notes
+### Go notes
 
 - **DecodeFunctionData** and **DecodeEventLog** require the ABI to contain the function/event; otherwise they return "not found" errors.
 - Event **topics** are **[]common.Hash**; convert from RPC hex strings if needed (e.g. **common.HexToHash**).
 - Decoded integers may be **int64** or **\*big.Int** depending on size; see [ABI Types](/docs/contract/abi-types/).
 
-## See also
+### See also
 
 - [Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData, EncodeEventTopics
 - [Decode Parameters](/docs/abi/decode-parameters/) — standalone DecodeAbiParameters

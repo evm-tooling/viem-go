@@ -7,7 +7,7 @@ description: Computes KZG commitments for a list of blobs
 
 Computes KZG commitments for a list of blobs using a KZG implementation.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "github.com/ChefBingbong/viem-go/utils/kzg"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,13 +56,13 @@ if err != nil {
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([][]byte, error)` for `BlobsToCommitments`, `([]string, error)` for `BlobsToCommitmentsHex`
 
 An array of KZG commitments, one for each blob. Each commitment is 48 bytes.
 
-## Parameters
+### Parameters
 
 ### blobs (required)
 
@@ -99,7 +99,7 @@ The KZG implementation to use for computing commitments.
   ]}
 />
 
-## Functions
+### Functions
 
 ### BlobsToCommitments
 
@@ -133,7 +133,7 @@ Computes hex commitments from hex blobs:
 hexCommitments, _ := blob.BlobsHexToCommitmentsHex(hexBlobs, kzgImpl)
 ```
 
-## Notes
+### Notes
 
 - Each commitment is 48 bytes (384 bits)
 - Commitments are used to verify blob integrity

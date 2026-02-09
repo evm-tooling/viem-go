@@ -6,7 +6,7 @@ description: Convert between Ethereum denominations (wei, gwei, ether) and human
 
 Convert between Ethereum denominations (wei, gwei, ether) and human-readable formats.
 
-## Overview
+### Overview
 
 Ethereum uses wei as the base unit (1 ETH = 10^18 wei). These utilities help convert between different denominations.
 
@@ -16,7 +16,7 @@ Ethereum uses wei as the base unit (1 ETH = 10^18 wei). These utilities help con
 | Gwei | 10^9 | gwei |
 | Ether | 10^18 | ETH |
 
-## parseEther
+### parseEther
 
 Convert ETH to wei:
 
@@ -48,7 +48,7 @@ console.log(wei)
   ]}
 />
 
-## formatEther
+### formatEther
 
 Convert wei to ETH string:
 
@@ -76,7 +76,7 @@ console.log(eth)
   ]}
 />
 
-## parseGwei
+### parseGwei
 
 Convert gwei to wei (commonly used for gas prices):
 
@@ -103,7 +103,7 @@ console.log(wei)
   ]}
 />
 
-## formatGwei
+### formatGwei
 
 Convert wei to gwei string:
 
@@ -131,7 +131,7 @@ console.log(gwei)
   ]}
 />
 
-## parseUnits
+### parseUnits
 
 Convert a string to a big integer with custom decimals:
 
@@ -167,7 +167,7 @@ console.log(dai) // 100500000000000000000n`
   ]}
 />
 
-## formatUnits
+### formatUnits
 
 Convert a big integer to a string with custom decimals:
 
@@ -201,7 +201,7 @@ console.log(formatted) // "100.5"`
   ]}
 />
 
-## Common Use Cases
+### Common Use Cases
 
 ### Display Token Balance
 
@@ -257,7 +257,7 @@ fmt.Printf("Cost: %s ETH\n", unit.FormatEther(cost))
 // Cost: 0.00042 ETH
 ```
 
-## Error Handling
+### Error Handling
 
 ```go
 // Invalid input

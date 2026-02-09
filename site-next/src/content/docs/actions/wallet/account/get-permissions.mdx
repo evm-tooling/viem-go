@@ -7,7 +7,7 @@ description: Gets the wallet's current permissions
 
 Gets the wallet's current permissions.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Gets the wallet's current permissions.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -58,7 +58,7 @@ log.Printf("Permissions: %+v", permissions)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `[]WalletPermission`
 
@@ -69,10 +69,10 @@ A list of wallet permissions. Each permission contains:
 - `Invoker` - The origin that requested the permission
 - `ParentCapability` - The parent capability (e.g., "eth_accounts")
 
-## Parameters
+### Parameters
 
 This action takes no parameters.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`wallet_getPermissions`](https://eips.ethereum.org/EIPS/eip-2255) (EIP-2255)

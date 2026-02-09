@@ -7,7 +7,7 @@ description: Returns a collection of historical gas information
 
 Returns a collection of historical gas information.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns a collection of historical gas information.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -70,7 +70,7 @@ log.Printf("Fee history: %d blocks", len(history.Reward))`,
   ]}
 />
 
-## Returns
+### Returns
 
 `formatters.FeeHistory`
 
@@ -80,7 +80,7 @@ A formatted fee history containing:
 - `OldestBlock uint64` - Oldest block number in the range
 - `Reward [][]*big.Int` - Reward percentiles for each block
 
-## Parameters
+### Parameters
 
 ### BlockCount (required)
 
@@ -184,6 +184,6 @@ The highest block tag of the requested range (e.g., "latest").
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_feeHistory`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_feehistory)

@@ -13,7 +13,7 @@ Supports verification of:
   - **Deployed** (via [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271))
   - **Pre-deployed** (via [ERC-6492](https://eips.ethereum.org/EIPS/eip-6492))
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -26,7 +26,7 @@ Supports verification of:
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -80,13 +80,13 @@ log.Printf("Valid: %v", valid)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `bool`
 
 Whether the signed hash is valid for the given address.
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -324,6 +324,6 @@ valid, err := public.VerifyHash(ctx, publicClient, public.VerifyHashParameters{
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) to verify signatures onchain via ERC-1271 or ERC-6492.
