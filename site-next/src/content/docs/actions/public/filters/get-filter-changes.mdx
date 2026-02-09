@@ -13,7 +13,7 @@ A filter can be created from:
 - [`createEventFilter`](/docs/actions/public/filters/create-event-filter)
 - [`createPendingTransactionFilter`](/docs/actions/public/filters/create-pending-transaction-filter)
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -26,7 +26,7 @@ A filter can be created from:
   ]}
 />
 
-## Usage
+### Usage
 
 ### Event Logs
 
@@ -119,14 +119,14 @@ log.Printf("Found %d new pending transactions", len(txHashes))`,
   ]}
 />
 
-## Returns
+### Returns
 
 The return type depends on the filter type:
 - `[]formatters.Log` - For event filters (via `GetFilterChangesLogs`)
 - `[]common.Hash` - For block filters (via `GetFilterChangesBlocks`)
 - `[]common.Hash` - For pending transaction filters (via `GetFilterChangesTransactions`)
 
-## Parameters
+### Parameters
 
 ### FilterID (required)
 
@@ -163,6 +163,6 @@ const logs = await publicClient.getFilterChanges({
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges)

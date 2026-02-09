@@ -7,7 +7,7 @@ A Public Client provides read-only access to the Ethereum blockchain through sta
 
 The `CreatePublicClient` function sets up a Public Client with a given [Transport](/docs/clients/transports/http/) and optional [Chain](/docs/clients/intro/).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -35,7 +35,7 @@ Import additional packages only when you need them:
 - **common**: Address/hash helpers from go-ethereum (e.g. `common.HexToAddress("0x...")`).
 - **public**: Public actions & watch parameter types (e.g. `public.WatchBlockNumberParameters`).
 
-## Go notes
+### Go notes
 
 #### Closing the client
 
@@ -45,7 +45,7 @@ In viem-go, `publicClient.Close()` closes the underlying transport connection (e
 
 Public Client methods and watch actions accept a `context.Context` as the first argument (e.g. `publicClient.GetBalance(ctx, ...)`, `publicClient.WatchBlockNumber(ctx, ...)`). Use it to cancel requests or to set timeouts with `context.WithTimeout`.
 
-## Error handling
+### Error handling
 
 Most viem-go APIs return `(value, error)`. Always handle errors from `CreatePublicClient` and from each call.
 
@@ -97,7 +97,7 @@ const blockNumber = await publicClient.getBlockNumber()`,
   ]}
 />
 
-## Usage
+### Usage
 
 #### HTTP Transport (recommended)
 
@@ -159,7 +159,7 @@ defer publicClient.Close()`,
   ]}
 />
 
-## Watch actions (brief)
+### Watch actions (brief)
 
 The Public Client exposes watch helpers like `WatchBlockNumber` that stream events over a channel. Cancel the context to stop watching.
 
@@ -183,7 +183,7 @@ for event := range events {
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Transport (required)
 
@@ -428,6 +428,6 @@ This is useful for debugging and for distinguishing multiple client instances in
   ]}
 />
 
-## Return Type
+### Return Type
 
 `CreatePublicClient` returns `(*PublicClient, error)`.

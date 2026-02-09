@@ -7,7 +7,7 @@ description: Creates a filter to listen for new events
 
 Creates a filter object to receive logs matching the specified criteria.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Creates a filter object to receive logs matching the specified criteria.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -76,7 +76,7 @@ changes, err := public.GetFilterChangesLogs(ctx, publicClient, filter.ID)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*CreateEventFilterReturnType`
 
@@ -84,7 +84,7 @@ A filter object containing:
 - `ID FilterID` - The filter identifier
 - `Type string` - Always `"event"` for event filters
 
-## Parameters
+### Parameters
 
 ### Address (optional)
 
@@ -222,6 +222,6 @@ The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter)

@@ -7,7 +7,7 @@ description: Encodes an ENS name into a DNS packet ByteArray
 
 Encodes an ENS name into a DNS packet ByteArray. This is used for the off-chain resolution protocol (CCIP-Read).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Encodes an ENS name into a DNS packet ByteArray. This is used for the off-chain 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -41,13 +41,13 @@ hex := ens.PacketToBytesHex("vitalik.eth")
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `[]byte` for `PacketToBytes`, `string` for `PacketToBytesHex`
 
 The DNS packet as bytes or hex string.
 
-## Parameters
+### Parameters
 
 ### packet (required)
 
@@ -67,7 +67,7 @@ The ENS name to encode as a DNS packet.
   ]}
 />
 
-## DNS Packet Format
+### DNS Packet Format
 
 The DNS packet format follows DNS encoding:
 - Each label is prefixed with its length byte
@@ -79,7 +79,7 @@ Example: `"vitalik.eth"` becomes:
 [7] 'v' 'i' 't' 'a' 'l' 'i' 'k' [3] 'e' 't' 'h' [0]
 ```
 
-## Functions
+### Functions
 
 ### PacketToBytes
 
@@ -97,7 +97,7 @@ Encodes an ENS name to DNS packet hex string:
 hex := ens.PacketToBytesHex("vitalik.eth")
 ```
 
-## Notes
+### Notes
 
 - Leading and trailing dots are stripped
 - Empty name returns `[]byte{0}`

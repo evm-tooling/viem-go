@@ -5,7 +5,7 @@ description: Non-padded ABI encoding (abi.encodePacked) in viem-go
 
 **EncodePacked** performs non-padded encoding (like Solidity’s `abi.encodePacked`): values are concatenated without 32-byte padding. It is a **standalone** function and does not require a parsed ABI.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ description: Non-padded ABI encoding (abi.encodePacked) in viem-go
   ]}
 />
 
-## EncodePacked
+### EncodePacked
 
 <CodeGroup
   tabs={[
@@ -71,11 +71,11 @@ if err != nil {
 - **types** and **values** must have the same length.
 - Supports address, string, bytes, bool, int/uint, fixed bytes, and arrays.
 
-## Go notes
+### Go notes
 
 - Use standard ABI encoding (32-byte padded) for contract calls; use **EncodePacked** when you need packed hashes or compact encoding (e.g. EIP-712, custom hashing).
 
-## See also
+### See also
 
 - [Encode Parameters](/docs/abi/encode-parameters/) — padded ABI parameter encoding
 - [Contract Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData for calldata

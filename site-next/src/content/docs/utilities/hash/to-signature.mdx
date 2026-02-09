@@ -7,7 +7,7 @@ description: Returns the normalized signature for a given function or event defi
 
 Returns the normalized signature for a given function or event definition. This is an alias for `NormalizeSignature`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the normalized signature for a given function or event definition. This 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -41,13 +41,13 @@ sig, _ = hash.ToSignature("event Transfer(address indexed from, address indexed 
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)`
 
 The normalized signature string.
 
-## Parameters
+### Parameters
 
 ### def (required)
 
@@ -67,7 +67,7 @@ The function or event definition string.
   ]}
 />
 
-## Notes
+### Notes
 
 - This is equivalent to `NormalizeSignature`
 - Used internally by hash functions to normalize signatures before hashing

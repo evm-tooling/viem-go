@@ -9,7 +9,7 @@ Destroys a filter and frees server resources.
 
 Filters timeout when they aren't requested with `eth_getFilterChanges` for a period of time, so this is mainly useful for cleanup when you're done with a filter early.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ Filters timeout when they aren't requested with `eth_getFilterChanges` for a per
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -75,13 +75,13 @@ const uninstalled = await publicClient.uninstallFilter({ filter })
   ]}
 />
 
-## Returns
+### Returns
 
 `bool`
 
 A boolean indicating if the filter was successfully uninstalled.
 
-## Parameters
+### Parameters
 
 ### FilterID (required)
 
@@ -114,6 +114,6 @@ const uninstalled = await publicClient.uninstallFilter({
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_uninstallFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_uninstallfilter)

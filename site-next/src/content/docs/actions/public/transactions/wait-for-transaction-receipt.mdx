@@ -14,7 +14,7 @@ There are 3 types of transaction replacement reasons:
 - **canceled**: The transaction has been canceled (e.g., value === 0, sent to self)
 - **replaced**: The transaction has been replaced (e.g., different value or data)
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ There are 3 types of transaction replacement reasons:
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -79,13 +79,13 @@ log.Printf("Transaction mined in block %d", receipt.BlockNumber)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*types.Receipt`
 
 The transaction receipt.
 
-## Parameters
+### Parameters
 
 ### Hash (required)
 
@@ -313,6 +313,6 @@ receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitF
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Polls [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt) on each block until it has been processed. If a transaction has been replaced, calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) to find the replacement.

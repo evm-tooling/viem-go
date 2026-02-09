@@ -7,7 +7,7 @@ description: Returns the account and storage values of the specified account inc
 
 Returns the account and storage values of the specified account including the Merkle-proof.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the account and storage values of the specified account including the Me
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -64,7 +64,7 @@ log.Printf("Account proof: %d account proof entries", len(proof.AccountProof))`,
   ]}
 />
 
-## Returns
+### Returns
 
 `formatters.Proof`
 
@@ -77,7 +77,7 @@ Proof data containing:
 - `StorageHash common.Hash` - The storage hash
 - `StorageProof []StorageProof` - Storage proofs for each requested key
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -179,6 +179,6 @@ proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Calls [`eth_getProof`](https://eips.ethereum.org/EIPS/eip-1186) (EIP-1186).

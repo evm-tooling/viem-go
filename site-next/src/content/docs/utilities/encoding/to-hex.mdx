@@ -7,7 +7,7 @@ description: Encodes a value (string, number, boolean, or byte array) to a hex s
 
 Encodes a value (string, number, boolean, or byte array) to a hex string with `0x` prefix.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Encodes a value (string, number, boolean, or byte array) to a hex string with `0
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -76,13 +76,13 @@ toHex(true)
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)`
 
 The hex-encoded value with `0x` prefix.
 
-## Parameters
+### Parameters
 
 ### value (required)
 
@@ -161,7 +161,7 @@ hex, _ := encoding.ToHex(big.NewInt(-1)).WithSize(32).WithSigned().Hex()
   ]}
 />
 
-## Standalone Functions
+### Standalone Functions
 
 ### NumberToHex
 

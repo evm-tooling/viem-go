@@ -9,7 +9,7 @@ Returns the status of a call batch that was sent via [sendCalls](/docs/actions/w
 
 This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -62,7 +62,7 @@ log.Printf("Status: %s (code: %d)", status.Status, status.StatusCode)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*GetCallsStatusReturnType`
 
@@ -75,7 +75,7 @@ An object containing:
 - `Version` - The EIP-5792 version
 - `Capabilities` - The wallet capabilities (optional)
 
-## Parameters
+### Parameters
 
 ### ID (required)
 
@@ -103,7 +103,7 @@ status, err := wallet.GetCallsStatus(ctx, walletClient, wallet.GetCallsStatusPar
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`wallet_getCallsStatus`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcallsstatus) (EIP-5792)
 

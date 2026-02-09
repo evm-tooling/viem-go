@@ -5,7 +5,7 @@ description: Define custom EVM-compatible chains with DefineChain and use Extrac
 
 You can support any EVM-compatible chain by defining a `chain.Chain` and passing it to [DefineChain](/docs/chains/custom/#definechain). viem-go does not include formatters or fee config; the `Chain` struct holds ID, name, native currency, RPC URLs, block explorers, optional block time, contracts, and a few extra fields.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ You can support any EVM-compatible chain by defining a `chain.Chain` and passing
   ]}
 />
 
-## DefineChain
+### DefineChain
 
 `DefineChain` accepts a `chain.Chain` and returns an independent **value** copy. Use it to build chain configs for private networks, L2s, or any EVM chain. Store the result and pass a **pointer** to clients (`&myChain`).
 
@@ -118,7 +118,7 @@ export const myChain = defineChain({
   ]}
 />
 
-## Chain type (Go)
+### Chain type (Go)
 
 The `Chain` struct mirrors the usual chain metadata. Use the key `"default"` for the primary RPC and block explorer.
 
@@ -184,7 +184,7 @@ type ChainContract struct {
 
 Addresses use `common.Address` (e.g. `common.HexToAddress("0x...")`).
 
-## Helper methods
+### Helper methods
 
 On a `*chain.Chain` (or value when the method set is on `*Chain`):
 
@@ -205,7 +205,7 @@ fmt.Println(explorer.URL)`,
   ]}
 />
 
-## ExtractChain
+### ExtractChain
 
 `ExtractChain(chains []*Chain, chainID int64)` returns the first chain in the slice whose `ID` matches `chainID`, or an error. Useful when you have a list of chains and a current chain ID (e.g. from the wallet).
 
@@ -236,7 +236,7 @@ if err != nil {
 - **Returns:** `(*Chain, error)`.
 - **Errors:** `ErrChainNotFound` (empty slice or no matching ID), `ErrInvalidChainID` (chainID &lt; 0).
 
-## AssertCurrentChain
+### AssertCurrentChain
 
 `AssertCurrentChain(chain *Chain, currentChainID int64)` checks that `currentChainID` equals `chain.ID`. Use it before sending a transaction to ensure the wallet is on the expected chain.
 
@@ -266,7 +266,7 @@ if err != nil {
 - **Returns:** `nil` if `chain != nil` and `currentChainID == chain.ID`.
 - **Errors:** `ErrChainNotFound` if `chain == nil`; `*ChainMismatchError` if IDs do not match. `ChainMismatchError` contains `Chain` and `CurrentChainID` and implements `error` with a descriptive message.
 
-## Error handling
+### Error handling
 
 | Error | When |
 |-------|------|
@@ -275,7 +275,7 @@ if err != nil {
 | **ErrInvalidChainsLen** | Used when the chain array is empty where a non-empty list is required. |
 | **ChainMismatchError** | `AssertCurrentChain`: current chain ID does not match the target chain. |
 
-## Using a custom chain with a client
+### Using a custom chain with a client
 
 <CodeGroup
   tabs={[
@@ -297,7 +297,7 @@ defer publicClient.Close()`,
   ]}
 />
 
-## Go vs viem
+### Go vs viem
 
 - viem-go has no separate **formatters** or **fees** config; the `Chain` struct holds only the fields above.
 - **DefineChain** returns a **value**; clients take `*chain.Chain`. Use `&myChain`.

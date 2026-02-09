@@ -15,7 +15,7 @@ Internally, encodes the function call using the ABI and delegates to [sendTransa
 This internally sends a transaction – it does not validate if the contract write will succeed. It is highly recommended to simulate the contract write first.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ This internally sends a transaction – it does not validate if the contract wri
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -71,13 +71,13 @@ log.Printf("Transaction hash: %s", hash)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `string`
 
 The transaction hash as a hex string.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -230,7 +230,7 @@ All transaction fields from [sendTransaction](/docs/actions/wallet/transactions/
 - `BlobVersionedHashes` - Blob versioned hashes (EIP-4844)
 - `MaxFeePerBlobGas` - Max fee per blob gas (EIP-4844)
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

@@ -7,7 +7,7 @@ description: Hashes typed data in EIP-712 format
 
 Signs typed data and calculates an Ethereum-specific hash in [EIP-712 format](https://eips.ethereum.org/EIPS/eip-712): `keccak256("\x19\x01" || domainSeparator || hashStruct(message))`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "math/big"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -108,13 +108,13 @@ const hash = hashTypedData({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)`
 
 The hashed typed data as a hex string with `0x` prefix.
 
-## Parameters
+### Parameters
 
 ### typedData (required)
 
@@ -303,7 +303,7 @@ The structured message to hash. Must match the structure defined in `types` for 
   ]}
 />
 
-## Hash Format
+### Hash Format
 
 The typed data hash is computed as:
 ```

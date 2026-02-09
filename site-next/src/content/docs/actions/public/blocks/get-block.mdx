@@ -7,7 +7,7 @@ description: Returns information about a block at a block number, hash or tag
 
 Returns information about a block at a block number, hash or tag.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns information about a block at a block number, hash or tag.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -72,13 +72,13 @@ log.Printf("Block number: %d", block.Number)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*types.Block`
 
 Information about the block.
 
-## Parameters
+### Parameters
 
 ### BlockHash (optional)
 
@@ -203,7 +203,7 @@ block, err := public.GetBlock(ctx, publicClient, public.GetBlockParameters{
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - Calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) for `blockNumber` & `blockTag`.
 - Calls [`eth_getBlockByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbyhash) for `blockHash`.

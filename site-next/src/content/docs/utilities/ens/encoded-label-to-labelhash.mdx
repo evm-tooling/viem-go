@@ -7,7 +7,7 @@ description: Converts an encoded label to a labelhash
 
 Converts an encoded label (e.g., `[abc123...]`) to a labelhash. Returns empty string if the label is not a valid encoded labelhash.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Converts an encoded label (e.g., `[abc123...]`) to a labelhash. Returns empty st
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -41,13 +41,13 @@ hash = ens.EncodedLabelToLabelhash("eth")
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `string`
 
 The labelhash as a hex string with `0x` prefix, or empty string if the input is not a valid encoded label.
 
-## Parameters
+### Parameters
 
 ### label (required)
 
@@ -70,7 +70,7 @@ hash = ens.EncodedLabelToLabelhash("eth")
   ]}
 />
 
-## Validation
+### Validation
 
 The function validates:
 1. Length must be exactly 66 characters (`[` + 64 hex chars + `]`)
@@ -78,7 +78,7 @@ The function validates:
 3. Must end with `]`
 4. Middle 64 characters must be valid hex
 
-## Notes
+### Notes
 
 - Returns empty string for invalid encoded labels
 - Used internally by `Namehash` and `Labelhash` to handle encoded labels

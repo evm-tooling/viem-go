@@ -11,7 +11,7 @@ Returns an estimate for the fees per gas (in wei) for a transaction to be likely
 - For legacy chains, returns `gasPrice`.
 - Applies a base fee multiplier (default 1.2) to provide a safety buffer.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ Returns an estimate for the fees per gas (in wei) for a transaction to be likely
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -73,7 +73,7 @@ log.Printf("Max priority fee per gas: %s", fees.MaxPriorityFeePerGas.String())`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*EstimateFeesPerGasReturnType`
 
@@ -83,7 +83,7 @@ An object containing:
 - `MaxPriorityFeePerGas *big.Int` - The max priority fee per gas (EIP-1559)
 - `GasPrice *big.Int` - The gas price (legacy)
 
-## Parameters
+### Parameters
 
 ### Type (optional)
 
@@ -126,6 +126,6 @@ fees, err := public.EstimateFeesPerGas(ctx, publicClient, public.EstimateFeesPer
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber), [`eth_maxPriorityFeePerGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_maxpriorityfeepergas), and [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice) to compute fees.

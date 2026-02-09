@@ -7,7 +7,7 @@ description: Calculates the RIPEMD-160 hash of a byte array or hex value
 
 Calculates the [RIPEMD-160](https://en.wikipedia.org/wiki/RIPEMD) hash of a byte array or hex value. This hash function is used in Bitcoin address generation.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Calculates the [RIPEMD-160](https://en.wikipedia.org/wiki/RIPEMD) hash of a byte
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -58,13 +58,13 @@ ripemd160(toBytes('hello world'))
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `string` for `Ripemd160`, `[]byte` for `Ripemd160Bytes`
 
 The hashed value. `Ripemd160` returns a hex string with `0x` prefix, `Ripemd160Bytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### value (required)
 
@@ -97,7 +97,7 @@ hash = hash.Ripemd160("hello")`,
   ]}
 />
 
-## Functions
+### Functions
 
 ### Ripemd160
 

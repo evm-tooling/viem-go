@@ -7,7 +7,7 @@ The HTTP transport connects to Ethereum nodes via standard JSON-RPC over HTTP/HT
 
 The `transport.HTTP(...)` function returns a `transport.TransportFactory` that you pass into a client config (e.g. `client.PublicClientConfig` or `client.WalletClientConfig`).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ These are the most common imports for using the HTTP transport:
 - **transport**: HTTP transport factory and config types (e.g. `transport.HTTP`, `transport.HTTPTransportConfig`).
 - **client**: Client constructors/config (e.g. `client.CreatePublicClient`, `client.PublicClientConfig`).
 
-## Go notes
+### Go notes
 
 #### Transport factories
 
@@ -38,7 +38,7 @@ These are the most common imports for using the HTTP transport:
 
 Close the client when you're done: `defer publicClient.Close()`. This closes the underlying transport (and any batch scheduler if enabled).
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -65,7 +65,7 @@ defer publicClient.Close()`,
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### URL (optional)
 
@@ -436,6 +436,6 @@ Human-readable transport name.
   ]}
 />
 
-## Return Type
+### Return Type
 
 `transport.HTTP(...)` returns a `transport.TransportFactory`.

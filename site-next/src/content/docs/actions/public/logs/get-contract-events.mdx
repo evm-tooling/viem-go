@@ -7,7 +7,7 @@ description: Returns a list of event logs emitted by a contract with decoded eve
 
 Returns a list of event logs emitted by a contract with decoded event data using the provided ABI.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns a list of event logs emitted by a contract with decoded event data using
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -82,7 +82,7 @@ log.Printf("Found %d Transfer events", len(logs))`,
   ]}
 />
 
-## Returns
+### Returns
 
 `[]ContractEventLog`
 
@@ -91,7 +91,7 @@ A list of decoded event logs, each containing:
 - `EventName string` - The decoded event name
 - `DecodedArgs map[string]any` - The decoded event arguments
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -324,6 +324,6 @@ Filters out logs that don't match the indexed/non-indexed arguments in the event
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs) with ABI-encoded topics and decoded event data.

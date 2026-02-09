@@ -8,7 +8,7 @@ Besides [private key](/docs/accounts/private-key/), [mnemonic](/docs/accounts/mn
 - **Address-only (JSON-RPC) accounts** — no local signing; the address is used with a Wallet Client that defers signing to the node/wallet over JSON-RPC.
 - **Custom local accounts** — you supply the address and implementations for signing (message, transaction, typed data, optional hash and authorization). Useful for hardware wallets, KMS, or other backends.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -23,7 +23,7 @@ Besides [private key](/docs/accounts/private-key/), [mnemonic](/docs/accounts/mn
 
 For address-only usage with the Wallet Client you also use `client.NewAddressAccount`; see [Wallet Client](/docs/clients/wallet/).
 
-## ToAccountFromAddress (JSON-RPC account)
+### ToAccountFromAddress (JSON-RPC account)
 
 Creates a **JSON-RPC account** from a valid 20-byte hex address. The returned account has type `AccountTypeJSONRPC` and only exposes `GetAddress()` and `GetType()`. No signing is done locally; when used with a Wallet Client, signing is delegated to the transport (e.g. node or injected wallet).
 
@@ -52,7 +52,7 @@ fmt.Println(account.GetType()) // "json-rpc"`,
 
 For use with the Wallet Client, you typically wrap the address in `client.NewAddressAccount(common.HexToAddress(addr))` and pass that as the client’s `Account`; the client then uses JSON-RPC methods like `eth_sendTransaction` for signing. The accounts package’s `ToAccountFromAddress` is useful when you need an `accounts.Account` (e.g. for APIs that accept the interface).
 
-## ToAccount (custom local account)
+### ToAccount (custom local account)
 
 Creates a **local account** from a `CustomSource`: you provide the address and function implementations for signing. Any optional signer can be `nil`; if a wallet action calls a missing signer, the account returns `ErrSigningNotSupported`.
 
@@ -105,7 +105,7 @@ At least one signing function should be provided for the account to be useful wi
 - **Return type:** `(*LocalAccount, error)`.
 - **Errors:** `ErrInvalidAddress` if `Address` is not valid.
 
-## ToAccountGeneric (address or custom)
+### ToAccountGeneric (address or custom)
 
 Accepts either an address string or a `CustomSource` and returns the appropriate account type. Useful when the account source is dynamic (e.g. config or user input).
 
@@ -138,7 +138,7 @@ typ := account.GetType()`,
 - **Return type:** `(Account, error)` where `Account` is the interface with `GetAddress() string` and `GetType() AccountType`.
 - **Errors:** `ErrInvalidAddress` for invalid address or unsupported source type; for `*CustomSource` nil pointer, also `ErrInvalidAddress`.
 
-## JSON-RPC account with Wallet Client
+### JSON-RPC account with Wallet Client
 
 To use an address-only account with the Wallet Client (signing delegated to the node or injected provider), use the client’s address account helper rather than the accounts package directly:
 
@@ -179,7 +179,7 @@ hash, err := walletClient.SendTransaction(ctx, wallet.SendTransactionParameters{
   ]}
 />
 
-## Error handling
+### Error handling
 
 All three functions can return `ErrInvalidAddress` when:
 

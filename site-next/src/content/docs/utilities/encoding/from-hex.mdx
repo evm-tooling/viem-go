@@ -7,7 +7,7 @@ description: Decodes a hex string to bytes, number, boolean, or string
 
 Decodes a hex string to bytes, number, boolean, or string using a fluent API.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Decodes a hex string to bytes, number, boolean, or string using a fluent API.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -80,13 +80,13 @@ fromHex('0x48656c6c6f20576f726c6421', 'bytes')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** Depends on the conversion method called (`[]byte`, `*big.Int`, `int64`, `uint64`, `bool`, `string`, `error`)
 
 The decoded value in the requested format.
 
-## Parameters
+### Parameters
 
 ### hex (required)
 
@@ -162,7 +162,7 @@ num, _ := encoding.FromHex("0xffffffffffffffffffffffffffffffffffffffffffffffffff
   ]}
 />
 
-## Conversion Methods
+### Conversion Methods
 
 ### ToBytes()
 
@@ -221,7 +221,7 @@ str, _ := encoding.FromHex("0x48656c6c6f").ToString()
 // "Hello"
 ```
 
-## Standalone Functions
+### Standalone Functions
 
 ### HexToBytes
 

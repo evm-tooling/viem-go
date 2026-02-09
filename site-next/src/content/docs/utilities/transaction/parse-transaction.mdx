@@ -7,7 +7,7 @@ description: Parses a serialized RLP-encoded transaction into a structured trans
 
 Parses a serialized RLP-encoded transaction into a structured `Transaction`. Supports signed and unsigned transactions of types: Legacy, EIP-2930, EIP-1559, EIP-4844, and EIP-7702.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Parses a serialized RLP-encoded transaction into a structured `Transaction`. Sup
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,13 +56,13 @@ const transaction = parseTransaction('0x02ef018203118477359400847735940080947099
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(*transaction.Transaction, error)`
 
 The parsed transaction object with all fields populated based on the transaction type.
 
-## Parameters
+### Parameters
 
 ### serializedTransaction (required)
 
@@ -87,7 +87,7 @@ The serialized RLP-encoded transaction hex string. Must start with a transaction
   ]}
 />
 
-## Supported Transaction Types
+### Supported Transaction Types
 
 ### Legacy (0x00)
 
@@ -109,7 +109,7 @@ Parses EIP-4844 blob transactions with blob-related fields.
 
 Parses EIP-7702 transactions with authorization lists.
 
-## Notes
+### Notes
 
 - Automatically detects the transaction type from the serialized format
 - Supports both signed and unsigned transactions

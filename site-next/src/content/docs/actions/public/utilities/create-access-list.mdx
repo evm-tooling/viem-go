@@ -7,7 +7,7 @@ description: Creates an access list for a transaction
 
 Creates an access list for a transaction.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Creates an access list for a transaction.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -68,7 +68,7 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
   ]}
 />
 
-## Returns
+### Returns
 
 `*CreateAccessListReturnType`
 
@@ -76,7 +76,7 @@ An access list object containing:
 - `AccessList types.AccessList` - The access list
 - `GasUsed *big.Int` - The gas used
 
-## Parameters
+### Parameters
 
 ### To (optional)
 
@@ -192,6 +192,6 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_createAccessList`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_createaccesslist)

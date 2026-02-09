@@ -5,7 +5,7 @@ description: Encode values from ABI parameter definitions without a parsed contr
 
 **EncodeAbiParameters** encodes values from a list of ABI parameter definitions. It is a **standalone** function: no parsed ABI required. Use **AbiParam** for each parameter (Name optional, Type required, Components for tuples).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ description: Encode values from ABI parameter definitions without a parsed contr
   ]}
 />
 
-## EncodeAbiParameters
+### EncodeAbiParameters
 
 <CodeGroup
   tabs={[
@@ -73,12 +73,12 @@ if err != nil {
 - **Params** and **values** must have the same length.
 - See [ABI Types](/docs/contract/abi-types/) for **AbiParam** and Solidity → Go type mapping.
 
-## Go notes
+### Go notes
 
 - All encode functions return **[]byte**; prefix with `0x` when you need a hex string.
 - For encoding **function calldata** (selector + args) with a parsed ABI, use contract-level [EncodeFunctionData](/docs/contract/abi-encoding/#encodefunctiondata).
 
-## See also
+### See also
 
 - [Decode Parameters](/docs/abi/decode-parameters/) — DecodeAbiParameters
 - [Parse ABI](/docs/abi/parse/) — get a parsed ABI for contract encoding

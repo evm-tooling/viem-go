@@ -7,7 +7,7 @@ description: Parses an ERC-6492 formatted signature
 
 Parses a hex-formatted ERC-6492 flavored signature. If the signature is not in ERC-6492 format, the underlying (original) signature is returned.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Parses a hex-formatted ERC-6492 flavored signature. If the signature is not in E
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,7 +57,7 @@ const { address, data, signature } = await parseErc6492Signature('0x000000000000
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(*signature.Erc6492Signature, error)`
 
@@ -68,7 +68,7 @@ A parsed ERC-6492 signature containing:
 
 If the signature is not ERC-6492 format, returns the original signature in the `Signature` field.
 
-## Parameters
+### Parameters
 
 ### signature (required)
 
@@ -95,7 +95,7 @@ The ERC-6492 formatted signature string. Must end with ERC-6492 magic bytes if i
   ]}
 />
 
-## Erc6492Signature Structure
+### Erc6492Signature Structure
 
 The parsed ERC-6492 signature contains:
 
@@ -103,7 +103,7 @@ The parsed ERC-6492 signature contains:
 - **Data**: The calldata to pass to deploy account (hex string)
 - **Signature**: The original signature (hex string)
 
-## Notes
+### Notes
 
 - ERC-6492 signatures are used for counterfactual contract account verification
 - The signature format is: `abi.encode(factoryAddress, factoryData, originalSignature) + magicBytes`

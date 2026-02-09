@@ -7,7 +7,7 @@ description: Removes leading or trailing zero bytes/characters from a byte slice
 
 Removes leading or trailing zero bytes/characters from a byte slice or hex string.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Removes leading or trailing zero bytes/characters from a byte slice or hex strin
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -61,13 +61,13 @@ trim('0xa4e12a4500000000000000000000000000000000000000000000000000000000', { dir
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `[]byte` for `TrimBytes`, `string` for `TrimHex`
 
 The trimmed value with leading or trailing zeros removed.
 
-## Parameters
+### Parameters
 
 ### value (required)
 
@@ -130,7 +130,7 @@ hexResult := data.TrimHex("0x01020000", data.TrimRight)
   ]}
 />
 
-## Convenience Functions
+### Convenience Functions
 
 ### TrimLeftBytes / TrimRightBytes
 

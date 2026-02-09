@@ -10,7 +10,7 @@ Signs a transaction.
 - For local accounts (implementing TransactionSignableAccount), signs locally without an RPC call.
 - For JSON-RPC accounts, delegates to the `eth_signTransaction` RPC method.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -23,7 +23,7 @@ Signs a transaction.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -65,13 +65,13 @@ log.Printf("Signed transaction: %s", signed)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `string`
 
 The signed transaction as a hex string.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -110,7 +110,7 @@ All transaction fields from [sendTransaction](/docs/actions/wallet/transactions/
 - `BlobVersionedHashes` - Blob versioned hashes (EIP-4844)
 - `MaxFeePerBlobGas` - Max fee per blob gas (EIP-4844)
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_signTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_signtransaction)
 - Local Accounts: Signs locally. No JSON-RPC request.

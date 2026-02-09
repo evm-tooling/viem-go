@@ -9,7 +9,7 @@ Returns a list of account addresses owned by the wallet or client.
 
 If the client has a local account attached (implements LocalAccount), it returns the local address directly without making an RPC call.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ If the client has a local account attached (implements LocalAccount), it returns
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -67,17 +67,17 @@ log.Printf("Addresses: %v", addresses)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `[]address.Address`
 
 A list of checksummed Ethereum addresses.
 
-## Parameters
+### Parameters
 
 This action takes no parameters.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`eth_accounts`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_accounts)
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { docsNav, type NavItem } from "@/lib/docs-nav";
 import { useSidebar } from "./SidebarContext";
 import { Button } from "@/components/ui/button";
@@ -422,18 +422,22 @@ function SidebarContent({ pathname }: { pathname: string }) {
   );
   const hover: HoverState = { hoveredId, setHoveredId };
   const accordion: AccordionState = { openGroupId, setOpenGroupId };
+  const scrollRef = useRef<HTMLElement>(null);
 
-  // Sync open group with current page on every navigation:
-  // - Page inside a group → open that group (close any other)
-  // - Page NOT inside any group → close all groups (smooth AnimatePresence exit)
+  /* Sync the open accordion group when the pathname changes */
   useEffect(() => {
-    setOpenGroupId(findActiveGroupId(docsNav, pathname));
+    const activeGroup = findActiveGroupId(docsNav, pathname);
+    if (activeGroup) {
+      setOpenGroupId(activeGroup);
+    }
   }, [pathname]);
 
   return (
     <>
       <LayoutGroup id="docsSidebar">
-        <nav
+        <motion.nav
+          ref={scrollRef}
+          layoutScroll
           className="flex-1 overflow-y-auto py-4 px-3"
           onMouseLeave={() => setHoveredId(null)}
           onBlurCapture={() => setHoveredId(null)}
@@ -447,7 +451,7 @@ function SidebarContent({ pathname }: { pathname: string }) {
               accordion={accordion}
             />
           ))}
-        </nav>
+        </motion.nav>
       </LayoutGroup>
       <SocialFooter />
     </>

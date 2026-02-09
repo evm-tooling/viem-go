@@ -7,7 +7,7 @@ description: Transforms a KZG commitment to its versioned hash
 
 Transforms a KZG commitment to its versioned hash. The versioned hash is SHA256(commitment) with the first byte replaced by the version.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "github.com/ChefBingbong/viem-go/utils/kzg"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -49,13 +49,13 @@ hexHash := blob.CommitmentToVersionedHashHex(commitment, kzg.VersionedHashVersio
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `[]byte` for `CommitmentToVersionedHash`, `string` for `CommitmentToVersionedHashHex`
 
 The versioned hash. It's a 32-byte value where the first byte is the version and the remaining 31 bytes are from SHA256(commitment).
 
-## Parameters
+### Parameters
 
 ### commitment (required)
 
@@ -92,7 +92,7 @@ The version byte to use. For KZG commitments, use `kzg.VersionedHashVersionKzg` 
   ]}
 />
 
-## Functions
+### Functions
 
 ### CommitmentToVersionedHash
 
@@ -134,14 +134,14 @@ Transforms a hex commitment and returns a hex versioned hash:
 hexHash, _ := blob.CommitmentHexToVersionedHashHex(hexCommitment, kzg.VersionedHashVersionKzg)
 ```
 
-## Hash Format
+### Hash Format
 
 The versioned hash is computed as:
 1. Compute SHA256(commitment)
 2. Replace the first byte with the version byte
 3. Return the 32-byte result
 
-## Notes
+### Notes
 
 - Versioned hashes are used in EIP-4844 blob transactions
 - The default version for KZG commitments is 0x01

@@ -15,7 +15,7 @@ Unlike `watchEvent`, `watchContractEvent`:
 
 Watch actions return a channel of events. Cancel the context to stop watching.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ Watch actions return a channel of events. Cancel the context to stop watching.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -93,7 +93,7 @@ for event := range events { // [!code focus:6]
   ]}
 />
 
-## Returns
+### Returns
 
 `<-chan WatchContractEventEvent`
 
@@ -101,7 +101,7 @@ A channel that emits `WatchContractEventEvent` structs containing:
 - `Logs []formatters.Log` - The decoded event logs (may contain multiple when `Batch` is true)
 - `Error error` - Any error that occurred
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -339,7 +339,7 @@ The number of workers for parallel log decoding.
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - When polling with filter support:
   - Calls [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter) to create a filter

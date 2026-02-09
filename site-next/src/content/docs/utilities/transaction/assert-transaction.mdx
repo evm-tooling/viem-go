@@ -7,7 +7,7 @@ description: Validates a transaction object and returns an error if invalid
 
 Validates a transaction object and returns an error if the transaction is invalid. Different validation functions exist for each transaction type.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "math/big"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -67,13 +67,13 @@ assertTransaction({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `error`
 
 Returns `nil` if the transaction is valid, or an error describing the validation failure.
 
-## Parameters
+### Parameters
 
 ### transaction (required)
 
@@ -112,7 +112,7 @@ err := transaction.AssertTransactionEIP1559(tx)`,
   ]}
 />
 
-## Assertion Functions
+### Assertion Functions
 
 ### AssertTransactionEIP1559
 
@@ -148,7 +148,7 @@ Validates a legacy transaction:
 - `To` address must be valid (if present)
 - `GasPrice` must not exceed max uint256
 
-## Common Validations
+### Common Validations
 
 All transaction types validate:
 - Address format (if `To` is present)

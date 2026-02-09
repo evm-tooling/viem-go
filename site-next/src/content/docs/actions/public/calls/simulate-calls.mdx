@@ -7,7 +7,7 @@ description: Simulates multiple calls and returns their results
 
 Simulates multiple calls and returns their results.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Simulates multiple calls and returns their results.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -72,7 +72,7 @@ log.Printf("Results: %d calls simulated", len(result.Results))`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*SimulateCallsReturnType`
 
@@ -81,7 +81,7 @@ An object containing:
 - `AssetChanges []AssetChange` - Asset balance changes (if `TraceAssetChanges` was enabled)
 - `Block formatters.Block` - The simulated block data
 
-## Parameters
+### Parameters
 
 ### Calls (required)
 
@@ -239,6 +239,6 @@ Enables validation mode.
 
 State overrides for the simulation.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) or [`eth_simulateV1`](https://github.com/ethereum/execution-apis/blob/main/src/engine/simulation.md) (if supported) for advanced simulation features.

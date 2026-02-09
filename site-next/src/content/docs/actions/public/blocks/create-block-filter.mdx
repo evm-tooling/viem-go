@@ -7,7 +7,7 @@ description: Creates a filter to listen for new blocks
 
 Creates a filter to listen for new blocks.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Creates a filter to listen for new blocks.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -69,7 +69,7 @@ changes, err := public.GetFilterChanges(ctx, publicClient, public.GetFilterChang
   ]}
 />
 
-## Returns
+### Returns
 
 `*CreateBlockFilterReturnType`
 
@@ -77,10 +77,10 @@ A filter object containing:
 - `ID FilterID` - The filter identifier
 - `Type string` - Always `"block"` for block filters
 
-## Parameters
+### Parameters
 
 This action takes no parameters.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_newBlockFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newblockfilter)

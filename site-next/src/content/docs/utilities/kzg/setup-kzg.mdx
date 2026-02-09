@@ -7,7 +7,7 @@ description: Sets up and returns a KZG interface with trusted setup loading
 
 Sets up and returns a KZG interface. It loads the trusted setup from the specified path before returning.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Sets up and returns a KZG interface. It loads the trusted setup from the specifi
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -63,13 +63,13 @@ if err != nil {
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(kzg.Kzg, error)`
 
 A KZG implementation that can be used for blob operations.
 
-## Parameters
+### Parameters
 
 ### params (required)
 
@@ -188,7 +188,7 @@ The path to the trusted setup file.
   ]}
 />
 
-## Functions
+### Functions
 
 ### SetupKzg
 
@@ -206,7 +206,7 @@ Sets up KZG using a `KzgWithSetup` implementation:
 kzgImpl, _ := kzg.SetupKzgWithLoader(kzgWithSetup, "/path/to/trusted_setup.txt")
 ```
 
-## Notes
+### Notes
 
 - If the trusted setup is already loaded, "already loaded" errors are ignored
 - The KZG implementation can be used for blob operations (commitments, proofs)

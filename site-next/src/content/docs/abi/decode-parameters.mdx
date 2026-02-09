@@ -5,7 +5,7 @@ description: Decode raw ABI-encoded bytes using parameter definitions without a 
 
 **DecodeAbiParameters** (and **DecodeAbiParametersInto**, **DecodeWithSelector**) decode ABI-encoded bytes using a list of **AbiParam** definitions. They are **standalone** functions: no parsed ABI required.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -27,7 +27,7 @@ description: Decode raw ABI-encoded bytes using parameter definitions without a 
   ]}
 />
 
-## DecodeAbiParameters
+### DecodeAbiParameters
 
 Decode raw ABI-encoded bytes using **AbiParam** definitions. Returns a slice of decoded values in order.
 
@@ -74,7 +74,7 @@ if err != nil {
 - **Signature:** `DecodeAbiParameters(params []AbiParam, data []byte) ([]any, error)`
 - Decoded types match [ABI Types](/docs/contract/abi-types/) (address → `common.Address`, uint256 → `*big.Int` or int64, etc.).
 
-## DecodeAbiParametersInto
+### DecodeAbiParametersInto
 
 Decode into a provided struct or slice (pointer). Useful for typed results.
 
@@ -90,7 +90,7 @@ err := abi.DecodeAbiParameters(params, data, &out)
 - **Signature:** `DecodeAbiParametersInto(params []AbiParam, data []byte, output any) error`
 - **output** must be a pointer to a struct (fields by position) or a slice.
 
-## DecodeWithSelector
+### DecodeWithSelector
 
 Decode data that starts with a 4-byte selector: returns the selector and decoded parameters (data after the selector).
 
@@ -101,11 +101,11 @@ selector, values, err := abi.DecodeWithSelector(params, data)
 
 - **Signature:** `DecodeWithSelector(params []AbiParam, data []byte) ([4]byte, []any, error)`
 
-## Go notes
+### Go notes
 
 - For decoding **function calldata** or **return data** with a parsed ABI, use contract-level [DecodeFunctionData](/docs/contract/abi-decoding/#decodefunctiondata) and [DecodeFunctionResult](/docs/contract/abi-decoding/#decodefunctionresult).
 
-## See also
+### See also
 
 - [Encode Parameters](/docs/abi/encode-parameters/) — EncodeAbiParameters
 - [Parse ABI](/docs/abi/parse/) — get a parsed ABI for contract decoding

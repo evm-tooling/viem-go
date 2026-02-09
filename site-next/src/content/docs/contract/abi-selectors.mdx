@@ -5,7 +5,7 @@ description: Compute selectors and event topics, format signatures, and parse ev
 
 Compute function/error selectors and event topics, format human-readable signatures, and batch-parse event logs using a **parsed contract ABI**. For generic lookup by name or selector (GetAbiItem), see [Get Abi Item](/docs/abi/get-abi-item/) in the ABI section.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ Compute function/error selectors and event topics, format human-readable signatu
   ]}
 />
 
-## ComputeSelector
+### ComputeSelector
 
 Compute the 4-byte function (or error) selector from a signature string: first 4 bytes of **keccak256(signature)**.
 
@@ -55,7 +55,7 @@ hexSel := abi.ComputeSelectorHex("transfer(address,uint256)")
 - **HexToSelector(hexStr string) ([4]byte, error)** — hex string (with or without `0x`) to 4-byte selector.
 - **MustHexToSelector(hexStr string) [4]byte** — same, panics on error.
 
-## ComputeEventTopic
+### ComputeEventTopic
 
 Compute the 32-byte event topic (keccak256 of the event signature). Used as the first topic in **eth_getLogs** for non-anonymous events.
 
@@ -70,13 +70,13 @@ hexTopic := abi.ComputeEventTopicHex("Transfer(address,address,uint256)")
 - **ComputeEventTopic(signature string) common.Hash**
 - **ComputeEventTopicHex(signature string) string**
 
-## Signature helpers
+### Signature helpers
 
 - **BuildFunctionSignature(name string, paramTypes []string) string** — e.g. `"transfer(address,uint256)"`.
 - **BuildEventSignature(name string, paramTypes []string) string** — same as above; alias for clarity.
 - **ParseFunctionSignature(signature string) (name string, paramTypes []string, error)** — parse back to name and types.
 
-## Standard selectors and topics
+### Standard selectors and topics
 
 - **StandardSelectors** — `map[string][4]byte` of common ERC20/ERC721 function selectors (e.g. `"transfer"`, `"balanceOf"`).
 - **StandardEventTopics** — `map[string]common.Hash` for common events (e.g. `"Transfer"`, `"Approval"`).
@@ -94,7 +94,7 @@ hexTopic := abi.ComputeEventTopicHex("Transfer(address,address,uint256)")
 
 For generic **GetAbiItem** (by name or hex selector with overload resolution), see [Get Abi Item](/docs/abi/get-abi-item/).
 
-## FormatAbiItem
+### FormatAbiItem
 
 Produce a human-readable signature for a function, event, or error (no argument values).
 
@@ -136,7 +136,7 @@ formatted := abi.FormatAbiItemWithArgs(fn, []any{to, amount}, &abi.FormatAbiItem
 - **GetEventSignature(name string) (string, error)**
 - **GetErrorSignature(name string) (string, error)**
 
-## ParseEventLogs
+### ParseEventLogs
 
 Decode multiple raw logs in one go. Keeps only logs whose first topic matches an event on the ABI; optionally filter by event name or indexed args.
 
@@ -181,7 +181,7 @@ for _, log := range parsed {
 
 **Signature:** `(a *ABI) ParseEventLogs(logs []RawLog, opts *ParseEventLogsOptions) []ParsedEventLog`
 
-## PrepareEncodeFunctionData
+### PrepareEncodeFunctionData
 
 Resolve an overloaded function by name (and args) or by selector, then encode with **EncodeWithPrepared**. Useful when encoding the same function repeatedly.
 
@@ -201,11 +201,11 @@ data, err := parsed.EncodeWithPrepared(prepared, to, amount)
 
 **PreparedFunctionData** has **Abi** (slice with the matched function), **FunctionSelector** ([4]byte), **FunctionName** (string).
 
-## Go notes
+### Go notes
 
 - **FormatAbiItem** and **FormatAbiItemWithArgs** accept **Function**, **Event**, or **Error** (or pointers).
 
-## See also
+### See also
 
 - [Introduction](/docs/contract/abi-introduction/) — ABI struct, Function/Event/Error types
 - [Get Abi Item](/docs/abi/get-abi-item/) — generic lookup by name or selector

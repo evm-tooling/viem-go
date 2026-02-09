@@ -7,7 +7,7 @@ description: Returns the full keccak256 hash of an event signature
 
 Returns the full keccak256 hash of an event signature. This is an alias for `ToSignatureHash` specifically for event definitions.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the full keccak256 hash of an event signature. This is an alias for `ToS
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -50,13 +50,13 @@ const hash = toEventHash('event Transfer(address, address, uint256)')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `ToEventHash`, `([]byte, error)` for `ToEventHashBytes`
 
 The full 32-byte keccak256 hash of the event signature. `ToEventHash` returns a hex string with `0x` prefix, `ToEventHashBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### event (required)
 
@@ -83,7 +83,7 @@ The event definition string.
   ]}
 />
 
-## Functions
+### Functions
 
 ### ToEventHash
 
@@ -103,7 +103,7 @@ hashBytes, _ := hash.ToEventHashBytes("event Transfer(address,address,uint256)")
 // []byte{0xdd, 0xf2, 0x52, ...}
 ```
 
-## Notes
+### Notes
 
 - This is equivalent to `ToEventSelector` and `ToSignatureHash` for event definitions
 - The event signature is normalized before hashing

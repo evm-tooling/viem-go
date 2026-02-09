@@ -7,7 +7,7 @@ description: Parses a hex formatted compact signature (EIP-2098) into a structur
 
 Parses a hex formatted compact signature ([EIP-2098](https://eips.ethereum.org/EIPS/eip-2098)) into a structured `CompactSignature` with `R` and `YParityAndS` components.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Parses a hex formatted compact signature ([EIP-2098](https://eips.ethereum.org/E
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -54,13 +54,13 @@ const { r, yParityAndS } = parseCompactSignature('0x68a020a209d3d56c46f38cc50a33
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(*signature.CompactSignature, error)`
 
 A structured compact signature with `R` and `YParityAndS` fields.
 
-## Parameters
+### Parameters
 
 ### signatureHex (required)
 
@@ -87,14 +87,14 @@ The hex formatted compact signature string. Must be 64 bytes (128 hex characters
   ]}
 />
 
-## Compact Signature Structure
+### Compact Signature Structure
 
 The parsed compact signature contains:
 
 - **R**: The R component (32 bytes as hex string)
 - **YParityAndS**: The S component with yParity encoded in the top bit of the first byte (32 bytes as hex string)
 
-## Functions
+### Functions
 
 ### ParseCompactSignature
 
@@ -112,7 +112,7 @@ Parses a 64-byte compact signature:
 sig, _ := signature.ParseCompactSignatureBytes([]byte{0x68, 0xa0, ...})
 ```
 
-## Compact Signature Format (EIP-2098)
+### Compact Signature Format (EIP-2098)
 
 The compact signature format is:
 - First 32 bytes: R component

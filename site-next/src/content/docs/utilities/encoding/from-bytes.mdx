@@ -7,7 +7,7 @@ description: Decodes a byte array to hex, number, boolean, or string
 
 Decodes a byte array to hex, number, boolean, or string using a fluent API.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Decodes a byte array to hex, number, boolean, or string using a fluent API.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -80,13 +80,13 @@ fromBytes(new Uint8Array([1]), 'boolean')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** Depends on the conversion method called (`string`, `*big.Int`, `int64`, `uint64`, `bool`, `error`)
 
 The decoded value in the requested format.
 
-## Parameters
+### Parameters
 
 ### bytes (required)
 
@@ -162,7 +162,7 @@ num, _ := encoding.FromBytes([]byte{0xff, 0xff, 0xff, 0xff}).
   ]}
 />
 
-## Conversion Methods
+### Conversion Methods
 
 ### ToHex()
 
@@ -230,7 +230,7 @@ str, _ := encoding.FromBytes([]byte{72, 101, 108, 108, 111}).ToString()
 // "Hello"
 ```
 
-## Standalone Functions
+### Standalone Functions
 
 ### BytesToHex
 

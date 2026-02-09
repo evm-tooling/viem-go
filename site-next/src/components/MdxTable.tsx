@@ -1,6 +1,6 @@
 export function Table({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="overflow-x-auto   ">
+    <div className="overflow-x-auto my-6 rounded-lg border border-card-border overflow-hidden">
       <table className="w-full border-collapse text-[0.875rem]">
         {children}
       </table>
@@ -24,7 +24,7 @@ export function Tr({ children }: { children?: React.ReactNode }) {
 
 export function Th({ children }: { children?: React.ReactNode }) {
   return (
-    <th className="px-4 py-2.5 text-left text-[0.8125rem] font-semibold text-gray-1 bg-gray-6/80 border-b border-accent/20">
+    <th className="px-4 py-2.5 text-left text-[0.8125rem] font-semibold text-foreground bg-background-tertiary/70 border-b border-accent/20">
       {children}
     </th>
   );
@@ -32,7 +32,7 @@ export function Th({ children }: { children?: React.ReactNode }) {
 
 export function Td({ children }: { children?: React.ReactNode }) {
   return (
-    <td className="px-4 py-2.5 text-left text-[0.875rem] text-gray-2 bg-dark-deep/40">
+    <td className="px-4 py-2.5 text-left text-[0.875rem] text-foreground-secondary bg-background-secondary/60">
       {children}
     </td>
   );

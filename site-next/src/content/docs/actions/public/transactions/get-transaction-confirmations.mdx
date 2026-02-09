@@ -7,7 +7,7 @@ description: Returns the number of blocks passed since the transaction was proce
 
 Returns the number of blocks passed (confirmations) since the transaction was processed on a block.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the number of blocks passed (confirmations) since the transaction was pr
   ]}
 />
 
-## Usage
+### Usage
 
 You can fetch confirmations by transaction hash:
 
@@ -109,13 +109,13 @@ const confirmations = await publicClient.getTransactionConfirmations({
   ]}
 />
 
-## Returns
+### Returns
 
 `uint64`
 
 The number of blocks passed since the transaction was processed. If confirmations is `0`, then the transaction has not been confirmed & processed yet.
 
-## Parameters
+### Parameters
 
 ### Hash (optional)
 
@@ -184,6 +184,6 @@ confirmations, err := public.GetTransactionConfirmations(ctx, publicClient, publ
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 Uses [`eth_getBlockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber) and [`eth_getTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByHash) or [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt) to calculate confirmations.

@@ -7,7 +7,7 @@ description: Converts a chain ID to an ENSIP-9 compliant coin type
 
 Converts a chain ID to an [ENSIP-9](https://docs.ens.domains/ensip/9) compliant coin type.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Converts a chain ID to an [ENSIP-9](https://docs.ens.domains/ensip/9) compliant 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -52,13 +52,13 @@ coinType = ens.MustToCoinType(1)
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(uint64, error)` for `ToCoinType`, `uint64` for `MustToCoinType`
 
 The coin type for the chain ID.
 
-## Parameters
+### Parameters
 
 ### chainId (required)
 
@@ -81,12 +81,12 @@ coinType, _ = ens.ToCoinType(10)
   ]}
 />
 
-## Conversion Rules
+### Conversion Rules
 
 1. **Ethereum Mainnet (chainId 1)**: Returns `60` (ETH's SLIP-44 coin type)
 2. **Other Chains**: Applies ENSIP-9 formula: `0x80000000 | chainId`
 
-## Functions
+### Functions
 
 ### ToCoinType
 
@@ -104,7 +104,7 @@ Converts chain ID to coin type or panics:
 coinType := ens.MustToCoinType(1)
 ```
 
-## Notes
+### Notes
 
 - Ethereum mainnet (chainId 1) uses SLIP-44 coin type 60
 - Other chains use the ENSIP-9 formula: `0x80000000 | chainId`

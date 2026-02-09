@@ -9,7 +9,7 @@ Fills a transaction request with the necessary fields to be signed over.
 
 The function fills in missing fields like nonce, gas, gasPrice/maxFeePerGas, and returns both the raw transaction data and the filled transaction object.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ The function fills in missing fields like nonce, gas, gasPrice/maxFeePerGas, and
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -69,7 +69,7 @@ log.Printf("Nonce: %d, Gas: %d", result.Transaction.Nonce, result.Transaction.Ga
   ]}
 />
 
-## Returns
+### Returns
 
 `*FillTransactionReturnType`
 
@@ -77,7 +77,7 @@ An object containing:
 - `Raw []byte` - The RLP-encoded transaction ready to be signed
 - `Transaction *FilledTransaction` - The filled transaction with all fields populated
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -311,10 +311,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-## Notes
+### Notes
 
 - Not all Ethereum nodes support `eth_fillTransaction`. This is primarily supported by Geth-based nodes. If your node doesn't support this method, you may need to manually fill the transaction using `getTransactionCount`, `estimateGas`, and `getGasPrice`/`getMaxPriorityFeePerGas`.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_fillTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_filltransaction)

@@ -7,7 +7,7 @@ description: Checks if a signature is in ERC-6492 format
 
 Checks whether a signature is in [ERC-6492](https://eips.ethereum.org/EIPS/eip-6492) format. ERC-6492 signatures are used for counterfactual contract account verification.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Checks whether a signature is in [ERC-6492](https://eips.ethereum.org/EIPS/eip-6
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,13 +56,13 @@ isErc6492Signature('0x000000000000000000000000cafebabecafebabecafebabecafebabeca
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `bool`
 
 `true` if the signature is in ERC-6492 format, `false` otherwise.
 
-## Parameters
+### Parameters
 
 ### signature (required)
 
@@ -89,7 +89,7 @@ The signature string to check. ERC-6492 signatures end with specific magic bytes
   ]}
 />
 
-## Notes
+### Notes
 
 - ERC-6492 signatures end with magic bytes: `0x6492649264926492649264926492649264926492649264926492649264926492`
 - These signatures are used for counterfactual contract account verification

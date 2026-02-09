@@ -7,7 +7,7 @@ description: Returns the size of a hex string or byte slice in bytes
 
 Returns the size of a hex string or byte slice in bytes.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the size of a hex string or byte slice in bytes.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -60,13 +60,13 @@ size(new Uint8Array([69, 420]))
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `int`
 
 The size in bytes. For hex strings, calculates the byte length from hex characters (rounds up for odd lengths).
 
-## Parameters
+### Parameters
 
 ### value (required)
 
@@ -108,7 +108,7 @@ size(new Uint8Array([69, 420]))
   ]}
 />
 
-## Notes
+### Notes
 
 - For hex strings, the size is calculated as `(hexLength + 1) / 2` to handle odd-length hex strings
 - Empty hex strings (`"0x"`) return `0`

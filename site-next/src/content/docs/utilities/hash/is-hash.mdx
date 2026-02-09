@@ -7,7 +7,7 @@ description: Checks if a string is a valid 32-byte hash
 
 Checks if a string is a valid 32-byte hash (64 hex characters with `0x` prefix).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Checks if a string is a valid 32-byte hash (64 hex characters with `0x` prefix).
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ isHash('0x123')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `bool`
 
 `true` if the string is a valid 32-byte hash, `false` otherwise.
 
-## Parameters
+### Parameters
 
 ### hash (required)
 
@@ -93,7 +93,7 @@ invalid := hash.IsHash("0x1234")
   ]}
 />
 
-## Notes
+### Notes
 
 - Validates that the string has exactly 64 hex characters after the `0x` prefix
 - Only accepts lowercase and uppercase hex characters (`0-9`, `a-f`, `A-F`)

@@ -7,7 +7,7 @@ description: Retrieves the bytecode at an address
 
 Retrieves the bytecode at an address.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Retrieves the bytecode at an address.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -65,13 +65,13 @@ if code == nil {
   ]}
 />
 
-## Returns
+### Returns
 
 `[]byte`
 
 The contract bytecode. Returns `nil` if no code exists at the address (empty account).
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -143,6 +143,6 @@ code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_getCode`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getcode)

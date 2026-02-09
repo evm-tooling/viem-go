@@ -5,7 +5,7 @@ description: Look up a function, event, or error by name or selector from a pars
 
 **GetAbiItem** finds a function, event, or error on a parsed ABI by **name** or **selector** (hex string). For overloaded functions, pass **Args** to disambiguate. Use the direct lookups (**GetFunction**, **GetEvent**, **GetError**, **GetFunctionBySelector**, **GetEventByTopic**, **GetErrorBySelector**) when you already know the kind of item or the key.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ description: Look up a function, event, or error by name or selector from a pars
   ]}
 />
 
-## GetAbiItem
+### GetAbiItem
 
 <CodeGroup
   tabs={[
@@ -62,7 +62,7 @@ case abi.Error:
 - **GetAbiItemOptions**: **Args []any** — used to resolve overloads when multiple items share a name.
 - With a 32-byte hex string, matches events by topic; with 8-char hex, matches function/error selectors.
 
-## Direct lookups
+### Direct lookups
 
 When you know the item kind or key, use:
 
@@ -79,11 +79,11 @@ ev, err := parsed.GetEventByTopic(topic)
 errItem, err := parsed.GetErrorBySelector(selector)
 ```
 
-## Go notes
+### Go notes
 
 - **AbiItem** is an interface; the concrete value returned may be **Function**, **Event**, or **Error** (value types from the ABI maps). **FormatAbiItem** and **FormatAbiItemWithArgs** accept both value and pointer types.
 
-## See also
+### See also
 
 - [Parse ABI](/docs/abi/parse/) — get a parsed ABI
 - [Contract Selectors & Items](/docs/contract/abi-selectors/) — FormatAbiItem, ParseEventLogs, ComputeSelector on a contract ABI

@@ -7,7 +7,7 @@ description: Adds an EVM chain to the wallet
 
 Adds an EVM chain to the wallet.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Adds an EVM chain to the wallet.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -67,13 +67,13 @@ await walletClient.addChain({ chain: avalanche })`,
   ]}
 />
 
-## Returns
+### Returns
 
 `error`
 
 Returns an error if the request fails.
 
-## Parameters
+### Parameters
 
 ### Chain (required)
 
@@ -96,6 +96,6 @@ err := wallet.AddChain(ctx, walletClient, wallet.AddChainParameters{
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`wallet_addEthereumChain`](https://eips.ethereum.org/EIPS/eip-3085) (EIP-3085)

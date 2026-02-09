@@ -5,7 +5,7 @@ description: Batch multiple contract read calls into one RPC with multicall
 
 **Multicall** executes multiple contract read calls in a single RPC round-trip using the Multicall3 contract (or deployless execution). Each call is ABI-encoded and decoded; results are returned in order with success/failure per call.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ description: Batch multiple contract read calls into one RPC with multicall
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -80,7 +80,7 @@ for i, r := range results {
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Contracts (required)
 
@@ -123,11 +123,11 @@ for i, r := range results {
 - **Default:** `4`
 - Limit concurrent batch executions. Set to 0 or negative for unlimited.
 
-## Return type
+### Return type
 
 - **Multicall** returns `([]MulticallResult, error)`. **MulticallResult** has **Status** (`"success"` or `"failure"`), **Result** (`any`), and **Error** (`error`).
 
-## See also
+### See also
 
 - [Reading Contracts](/docs/contract/read-contract/) — single readContract
 - [ABI Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData

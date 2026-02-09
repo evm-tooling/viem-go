@@ -10,7 +10,7 @@ viem-go brings a modern, high-level Ethereum developer experience to the Go ecos
 
 If you want the deeper “how it works” view (call flows, package responsibilities, and where the benchmark wins come from), see **[Architecture](/docs/architecture/)**.
 
-## Why viem-go?
+### Why viem-go?
 
 - **Go lacks high-level Ethereum abstractions**: There isn’t a widely adopted, high-level Ethereum API abstraction in the Go ecosystem that makes common tasks feel straightforward.
 - **go-ethereum is low-level by design**: go-ethereum is excellent, but working directly with its lower-level APIs can be tedious and creates a higher barrier to entry for day-to-day EVM development in Go.
@@ -19,7 +19,7 @@ If you want the deeper “how it works” view (call flows, package responsibili
 - **Unlock Go performance advantages**: Go can address performance bottlenecks common in TypeScript workloads using concurrency and goroutines.
 - **High-level without sacrificing performance**: viem-go aims to provide a high-level API without giving up performance relative to go-ethereum, and to build on efficiency advantages over TypeScript viem where possible.
 
-## Benchmarks
+### Benchmarks
 
 Benchmarks are run against the same Anvil instance (mainnet fork) for a fair comparison.
 
@@ -185,7 +185,7 @@ The table below averages each suite’s detailed rows (arithmetic mean for ns/op
 
 </div>
 
-## Why Not Just Use go-ethereum?
+### Why Not Just Use go-ethereum?
 
 go-ethereum is excellent for low-level operations, but it can be verbose for common tasks. viem-go provides higher-level abstractions while still using go-ethereum under the hood for cryptographic primitives.
 
@@ -218,7 +218,7 @@ contractABI.UnpackIntoInterface(&balance, "balanceOf", result)`
   ]}
 />
 
-## Design Principles
+### Design Principles
 
 ### 1. Mirror viem's API
 
@@ -244,36 +244,28 @@ viem-go doesn't reinvent cryptographic wheels. It uses go-ethereum for:
 
 The test suite runs against actual Ethereum nodes (via Anvil) to ensure real-world compatibility.
 
-## What's Implemented
+### What's Implemented
 
 viem-go is under active development. Current features include:
 
-<div className="docs-feature-table">
-  <div className="docs-feature-table__header">
-    <span style={{ flex: 1 }}>Feature</span>
-    <span>Status</span>
-  </div>
-  {[
-    'Public Client',
-    'Wallet Client',
-    'HTTP Transport',
-    'WebSocket Transport',
-    'Read Contract',
-    'Write Contract',
-    'Account Management',
-    'ABI Encoding/Decoding',
-    'Unit Utilities',
-    'Signature Utilities',
-    'ERC20/721/1155 Bindings',
-  ].map((feature) => (
-    <div key={feature} className="docs-feature-table__row">
-      <span className="docs-feature-table__name">{feature}</span>
-      <span className="docs-feature-table__status docs-feature-table__status--complete">✅ Complete</span>
-    </div>
-  ))}
-</div>
+<DocsTable
+  headers={['Feature', 'Status']}
+  rows={[
+    ['Public Client', '✅ Complete'],
+    ['Wallet Client', '✅ Complete'],
+    ['HTTP Transport', '✅ Complete'],
+    ['WebSocket Transport', '✅ Complete'],
+    ['Read Contract', '✅ Complete'],
+    ['Write Contract', '✅ Complete'],
+    ['Account Management', '✅ Complete'],
+    ['ABI Encoding/Decoding', '✅ Complete'],
+    ['Unit Utilities', '✅ Complete'],
+    ['Signature Utilities', '✅ Complete'],
+    ['ERC20/721/1155 Bindings', '✅ Complete'],
+  ]}
+/>
 
 
-## Getting Started
+### Getting Started
 
 Ready to dive in? Head to the [Getting Started](/docs/getting-started/) guide to set up your first viem-go project.

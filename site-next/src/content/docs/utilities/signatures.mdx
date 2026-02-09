@@ -6,7 +6,7 @@ description: Utilities for signing, verifying, and recovering Ethereum signature
 
 Utilities for signing, verifying, and recovering Ethereum signatures.
 
-## recoverMessageAddress
+### recoverMessageAddress
 
 Recover the address that signed a message:
 
@@ -43,7 +43,7 @@ console.log('Signer:', address)`
   ]}
 />
 
-## recoverAddress
+### recoverAddress
 
 Recover address from a hash and signature:
 
@@ -69,7 +69,7 @@ const address = await recoverAddress({
   ]}
 />
 
-## recoverPublicKey
+### recoverPublicKey
 
 Recover the public key from a signature:
 
@@ -78,7 +78,7 @@ pubKey, err := signature.RecoverPublicKey(hash, sig)
 fmt.Printf("Public Key: 0x%x\n", pubKey)
 ```
 
-## recoverTypedDataAddress
+### recoverTypedDataAddress
 
 Recover address from EIP-712 typed data signature:
 
@@ -106,7 +106,7 @@ const address = await recoverTypedDataAddress({
   ]}
 />
 
-## verifyMessage
+### verifyMessage
 
 Verify a message signature matches an address:
 
@@ -143,7 +143,7 @@ console.log('Valid:', valid)`
   ]}
 />
 
-## verifyTypedData
+### verifyTypedData
 
 Verify an EIP-712 typed data signature:
 
@@ -176,7 +176,7 @@ const valid = await verifyTypedData({
   ]}
 />
 
-## parseSignature
+### parseSignature
 
 Parse a hex signature into its components:
 
@@ -204,7 +204,7 @@ const { r, s, v } = parseSignature('0x66edc...')`
   ]}
 />
 
-## serializeSignature
+### serializeSignature
 
 Combine signature components into a hex string:
 
@@ -231,7 +231,7 @@ const hex = serializeSignature({ r, s, v })`
   ]}
 />
 
-## Compact Signatures (EIP-2098)
+### Compact Signatures (EIP-2098)
 
 Convert to/from compact signature format:
 
@@ -243,7 +243,7 @@ compact := signature.SignatureToCompactSignature(sig)
 sig := signature.CompactSignatureToSignature(compact)
 ```
 
-## ERC-6492 Signatures
+### ERC-6492 Signatures
 
 For smart contract wallet signatures:
 
@@ -263,7 +263,7 @@ erc6492Sig := signature.SerializeErc6492Signature(
 )
 ```
 
-## Common Use Cases
+### Common Use Cases
 
 ### Verify User Signed Terms
 

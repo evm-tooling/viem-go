@@ -7,7 +7,7 @@ description: Determines the transaction type from a serialized transaction
 
 Determines the transaction type from a serialized transaction hex string by examining the type prefix.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Determines the transaction type from a serialized transaction hex string by exam
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -50,13 +50,13 @@ const type = getSerializedTransactionType('0x02ef0182031184773594008477359400809
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(transaction.TransactionType, error)`
 
 The transaction type: `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`.
 
-## Parameters
+### Parameters
 
 ### serializedTransaction (required)
 
@@ -81,7 +81,7 @@ The serialized transaction hex string.
   ]}
 />
 
-## Type Detection
+### Type Detection
 
 The transaction type is determined from the first byte(s) of the serialized transaction:
 
@@ -91,7 +91,7 @@ The transaction type is determined from the first byte(s) of the serialized tran
 - **EIP-4844**: `0x03` prefix
 - **EIP-7702**: `0x04` prefix
 
-## Notes
+### Notes
 
 - This function only examines the type prefix, not the transaction fields
 - For determining type from a transaction object, use `GetTransactionType` instead

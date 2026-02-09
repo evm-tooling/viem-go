@@ -7,7 +7,7 @@ description: Returns a list of event logs matching the provided parameters
 
 Returns a list of event logs matching the provided parameters.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns a list of event logs matching the provided parameters.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -77,13 +77,13 @@ log.Printf("Found %d logs", len(logs))`,
   ]}
 />
 
-## Returns
+### Returns
 
 `[]formatters.Log`
 
 A list of event logs matching the filter criteria.
 
-## Parameters
+### Parameters
 
 ### Address (optional)
 
@@ -259,6 +259,6 @@ logs, err := public.GetLogs(ctx, publicClient, public.GetLogsParameters{
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs)

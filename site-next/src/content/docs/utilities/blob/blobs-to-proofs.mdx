@@ -7,7 +7,7 @@ description: Computes KZG proofs for a list of blobs and their commitments
 
 Computes KZG proofs for a list of blobs and their commitments using a KZG implementation.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "github.com/ChefBingbong/viem-go/utils/kzg"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -50,13 +50,13 @@ if err != nil {
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([][]byte, error)` for `BlobsToProofs`, `([]string, error)` for `BlobsToProofsHex`
 
 An array of KZG proofs, one for each blob. Each proof is 48 bytes.
 
-## Parameters
+### Parameters
 
 ### blobs (required)
 
@@ -112,7 +112,7 @@ The KZG implementation to use for computing proofs.
   ]}
 />
 
-## Functions
+### Functions
 
 ### BlobsToProofs
 
@@ -146,7 +146,7 @@ Computes hex proofs from hex blobs and commitments:
 hexProofs, _ := blob.BlobsHexToProofsHex(hexBlobs, hexCommitments, kzgImpl)
 ```
 
-## Notes
+### Notes
 
 - Each proof is 48 bytes (384 bits)
 - Proofs are used to verify that a blob matches its commitment

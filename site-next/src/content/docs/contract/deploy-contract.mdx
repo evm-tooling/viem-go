@@ -5,7 +5,7 @@ description: Deploy a contract with bytecode and constructor arguments
 
 **DeployContract** sends a transaction with no `to` address and data set to bytecode + ABI-encoded constructor arguments. Equivalent to viem’s `deployContract`. Requires a Wallet Client with an account.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -26,7 +26,7 @@ description: Deploy a contract with bytecode and constructor arguments
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -63,7 +63,7 @@ hash, err = wallet.DeployContract(ctx, walletClient, wallet.DeployContractParame
   ]}
 />
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -107,15 +107,15 @@ hash, err = wallet.DeployContract(ctx, walletClient, wallet.DeployContractParame
 
 - Same as for other wallet transactions. Omit for defaults/estimation.
 
-## Return type
+### Return type
 
 - **DeployContract** returns `(SendTransactionReturnType, error)` — the transaction hash (hex string).
 
-## Encode deploy data
+### Encode deploy data
 
 Deploy data is bytecode + **abi.EncodeConstructor(args...)**. To build deploy data without sending, use a parsed ABI: concatenate bytecode bytes and **parsedABI.EncodeConstructor(args...)**. See [ABI Encoding](/docs/contract/abi-encoding/) for **EncodeConstructor**.
 
-## See also
+### See also
 
 - [Writing Contracts](/docs/contract/write-contract/) — WriteContract
 - [Estimate Contract Gas](/docs/contract/estimate-contract-gas/) — estimate deployment gas

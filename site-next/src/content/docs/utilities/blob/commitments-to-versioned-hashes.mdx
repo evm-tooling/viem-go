@@ -7,7 +7,7 @@ description: Transforms a list of commitments to their versioned hashes
 
 Transforms a list of KZG commitments to their versioned hashes.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -21,7 +21,7 @@ import "github.com/ChefBingbong/viem-go/utils/kzg"`,
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -48,13 +48,13 @@ hexHashes := blob.CommitmentsToVersionedHashesHex(commitments, kzg.VersionedHash
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `[][]byte` for `CommitmentsToVersionedHashes`, `[]string` for `CommitmentsToVersionedHashesHex`
 
 An array of versioned hashes, one for each commitment. Each hash is 32 bytes.
 
-## Parameters
+### Parameters
 
 ### commitments (required)
 
@@ -91,7 +91,7 @@ The version byte to use. For KZG commitments, use `kzg.VersionedHashVersionKzg` 
   ]}
 />
 
-## Functions
+### Functions
 
 ### CommitmentsToVersionedHashes
 
@@ -133,7 +133,7 @@ Transforms hex commitments and returns hex versioned hashes:
 hexHashes, _ := blob.CommitmentsHexToVersionedHashesHex(hexCommitments, kzg.VersionedHashVersionKzg)
 ```
 
-## Notes
+### Notes
 
 - Each versioned hash is 32 bytes (256 bits)
 - The number of hashes equals the number of commitments

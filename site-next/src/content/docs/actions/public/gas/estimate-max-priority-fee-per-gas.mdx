@@ -7,7 +7,7 @@ description: Returns an estimate for the max priority fee per gas for a transact
 
 Returns an estimate for the max priority fee per gas (in wei) for a transaction to be likely included in the next block.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns an estimate for the max priority fee per gas (in wei) for a transaction 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -65,13 +65,13 @@ log.Printf("Max priority fee per gas: %s", maxPriorityFeePerGas.String())`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*big.Int`
 
 The max priority fee per gas in wei.
 
-## Parameters
+### Parameters
 
 ### Block (optional)
 
@@ -97,7 +97,7 @@ maxPriorityFeePerGas, err := public.EstimateMaxPriorityFeePerGas(ctx, publicClie
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 - [`eth_maxPriorityFeePerGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_maxpriorityfeepergas) (preferred)
 - [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) + [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice) (fallback)

@@ -7,7 +7,7 @@ description: Encodes and decodes values using Recursive Length Prefix (RLP) enco
 
 Encodes and decodes values using [Recursive Length Prefix (RLP)](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encoding, the serialization format used in Ethereum.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Encodes and decodes values using [Recursive Length Prefix (RLP)](https://ethereu
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -77,13 +77,13 @@ fromRlp('0xc67f7f838081e8', 'hex')
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]byte, error)` for `Bytes()`, `(string, error)` for `Hex()`, `(any, error)` for decoder methods
 
 The RLP-encoded or decoded value.
 
-## Parameters
+### Parameters
 
 ### value (required for encoding)
 
@@ -147,7 +147,7 @@ result, _ := decoded.Bytes()
   ]}
 />
 
-## Encoding Methods
+### Encoding Methods
 
 ### Hex()
 
@@ -167,7 +167,7 @@ encoded, _ := encoding.ToRlp("0x123456789").Bytes()
 // []byte{0x85, 0x01, 0x23, 0x45, 0x67, 0x89}
 ```
 
-## Decoding Methods
+### Decoding Methods
 
 ### Hex()
 
@@ -189,7 +189,7 @@ result, _ := decoded.Bytes()
 // []byte{0x01, 0x23, 0x45, 0x67, 0x89}
 ```
 
-## Standalone Functions
+### Standalone Functions
 
 ### RlpEncode
 
@@ -227,7 +227,7 @@ decoded, _ := encoding.RlpDecodeHex("0x850123456789")
 // []byte{0x01, 0x23, 0x45, 0x67, 0x89}
 ```
 
-## RLP Encoding Rules
+### RLP Encoding Rules
 
 - Single bytes < 0x80 encode as themselves
 - Short strings (1-55 bytes) encode as `0x80 + length` followed by bytes

@@ -7,7 +7,7 @@ description: Returns the transaction receipt given a transaction hash
 
 Returns the transaction receipt given a transaction hash.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the transaction receipt given a transaction hash.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -70,13 +70,13 @@ log.Printf("Transaction status: %s", receipt.Status)`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*types.Receipt`
 
 The transaction receipt.
 
-## Parameters
+### Parameters
 
 ### Hash (required)
 
@@ -111,6 +111,6 @@ receipt, err := public.GetTransactionReceipt(ctx, publicClient, public.GetTransa
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt)

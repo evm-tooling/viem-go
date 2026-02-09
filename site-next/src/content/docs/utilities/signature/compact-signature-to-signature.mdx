@@ -7,7 +7,7 @@ description: Converts a CompactSignature back to a regular Signature
 
 Converts a `CompactSignature` ([EIP-2098](https://eips.ethereum.org/EIPS/eip-2098)) back to a regular `Signature` with separate `R`, `S`, `V`, and `YParity` components.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Converts a `CompactSignature` ([EIP-2098](https://eips.ethereum.org/EIPS/eip-209
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -63,13 +63,13 @@ const sig = compactSignatureToSignature({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(*signature.Signature, error)`
 
 A regular signature with `R`, `S`, `V`, and `YParity` components.
 
-## Parameters
+### Parameters
 
 ### compactSignature (required)
 
@@ -102,14 +102,14 @@ sig, _ := signature.CompactSignatureToSignature(compact)`,
   ]}
 />
 
-## Implementation
+### Implementation
 
 This function:
 1. Extracts yParity from the top bit (bit 7) of the first byte of `YParityAndS`
 2. Clears the top bit to get the actual S value
 3. Constructs a regular `Signature` with `R`, `S`, `YParity`, and `V` (derived from yParity)
 
-## Notes
+### Notes
 
 - The yParity is decoded from the top bit of the first byte of `YParityAndS`
 - If bit 7 is set, yParity = 1

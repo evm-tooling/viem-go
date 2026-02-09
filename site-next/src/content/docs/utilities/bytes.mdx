@@ -7,7 +7,7 @@ description: Root-level byte conversion utilities
 
 Root-level byte conversion utilities providing a fluent API for converting byte arrays to other types.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Root-level byte conversion utilities providing a fluent API for converting byte 
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -54,7 +54,7 @@ b := utils.FromBytes([]byte{1}).ToBool()
   ]}
 />
 
-## Fluent API
+### Fluent API
 
 ### FromBytes
 
@@ -73,7 +73,7 @@ converter := utils.FromBytes([]byte{0x01, 0x02})
 - **ToBool()**: Converts bytes to boolean
 - **ToBytes()**: Returns the underlying byte slice
 
-## Standalone Functions
+### Standalone Functions
 
 ### BytesToHex
 
@@ -174,7 +174,7 @@ bytes := utils.BoolToBytes(true)
 // []byte{1}
 ```
 
-## Notes
+### Notes
 
 - These are root-level utilities in the `utils` package
 - For more advanced features (size validation, signed conversions), use the `encoding` package utilities

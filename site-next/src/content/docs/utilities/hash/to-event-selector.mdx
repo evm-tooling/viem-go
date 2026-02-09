@@ -7,7 +7,7 @@ description: Returns the event selector (topic0) for a given event definition
 
 Returns the event selector (topic0) for a given event definition. The selector is the full keccak256 hash of the event signature.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the event selector (topic0) for a given event definition. The selector i
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -56,13 +56,13 @@ const selector2 = toEventSelector('Transfer(address indexed from, address indexe
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)` for `ToEventSelector`, `([]byte, error)` for `ToEventSelectorBytes`
 
 The event selector (32-byte hash). `ToEventSelector` returns a hex string with `0x` prefix, `ToEventSelectorBytes` returns raw bytes.
 
-## Parameters
+### Parameters
 
 ### event (required)
 
@@ -94,7 +94,7 @@ selector, _ = hash.ToEventSelector("Transfer(address,address,uint256)")
   ]}
 />
 
-## Functions
+### Functions
 
 ### ToEventSelector
 
@@ -114,7 +114,7 @@ selectorBytes, _ := hash.ToEventSelectorBytes("event Transfer(address,address,ui
 // []byte{0xdd, 0xf2, 0x52, ...}
 ```
 
-## Notes
+### Notes
 
 - The event signature is normalized (spaces removed, parameter names and `indexed` keywords removed) before hashing
 - The full 32-byte hash is used (unlike function selectors which use only 4 bytes)

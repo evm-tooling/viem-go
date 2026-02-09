@@ -10,7 +10,7 @@ Creates, signs, and sends a new transaction to the network.
 - For JSON-RPC accounts (or when no local signer is available), sends via `eth_sendTransaction`.
 - For local accounts (implementing TransactionSignableAccount), prepares, signs locally, and sends via `eth_sendRawTransaction`.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -23,7 +23,7 @@ Creates, signs, and sends a new transaction to the network.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -111,13 +111,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-## Returns
+### Returns
 
 `string`
 
 The transaction hash as a hex string.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -466,7 +466,7 @@ When true, asserts the chain ID matches. Default: true.
 
 Data to append to the end of the calldata. Takes precedence over client.DataSuffix().
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

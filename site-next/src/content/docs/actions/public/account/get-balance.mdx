@@ -7,7 +7,7 @@ description: Returns the balance of an address in wei
 
 Returns the balance of an address in wei.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Returns the balance of an address in wei.
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -71,13 +71,13 @@ log.Printf("Balance: %s wei", balance.String())`,
   ]}
 />
 
-## Returns
+### Returns
 
 `*big.Int`
 
 The balance of the address in wei.
 
-## Parameters
+### Parameters
 
 ### Address (required)
 
@@ -174,10 +174,10 @@ balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters
   ]}
 />
 
-## Tips
+### Tips
 
 - You can convert the balance to ether units using utility functions from your math library.
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_getBalance`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getbalance)

@@ -7,7 +7,7 @@ description: Parses a hex formatted signature into a structured Signature
 
 Parses a hex formatted signature into a structured `Signature` with `R`, `S`, `V`, and `YParity` components.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Parses a hex formatted signature into a structured `Signature` with `R`, `S`, `V
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -64,13 +64,13 @@ console.log('V:', v)`,
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(*signature.Signature, error)`
 
 A structured signature with `R`, `S`, `V`, and `YParity` fields.
 
-## Parameters
+### Parameters
 
 ### signatureHex (required)
 
@@ -97,7 +97,7 @@ The hex formatted signature string. Must be 65 bytes (130 hex characters with `0
   ]}
 />
 
-## Signature Structure
+### Signature Structure
 
 The parsed signature contains:
 
@@ -106,7 +106,7 @@ The parsed signature contains:
 - **V**: The V value (27 or 28 for legacy, optional for EIP-2930/1559)
 - **YParity**: The parity of the y-coordinate (0 or 1)
 
-## Functions
+### Functions
 
 ### ParseSignature
 
@@ -124,7 +124,7 @@ Parses a 65-byte signature:
 sig, _ := signature.ParseSignatureBytes([]byte{0x6e, 0x10, ...})
 ```
 
-## Signature Format
+### Signature Format
 
 The signature format is:
 - First 32 bytes: R component

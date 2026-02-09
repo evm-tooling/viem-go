@@ -57,7 +57,7 @@ const ComparisonSection = () => (
           </span>
         </div>
         <h2 className="text-center mb-4">viem-go vs go-ethereum</h2>
-        <p className="mx-auto max-w-2xl text-center mb-12">
+        <p className="mx-auto max-w-2xl text-center mb-12 ">
           See how viem-go compares to the standard go-ethereum library.
         </p>
       </AnimatedSection>
@@ -69,7 +69,7 @@ const ComparisonSection = () => (
           className="overflow-hidden shadow-xl shadow-primary/5"
         >
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] border-b border-border bg-background-tertiary/50">
+          <div className="grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] border-b border-border bg-background-tertiary/40">
             <div className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-foreground-muted">
               Feature
             </div>
@@ -93,7 +93,7 @@ const ComparisonSection = () => (
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className={`grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] items-center transition-colors hover:bg-background-tertiary/30 ${
+              className={`grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] items-center transition-colors hover:bg-background-tertiary/40 ${
                 i !== rows.length - 1 ? "border-b border-border/50" : ""
               }`}
             >

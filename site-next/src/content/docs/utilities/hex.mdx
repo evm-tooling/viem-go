@@ -7,7 +7,7 @@ description: Root-level hex conversion utilities
 
 Root-level hex conversion utilities providing a fluent API for converting hex strings to other types.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Root-level hex conversion utilities providing a fluent API for converting hex st
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -53,7 +53,7 @@ b, _ := utils.FromHex("0x1").ToBool()
   ]}
 />
 
-## Fluent API
+### Fluent API
 
 ### FromHex
 
@@ -72,7 +72,7 @@ converter := utils.FromHex("0x0102")
 - **ToBool()**: Converts hex to boolean
 - **String()**: Returns the original hex string
 
-## Standalone Functions
+### Standalone Functions
 
 ### HexToBytes
 
@@ -131,7 +131,7 @@ padded := utils.PadHex("0x01", 4)
 // "0x00000001"
 ```
 
-## Notes
+### Notes
 
 - These are root-level utilities in the `utils` package
 - For more advanced features (size validation, signed conversions), use the `encoding` package utilities

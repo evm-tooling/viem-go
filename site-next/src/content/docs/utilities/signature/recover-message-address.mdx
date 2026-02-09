@@ -7,7 +7,7 @@ description: Recovers the Ethereum address that signed a message
 
 Recovers the Ethereum address that signed a message from the message and signature.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Recovers the Ethereum address that signed a message from the message and signatu
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -57,13 +57,13 @@ console.log('Signer:', address)
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(string, error)`
 
 The Ethereum address that signed the message, as a hex string with `0x` prefix.
 
-## Parameters
+### Parameters
 
 ### message (required)
 
@@ -140,7 +140,7 @@ address, _ = signature.RecoverMessageAddress(message, sig)`,
   ]}
 />
 
-## Implementation
+### Implementation
 
 This function:
 1. Hashes the message using `HashMessage` (EIP-191 format)

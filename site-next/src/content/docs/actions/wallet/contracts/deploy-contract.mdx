@@ -9,7 +9,7 @@ Deploys a contract to the network, given bytecode and constructor arguments.
 
 Internally, encodes the deploy data (bytecode + ABI-encoded constructor args) and delegates to [sendTransaction](/docs/actions/wallet/transactions/send-transaction) with no `to` address (contract creation).
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ Internally, encodes the deploy data (bytecode + ABI-encoded constructor args) an
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -83,13 +83,13 @@ if err != nil {
   ]}
 />
 
-## Returns
+### Returns
 
 `string`
 
 The transaction hash as a hex string.
 
-## Parameters
+### Parameters
 
 ### Account (optional)
 
@@ -184,7 +184,7 @@ All transaction fields from [sendTransaction](/docs/actions/wallet/transactions/
 
 Note: `To` is not used for contract deployment (it's intentionally empty for contract creation).
 
-## JSON-RPC Methods
+### JSON-RPC Methods
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

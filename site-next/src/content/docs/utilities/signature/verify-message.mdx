@@ -11,7 +11,7 @@ Verifies that a message was signed by the provided address.
 This utility can only verify a message that was signed by an Externally Owned Account (EOA). To verify messages from Contract Accounts (& EOA), use the Public Client's `VerifyMessage` action instead.
 :::
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ This utility can only verify a message that was signed by an Externally Owned Ac
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -62,13 +62,13 @@ const valid = await verifyMessage({
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `(bool, error)`
 
 `true` if the provided `address` generated the `signature`, `false` otherwise.
 
-## Parameters
+### Parameters
 
 ### address (required)
 
@@ -178,7 +178,7 @@ valid, _ = signature.VerifyMessage(address, message, sig)`,
   ]}
 />
 
-## Implementation
+### Implementation
 
 This function:
 1. Recovers the address from the message and signature using `RecoverMessageAddress`

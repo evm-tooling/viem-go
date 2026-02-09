@@ -5,7 +5,7 @@ description: "Contract ABI: using a parsed ABI for encoding and decoding contrac
 
 This section covers **contract-level** ABI usage: encoding function calldata, event topics, and errors, and decoding function results and event logs using a **parsed ABI**. To get a parsed ABI, use **abi.Parse(jsonABI)** — see [Parse ABI](/docs/abi/parse/) for full parsing docs.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,7 @@ This section covers **contract-level** ABI usage: encoding function calldata, ev
   ]}
 />
 
-## ABI type
+### ABI type
 
 After parsing, you get an **ABI** struct:
 
@@ -47,7 +47,7 @@ Helper methods:
 - **FunctionNames() []string**
 - **EventNames() []string**
 
-## Function type
+### Function type
 
 Each **Function** has:
 
@@ -59,7 +59,7 @@ Each **Function** has:
 - **Signature** — e.g. `"transfer(address,uint256)"`.
 - **IsReadOnly() bool** — true for Pure/View.
 
-## Event type
+### Event type
 
 Each **Event** has:
 
@@ -69,7 +69,7 @@ Each **Event** has:
 - **Topic** — `common.Hash` (keccak256 of event signature).
 - **Signature** — e.g. `"Transfer(address,address,uint256)"`.
 
-## Error type
+### Error type
 
 Each **Error** has:
 
@@ -78,7 +78,7 @@ Each **Error** has:
 - **Selector** — `[4]byte` (first 4 bytes of keccak256(signature)).
 - **Signature** — e.g. `"InsufficientBalance(uint256,uint256)"`.
 
-## Parameter type
+### Parameter type
 
 **Parameter** (used in function/event/error inputs/outputs):
 
@@ -87,15 +87,15 @@ Each **Error** has:
 - **Indexed** — for events, whether the parameter is indexed.
 - **Components** — for tuple types, nested parameters.
 
-## State mutability
+### State mutability
 
 Constants: **Pure**, **View**, **NonPayable**, **Payable**. Use **ParseStateMutability(s string)** to parse a string.
 
-## Go notes
+### Go notes
 
 - The ABI struct is built from go-ethereum’s parser; **MarshalJSON** / **UnmarshalJSON** are implemented so the ABI can be serialized as the original JSON.
 
-## See also
+### See also
 
 - [Parse ABI](/docs/abi/parse/) — Parse, ParseFromString, MustParse, ParseItems
 - [Encoding](/docs/contract/abi-encoding/) — EncodeFunctionData, EncodeEventTopics, EncodeErrorResult

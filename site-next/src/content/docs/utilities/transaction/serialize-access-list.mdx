@@ -7,7 +7,7 @@ description: Serializes an EIP-2930 access list for RLP encoding
 
 Serializes an EIP-2930 access list for RLP encoding. Validates addresses and storage keys before serialization.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -20,7 +20,7 @@ Serializes an EIP-2930 access list for RLP encoding. Validates addresses and sto
   ]}
 />
 
-## Usage
+### Usage
 
 <CodeGroup
   tabs={[
@@ -63,13 +63,13 @@ const serialized = serializeAccessList([
   ]}
 />
 
-## Returns
+### Returns
 
 - **Type:** `([]any, error)`
 
 The serialized access list as an RLP-compatible slice. Each item is `[address, [storageKey1, storageKey2, ...]]`.
 
-## Parameters
+### Parameters
 
 ### accessList (required)
 
@@ -153,7 +153,7 @@ The storage keys to access. Each key must be exactly 32 bytes (64 hex characters
   ]}
 />
 
-## Serialized Format
+### Serialized Format
 
 The serialized access list format is:
 ```
@@ -164,7 +164,7 @@ The serialized access list format is:
 ]
 ```
 
-## ParseAccessList
+### ParseAccessList
 
 To parse an RLP-decoded access list back to `AccessList`:
 
@@ -172,7 +172,7 @@ To parse an RLP-decoded access list back to `AccessList`:
 parsed, _ := transaction.ParseAccessList(rlpDecodedData)
 ```
 
-## Validations
+### Validations
 
 This function validates:
 1. **Address Format**: Each address must be a valid 40-character hex address

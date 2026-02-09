@@ -9,7 +9,7 @@ Returns a list of event logs since the filter was created.
 
 Note: `getFilterLogs` is only compatible with **event filters**.
 
-## Import
+### Import
 
 <CodeGroup
   tabs={[
@@ -22,7 +22,7 @@ Note: `getFilterLogs` is only compatible with **event filters**.
   ]}
 />
 
-## Usage
+### Usage
 
 With a basic event filter:
 
@@ -107,7 +107,7 @@ if err != nil {
   ]}
 />
 
-## Returns
+### Returns
 
 `[]ContractEventLog`
 
@@ -116,7 +116,7 @@ A list of event logs, each containing:
 - `EventName string` - The decoded event name (if ABI was provided)
 - `DecodedArgs map[string]any` - The decoded event arguments (if ABI was provided)
 
-## Parameters
+### Parameters
 
 ### Filter (required)
 
@@ -155,6 +155,6 @@ const logs = await publicClient.getFilterLogs({
   ]}
 />
 
-## JSON-RPC Method
+### JSON-RPC Method
 
 [`eth_getFilterLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterlogs)
