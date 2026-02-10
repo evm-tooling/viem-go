@@ -3,6 +3,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getDocBySlug, getAllDocSlugs, extractHeadings, getDocLastModified } from "@/lib/mdx";
 import { getAdjacentPages } from "@/lib/docs-nav";
+import { createDocsMetadata, getDocsPageJsonLd } from "@/lib/seo";
 import { CodeGroup } from "@/components/CodePanel";
 import CopyButton from "@/components/CopyButton";
 import TerminalTyping from "@/components/TerminalTyping";
@@ -103,10 +104,11 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!doc) return { title: "Not Found" };
 
-  return {
-    title: `${doc.meta.title} - viem-go`,
+  return createDocsMetadata({
+    title: doc.meta.title,
     description: doc.meta.description,
-  };
+    slug: slugStr,
+  });
 }
 
 export default async function DocPage({ params }: PageProps) {
@@ -122,32 +124,49 @@ export default async function DocPage({ params }: PageProps) {
   const { prev, next } = getAdjacentPages(slugStr);
   const lastModified = getDocLastModified(slugStr);
 
+  // Generate JSON-LD structured data for this documentation page
+  const jsonLd = getDocsPageJsonLd({
+    title: doc.meta.title,
+    description: doc.meta.description,
+    slug: slugStr,
+    dateModified: lastModified || undefined,
+  });
+
   return (
-    <div className="flex gap-0">
-      <article className="flex-1 min-w-0 max-w-[80ch]">
-        <h1 className="heading-1 mb-2">
-          {doc.meta.title}
-        </h1>
-        {doc.meta.description && (
-          <p className="text-lead mb-8">
-            {doc.meta.description}
-          </p>
-        )}
-        <div className="docs-prose ">
-          <MDXRemote
-            source={doc.content}
-            components={mdxComponents}
-            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+    <>
+      {/* JSON-LD Structured Data for this doc page */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
+      <div className="flex gap-0">
+        <article className="flex-1 min-w-0 max-w-[80ch]">
+          <h1 className="heading-1 mb-2">
+            {doc.meta.title}
+          </h1>
+          {doc.meta.description && (
+            <p className="text-lead mb-8">
+              {doc.meta.description}
+            </p>
+          )}
+          <div className="docs-prose ">
+            <MDXRemote
+              source={doc.content}
+              components={mdxComponents}
+              options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+            />
+          </div>
+          <DocsPageFooter
+            slug={slugStr}
+            prev={prev}
+            next={next}
+            lastModified={lastModified}
           />
-        </div>
-        <DocsPageFooter
-          slug={slugStr}
-          prev={prev}
-          next={next}
-          lastModified={lastModified}
-        />
-      </article>
-      <TableOfContents headings={headings} />
-    </div>
+        </article>
+        <TableOfContents headings={headings} />
+      </div>
+    </>
   );
 }
