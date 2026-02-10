@@ -1,0 +1,29 @@
+{
+  "name": "viemgolem · Go Interface for Ethereum",
+  "short_name": "viem-go golem",
+  "description": "Build reliable blockchain apps & libraries with idiomatic Go, type-safe and composable modules that interface with Ethereum — inspired by viem",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#3991cd",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicons/golem-icon-only-dark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicons/golem-icon-only-dark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "developer tools",
+    "utilities"
+  ],
+  "lang": "en-US"
+}
