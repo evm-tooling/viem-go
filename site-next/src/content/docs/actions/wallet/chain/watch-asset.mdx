@@ -3,11 +3,9 @@ title: watchAsset
 description: Requests to watch an asset in wallet
 ---
 
-# watchAsset
-
-Requests that the wallet tracks a specified token. Returns a boolean indicating if the token was successfully added.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Requests that the wallet tracks a specified token. Returns a boolean indicating 
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -86,9 +86,13 @@ Boolean indicating if the token was successfully added.
 
 ### Parameters
 
-### Type (required)
+Configuration options accepted by this action.
+
+### Type
 
 - **Type:** `string`
+
+- **Required**
 
 The token type (e.g., "ERC20").
 
@@ -110,15 +114,21 @@ The token type (e.g., "ERC20").
   ]}
 />
 
-### Options (required)
+### Options
 
 - **Type:** `WatchAssetOptions`
 
+- **Required**
+
 The token details.
 
-#### Options.Address (required)
+#### Options.Address
+
+Specify the token contract address for the asset to watch.
 
 - **Type:** `string`
+
+- **Required**
 
 The address of the token contract.
 
@@ -140,9 +150,13 @@ The address of the token contract.
   ]}
 />
 
-#### Options.Symbol (required)
+#### Options.Symbol
+
+Provide the symbol that will be shown for this token.
 
 - **Type:** `string`
+
+- **Required**
 
 A ticker symbol or shorthand, up to 11 characters.
 
@@ -164,9 +178,13 @@ A ticker symbol or shorthand, up to 11 characters.
   ]}
 />
 
-#### Options.Decimals (required)
+#### Options.Decimals
+
+Define how many decimal places the token uses.
 
 - **Type:** `uint8`
+
+- **Required**
 
 The number of token decimals.
 
@@ -188,9 +206,13 @@ The number of token decimals.
   ]}
 />
 
-#### Options.Image (optional)
+#### Options.Image
+
+Optionally supply a URL for the token logo.
 
 - **Type:** `string`
+
+- **Optional**
 
 A string URL of the token logo.
 

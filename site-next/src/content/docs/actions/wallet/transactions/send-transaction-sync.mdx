@@ -3,10 +3,6 @@ title: sendTransactionSync
 description: Creates, signs, and sends a new transaction to the network synchronously
 ---
 
-# sendTransactionSync
-
-Creates, signs, and sends a new transaction to the network synchronously. Returns the transaction receipt after the transaction is included in a block.
-
 - For JSON-RPC accounts, sends via `eth_sendTransaction` then waits for receipt via `WaitForTransactionReceipt`.
 - For local accounts, prepares, signs locally, and sends via `sendRawTransactionSync` (EIP-7966).
 
@@ -15,6 +11,8 @@ This Action is only recommended to be used on chains with low block times and fa
 :::
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -28,6 +26,8 @@ This Action is only recommended to be used on chains with low block times and fa
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -79,10 +79,12 @@ The transaction receipt after the transaction is included in a block.
 
 All parameters from [sendTransaction](/docs/actions/wallet/transactions/send-transaction) are supported, plus:
 
-### PollingInterval (optional)
+### PollingInterval
 
 - **Type:** `time.Duration`
 - **Default:** `client.PollingInterval()`
+
+- **Optional**
 
 The polling interval to poll for the transaction receipt.
 
@@ -102,7 +104,7 @@ receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransac
   ]}
 />
 
-### ThrowOnReceiptRevert (optional)
+### ThrowOnReceiptRevert
 
 - **Type:** `*bool`
 - **Default:** `true`
@@ -124,10 +126,12 @@ receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransac
   ]}
 />
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `*time.Duration`
 - **Default:** `max(chain.blockTime * 3, 5000ms)`
+
+- **Optional**
 
 The timeout to wait for a response.
 
@@ -149,6 +153,8 @@ receipt, err := wallet.SendTransactionSync(ctx, walletClient, wallet.SendTransac
 />
 
 ### JSON-RPC Methods
+
+- The underlying JSON-RPC methods invoked by this action.
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransactionSync`](https://eips.ethereum.org/EIP-7966) (EIP-7966)

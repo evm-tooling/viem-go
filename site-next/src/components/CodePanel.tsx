@@ -163,28 +163,30 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
                   {({ tokens, getLineProps, getTokenProps }) => (
                     <pre
                       style={{ fontFamily: viemMonoFontFamily }}
-                      className="!m-0 !bg-code-bg-deep/20 !pb-4 !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed"
+                      className="!m-0 !bg-code-bg-deep/20 !pb-4 !pt-3 !px-0 !border-0 overflow-auto text-[0.8125rem] leading-relaxed"
                       onMouseEnter={() => { if (!active) setActive(true); }}
                       onMouseLeave={() => { if (active) setActive(false); }}
                     >
-                      {tokens.map((line, i) => (
-                        <div
-                          key={i}
-                          {...getLineProps({ line })}
-                          className={`transition-all duration-300 ${lineClassName(parsed.metaByLine[i], parsed.hasFocus, active)}`}
-                        >
-                          {tab.showLineNumbers && (
-                            <span className="table-cell pr-3 text-right text-foreground-muted select-none min-w-6">
-                              {i + 1}
+                      <code className="table w-full">
+                        {tokens.map((line, i) => (
+                          <div
+                            key={i}
+                            {...getLineProps({ line })}
+                            className={`transition-all duration-300 ${lineClassName(parsed.metaByLine[i], parsed.hasFocus, active)}`}
+                          >
+                            {tab.showLineNumbers && (
+                              <span className="table-cell pl-4 pr-3 text-right text-foreground-muted select-none min-w-6">
+                                {i + 1}
+                              </span>
+                            )}
+                            <span className={`table-cell w-full pr-4${tab.showLineNumbers ? "" : " pl-4"}`}>
+                              {line.map((token, key) => (
+                                <span key={key} {...getTokenProps({ token })} />
+                              ))}
                             </span>
-                          )}
-                          <span className="table-cell">
-                            {line.map((token, key) => (
-                              <span key={key} {...getTokenProps({ token })} />
-                            ))}
-                          </span>
-                        </div>
-                      ))}
+                          </div>
+                        ))}
+                      </code>
                     </pre>
                   )}
                 </Highlight>

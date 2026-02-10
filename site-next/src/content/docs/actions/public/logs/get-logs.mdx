@@ -3,11 +3,9 @@ title: getLogs
 description: Returns a list of event logs matching the provided parameters
 ---
 
-# getLogs
-
-Returns a list of event logs matching the provided parameters.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns a list of event logs matching the provided parameters.
 />
 
 ### Usage
+
+An example showing how to construct a public client and fetch logs that match a simple filter.
 
 <CodeGroup
   tabs={[
@@ -85,9 +85,12 @@ A list of event logs matching the filter criteria.
 
 ### Parameters
 
-### Address (optional)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+- **Optional**
 
 The contract address(es) to filter logs from. Can be a single address or a slice of addresses.
 
@@ -118,9 +121,10 @@ logs, err := public.GetLogs(ctx, publicClient, public.GetLogsParameters{
   ]}
 />
 
-### Topics (optional)
+### Topics
 
 - **Type:** `[]any`
+- **Optional**
 
 The indexed event topics to filter. Each topic can be a single value or an array of values (OR condition).
 
@@ -139,9 +143,10 @@ logs, err := public.GetLogs(ctx, publicClient, public.GetLogsParameters{
   ]}
 />
 
-### FromBlock (optional)
+### FromBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to start filtering from. Mutually exclusive with `FromBlockTag`.
 
@@ -169,9 +174,10 @@ logs, err := public.GetLogs(ctx, publicClient, public.GetLogsParameters{
   ]}
 />
 
-### FromBlockTag (optional)
+### FromBlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to start filtering from. Mutually exclusive with `FromBlock`.
 
@@ -189,9 +195,10 @@ The block tag to start filtering from. Mutually exclusive with `FromBlock`.
   ]}
 />
 
-### ToBlock (optional)
+### ToBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to stop filtering at. Mutually exclusive with `ToBlockTag`.
 
@@ -219,9 +226,10 @@ logs, err := public.GetLogs(ctx, publicClient, public.GetLogsParameters{
   ]}
 />
 
-### ToBlockTag (optional)
+### ToBlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
 
@@ -239,9 +247,10 @@ The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
   ]}
 />
 
-### BlockHash (optional)
+### BlockHash
 
 - **Type:** `*common.Hash`
+- **Optional**
 
 Filters logs from a specific block by hash. Mutually exclusive with `FromBlock`/`ToBlock`.
 
@@ -260,5 +269,7 @@ logs, err := public.GetLogs(ctx, publicClient, public.GetLogsParameters{
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs)

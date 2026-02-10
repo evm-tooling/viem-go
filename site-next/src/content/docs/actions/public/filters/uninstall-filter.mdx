@@ -3,13 +3,13 @@ title: uninstallFilter
 description: Destroys a filter and frees server resources
 ---
 
-# uninstallFilter
-
 Destroys a filter and frees server resources.
 
 Filters timeout when they aren't requested with `eth_getFilterChanges` for a period of time, so this is mainly useful for cleanup when you're done with a filter early.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +23,8 @@ Filters timeout when they aren't requested with `eth_getFilterChanges` for a per
 />
 
 ### Usage
+
+An example showing how to create a filter, then uninstall it when you are finished.
 
 <CodeGroup
   tabs={[
@@ -83,9 +85,12 @@ A boolean indicating if the filter was successfully uninstalled.
 
 ### Parameters
 
-### FilterID (required)
+Configuration options accepted by this action.
+
+### FilterID
 
 - **Type:** `FilterID`
+- **Required**
 
 The filter identifier to uninstall.
 
@@ -115,5 +120,7 @@ const uninstalled = await publicClient.uninstallFilter({
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_uninstallFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_uninstallfilter)

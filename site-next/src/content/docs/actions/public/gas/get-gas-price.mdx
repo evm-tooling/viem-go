@@ -3,11 +3,9 @@ title: getGasPrice
 description: Returns the current price of gas in wei
 ---
 
-# getGasPrice
-
-Returns the current price of gas (in wei).
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the current price of gas (in wei).
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and fetch the current gas price.
 
 <CodeGroup
   tabs={[
@@ -76,5 +76,7 @@ The current gas price in wei.
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice)

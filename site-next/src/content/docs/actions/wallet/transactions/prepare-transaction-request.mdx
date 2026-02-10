@@ -3,11 +3,9 @@ title: prepareTransactionRequest
 description: Prepares a transaction request for signing
 ---
 
-# prepareTransactionRequest
-
-Prepares a transaction request for signing by populating a nonce, gas limit, fee values, and a transaction type.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Prepares a transaction request for signing by populating a nonce, gas limit, fee
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -70,9 +70,13 @@ The fully-prepared transaction request with all required fields populated (nonce
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `Account`
+
+- **Optional**
 
 The account to prepare the transaction for. If nil, uses the client's account.
 
@@ -97,10 +101,12 @@ prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.Prep
   ]}
 />
 
-### Parameters (optional)
+### Parameters
 
 - **Type:** `[]string`
 - **Default:** `["blobVersionedHashes", "chainId", "fees", "gas", "nonce", "type"]`
+
+- **Optional**
 
 Parameters to prepare. For instance, if `["gas", "nonce"]` is provided, then only the `gas` and `nonce` parameters will be prepared.
 
@@ -118,9 +124,11 @@ Parameters to prepare. For instance, if `["gas", "nonce"]` is provided, then onl
   ]}
 />
 
-### To (optional)
+### To
 
 - **Type:** `string`
+
+- **Optional**
 
 The transaction recipient or contract address.
 
@@ -137,9 +145,11 @@ The transaction recipient or contract address.
   ]}
 />
 
-### Value (optional)
+### Value
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 Value in wei sent with this transaction.
 
@@ -159,9 +169,11 @@ prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.Prep
   ]}
 />
 
-### Data (optional)
+### Data
 
 - **Type:** `string`
+
+- **Optional**
 
 A contract hashed method call with encoded args.
 
@@ -179,9 +191,11 @@ A contract hashed method call with encoded args.
   ]}
 />
 
-### Gas (optional)
+### Gas
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 The gas limit of the transaction. If missing and `gas` is in `Parameters`, it will be estimated.
 
@@ -201,27 +215,35 @@ prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.Prep
   ]}
 />
 
-### GasPrice (optional)
+### GasPrice
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 The price (in wei) to pay per gas. Only applies to Legacy Transactions.
 
-### MaxFeePerGas (optional)
+### MaxFeePerGas
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 Total fee per gas (in wei), inclusive of `maxPriorityFeePerGas`. Only applies to EIP-1559 Transactions. If missing and `fees` is in `Parameters`, it will be estimated.
 
-### MaxPriorityFeePerGas (optional)
+### MaxPriorityFeePerGas
 
 - **Type:** `*big.Int`
 
+- **Optional**
+
 Max priority fee per gas (in wei). Only applies to EIP-1559 Transactions. If missing and `fees` is in `Parameters`, it will be estimated.
 
-### Nonce (optional)
+### Nonce
 
 - **Type:** `*int`
+
+- **Optional**
 
 Unique number identifying this transaction. If missing and `nonce` is in `Parameters`, it will be fetched from the network.
 
@@ -240,50 +262,66 @@ prepared, err := wallet.PrepareTransactionRequest(ctx, walletClient, wallet.Prep
   ]}
 />
 
-### Type (optional)
+### Type
 
 - **Type:** `formatters.TransactionType`
 
+- **Optional**
+
 The transaction type. Can be `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`. If missing and `type` is in `Parameters`, it will be inferred from the network or transaction fields.
 
-### ChainID (optional)
+### ChainID
 
 - **Type:** `*int64`
 
+- **Optional**
+
 The chain ID. If missing and `chainId` is in `Parameters`, it will be fetched from the client's chain or via `eth_chainId`.
 
-### Chain (optional)
+### Chain
 
 - **Type:** `*chain.Chain`
 
+- **Optional**
+
 The target chain. Used to infer chain ID and transaction type.
 
-### AccessList (optional)
+### AccessList
 
 - **Type:** `[]formatters.AccessListItem`
 
+- **Optional**
+
 The access list for EIP-2930 transactions.
 
-### AuthorizationList (optional)
+### AuthorizationList
 
 - **Type:** `[]transaction.SignedAuthorization`
 
+- **Optional**
+
 Signed EIP-7702 Authorization list.
 
-### Blobs (optional)
+### Blobs
 
 - **Type:** `[]string`
+
+- **Optional**
 
 Blobs for Blob Transactions (EIP-4844).
 
-### BlobVersionedHashes (optional)
+### BlobVersionedHashes
 
 - **Type:** `[]string`
 
+- **Optional**
+
 Blob versioned hashes for Blob Transactions (EIP-4844).
 
-### MaxFeePerBlobGas (optional)
+### MaxFeePerBlobGas
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 Max fee per blob gas for Blob Transactions (EIP-4844).

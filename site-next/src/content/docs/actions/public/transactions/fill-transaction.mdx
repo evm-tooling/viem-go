@@ -3,13 +3,11 @@ title: fillTransaction
 description: Fills a transaction request with the necessary fields to be signed over
 ---
 
-# fillTransaction
-
-Fills a transaction request with the necessary fields to be signed over.
-
 The function fills in missing fields like nonce, gas, gasPrice/maxFeePerGas, and returns both the raw transaction data and the filled transaction object.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +21,8 @@ The function fills in missing fields like nonce, gas, gasPrice/maxFeePerGas, and
 />
 
 ### Usage
+
+An example showing how to construct a public client and fill a transaction before signing.
 
 <CodeGroup
   tabs={[
@@ -79,9 +79,12 @@ An object containing:
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account to fill the transaction for (msg.sender).
 
@@ -106,9 +109,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### To (optional)
+### To
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The recipient address.
 
@@ -128,9 +132,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### Data (optional)
+### Data
 
 - **Type:** `[]byte`
+- **Optional**
 
 Transaction data.
 
@@ -149,9 +154,10 @@ Transaction data.
   ]}
 />
 
-### Value (optional)
+### Value
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The amount of wei to send.
 
@@ -172,9 +178,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### Nonce (optional)
+### Nonce
 
 - **Type:** `*uint64`
+- **Optional**
 
 The nonce for the transaction. If nil, will be filled by the RPC.
 
@@ -194,9 +201,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### Gas (optional)
+### Gas
 
 - **Type:** `*uint64`
+- **Optional**
 
 The gas limit. If nil, will be estimated.
 
@@ -216,9 +224,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### GasPrice (optional)
+### GasPrice
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The gas price (legacy transactions). If nil, will be estimated.
 
@@ -240,9 +249,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### MaxFeePerGas (optional)
+### MaxFeePerGas
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The max fee per gas (EIP-1559). If nil, will be estimated.
 
@@ -264,9 +274,10 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### MaxPriorityFeePerGas (optional)
+### MaxPriorityFeePerGas
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The max priority fee per gas (EIP-1559). If nil, will be estimated.
 
@@ -288,10 +299,11 @@ result, err := public.FillTransaction(ctx, publicClient, public.FillTransactionP
   ]}
 />
 
-### BaseFeeMultiplier (optional)
+### BaseFeeMultiplier
 
 - **Type:** `*float64`
 - **Default:** `1.2` (20% buffer)
+- **Optional**
 
 The multiplier for the base fee.
 

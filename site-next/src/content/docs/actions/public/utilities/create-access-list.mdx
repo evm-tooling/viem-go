@@ -3,11 +3,11 @@ title: createAccessList
 description: Creates an access list for a transaction
 ---
 
-# createAccessList
-
 Creates an access list for a transaction.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +21,8 @@ Creates an access list for a transaction.
 />
 
 ### Usage
+
+An example showing how to construct a public client and generate an access list for a transaction.
 
 <CodeGroup
   tabs={[
@@ -78,9 +80,12 @@ An access list object containing:
 
 ### Parameters
 
-### To (optional)
+Configuration options accepted by this action.
+
+### To
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The transaction recipient.
 
@@ -103,9 +108,10 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
   ]}
 />
 
-### Data (optional)
+### Data
 
 - **Type:** `[]byte`
+- **Optional**
 
 Transaction data.
 
@@ -124,9 +130,10 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
   ]}
 />
 
-### Account (optional)
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account to execute the transaction from.
 
@@ -149,9 +156,10 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to create the access list at.
 
@@ -171,9 +179,10 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to create the access list at.
 
@@ -193,5 +202,7 @@ accessList, err := public.CreateAccessList(ctx, publicClient, public.CreateAcces
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_createAccessList`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_createaccesslist)

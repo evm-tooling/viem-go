@@ -3,14 +3,12 @@ title: sendTransaction
 description: Creates, signs, and sends a new transaction to the network
 ---
 
-# sendTransaction
-
-Creates, signs, and sends a new transaction to the network.
-
 - For JSON-RPC accounts (or when no local signer is available), sends via `eth_sendTransaction`.
 - For local accounts (implementing TransactionSignableAccount), prepares, signs locally, and sends via `eth_sendRawTransaction`.
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +22,8 @@ Creates, signs, and sends a new transaction to the network.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -119,9 +119,13 @@ The transaction hash as a hex string.
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `Account`
+
+- **Optional**
 
 The account to send from. If nil, uses the client's account.
 
@@ -152,9 +156,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### To (optional)
+### To
+
+Specify the recipient or contract address for the transaction.
 
 - **Type:** `string`
+
+- **Optional**
 
 The transaction recipient or contract address.
 
@@ -172,9 +180,13 @@ The transaction recipient or contract address.
   ]}
 />
 
-### Value (optional)
+### Value
+
+Set the amount of ETH (in wei) to send with the transaction.
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 Value in wei sent with this transaction.
 
@@ -194,9 +206,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### Data (optional)
+### Data
+
+Provide calldata for contract method invocations.
 
 - **Type:** `string`
+
+- **Optional**
 
 A contract hashed method call with encoded args.
 
@@ -214,9 +230,13 @@ A contract hashed method call with encoded args.
   ]}
 />
 
-### Gas (optional)
+### Gas
+
+Control the gas limit used for this transaction.
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 The gas limit of the transaction. If missing, it will be estimated.
 
@@ -236,7 +256,9 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### GasPrice (optional)
+### GasPrice
+
+Configure the gas price for legacy transactions.
 
 - **Type:** `*big.Int`
 
@@ -258,9 +280,11 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### MaxFeePerGas (optional)
+### MaxFeePerGas
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 Total fee per gas (in wei), inclusive of `maxPriorityFeePerGas`. Only applies to EIP-1559 Transactions.
 
@@ -280,9 +304,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### MaxPriorityFeePerGas (optional)
+### MaxPriorityFeePerGas
+
+Configure the priority fee per gas for EIP-1559 transactions.
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 Max priority fee per gas (in wei). Only applies to EIP-1559 Transactions.
 
@@ -303,9 +331,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### Nonce (optional)
+### Nonce
+
+Override the nonce used for this transaction.
 
 - **Type:** `*int`
+
+- **Optional**
 
 Unique number identifying this transaction.
 
@@ -324,9 +356,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### Type (optional)
+### Type
+
+Select the transaction type to use.
 
 - **Type:** `formatters.TransactionType`
+
+- **Optional**
 
 The transaction type. Can be `"legacy"`, `"eip2930"`, `"eip1559"`, `"eip4844"`, or `"eip7702"`.
 
@@ -346,9 +382,11 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### AccessList (optional)
+### AccessList
 
 - **Type:** `[]formatters.AccessListItem`
+
+- **Optional**
 
 The access list for EIP-2930 transactions.
 
@@ -373,9 +411,13 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### AuthorizationList (optional)
+### AuthorizationList
+
+Attach an authorization list for EIP-7702 transactions.
 
 - **Type:** `[]transaction.SignedAuthorization`
+
+- **Optional**
 
 Signed EIP-7702 Authorization list.
 
@@ -399,9 +441,11 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### Blobs (optional)
+### Blobs
 
 - **Type:** `[]string`
+
+- **Optional**
 
 Blobs for Blob Transactions (EIP-4844).
 
@@ -419,19 +463,27 @@ Blobs for Blob Transactions (EIP-4844).
   ]}
 />
 
-### BlobVersionedHashes (optional)
+### BlobVersionedHashes
+
+Provide blob versioned hashes for EIP-4844 transactions.
 
 - **Type:** `[]string`
 
+- **Optional**
+
 Blob versioned hashes for Blob Transactions (EIP-4844).
 
-### MaxFeePerBlobGas (optional)
+### MaxFeePerBlobGas
+
+Configure the max fee per blob gas for EIP-4844 transactions.
 
 - **Type:** `*big.Int`
 
 Max fee per blob gas for Blob Transactions (EIP-4844).
 
-### Chain (optional)
+- **Optional**
+
+### Chain
 
 - **Type:** `*chain.Chain`
 
@@ -453,20 +505,27 @@ hash, err := wallet.SendTransaction(ctx, walletClient, wallet.SendTransactionPar
   ]}
 />
 
-### AssertChainID (optional)
+### AssertChainID
 
 - **Type:** `*bool`
 - **Default:** `true`
 
+- **Optional**
+
 When true, asserts the chain ID matches. Default: true.
 
-### DataSuffix (optional)
+### DataSuffix
+
+Append additional data to the end of the calldata.
 
 - **Type:** `string`
+- **Optional**
 
 Data to append to the end of the calldata. Takes precedence over client.DataSuffix().
 
 ### JSON-RPC Methods
+
+- The underlying JSON-RPC methods invoked by this action.
 
 - JSON-RPC Accounts: [`eth_sendTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendtransaction) (with `wallet_sendTransaction` fallback)
 - Local Accounts: [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

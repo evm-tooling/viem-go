@@ -3,11 +3,9 @@ title: getTransaction
 description: Returns information about a transaction given a hash or block identifier
 ---
 
-# getTransaction
-
-Returns information about a transaction given a hash or block identifier.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns information about a transaction given a hash or block identifier.
 />
 
 ### Usage
+
+An example showing how to construct a public client and fetch a transaction.
 
 <CodeGroup
   tabs={[
@@ -78,9 +78,12 @@ The transaction information.
 
 ### Parameters
 
-### Hash (optional)
+Configuration options accepted by this action.
+
+### Hash
 
 - **Type:** `*common.Hash`
+- **Optional**
 
 Get information about a transaction given a transaction hash.
 
@@ -111,9 +114,10 @@ tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParamet
   ]}
 />
 
-### BlockHash (optional)
+### BlockHash
 
 - **Type:** `*common.Hash`
+- **Optional**
 
 Get information about a transaction given a block hash (must be used with `Index`).
 
@@ -147,9 +151,10 @@ tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParamet
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 Get information about a transaction given a block number (must be used with `Index`).
 
@@ -180,9 +185,10 @@ tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParamet
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 Get information about a transaction given a block tag (must be used with `Index`).
 
@@ -212,9 +218,10 @@ tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParamet
   ]}
 />
 
-### Index (optional)
+### Index
 
 - **Type:** `*int`
+- **Optional**
 
 An index to be used with a block identifier (number, hash or tag).
 
@@ -245,6 +252,8 @@ tx, err := public.GetTransaction(ctx, publicClient, public.GetTransactionParamet
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 - [`eth_getTransactionByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByHash) for `hash`
 - [`eth_getTransactionByBlockHashAndIndex`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionByBlockHashAndIndex) for `blockHash` + `index`

@@ -3,11 +3,9 @@ title: getCode
 description: Retrieves the bytecode at an address
 ---
 
-# getCode
-
-Retrieves the bytecode at an address.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Retrieves the bytecode at an address.
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and call this action.
 
 <CodeGroup
   tabs={[
@@ -73,9 +73,12 @@ The contract bytecode. Returns `nil` if no code exists at the address (empty acc
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The contract address to retrieve bytecode for.
 
@@ -97,9 +100,10 @@ code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to get the code at.
 
@@ -120,10 +124,11 @@ code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
 - **Default:** `"latest"`
+- **Optional**
 
 The block tag to get the code at (e.g., "latest", "pending").
 
@@ -144,5 +149,7 @@ code, err := public.GetCode(ctx, publicClient, public.GetCodeParameters{
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getCode`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getcode)

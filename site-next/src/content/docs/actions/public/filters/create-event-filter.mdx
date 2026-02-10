@@ -3,11 +3,11 @@ title: createEventFilter
 description: Creates a filter to listen for new events
 ---
 
-# createEventFilter
-
 Creates a filter object to receive logs matching the specified criteria.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +21,8 @@ Creates a filter object to receive logs matching the specified criteria.
 />
 
 ### Usage
+
+An example showing how to create an event filter for a contract and use it to fetch changes.
 
 <CodeGroup
   tabs={[
@@ -86,9 +88,12 @@ A filter object containing:
 
 ### Parameters
 
-### Address (optional)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+- **Optional**
 
 The contract address(es) to filter logs from. Can be a single address or a slice of addresses.
 
@@ -119,9 +124,10 @@ filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFil
   ]}
 />
 
-### Topics (optional)
+### Topics
 
 - **Type:** `[]any`
+- **Optional**
 
 The indexed event topics to filter. Each topic can be a single value or an array of values (OR condition).
 
@@ -140,9 +146,10 @@ filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFil
   ]}
 />
 
-### FromBlock (optional)
+### FromBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to start filtering from. Mutually exclusive with `FromBlockTag`.
 
@@ -161,9 +168,10 @@ filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFil
   ]}
 />
 
-### FromBlockTag (optional)
+### FromBlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to start filtering from. Mutually exclusive with `FromBlock`.
 
@@ -181,9 +189,10 @@ The block tag to start filtering from. Mutually exclusive with `FromBlock`.
   ]}
 />
 
-### ToBlock (optional)
+### ToBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to stop filtering at. Mutually exclusive with `ToBlockTag`.
 
@@ -202,9 +211,10 @@ filter, err := public.CreateEventFilter(ctx, publicClient, public.CreateEventFil
   ]}
 />
 
-### ToBlockTag (optional)
+### ToBlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
 
@@ -223,5 +233,7 @@ The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter)

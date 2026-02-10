@@ -3,13 +3,9 @@ title: getCallsStatus
 description: Gets the status of a call batch (EIP-5792)
 ---
 
-# getCallsStatus
-
-Returns the status of a call batch that was sent via [sendCalls](/docs/actions/wallet/calls/send-calls).
-
-This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +20,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -77,9 +74,13 @@ An object containing:
 
 ### Parameters
 
-### ID (required)
+### ID
+
+Specify which call batch to fetch the status for.
 
 - **Type:** `string`
+
+- **Required**
 
 The identifier of the call batch (returned from [sendCalls](/docs/actions/wallet/calls/send-calls)).
 

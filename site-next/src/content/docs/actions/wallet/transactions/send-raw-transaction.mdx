@@ -3,11 +3,9 @@ title: sendRawTransaction
 description: Sends a signed transaction to the network
 ---
 
-# sendRawTransaction
-
-Sends a **signed** transaction to the network.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Sends a **signed** transaction to the network.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -76,9 +76,13 @@ The transaction hash as a hex string.
 
 ### Parameters
 
-### SerializedTransaction (required)
+Configuration options accepted by this action.
+
+### SerializedTransaction
 
 - **Type:** `string`
+
+- **Required**
 
 The signed serialized transaction hex string.
 
@@ -96,5 +100,7 @@ The signed serialized transaction hex string.
 />
 
 ### JSON-RPC Method
+
+- The underlying JSON-RPC method invoked by this action.
 
 - [`eth_sendRawTransaction`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_sendrawtransaction)

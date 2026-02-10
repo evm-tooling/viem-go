@@ -3,11 +3,9 @@ title: requestPermissions
 description: Requests permissions for a wallet
 ---
 
-# requestPermissions
-
-Requests permissions for a wallet.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Requests permissions for a wallet.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -68,9 +68,13 @@ A list of granted wallet permissions.
 
 ### Parameters
 
-### Permissions (required)
+### Permissions
+
+Define which permissions to request from the connected wallet.
 
 - **Type:** `RequestPermissionsParameters` (map[string]map[string]any)
+
+- **Required**
 
 A map where keys are permission names (e.g., "eth_accounts") and values are permission-specific configuration objects.
 

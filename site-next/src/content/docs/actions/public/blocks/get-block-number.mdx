@@ -3,11 +3,9 @@ title: getBlockNumber
 description: Returns the number of the most recent block seen
 ---
 
-# getBlockNumber
-
-Returns the number of the most recent block seen.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the number of the most recent block seen.
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and fetch the latest block number.
 
 <CodeGroup
   tabs={[
@@ -73,10 +73,13 @@ The number of the most recent block.
 
 ### Parameters
 
-### CacheTime (optional)
+Configuration options accepted by this action.
+
+### CacheTime
 
 - **Type:** `*time.Duration`
 - **Default:** Client's `CacheTime`
+- **Optional**
 
 Time that cached block number will remain in memory.
 
@@ -115,5 +118,7 @@ By default, block numbers are cached for the period of the [Client's `CacheTime`
 - Setting a value of `0` will disable the cache, and always retrieve a fresh block number.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_blockNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blocknumber)

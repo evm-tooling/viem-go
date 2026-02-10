@@ -3,11 +3,9 @@ title: getPermissions
 description: Gets the wallet's current permissions
 ---
 
-# getPermissions
-
-Gets the wallet's current permissions.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Gets the wallet's current permissions.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -74,5 +74,7 @@ A list of wallet permissions. Each permission contains:
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+- The underlying JSON-RPC method invoked by this action.
 
 - [`wallet_getPermissions`](https://eips.ethereum.org/EIPS/eip-2255) (EIP-2255)

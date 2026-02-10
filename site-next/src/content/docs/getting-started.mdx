@@ -46,12 +46,13 @@ that you are always on the latest version. to check and update tot he latest ver
 
 
 ### Quick Start
+follow the quick guilde below to quickely set up a `mmain.go` file with a simple public client and native balance reader.
 
 </div>
 
-### 1. Create a Client
+### 1. Import Dependancies
 
-Set up a [Public Client](/docs/clients/public/) with a [Transport](/docs/clients/transports/http/) and optional [Chain](/docs/clients/intro/) configuration.
+In order to use the features from viem-go we must first import the features we require.
 
 <CodeGroup 
 
@@ -62,53 +63,74 @@ Set up a [Public Client](/docs/clients/public/) with a [Transport](/docs/clients
       code: `package main
 
 import (
-    "context"
     "fmt"
-    "log"
-    
+    "context" 
+    // import the required dependancies from viem-go
     "github.com/ChefBingbong/viem-go/client"
     "github.com/ChefBingbong/viem-go/client/transport"
     "github.com/ChefBingbong/viem-go/chain/definitions"
 )
-
-func main() {
-    // Create a public client
-    publicClient, err := client.CreatePublicClient(client.PublicClientConfig{ // [!code focus:3]
-        Chain:     definitions.Mainnet,
-        Transport: transport.HTTP("https://eth.llamarpc.com"),
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer publicClient.Close()
-    
-    fmt.Println("Client created successfully!")
-}`
+`
     },
     {
       title: "viem",
       language: "ts",
       code: `import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
+import { mainnet } from 'viem/chains'`
+    }
+  ]}
+/>
 
+
+### 2. Create a Client
+
+Next Set up a [Public Client](/docs/clients/public/) with a [Transport](/docs/clients/transports/http/) and optional [Chain](/docs/clients/intro/) configuration.
+
+<CodeGroup 
+
+  tabs={[
+    {
+      title: "Go",
+      language: "go",
+      code: `
+const RPC_URL  = "https://eth.llamarpc.com" 
+
+func main() {
+    // Create a public client
+    publicClient, err := client.CreatePublicClient(client.PublicClientConfig{ // [!code focus:3]
+        Chain:     &definitions.Mainnet,
+        Transport: transport.HTTP(RPC_URL),
+    })
+
+    defer publicClient.Close()
+
+    if err != nil {
+        log.Fatal(err)
+    }
+}`
+    },
+    {
+      title: "viem",
+      language: "ts",
+      code: `async function main() {
 const publicClient = createPublicClient({ // [!code focus:3]
   chain: mainnet,
   transport: http(),
 })
 
-console.log('Client created successfully!')`
+console.log('Client created successfully!')}`
     }
   ]}
 />
 
 <Aside type="note">
-In production, always use an authenticated RPC endpoint (Infura, Alchemy, etc.) instead of public endpoints
+<span>In production, always use an authenticated RPC endpoint (Infura, Alchemy, etc.) instead of public endpoints</span>
 </Aside>
 
 
-### 2. Read Blockchain Data
+### 3. Read Blockchain Data
 
-Once you have a client, you can query the blockchain:
+Once you have a client, you can query the blockchain. Note we usually pass in whats known as a `context`, to out client actions. **Context** is just a useful tool from the Go standard library that helps handle process lifetimes
 
 <CodeGroup 
 
@@ -123,19 +145,11 @@ if err != nil {
 }
 fmt.Println("Block number:", blockNumber)
 
-// Read USDC balance
-result, err := publicClient.ReadContract(context.Background(), client.ReadContractOptions{ // [!code focus:5]
-    Address:      common.HexToAddress("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-    ABI:          \`[{"name":"balanceOf","type":"function","inputs":[{"name":"owner","type":"address"}],"outputs":[{"type":"uint256"}]}]\`,
-    FunctionName: "balanceOf",
-    Args:         []any{common.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")},
-})
+balance, err := publicClient.getBalance(context.Background()) // [!code focus]
 if err != nil {
     log.Fatal(err)
 }
-
-balance := result.(*big.Int)
-fmt.Println("USDC Balance:", balance)`
+fmt.Println("Block number:", balance)`
     },
     {
       title: "viem",
@@ -168,7 +182,7 @@ the demo below is a runnable live example showing how to fetch balances from an 
 
 
 ### Next Steps
-
+- See The BenchMarks [Clients](/docs/performance/)
 - Learn about [Clients](/docs/clients/intro/) in depth
 - Explore [Contract Interactions](/docs/contract/read-contract/)
 - Check out the [Utilities](/docs/utilities/units/) for common operations

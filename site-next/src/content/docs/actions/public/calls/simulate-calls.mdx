@@ -3,11 +3,9 @@ title: simulateCalls
 description: Simulates multiple calls and returns their results
 ---
 
-# simulateCalls
-
-Simulates multiple calls and returns their results.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Simulates multiple calls and returns their results.
 />
 
 ### Usage
+
+An example showing how to set up and run multiple simulated contract calls.
 
 <CodeGroup
   tabs={[
@@ -83,9 +83,12 @@ An object containing:
 
 ### Parameters
 
-### Calls (required)
+Configuration options accepted by this action.
+
+### Calls
 
 - **Type:** `[]SimulateCall`
+- **Required**
 
 The calls to simulate.
 
@@ -108,9 +111,10 @@ The calls to simulate.
   ]}
 />
 
-### Account (optional)
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account attached to the calls (msg.sender).
 
@@ -129,9 +133,10 @@ result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParam
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to simulate at.
 
@@ -150,9 +155,10 @@ result, err := public.SimulateCalls(ctx, publicClient, public.SimulateCallsParam
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to simulate at (e.g., "latest", "pending").
 
@@ -170,10 +176,11 @@ The block tag to simulate at (e.g., "latest", "pending").
   ]}
 />
 
-### TraceAssetChanges (optional)
+### TraceAssetChanges
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables tracing of asset (ETH/ERC20) balance changes.
 
@@ -191,10 +198,11 @@ Enables tracing of asset (ETH/ERC20) balance changes.
   ]}
 />
 
-### TraceTransfers (optional)
+### TraceTransfers
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables transfer tracing.
 
@@ -212,10 +220,11 @@ Enables transfer tracing.
   ]}
 />
 
-### Validation (optional)
+### Validation
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables validation mode.
 
@@ -233,12 +242,15 @@ Enables validation mode.
   ]}
 />
 
-### StateOverrides (optional)
+### StateOverrides
 
 - **Type:** `types.StateOverride`
+- **Optional**
 
 State overrides for the simulation.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) or [`eth_simulateV1`](https://github.com/ethereum/execution-apis/blob/main/src/engine/simulation.md) (if supported) for advanced simulation features.

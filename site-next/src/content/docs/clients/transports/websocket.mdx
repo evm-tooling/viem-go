@@ -96,9 +96,10 @@ defer sub.Unsubscribe()`,
 
 ### Parameters
 
-### URL (optional)
+### URL
 
 - **Type:** `string`
+- **Optional**
 
 The WebSocket RPC endpoint URL.
 
@@ -124,10 +125,11 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `time.Duration`
 - **Default:** `10s`
+- **Optional**
 
 Request timeout for each JSON-RPC call.
 
@@ -148,10 +150,11 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### RetryCount (optional)
+### RetryCount
 
 - **Type:** `int`
 - **Default:** `3`
+- **Optional**
 
 Maximum number of retry attempts for retryable errors.
 
@@ -168,10 +171,11 @@ Maximum number of retry attempts for retryable errors.
   ]}
 />
 
-### RetryDelay (optional)
+### RetryDelay
 
 - **Type:** `time.Duration`
 - **Default:** `150ms`
+- **Optional**
 
 Base delay between retries. Retries use exponential backoff \(delay * 2^attempt\).
 
@@ -188,10 +192,11 @@ Base delay between retries. Retries use exponential backoff \(delay * 2^attempt\
   ]}
 />
 
-### KeepAlive (optional)
+### KeepAlive
 
 - **Type:** `*transport.KeepAliveConfig`
 - **Default:** `{ Enabled: true, Interval: 30s }`
+- **Optional**
 
 Keep-alive ping configuration.
 
@@ -211,10 +216,11 @@ Keep-alive ping configuration.
   ]}
 />
 
-### KeepAlive.Enabled (optional)
+### KeepAlive.Enabled
 
 - **Type:** `bool`
 - **Default:** `true`
+- **Optional**
 
 Whether keep-alive pings are enabled.
 
@@ -233,10 +239,11 @@ Whether keep-alive pings are enabled.
   ]}
 />
 
-### KeepAlive.Interval (optional)
+### KeepAlive.Interval
 
 - **Type:** `time.Duration`
 - **Default:** `30s`
+- **Optional**
 
 Interval between keep-alive pings.
 
@@ -256,10 +263,11 @@ Interval between keep-alive pings.
   ]}
 />
 
-### Reconnect (optional)
+### Reconnect
 
 - **Type:** `*transport.ReconnectConfig`
 - **Default:** `{ Enabled: true, MaxAttempts: 5, Delay: 2s }`
+- **Optional**
 
 Automatic reconnection configuration.
 
@@ -280,10 +288,11 @@ Automatic reconnection configuration.
   ]}
 />
 
-### Reconnect.Enabled (optional)
+### Reconnect.Enabled
 
 - **Type:** `bool`
 - **Default:** `true`
+- **Optional**
 
 Whether reconnection is enabled.
 
@@ -302,10 +311,11 @@ Whether reconnection is enabled.
   ]}
 />
 
-### Reconnect.MaxAttempts (optional)
+### Reconnect.MaxAttempts
 
 - **Type:** `int`
 - **Default:** `5`
+- **Optional**
 
 Maximum reconnection attempts.
 
@@ -325,10 +335,11 @@ Maximum reconnection attempts.
   ]}
 />
 
-### Reconnect.Delay (optional)
+### Reconnect.Delay
 
 - **Type:** `time.Duration`
 - **Default:** `2s`
+- **Optional**
 
 Delay between reconnection attempts.
 
@@ -348,9 +359,10 @@ Delay between reconnection attempts.
   ]}
 />
 
-### Methods (optional)
+### Methods
 
 - **Type:** `*transport.MethodFilter`
+- **Optional**
 
 Restrict which JSON-RPC methods can be called by this transport.
 
@@ -370,9 +382,10 @@ Restrict which JSON-RPC methods can be called by this transport.
   ]}
 />
 
-### Methods.Include (optional)
+### Methods.Include
 
 - **Type:** `[]string`
+- **Optional**
 
 If set, only methods in `Include` are allowed (except those blocked by `Exclude`).
 
@@ -391,9 +404,10 @@ If set, only methods in `Include` are allowed (except those blocked by `Exclude`
   ]}
 />
 
-### Methods.Exclude (optional)
+### Methods.Exclude
 
 - **Type:** `[]string`
+- **Optional**
 
 Methods to block (checked before `Include`).
 
@@ -412,10 +426,11 @@ Methods to block (checked before `Include`).
   ]}
 />
 
-### Key (optional)
+### Key
 
 - **Type:** `string`
 - **Default:** `"webSocket"`
+- **Optional**
 
 Transport identifier key.
 
@@ -432,10 +447,11 @@ Transport identifier key.
   ]}
 />
 
-### Name (optional)
+### Name
 
 - **Type:** `string`
 - **Default:** `"WebSocket JSON-RPC"`
+- **Optional**
 
 Human-readable transport name.
 

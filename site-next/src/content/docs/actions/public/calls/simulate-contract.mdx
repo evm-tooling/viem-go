@@ -3,13 +3,11 @@ title: simulateContract
 description: Simulates/validates a contract interaction
 ---
 
-# simulateContract
-
-Simulates/validates a contract interaction.
-
 This is useful for retrieving return data and revert reasons of contract write functions. This function does not require gas to execute and does not change the state of the blockchain. It is almost identical to ReadContract, but also supports contract write functions.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +21,8 @@ This is useful for retrieving return data and revert reasons of contract write f
 />
 
 ### Usage
+
+An example showing how to simulate a token transfer without sending a real transaction.
 
 <CodeGroup
   tabs={[
@@ -104,9 +104,12 @@ An object containing:
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The contract address.
 
@@ -132,9 +135,10 @@ result, err := public.SimulateContract(ctx, publicClient, public.SimulateContrac
   ]}
 />
 
-### ABI (required)
+### ABI
 
 - **Type:** `*abi.ABI`
+- **Required**
 
 The contract ABI.
 
@@ -157,9 +161,10 @@ result, err := public.SimulateContract(ctx, publicClient, public.SimulateContrac
   ]}
 />
 
-### FunctionName (required)
+### FunctionName
 
 - **Type:** `string`
+- **Required**
 
 The name of the function to call.
 
@@ -179,9 +184,10 @@ The name of the function to call.
   ]}
 />
 
-### Args (optional)
+### Args
 
 - **Type:** `[]any`
+- **Optional**
 
 The function arguments.
 
@@ -203,9 +209,10 @@ result, err := public.SimulateContract(ctx, publicClient, public.SimulateContrac
   ]}
 />
 
-### Account (optional)
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account attached to the call (msg.sender).
 
@@ -227,9 +234,10 @@ result, err := public.SimulateContract(ctx, publicClient, public.SimulateContrac
   ]}
 />
 
-### Value (optional)
+### Value
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The amount of wei to send with the call.
 
@@ -252,9 +260,10 @@ result, err := public.SimulateContract(ctx, publicClient, public.SimulateContrac
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to simulate at.
 
@@ -276,9 +285,10 @@ result, err := public.SimulateContract(ctx, publicClient, public.SimulateContrac
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to simulate at (e.g., "latest", "pending").
 
@@ -299,24 +309,29 @@ The block tag to simulate at (e.g., "latest", "pending").
   ]}
 />
 
-### StateOverride (optional)
+### StateOverride
 
 - **Type:** `types.StateOverride`
+- **Optional**
 
 State overrides for the call.
 
-### BlockOverrides (optional)
+### BlockOverrides
 
 - **Type:** `*types.BlockOverrides`
+- **Optional**
 
 Block-level overrides.
 
-### DataSuffix (optional)
+### DataSuffix
 
 - **Type:** `[]byte`
+- **Optional**
 
 Optional data to append to the calldata. Useful for adding a "domain" tag.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) with ABI-encoded data.

@@ -3,11 +3,9 @@ title: estimateMaxPriorityFeePerGas
 description: Returns an estimate for the max priority fee per gas for a transaction to be likely included in the next block
 ---
 
-# estimateMaxPriorityFeePerGas
-
-Returns an estimate for the max priority fee per gas (in wei) for a transaction to be likely included in the next block.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns an estimate for the max priority fee per gas (in wei) for a transaction 
 />
 
 ### Usage
+
+An example showing how to construct a public client and estimate the max priority fee per gas.
 
 <CodeGroup
   tabs={[
@@ -73,9 +73,12 @@ The max priority fee per gas in wei.
 
 ### Parameters
 
-### Block (optional)
+Configuration options accepted by this action.
+
+### Block
 
 - **Type:** `*types.Block`
+- **Optional**
 
 An optional pre-fetched block to use for fallback calculations. If nil, the latest block will be fetched when needed.
 
@@ -98,6 +101,8 @@ maxPriorityFeePerGas, err := public.EstimateMaxPriorityFeePerGas(ctx, publicClie
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 - [`eth_maxPriorityFeePerGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_maxpriorityfeepergas) (preferred)
 - [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) + [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice) (fallback)

@@ -189,9 +189,10 @@ for event := range events {
 
 ### Parameters
 
-### Transport (required)
+### Transport
 
 - **Type:** `transport.TransportFactory`
+- **Required**
 
 Transport factory for JSON-RPC calls. This parameter is required.
 
@@ -220,9 +221,10 @@ If your transport needs its own configuration, keep it in the transport construc
   ]}
 />
 
-### Chain (optional)
+### Chain
 
 - **Type:** `*chain.Chain`
+- **Optional**
 
 The Chain configuration (e.g. `definitions.Mainnet`) for the Public Client.
 
@@ -251,9 +253,10 @@ This influences defaults like `PollingInterval` (based on block time) and is use
   ]}
 />
 
-### Batch (optional)
+### Batch
 
 - **Type:** `*client.BatchOptions`
+- **Optional**
 
 Batch settings for the client (e.g. enabling multicall-style batching for some actions).
 
@@ -280,10 +283,11 @@ If you don’t need batching, omit this field.
 <span>Multicall batching (action-level) is separate from transport-level JSON-RPC batching. Both can be used together -- multicall aggregates contract reads into one <code>eth_call</code>, while JSON-RPC batching combines multiple RPC requests into a single HTTP request.</span>
 </Aside>
 
-### PollingInterval (optional)
+### PollingInterval
 
 - **Type:** `time.Duration`
 - **Default:** `min(max(chain.BlockTime/2, 500ms), 4s)` (defaults to `4s` when `Chain` is not provided)
+- **Optional**
 
 Frequency for polling-enabled behavior, including watch actions when not using subscriptions.
 
@@ -312,10 +316,11 @@ Frequency for polling-enabled behavior, including watch actions when not using s
   ]}
 />
 
-### CacheTime (optional)
+### CacheTime
 
 - **Type:** `time.Duration`
 - **Default:** `PollingInterval`
+- **Optional**
 
 Time that cached data will remain in memory.
 
@@ -346,10 +351,11 @@ In viem-go, if `CacheTime` is not set, it defaults to the client `PollingInterva
   ]}
 />
 
-### ExperimentalBlockTag (optional)
+### ExperimentalBlockTag
 
 - **Type:** `client.BlockTag`
 - **Default:** `client.BlockTagLatest`
+- **Optional**
 
 Default block tag used by actions when you don’t pass an explicit block tag.
 
@@ -372,10 +378,11 @@ Default block tag used by actions when you don’t pass an explicit block tag.
 <span>Changing the default block tag to anything other than <code>latest</code> (e.g. <code>safe</code> or <code>finalized</code>) may cause unexpected behavior with certain RPC providers that don't fully support these tags. Test with your provider before deploying.</span>
 </Aside>
 
-### Key (optional)
+### Key
 
 - **Type:** `string`
 - **Default:** `"public"`
+- **Optional**
 
 A key for the Client.
 
@@ -406,10 +413,11 @@ This is primarily useful when you have multiple clients in the same process and 
   ]}
 />
 
-### Name (optional)
+### Name
 
 - **Type:** `string`
 - **Default:** `"Public Client"`
+- **Optional**
 
 A human-readable name for the Client.
 

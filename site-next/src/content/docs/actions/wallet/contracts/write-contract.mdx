@@ -3,10 +3,6 @@ title: writeContract
 description: Executes a write function on a contract
 ---
 
-# writeContract
-
-Executes a write function on a contract.
-
 A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a Transaction is needed to be broadcast in order to change the state.
 
 Internally, encodes the function call using the ABI and delegates to [sendTransaction](/docs/actions/wallet/transactions/send-transaction) with the ABI-encoded data.
@@ -16,6 +12,8 @@ This internally sends a transaction – it does not validate if the contract wri
 :::
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -30,6 +28,7 @@ This internally sends a transaction – it does not validate if the contract wri
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -79,15 +78,25 @@ The transaction hash as a hex string.
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
+
+Control which account is used to send the contract write.
 
 - **Type:** `Account`
 
+- **Optional**
+
 The account to send from. If nil, uses the client's account.
 
-### Address (required)
+### Address
+
+Specify the contract address that will receive the write.
 
 - **Type:** `string`
+
+- **Required**
 
 The contract address to call.
 
@@ -107,9 +116,13 @@ The contract address to call.
   ]}
 />
 
-### ABI (required)
+### ABI
+
+Provide the ABI used to encode the contract call.
 
 - **Type:** `any` ([]byte, string, or *abi.ABI)
+
+- **Required**
 
 The contract ABI as JSON bytes, string, or a pre-parsed *abi.ABI.
 
@@ -143,9 +156,13 @@ hash, err := wallet.WriteContract(ctx, walletClient, wallet.WriteContractParamet
   ]}
 />
 
-### FunctionName (required)
+### FunctionName
+
+Choose which function from the ABI to call.
 
 - **Type:** `string`
+
+- **Required**
 
 The name of the function to call.
 
@@ -165,9 +182,13 @@ The name of the function to call.
   ]}
 />
 
-### Args (optional)
+### Args
+
+Pass the arguments for the selected function.
 
 - **Type:** `[]any`
+
+- **Optional**
 
 The function arguments.
 
@@ -187,9 +208,13 @@ The function arguments.
   ]}
 />
 
-### Value (optional)
+### Value
+
+Optionally send ETH alongside the contract write.
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 The amount of ETH to send with the transaction.
 

@@ -3,11 +3,9 @@ title: getFeeHistory
 description: Returns a collection of historical gas information
 ---
 
-# getFeeHistory
-
-Returns a collection of historical gas information.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns a collection of historical gas information.
 />
 
 ### Usage
+
+An example showing how to request recent fee history and inspect the returned statistics.
 
 <CodeGroup
   tabs={[
@@ -82,9 +82,12 @@ A formatted fee history containing:
 
 ### Parameters
 
-### BlockCount (required)
+Configuration options accepted by this action.
+
+### BlockCount
 
 - **Type:** `uint64`
+- **Required**
 
 The number of blocks in the requested range. Between 1 and 1024 blocks can be requested in a single query.
 
@@ -111,9 +114,10 @@ The number of blocks in the requested range. Between 1 and 1024 blocks can be re
   ]}
 />
 
-### RewardPercentiles (required)
+### RewardPercentiles
 
 - **Type:** `[]float64`
+- **Required**
 
 A monotonically increasing list of percentile values to sample from each block's effective priority fees per gas in ascending order, weighted by gas used.
 
@@ -140,9 +144,10 @@ A monotonically increasing list of percentile values to sample from each block's
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The highest block number of the requested range.
 
@@ -162,10 +167,11 @@ history, err := public.GetFeeHistory(ctx, publicClient, public.GetFeeHistoryPara
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
 - **Default:** `"latest"`
+- **Optional**
 
 The highest block tag of the requested range (e.g., "latest").
 
@@ -185,5 +191,7 @@ The highest block tag of the requested range (e.g., "latest").
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_feeHistory`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_feehistory)

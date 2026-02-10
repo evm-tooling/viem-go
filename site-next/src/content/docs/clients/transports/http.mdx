@@ -67,9 +67,10 @@ defer publicClient.Close()`,
 
 ### Parameters
 
-### URL (optional)
+### URL
 
 - **Type:** `string`
+- **Optional**
 
 The RPC endpoint URL.
 
@@ -95,10 +96,11 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `time.Duration`
 - **Default:** `10s`
+- **Optional**
 
 Request timeout for each JSON-RPC call.
 
@@ -119,10 +121,11 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### RetryCount (optional)
+### RetryCount
 
 - **Type:** `int`
 - **Default:** `3`
+- **Optional**
 
 Maximum number of retry attempts for retryable errors.
 
@@ -143,10 +146,11 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### RetryDelay (optional)
+### RetryDelay
 
 - **Type:** `time.Duration`
 - **Default:** `150ms`
+- **Optional**
 
 Base delay between retries. Retries use exponential backoff \(delay * 2^attempt\).
 
@@ -169,9 +173,10 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### Headers (optional)
+### Headers
 
 - **Type:** `map[string]string`
+- **Optional**
 
 Additional HTTP headers to include in requests (e.g. for authenticated endpoints).
 
@@ -194,9 +199,10 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### Batch (optional)
+### Batch
 
 - **Type:** `*transport.BatchConfig`
+- **Optional**
 
 Enables JSON-RPC request batching at the transport layer.
 
@@ -223,10 +229,11 @@ publicClient, err := client.CreatePublicClient(client.PublicClientConfig{
   ]}
 />
 
-### Batch.Enabled (optional)
+### Batch.Enabled
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Whether batching is enabled.
 
@@ -245,10 +252,11 @@ Whether batching is enabled.
   ]}
 />
 
-### Batch.BatchSize (optional)
+### Batch.BatchSize
 
 - **Type:** `int`
 - **Default:** `1000`
+- **Optional**
 
 Maximum number of requests per batch. If `0`, viem-go defaults it to `1000`.
 
@@ -268,9 +276,10 @@ Maximum number of requests per batch. If `0`, viem-go defaults it to `1000`.
   ]}
 />
 
-### Batch.Wait (optional)
+### Batch.Wait
 
 - **Type:** `time.Duration`
+- **Optional**
 
 Maximum time to wait before sending a batch (gives more time for concurrent requests to coalesce).
 
@@ -290,9 +299,10 @@ Maximum time to wait before sending a batch (gives more time for concurrent requ
   ]}
 />
 
-### Methods (optional)
+### Methods
 
 - **Type:** `*transport.MethodFilter`
+- **Optional**
 
 Restrict which JSON-RPC methods can be called by this transport.
 
@@ -312,9 +322,10 @@ Restrict which JSON-RPC methods can be called by this transport.
   ]}
 />
 
-### Methods.Include (optional)
+### Methods.Include
 
 - **Type:** `[]string`
+- **Optional**
 
 If set, only methods in `Include` are allowed (except those blocked by `Exclude`).
 
@@ -333,9 +344,10 @@ If set, only methods in `Include` are allowed (except those blocked by `Exclude`
   ]}
 />
 
-### Methods.Exclude (optional)
+### Methods.Exclude
 
 - **Type:** `[]string`
+- **Optional**
 
 Methods to block (checked before `Include`).
 
@@ -354,10 +366,11 @@ Methods to block (checked before `Include`).
   ]}
 />
 
-### Raw (optional)
+### Raw
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 When enabled, RPC error responses are returned as `(*transport.RPCResponse, nil)` instead of being wrapped into an error.
 
@@ -376,30 +389,33 @@ This can be useful if you want to inspect `resp.Error` yourself.
   ]}
 />
 
-### OnRequest (optional)
+### OnRequest
 
 - **Type:** `func(req any) error`
+- **Optional**
 
 Hook invoked before each request.
 
 <Aside type="note">
-This field exists on `HTTPTransportConfig`, but it is not currently invoked by the transport implementation.
+<span>This field exists on `HTTPTransportConfig`, but it is not currently invoked by the transport implementation.</span>
 </Aside>
 
-### OnResponse (optional)
+### OnResponse
 
 - **Type:** `func(resp any) error`
+- **Optional**
 
 Hook invoked after each response.
 
 <Aside type="note">
-This field exists on `HTTPTransportConfig`, but it is not currently invoked by the transport implementation.
+<span>This field exists on `HTTPTransportConfig`, but it is not currently invoked by the transport implementation.</span>
 </Aside>
 
-### Key (optional)
+### Key
 
 - **Type:** `string`
 - **Default:** `"http"`
+- **Optional**
 
 Transport identifier key.
 
@@ -416,10 +432,11 @@ Transport identifier key.
   ]}
 />
 
-### Name (optional)
+### Name
 
 - **Type:** `string`
 - **Default:** `"HTTP JSON-RPC"`
+- **Optional**
 
 Human-readable transport name.
 

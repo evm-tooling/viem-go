@@ -3,11 +3,9 @@ title: watchPendingTransactions
 description: Watches and returns pending transaction hashes
 ---
 
-# watchPendingTransactions
-
-Watches and returns pending transaction hashes.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -90,10 +88,13 @@ A channel that emits `WatchPendingTransactionsEvent` structs containing:
 
 ### Parameters
 
-### Batch (optional)
+Configuration options accepted by this action.
+
+### Batch
 
 - **Type:** `bool`
 - **Default:** `true`
+- **Optional**
 
 Whether or not to batch the transaction hashes between polling intervals.
 
@@ -119,10 +120,11 @@ Whether or not to batch the transaction hashes between polling intervals.
   ]}
 />
 
-### Poll (optional)
+### Poll
 
 - **Type:** `*bool`
 - **Default:** `false` for WebSocket Transports, `true` for non-WebSocket Transports
+- **Optional**
 
 Whether or not to use a polling mechanism instead of a WebSocket subscription.
 
@@ -149,10 +151,11 @@ events := public.WatchPendingTransactions(ctx, publicClient, public.WatchPending
   ]}
 />
 
-### PollingInterval (optional)
+### PollingInterval
 
 - **Type:** `time.Duration`
 - **Default:** Client's `PollingInterval`
+- **Optional**
 
 The interval between polls when using polling mode.
 
@@ -181,6 +184,8 @@ events := public.WatchPendingTransactions(ctx, publicClient, public.WatchPending
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 - When polling:
   - Calls [`eth_newPendingTransactionFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newpendingtransactionfilter) to initialize the filter

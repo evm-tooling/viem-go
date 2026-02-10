@@ -3,13 +3,9 @@ title: sendCallsSync
 description: Sends a batch of calls synchronously (EIP-5792)
 ---
 
-# sendCallsSync
-
-Requests the connected wallet to send a batch of calls, and waits for the calls to be included in a block. Returns the call status.
-
-This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
-
 ### Import
+
+Import the wallet actions package so you can call this action synchronously.
 
 <CodeGroup
   tabs={[
@@ -24,6 +20,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -78,10 +75,14 @@ The call status with receipts after the calls are included in a block.
 
 All parameters from [sendCalls](/docs/actions/wallet/calls/send-calls) are supported, plus:
 
-### PollingInterval (optional)
+### PollingInterval
+
+Control how frequently the call status is polled.
 
 - **Type:** `time.Duration`
 - **Default:** `client.PollingInterval()`
+
+- **Optional**
 
 The polling interval to poll for the calls status.
 
@@ -101,7 +102,9 @@ status, err := wallet.SendCallsSync(ctx, walletClient, wallet.SendCallsSyncParam
   ]}
 />
 
-### Status (optional)
+### Status
+
+Provide a custom function to decide when polling should stop.
 
 - **Type:** `func(*GetCallsStatusReturnType) bool`
 - **Default:** `statusCode == 200 || statusCode >= 300`
@@ -124,10 +127,12 @@ A function that determines whether to stop polling.
   ]}
 />
 
-### ThrowOnFailure (optional)
+### ThrowOnFailure
 
 - **Type:** `bool`
 - **Default:** `false`
+
+- **Optional**
 
 When true, returns an error if the call bundle fails.
 
@@ -145,10 +150,12 @@ When true, returns an error if the call bundle fails.
   ]}
 />
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `*time.Duration`
 - **Default:** `max(chain.blockTime * 3, 5000ms)`
+
+- **Optional**
 
 The timeout (in milliseconds) to wait for calls to be included in a block.
 

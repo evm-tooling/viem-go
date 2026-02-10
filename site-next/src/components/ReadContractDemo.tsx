@@ -98,6 +98,18 @@ export default function ReadContractDemo({
   const [error, setError] = React.useState<string | null>(null);
   const [exitCode, setExitCode] = React.useState<number | null>(null);
 
+  // Track light/dark mode (same pattern as useCodeTheme)
+  const [isLight, setIsLight] = React.useState(false);
+  React.useEffect(() => {
+    const html = document.documentElement;
+    setIsLight(html.classList.contains("light"));
+    const observer = new MutationObserver(() => {
+      setIsLight(html.classList.contains("light"));
+    });
+    observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
   const run = React.useCallback(async () => {
     setRunning(true);
     setError(null);
@@ -149,14 +161,14 @@ export default function ReadContractDemo({
   }, [rpcUrl, tokenAddress, userAddress]);
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/20 bg-gray-6/50">
-      <div className="flex items-center justify-between h-10 bg-dark-deep/60 border-b border-accent/10 px-2">
+    <div className="group/code my-6 rounded-lg overflow-hidden border-1 border-code-border bg-code-bg/80 transition-all duration-300 !hover:border-tertiary/30 hover:shadow-[0_0_20px_-1px_hsl(var(--tertiary)/0.15)]">
+      <div className="flex items-center justify-between h-10 bg-code-bg/50 border-b border-code-border px-2">
         <div className="flex items-stretch min-w-0">
-          <div className="flex items-center gap-2 px-3 border-r border-accent/10 text-[0.75rem] text-gray-4">
-            <span className="font-medium text-gray-2 truncate">{title}</span>
+          <div className="flex items-center gap-2 px-3 border-r border-code-border text-[0.75rem] text-foreground-muted">
+            <span className="font-medium text-foreground-secondary truncate">{title}</span>
           </div>
-          <div className="flex items-center px-3 text-[0.8125rem] font-medium text-gray-1 bg-gray-6/40 border-r border-accent/10">
-            <span className="text-[0.75rem] text-gray-4 mr-2">Go</span>
+          <div className="flex items-center px-3 text-[0.8125rem] font-medium text-foreground bg-code-bg-deep/20 border-r border-code-border">
+            <span className="text-[0.75rem] text-foreground-muted mr-2">Go</span>
             <span className="truncate">{fileName}</span>
           </div>
         </div>
@@ -166,7 +178,7 @@ export default function ReadContractDemo({
         </div>
       </div>
 
-      <div className="border-b border-accent/10">
+      <div className="border-b border-code-border">
         <Editor
           height={editorHeight}
           language="go"
@@ -184,8 +196,10 @@ export default function ReadContractDemo({
             wordWrap: "off",
             tabSize: 2,
             automaticLayout: true,
+            scrollbar: { vertical: "hidden", horizontal: "hidden", handleMouseWheel: false },
+            overviewRulerLanes: 0,
           }}
-          theme="viem-dark"
+          theme={isLight ? "viem-light" : "viem-dark"}
           beforeMount={(monaco) => {
             monaco.editor.defineTheme("viem-dark", {
               base: "vs-dark",
@@ -205,25 +219,43 @@ export default function ReadContractDemo({
                 "editorWhitespace.foreground": "#252d3a",
               },
             });
+            monaco.editor.defineTheme("viem-light", {
+              base: "vs",
+              inherit: true,
+              rules: [],
+              colors: {
+                "editor.background": "#eef1f6",
+                "editor.foreground": "#24292e",
+                "editorLineNumber.foreground": "#8b949e",
+                "editorLineNumber.activeForeground": "#24292e",
+                "editorGutter.background": "#eef1f6",
+                "editorCursor.foreground": "#2563eb",
+                "editor.selectionBackground": "#c8d7ea",
+                "editor.inactiveSelectionBackground": "#dce5f0",
+                "editorIndentGuide.background1": "#d0d7de",
+                "editorIndentGuide.activeBackground1": "#b8c0c8",
+                "editorWhitespace.foreground": "#d0d7de",
+              },
+            });
           }}
         />
       </div>
 
-      <div className="bg-dark-deep/70">
-        <div className="flex items-center justify-between px-3 py-2 border-b border-accent/10">
-          <div className="flex items-center gap-2 text-[0.75rem] text-gray-4 min-w-0">
-            <span className="font-medium text-gray-2">Terminal</span>
-            <span className="text-gray-4">•</span>
-            <span className="text-gray-4">docs runner</span>
-            <span className="text-gray-4">•</span>
-            <span className="text-gray-4">Command</span>
-            <code className="text-gray-2 bg-gray-6/40 border border-gray-5/40 rounded px-1.5 py-0.5 font-normal truncate">
+      <div className="bg-code-bg-deep/40">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-code-border">
+          <div className="flex items-center gap-2 text-[0.75rem] text-foreground-muted min-w-0">
+            <span className="font-medium text-foreground-secondary">Terminal</span>
+            <span className="text-foreground-muted">•</span>
+            <span className="text-foreground-muted">docs runner</span>
+            <span className="text-foreground-muted">•</span>
+            <span className="text-foreground-muted">Command</span>
+            <code className="text-foreground-secondary bg-code-bg-deep/30 border border-code-border rounded px-1.5 py-0.5 font-normal truncate">
               viem-go read-contract
             </code>
           </div>
           <button
             type="button"
-            className="h-[30px] px-3 rounded-md text-[0.75rem] font-medium bg-accent/30 hover:bg-accent/40 text-primary-foreground border border-accent/40 disabled:opacity-60 active:scale-[0.99] transition"
+            className="h-[30px] px-3 rounded-md text-[0.75rem] font-medium bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 disabled:opacity-60 active:scale-[0.99] transition"
             onClick={run}
             disabled={running}
           >
@@ -238,14 +270,14 @@ export default function ReadContractDemo({
             {lines.map((l, idx) => {
               const cls =
                 l.kind === "prompt"
-                  ? "text-emerald-300"
+                  ? "text-terminal-output"
                   : l.kind === "command"
-                    ? "text-gray-2"
+                    ? "text-foreground-secondary"
                   : l.kind === "stderr"
-                    ? "text-red-300"
+                    ? "text-destructive"
                     : l.kind === "meta"
-                      ? "text-gray-4"
-                      : "text-gray-2";
+                      ? "text-foreground-muted"
+                      : "text-foreground-secondary";
               return (
                 <div key={idx} className={cls}>
                   {l.text}
@@ -253,13 +285,13 @@ export default function ReadContractDemo({
               );
             })}
             {running ? (
-              <div className="text-gray-2">
+              <div className="text-foreground-secondary">
                 <span className="animate-cursor-blink">▍</span>
               </div>
             ) : null}
           </div>
           {!running && exitCode != null ? (
-            <div className="mt-2 text-gray-4 whitespace-pre">
+            <div className="mt-2 text-foreground-muted whitespace-pre">
               {exitCode === 0 ? "exit 0" : "exit 1"}
             </div>
           ) : null}
