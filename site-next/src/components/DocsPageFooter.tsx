@@ -30,7 +30,7 @@ export default function DocsPageFooter({
 
   return (
     <footer className="mt-10 max-w-[80ch]">
-       <div className="flex items-center justify-between text-sm text-foreground-muted mb-6 pb-4 border-b-2">
+       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm text-foreground-muted mb-6 pb-4 border-b-2">
         <a
           href={editUrl}
           target="_blank"
@@ -54,7 +54,7 @@ export default function DocsPageFooter({
           Suggest changes to this page
         </a>
         {lastModified && (
-          <span>Last updated: {formatDate(lastModified)}</span>
+          <span className="pl-5 sm:pl-0 text-sm">Last updated: {formatDate(lastModified)}</span>
         )}
       </div>
       {/* Prev / Next navigation */}
@@ -96,10 +96,7 @@ export default function DocsPageFooter({
       <div className="mt-8 border-t border-border/30" />
 
       {/* Copyright + social icons */}
-      <div className="mt-5 flex items-center justify-between pb-8">
-        <span className="text-xs text-foreground-muted">
-          &copy; Copyright {new Date().getFullYear()} viem-go. All rights reserved.
-        </span>
+      <div className="mt-5 flex flex-col items-center gap-4 pb-8">
         <div className="flex items-center gap-3">
           {/* Twitter / X */}
           <a
@@ -138,6 +135,9 @@ export default function DocsPageFooter({
             </svg>
           </a>
         </div>
+        <span className="text-xs text-foreground-muted text-center">
+          &copy; Copyright {new Date().getFullYear()} viem-go. All rights reserved.
+        </span>
       </div>
     </footer>
   );
