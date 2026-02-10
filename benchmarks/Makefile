@@ -8,8 +8,10 @@
 ##   make bench DRY_RUN=1                # dry run (no files)
 ##   make bench-single BENCH=abi         # single suite compare (Go+TS)
 ##   make bench-single BENCH=call RUNTIME=ts ITER=10 COUNT=1
+##   make chart SUITE=abi ITER=5000       # generate comparison chart for one suite
+##   make charts ITER=5000                # generate comparison charts for all suites
 
-.PHONY: help bench bench-single install clean clean-all
+.PHONY: help bench bench-single install clean clean-all chart charts
 
 # Benchmark params
 ITER ?= 100
@@ -33,6 +35,8 @@ help:
 	@echo "Targets:"
 	@echo "  make bench                         Full run (CPU suites ladder by default)"
 	@echo "  make bench-single BENCH=<suite>     Single suite (Go+TS by default)"
+	@echo "  make chart SUITE=<suite>            Generate comparison chart for one suite"
+	@echo "  make charts                         Generate comparison charts for all suites"
 	@echo "  make install                       Install TS deps"
 	@echo "  make clean                         Remove results artifacts"
 	@echo ""
@@ -63,8 +67,17 @@ endif
 		./bench.sh --type single --benchname $(BENCH) --iter $(ITER) --count $(COUNT) --isdryrun $(DRY_RUN); \
 	fi
 
+chart:
+ifndef SUITE
+	@echo "Error: SUITE is required (e.g. SUITE=abi, SUITE=address)"; exit 1
+endif
+	bun run generate-chart.ts --suite $(SUITE) --iter $(ITER)
+
+charts:
+	bun run generate-chart.ts --all --iter $(ITER)
+
 clean:
-	rm -rf results/*.txt results/*.json results/*.md results/charts/ results/*charts-iter*/ results/*go-results.iter*.txt results/*ts-results.iter*.txt results/*comparison.iter*.md results/*full-report.iter*.md results/single-run
+	rm -rf results/*.txt results/*.json results/*.md results/charts/ results/*charts-iter*/ results/*go-results.iter*.txt results/*ts-results.iter*.txt results/*comparison.iter*.md results/*full-report.iter*.md results/single-run results/bench-comparison-charts
 
 clean-all: clean
 	rm -rf typescript/node_modules

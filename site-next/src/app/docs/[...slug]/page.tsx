@@ -12,6 +12,8 @@ import ReadContractDemo from "@/components/ReadContractDemo";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/MdxTable";
 import DocsTable from "@/components/DocsTable";
 import FlowDiagram from "@/components/FlowDiagram";
+import BenchmarkSlider from "@/components/BenchmarkSlider";
+import BenchmarkViewer from "@/components/BenchmarkViewer";
 import TableOfContents from "@/components/TableOfContents";
 
 /** Generate a slug id from heading text (matches extractHeadings logic) */
@@ -68,6 +70,8 @@ const mdxComponents = {
   ReadContractDemo,
   DocsTable,
   FlowDiagram,
+  BenchmarkSlider,
+  BenchmarkViewer,
   h2: createHeading(2),
   h3: createHeading(3),
   h4: createHeading(4),
