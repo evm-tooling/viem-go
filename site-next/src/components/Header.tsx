@@ -51,7 +51,7 @@ export default function Header() {
       <div className="px-4 sm:px-6 h-12 flex items-center justify-between gap-3">
         {/* Left: logo area + search */}
         <div className="flex items-center min-w-0">
-          <div className={`flex items-center gap-3 sm:gap-4 shrink-0 ${pathname === "/" ? "" : "lg:w-[260px] xl:w-[320px] 2xl:w-[355px] xl:pl-14 2xl:pl-20"}`}>
+          <div className={`flex items-center gap-3 sm:gap-4 shrink-0 ${pathname === "/" ? "" : "lg:w-[260px] xl:w-[320px] 2xl:w-[355px] xl:pl-12"}`}>
             <SidebarToggle />
             <Link href="/" className="flex items-center gap-2 shrink-0">
               <Image
