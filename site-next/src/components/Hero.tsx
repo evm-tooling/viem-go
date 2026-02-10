@@ -170,37 +170,32 @@ export default function Hero() {
       </div>
 
       {/* Features marquee */}
-      <motion.div
+      <div
         ref={marqueeRef}
         className="relative overflow-hidden pb-10"
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        custom={3}
       >
         <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
           <motion.div
-            className="flex shrink-0 gap-5"
+            className="flex shrink-0 gap-4 sm:gap-5"
             animate={shouldReduceMotion || !isMarqueeInView ? {} : { x: ["0%", "-50%"] }}
             transition={shouldReduceMotion ? {} : { duration: 45, repeat: Infinity, ease: "linear" }}
           >
             {doubled.map((f, i) => (
               <Card
                 key={i}
-                variant="surfaceInteractive"
-                className="group relative shrink-0 w-[240px] sm:w-[280px] border-card-border/60 bg-card/40 sm:backdrop-blur-md p-4 sm:p-6 shadow-lg shadow-primary/5 duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+                variant="surface"
+                className="shrink-0 w-[220px] sm:w-[280px] border-card-border/60 bg-card/60 p-4 sm:p-6 shadow-md shadow-primary/5"
               >
-                <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-                <div className="mb-4 icon-box icon-box-primary h-10 w-10 rounded-lg transition-colors group-hover:bg-primary/20">
-                  <f.icon className="h-5 w-5" />
+                <div className="mb-3 sm:mb-4 icon-box icon-box-primary h-9 w-9 sm:h-10 sm:w-10 rounded-lg">
+                  <f.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
-                <h4 className="mb-2 text-foreground group-hover:text-primary transition-colors">{f.title}</h4>
-                <p className="text-sm text-foreground-secondary">{f.desc}</p>
+                <h4 className="mb-1.5 sm:mb-2 text-sm sm:text-base text-foreground">{f.title}</h4>
+                <p className="text-xs sm:text-sm text-foreground-secondary">{f.desc}</p>
               </Card>
             ))}
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

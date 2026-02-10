@@ -1,5 +1,4 @@
 'use client'
-import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
 import { Card } from "@/components/ui/card";
 import {
@@ -48,26 +47,21 @@ export default function FeaturesSection() {
       <div className="relative grid grid-cols-4 gap-6 max-w-[1120px] mx-auto max-lg:grid-cols-2 max-sm:grid-cols-1">
         {features.map((f, i) => (
           <AnimatedSection key={f.title} delay={i * 0.06}>
-            <Card asChild variant="surfaceInteractive" padding="md" className="group relative h-full duration-300">
-              <motion.div whileHover={{ y: -6 }}>
-                {/* Top accent bar */}
-                <div
-                  className={`absolute top-0 left-4 right-4 h-0.5 rounded-b-full ${
-                    f.accent === "tertiary" ? "bg-tertiary" : "bg-primary"
-                  } opacity-60`}
-                />
+            <Card variant="surfaceInteractive" padding="md" className="group relative h-full hover:-translate-y-1 transition-transform duration-200">
+              {/* Top accent bar */}
+              <div
+                className={`absolute top-0 left-4 right-4 h-0.5 rounded-b-full ${
+                  f.accent === "tertiary" ? "bg-tertiary" : "bg-primary"
+                } opacity-60`}
+              />
 
-                {/* Hover glow */}
-                <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-
-                <div className={`mb-4 icon-box h-12 w-12 rounded-xl transition-transform group-hover:scale-110 ${
-                  f.accent === "tertiary" ? "icon-box-tertiary" : "icon-box-primary"
-                }`}>
-                  <f.icon className="h-6 w-6" />
-                </div>
-                <h4 className="mb-2 text-foreground">{f.title}</h4>
-                <p className="text-sm text-foreground-secondary">{f.desc}</p>
-              </motion.div>
+              <div className={`mb-4 icon-box h-12 w-12 rounded-xl ${
+                f.accent === "tertiary" ? "icon-box-tertiary" : "icon-box-primary"
+              }`}>
+                <f.icon className="h-6 w-6" />
+              </div>
+              <h4 className="mb-2 text-foreground">{f.title}</h4>
+              <p className="text-sm text-foreground-secondary">{f.desc}</p>
             </Card>
           </AnimatedSection>
         ))}

@@ -1,5 +1,4 @@
 'use client'
-import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
 
 const metrics = [
@@ -9,19 +8,13 @@ const metrics = [
   { label: "Sig Recovery", value: 9, max: 32 },
 ];
 
-const RadialGauge = ({ label, value, max, delay }: { label: string; value: number; max: number; delay: number }) => {
+const RadialGauge = ({ label, value, max }: { label: string; value: number; max: number }) => {
   const percentage = (value / max) * 100;
   const circumference = 2 * Math.PI * 40;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      className="flex flex-col items-center gap-3"
-    >
+    <div className="flex flex-col items-center gap-3">
       <div className="relative h-28 w-28">
         <svg className="h-full w-full -rotate-90" viewBox="0 0 96 96">
           {/* Background circle */}
@@ -31,18 +24,16 @@ const RadialGauge = ({ label, value, max, delay }: { label: string; value: numbe
             stroke="hsl(var(--background-tertiary))"
             strokeWidth="6"
           />
-          {/* Animated progress */}
-          <motion.circle
+          {/* Progress circle - static, no animation */}
+          <circle
             cx="48" cy="48" r="40"
             fill="none"
             stroke="url(#gaugeGradient)"
             strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            whileInView={{ strokeDashoffset }}
-            viewport={{ once: true }}
-            transition={{ delay: delay + 0.2, duration: 1.2, ease: "easeOut" }}
+            strokeDashoffset={strokeDashoffset}
+            className="transition-[stroke-dashoffset] duration-1000 ease-out"
           />
           <defs>
             <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -56,7 +47,7 @@ const RadialGauge = ({ label, value, max, delay }: { label: string; value: numbe
         </div>
       </div>
       <span className="text-xs font-medium text-foreground-secondary text-center">{label}</span>
-    </motion.div>
+    </div>
   );
 };
 
@@ -79,17 +70,13 @@ const BenchmarkBigNumber = () => (
       </AnimatedSection>
 
       {/* Big hero number */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-center mb-4"
-      >
-        <span className="text-[8rem] sm:text-[10rem] font-black leading-none text-primary tracking-tighter">
-          20×
-        </span>
-      </motion.div>
+      <AnimatedSection>
+        <div className="text-center mb-4">
+          <span className="text-[8rem] sm:text-[10rem] font-black leading-none text-primary tracking-tighter">
+            20×
+          </span>
+        </div>
+      </AnimatedSection>
 
       <AnimatedSection delay={0.2}>
         <h2 className="text-center mb-3 text-2xl sm:text-3xl">
@@ -102,8 +89,8 @@ const BenchmarkBigNumber = () => (
 
       {/* Radial gauges */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 justify-items-center">
-        {metrics.map((m, i) => (
-          <RadialGauge key={m.label} {...m} delay={i * 0.12} />
+        {metrics.map((m) => (
+          <RadialGauge key={m.label} {...m} />
         ))}
       </div>
 
