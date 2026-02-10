@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/ethereum/go-ethereum v1.16.8
 	github.com/goccy/go-json v0.10.5
-	github.com/gorilla/websocket v1.4.2
+	github.com/gorilla/websocket v1.5.3
 	github.com/onsi/ginkgo v1.12.3
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
