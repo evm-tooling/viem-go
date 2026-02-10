@@ -50,33 +50,44 @@ export function extractHeadings(content: string): TocEntry[] {
   return headings;
 }
 
-export function getDocBySlug(slug: string): {
-  content: string;
-  meta: DocMeta;
-} | null {
-  // Try direct match then with .mdx extension
+/** Resolve the filesystem path for a doc slug, or null if not found. */
+export function getDocFilePath(slug: string): string | null {
   const possiblePaths = [
     path.join(CONTENT_DIR, `${slug}.mdx`),
     path.join(CONTENT_DIR, slug, "index.mdx"),
   ];
-
   for (const filePath of possiblePaths) {
-    if (fs.existsSync(filePath)) {
-      const raw = fs.readFileSync(filePath, "utf-8");
-      const { data, content } = matter(raw);
-      return {
-        content,
-        meta: {
-          title: data.title || slug,
-          description: data.description,
-          slug,
-          ...data,
-        },
-      };
-    }
+    if (fs.existsSync(filePath)) return filePath;
   }
-
   return null;
+}
+
+/** Get the last-modified date of a doc file. */
+export function getDocLastModified(slug: string): Date | null {
+  const filePath = getDocFilePath(slug);
+  if (!filePath) return null;
+  const stat = fs.statSync(filePath);
+  return stat.mtime;
+}
+
+export function getDocBySlug(slug: string): {
+  content: string;
+  meta: DocMeta;
+} | null {
+  const filePath = getDocFilePath(slug);
+  if (!filePath) return null;
+
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { data, content } = matter(raw);
+  return {
+    content,
+    meta: {
+      title: data.title || slug,
+      description: data.description,
+      slug,
+      ...data,
+    },
+  };
 }
 
 export function getAllDocSlugs(): string[] {

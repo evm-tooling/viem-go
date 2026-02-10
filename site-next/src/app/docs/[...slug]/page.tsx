@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { getDocBySlug, getAllDocSlugs, extractHeadings } from "@/lib/mdx";
+import { getDocBySlug, getAllDocSlugs, extractHeadings, getDocLastModified } from "@/lib/mdx";
+import { getAdjacentPages } from "@/lib/docs-nav";
 import { CodeGroup } from "@/components/CodePanel";
 import CopyButton from "@/components/CopyButton";
 import TerminalTyping from "@/components/TerminalTyping";
@@ -15,6 +16,7 @@ import FlowDiagram from "@/components/FlowDiagram";
 import BenchmarkSlider from "@/components/BenchmarkSlider";
 import BenchmarkViewer from "@/components/BenchmarkViewer";
 import TableOfContents from "@/components/TableOfContents";
+import DocsPageFooter from "@/components/DocsPageFooter";
 
 /** Generate a slug id from heading text (matches extractHeadings logic) */
 function slugify(text: string): string {
@@ -117,6 +119,8 @@ export default async function DocPage({ params }: PageProps) {
   }
 
   const headings = extractHeadings(doc.content);
+  const { prev, next } = getAdjacentPages(slugStr);
+  const lastModified = getDocLastModified(slugStr);
 
   return (
     <div className="flex gap-0">
@@ -136,6 +140,12 @@ export default async function DocPage({ params }: PageProps) {
             options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
           />
         </div>
+        <DocsPageFooter
+          slug={slugStr}
+          prev={prev}
+          next={next}
+          lastModified={lastModified}
+        />
       </article>
       <TableOfContents headings={headings} />
     </div>
