@@ -116,6 +116,10 @@ walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
   ]}
 />
 
+<Aside type="caution">
+<span>JSON-RPC accounts send signing requests to the connected node. Never use this approach with untrusted or public RPC endpoints -- the node has full control over signing. For production use, prefer local accounts instead.</span>
+</Aside>
+
 ### Local Accounts (Private Key, Mnemonic, etc)
 
 A Local Account performs signing of transactions & messages with a private key **before** executing a method over JSON-RPC.
@@ -198,6 +202,10 @@ const walletClient = createWalletClient({
 
 <Aside type="note">
 <span className="text-tertiary">By providing a local <b className="text-foreground">Account</b> (private key, mnemonic, or HD wallet), the client will sign transactions locally and send them via <b className="text-foreground">eth_sendRawTransaction</b> — no private keys are ever sent to the RPC node.</span>
+</Aside>
+
+<Aside type="tip">
+<span>Local accounts are the safest option for production use. Private keys never leave your application -- all signing happens in-process before the transaction is sent over the network.</span>
 </Aside>
 
 #### 2: Consume Wallet Actions

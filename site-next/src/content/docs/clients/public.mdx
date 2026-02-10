@@ -159,6 +159,10 @@ defer publicClient.Close()`,
   ]}
 />
 
+<Aside type="tip">
+<span>WebSocket transports enable real <code>eth_subscribe</code> subscriptions for watch actions, while HTTP transports fall back to polling. Prefer WebSocket for watch-heavy workloads to reduce latency and RPC calls.</span>
+</Aside>
+
 ### Watch actions (brief)
 
 The Public Client exposes watch helpers like `WatchBlockNumber` that stream events over a channel. Cancel the context to stop watching.
@@ -272,6 +276,10 @@ If you don’t need batching, omit this field.
   ]}
 />
 
+<Aside type="note">
+<span>Multicall batching (action-level) is separate from transport-level JSON-RPC batching. Both can be used together -- multicall aggregates contract reads into one <code>eth_call</code>, while JSON-RPC batching combines multiple RPC requests into a single HTTP request.</span>
+</Aside>
+
 ### PollingInterval (optional)
 
 - **Type:** `time.Duration`
@@ -359,6 +367,10 @@ Default block tag used by actions when you don’t pass an explicit block tag.
     }
   ]}
 />
+
+<Aside type="caution">
+<span>Changing the default block tag to anything other than <code>latest</code> (e.g. <code>safe</code> or <code>finalized</code>) may cause unexpected behavior with certain RPC providers that don't fully support these tags. Test with your provider before deploying.</span>
+</Aside>
 
 ### Key (optional)
 

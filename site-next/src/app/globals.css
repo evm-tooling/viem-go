@@ -1,61 +1,164 @@
 /* ============================================================
    MIDNIGHT EMBER THEME — Astro + Tailwind CSS v4
    
-   Existing color names mapped to Midnight Ember palette.
-   No component class changes needed.
+   Single dark theme. All components use semantic tokens only.
    ============================================================ */
 
    @import "tailwindcss";
 
+   /* ============================================================
+      HSL TOKEN DEFINITIONS
+      ============================================================ */
+   
+   :root {
+     /* ── Backgrounds (4-tier system) ──
+        dark          → deepest bg, page root
+        dark-light    → raised surfaces, alt sections
+        default       → cards, panels
+        default-light → elevated cards, hover states, table headers
+     ── */
+     --background:           225 30% 6%;    /* dark */
+     --background-secondary: 225 25% 10%;   /* dark-light */
+     --background-tertiary:  225 22% 14%;   /* default */
+     --background-elevated:  225 20% 18%;   /* default-light */
+   
+     /* ── Foreground / text ── */
+     --foreground:           210 25% 90%;
+     --foreground-secondary: 215 22% 68%;
+     --foreground-muted:     215 18% 46%;
+   
+     /* ── Brand primary — electric blue ── */
+     --primary:              215 85% 55%;
+     --primary-foreground:   0 0% 100%;
+     --primary-hover:        215 85% 48%;
+   
+     /* ── Secondary — dark surface ── */
+     --secondary:            225 25% 18%;
+     --secondary-foreground: 210 25% 85%;
+   
+     /* ── Tertiary / pop — hot orange ── */
+     --tertiary:             24 95% 55%;
+     --tertiary-foreground:  0 0% 100%;
+   
+     /* ── Surfaces ── */
+     --card:                 225 25% 10%;
+     --card-foreground:      210 25% 90%;
+     --card-border:          225 20% 18%;
+   
+     --muted:                225 20% 15%;
+     --muted-foreground:     220 12% 48%;
+   
+     --accent:               215 60% 18%;
+     --accent-foreground:    215 85% 70%;
+   
+     /* ── Semantic ── */
+     --destructive:          0 75% 55%;
+     --destructive-foreground: 0 0% 100%;
+     --success:              145 65% 42%;
+     --success-foreground:   0 0% 100%;
+     --warning:              38 90% 55%;
+     --warning-foreground:   38 90% 10%;
+   
+     /* ── Chrome ── */
+     --border:               225 20% 18%;
+     --input:                225 20% 15%;
+     --ring:                 215 85% 55%;
+     --radius:               0.5rem;
+   
+     /* ── Code blocks ── */
+     --code-bg:              225 30% 8%;
+     --code-border:          225 20% 16%;
+     --code-bg-deep:         225 32% 5%;
+   
+     /* ── Aside / callout accents ── */
+     --aside-note:           24 95% 55%;    /* tertiary orange */
+     --aside-tip:            145 65% 42%;   /* success green */
+     --aside-caution:        38 90% 55%;
+     --aside-danger:         0 75% 55%;
+   
+     /* ── Terminal prompt colors ── */
+     --terminal-user:        270 65% 65%;   /* purple prompt */
+     --terminal-path:        215 85% 70%;   /* blue path */
+     --terminal-command:     24 90% 62%;    /* orange command */
+     --terminal-output:      145 70% 55%;   /* green output */
+     --terminal-cursor:      215 85% 55%;   /* blue cursor (= primary) */
+   
+     /* ── Typography scale ── */
+     --fs-h1:    2.25rem;
+     --fs-h2:    1.75rem;
+     --fs-h3:    1.5rem;
+     --fs-h4:    1.25rem;
+     --fs-body:  0.95rem;
+     --fs-lead:  1.125rem;
+     --fs-subtitle: 1.35rem;
+     --fs-small: 0.875rem;
+     --fs-fine:  0.8125rem;
+     --lh-heading: 1.15;
+     --lh-body: 1.75rem;
+     --tracking-heading: -0.02em;
+   }
+   
+   /* ============================================================
+      TAILWIND v4 THEME — Map tokens → Tailwind classes
+      ============================================================ */
+   
    @theme inline {
-     /* ── Brand colors → Midnight Ember primary/tertiary ── */
-     --color-brand-navy: hsl(var(--primary-hover));       /* was #5a5785 → electric blue darker */
-     --color-brand-blue: hsl(var(--primary));              /* was #3991cd → electric blue */
-     --color-brand-blue-light: hsl(var(--accent-foreground)); /* was #7bbbe6 → lighter blue accent */
-     --color-accent: hsl(var(--primary));                  /* was #54b2f0 → primary blue */
-     --color-accent-low: hsl(var(--accent));               /* was #1a2942 → dark accent surface */
-     --color-accent-high: hsl(var(--primary-foreground));  /* was #7ecbf7 → bright on hover */
-   
-     /* ── Grays → Midnight Ember foreground scale ── */
-     --color-gray-1: hsl(var(--foreground));               /* was #e8eef4 → lightest text */
-     --color-gray-2: hsl(var(--foreground-secondary));     /* was #b8c5d4 → body text */
-     --color-gray-3: hsl(var(--foreground-muted));         /* was #8494a8 → muted text */
-     --color-gray-4: hsl(var(--muted-foreground));         /* was #5a6778 → dimmed text */
-     --color-gray-5: hsl(var(--border));                   /* was #3a4555 → borders/scrollbar */
-     --color-gray-6: hsl(var(--secondary));                /* was #252d3a → dark surface */
-     --color-dark-bg: hsl(var(--background));              /* was #171c24 → main background */
-     --color-dark-deep: hsl(var(--background));            /* was #0d1117 → deepest bg */
-   
-     /* ── Semantic colors (new, for components that want them) ── */
+     /* ── Colors (all reference HSL tokens) ── */
      --color-background: hsl(var(--background));
      --color-background-secondary: hsl(var(--background-secondary));
      --color-background-tertiary: hsl(var(--background-tertiary));
+     --color-background-elevated: hsl(var(--background-elevated));
+   
      --color-foreground: hsl(var(--foreground));
      --color-foreground-secondary: hsl(var(--foreground-secondary));
      --color-foreground-muted: hsl(var(--foreground-muted));
+   
      --color-primary: hsl(var(--primary));
      --color-primary-foreground: hsl(var(--primary-foreground));
      --color-primary-hover: hsl(var(--primary-hover));
+   
      --color-secondary: hsl(var(--secondary));
      --color-secondary-foreground: hsl(var(--secondary-foreground));
+   
      --color-tertiary: hsl(var(--tertiary));
      --color-tertiary-foreground: hsl(var(--tertiary-foreground));
+   
+     --color-card: hsl(var(--card));
+     --color-card-foreground: hsl(var(--card-foreground));
+     --color-card-border: hsl(var(--card-border));
+   
+     --color-muted: hsl(var(--muted));
+     --color-muted-foreground: hsl(var(--muted-foreground));
+   
+     --color-accent: hsl(var(--accent));
+     --color-accent-foreground: hsl(var(--accent-foreground));
+   
      --color-destructive: hsl(var(--destructive));
      --color-destructive-foreground: hsl(var(--destructive-foreground));
      --color-success: hsl(var(--success));
      --color-success-foreground: hsl(var(--success-foreground));
      --color-warning: hsl(var(--warning));
      --color-warning-foreground: hsl(var(--warning-foreground));
-     --color-muted: hsl(var(--muted));
-     --color-muted-foreground: hsl(var(--muted-foreground));
-     --color-card: hsl(var(--card));
-     --color-card-foreground: hsl(var(--card-foreground));
-     --color-card-border: hsl(var(--card-border));
-     --color-code-bg: hsl(var(--code-bg));
-     --color-code-border: hsl(var(--code-border));
+   
      --color-border: hsl(var(--border));
      --color-input: hsl(var(--input));
      --color-ring: hsl(var(--ring));
+   
+     --color-code-bg: hsl(var(--code-bg));
+     --color-code-border: hsl(var(--code-border));
+     --color-code-bg-deep: hsl(var(--code-bg-deep));
+   
+     --color-aside-note: hsl(var(--aside-note));
+     --color-aside-tip: hsl(var(--aside-tip));
+     --color-aside-caution: hsl(var(--aside-caution));
+     --color-aside-danger: hsl(var(--aside-danger));
+   
+     /* Terminal prompt colors */
+     --color-terminal-user: hsl(var(--terminal-user));
+     --color-terminal-path: hsl(var(--terminal-path));
+     --color-terminal-command: hsl(var(--terminal-command));
+     --color-terminal-output: hsl(var(--terminal-output));
+     --color-terminal-cursor: hsl(var(--terminal-cursor));
    
      /* Font families */
      --font-sans: var(--font-inter);
@@ -113,98 +216,6 @@
    }
    
    /* ============================================================
-      MIDNIGHT EMBER — HSL Token Definitions
-      ============================================================ */
-   
-   :root {
-     --background:           225 30% 6%;
-     --background-secondary: 225 25% 10%;
-     --background-tertiary:  225 22% 14%;
-     --foreground:           210 25% 90%;
-    --foreground-secondary: 215 22% 68%;
-    --foreground-muted:     215 18% 46%;
-     --primary:              215 85% 55%;
-     --primary-foreground:   0 0% 100%;
-     --primary-hover:        215 85% 48%;
-     --secondary:            225 25% 18%;
-     --secondary-foreground: 210 25% 85%;
-     --tertiary:             24 95% 55%;
-     --tertiary-foreground:  0 0% 100%;
-     --card:                 225 25% 10%;
-     --card-foreground:      210 25% 90%;
-     --card-border:          225 20% 18%;
-     --muted:                225 20% 15%;
-     --muted-foreground:     220 12% 48%;
-     --accent:               215 60% 18%;
-     --accent-foreground:    215 85% 70%;
-     --destructive:          0 75% 55%;
-     --destructive-foreground: 0 0% 100%;
-     --success:              145 65% 42%;
-     --success-foreground:   0 0% 100%;
-     --warning:              38 90% 55%;
-     --warning-foreground:   38 90% 10%;
-     --border:               225 20% 18%;
-     --input:                225 20% 15%;
-     --ring:                 215 85% 55%;
-     --radius:               0.5rem;
-     --code-bg:              225 30% 8%;
-     --code-border:          225 20% 16%;
-
-    /* ============================================================
-       Typography scale (app-wide)
-       ============================================================ */
-    --fs-h1:2.25rem;
-    --fs-h2: 1.75rem;
-    --fs-h3: 1.5rem;
-    --fs-h4: 1.25rem;
-    --fs-body: 0.95rem;
-    --fs-lead: 1.125rem;
-    --fs-subtitle: 1.35rem;
-    --fs-small: 0.875rem;
-    --fs-fine: 0.8125rem;
-    --lh-heading: 1.15;
-    --lh-body: 1.75rem;
-    --tracking-heading: -0.02em;
-   }
-
-  /* Light theme overrides (works with `html.light` or `[data-theme="light"]`). */
-  html.light,
-  [data-theme="light"] {
-    color-scheme: light;
-    --background:           210 40% 98%;
-    --background-secondary: 210 35% 96%;
-    --background-tertiary:  210 25% 93%;
-    --foreground:           225 15% 12%;
-    --foreground-secondary: 225 10% 30%;
-    --foreground-muted:     225 8% 45%;
-    --primary:              215 85% 45%;
-    --primary-foreground:   0 0% 100%;
-    --primary-hover:        215 85% 38%;
-    --secondary:            210 25% 92%;
-    --secondary-foreground: 225 15% 16%;
-    --tertiary:             24 90% 50%;
-    --tertiary-foreground:  0 0% 100%;
-    --card:                 0 0% 100%;
-    --card-foreground:      225 15% 12%;
-    --card-border:          220 18% 85%;
-    --muted:                210 25% 92%;
-    --muted-foreground:     225 8% 45%;
-    --accent:               215 55% 92%;
-    --accent-foreground:    215 85% 35%;
-    --destructive:          0 75% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --success:              145 65% 35%;
-    --success-foreground:   0 0% 100%;
-    --warning:              38 90% 45%;
-    --warning-foreground:   38 90% 10%;
-    --border:               220 18% 85%;
-    --input:                220 18% 90%;
-    --ring:                 215 85% 45%;
-    --code-bg:              210 30% 96%;
-    --code-border:          220 18% 85%;
-  }
-   
-   /* ============================================================
       BASE STYLES
       ============================================================ */
    
@@ -213,374 +224,619 @@
    }
    
    body {
-    background: var(--color-background);
-    color: var(--color-foreground);
+     background: var(--color-background);
+     color: var(--color-foreground);
      font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
      -webkit-font-smoothing: antialiased;
      -moz-osx-font-smoothing: grayscale;
    }
-
-  /* ============================================
-     APP TYPOGRAPHY (outside `.docs-prose`)
-     ============================================ */
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    color: var(--color-foreground);
-    font-weight: 650;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-heading);
-  }
-
-  h1 { font-size: var(--fs-h1); }
-  h2 { font-size: var(--fs-h2); }
-  h3 { font-size: var(--fs-h3); }
-  h4 { font-size: var(--fs-h4); }
-
-  p {
-    color: var(--color-foreground-secondary);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-  }
-
-  small {
-    color: var(--color-foreground-muted);
-    font-size: var(--fs-fine);
-    line-height: 1.4;
-  }
-
-  /* Utility classes for explicit typography roles */
-  @utility heading-1 {
-    font-size: var(--fs-h1);
-    font-weight: 750;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-heading);
-    color: var(--color-foreground);
-  }
-
-  @utility heading-2 {
-    font-size: var(--fs-h2);
-    font-weight: 700;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-heading);
-    color: var(--color-foreground);
-  }
-
-  @utility heading-3 {
-    font-size: var(--fs-h3);
-    font-weight: 650;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-heading);
-    color: var(--color-foreground);
-  }
-
-  @utility heading-4 {
-    font-size: var(--fs-h4);
-    font-weight: 650;
-    line-height: var(--lh-heading);
-    color: var(--color-foreground);
-  }
-
-  @utility text-body {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: var(--color-foreground-secondary);
-  }
-
-  @utility text-lead {
-    font-size: var(--fs-lead);
-    line-height: 1.7;
-    color: var(--color-foreground-secondary);
-  }
-
-  @utility text-fine {
-    font-size: var(--fs-fine);
-    line-height: 1.4;
-    color: var(--color-foreground-muted);
-  }
    
    * {
-     border-color: var(--color-gray-5);
+     border-color: var(--color-border);
    }
    
-   /* Scrollbar styling */
+   /* ── Heading defaults ── */
+   h1, h2, h3, h4 {
+     color: var(--color-foreground);
+     font-weight: 650;
+     line-height: var(--lh-heading);
+     letter-spacing: var(--tracking-heading);
+   }
+   h1 { font-size: var(--fs-h1); }
+   h2 { font-size: var(--fs-h2); }
+   h3 { font-size: var(--fs-h3); }
+   h4 { font-size: var(--fs-h4); }
+   
+   p {
+     color: var(--color-foreground-secondary);
+     font-size: var(--fs-body);
+     line-height: var(--lh-body);
+   }
+   
+   small {
+     color: var(--color-foreground-muted);
+     font-size: var(--fs-fine);
+     line-height: 1.4;
+   }
+   
+   /* ============================================================
+      TYPOGRAPHY UTILITY CLASSES
+      ============================================================ */
+   
+   @utility heading-1 {
+     font-size: var(--fs-h1);
+     font-weight: 750;
+     line-height: var(--lh-heading);
+     letter-spacing: var(--tracking-heading);
+     color: var(--color-foreground);
+   }
+   
+   @utility heading-2 {
+     font-size: var(--fs-h2);
+     font-weight: 700;
+     line-height: var(--lh-heading);
+     letter-spacing: var(--tracking-heading);
+     color: var(--color-foreground);
+   }
+   
+   @utility heading-3 {
+     font-size: var(--fs-h3);
+     font-weight: 650;
+     line-height: var(--lh-heading);
+     letter-spacing: var(--tracking-heading);
+     color: var(--color-foreground);
+   }
+   
+   @utility heading-4 {
+     font-size: var(--fs-h4);
+     font-weight: 650;
+     line-height: var(--lh-heading);
+     color: var(--color-foreground);
+   }
+   
+   @utility text-body {
+     font-size: var(--fs-body);
+     line-height: var(--lh-body);
+     color: var(--color-foreground-secondary);
+   }
+   
+   @utility text-lead {
+     font-size: var(--fs-lead);
+     line-height: 1.7;
+     color: var(--color-foreground-secondary);
+   }
+   
+   @utility text-fine {
+     font-size: var(--fs-fine);
+     line-height: 1.4;
+     color: var(--color-foreground-muted);
+   }
+   
+   /* ============================================================
+      SURFACE & GRADIENT UTILITIES
+      ============================================================ */
+   
+   @utility text-gradient-primary {
+     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--tertiary)));
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
+     background-clip: text;
+   }
+   
+   @utility hover-glow {
+     transition: box-shadow 0.2s ease;
+   }
+   @utility hover-glow-sm {
+     &:hover {
+       box-shadow: 0 0 12px -3px hsl(var(--primary) / 0.2);
+     }
+   }
+   @utility hover-glow-md {
+     &:hover {
+       box-shadow: 0 0 20px -4px hsl(var(--primary) / 0.25);
+     }
+   }
+   @utility hover-glow-lg {
+     &:hover {
+       box-shadow: 0 0 20px -2px hsl(var(--primary) / 0.3), 0 0 0 1px hsl(var(--primary) / 0.15);
+     }
+   }
+   
+   /* ── Badge presets ── */
+   @utility section-badge {
+     display: inline-block;
+     border-radius: 9999px;
+     border-width: 1px;
+     padding: 0.25rem 1rem;
+     font-size: 0.75rem;
+     font-weight: 600;
+     text-transform: uppercase;
+     letter-spacing: 0.05em;
+   }
+   @utility section-badge-primary {
+     border-color: hsl(var(--primary) / 0.3);
+     background: hsl(var(--primary) / 0.1);
+     color: hsl(var(--primary));
+   }
+   @utility section-badge-tertiary {
+     border-color: hsl(var(--tertiary) / 0.3);
+     background: hsl(var(--tertiary) / 0.1);
+     color: hsl(var(--tertiary));
+   }
+   
+   /* ── Icon container presets ── */
+   @utility icon-box {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 0.75rem;
+   }
+   @utility icon-box-primary {
+     background: hsl(var(--primary) / 0.1);
+     color: hsl(var(--primary));
+   }
+   @utility icon-box-tertiary {
+     background: hsl(var(--tertiary) / 0.1);
+     color: hsl(var(--tertiary));
+   }
+   
+   /* ── Glow orb presets (decorative background blobs) ── */
+   @utility glow-orb {
+     position: absolute;
+     border-radius: 9999px;
+     pointer-events: none;
+     background: radial-gradient(circle, hsl(var(--primary) / 0.35), transparent 70%);
+   }
+   @utility glow-orb-tertiary {
+     position: absolute;
+     border-radius: 9999px;
+     pointer-events: none;
+     background: radial-gradient(circle, hsl(var(--tertiary) / 0.04), transparent 70%);
+   }
+   @utility glow-orb-ellipse {
+     position: absolute;
+     border-radius: 9999px;
+     pointer-events: none;
+     background: radial-gradient(ellipse, hsl(var(--primary) / 0.5), transparent 70%);
+   }
+   
+   /* ── Section background presets ── */
+   @utility section-bg-dark {
+     background: var(--color-background);
+   }
+   @utility section-bg-dark-light {
+     background: var(--color-background-secondary);
+   }
+   @utility section-bg-default {
+     background: var(--color-background-tertiary);
+   }
+   @utility section-bg-default-light {
+     background: var(--color-background-elevated);
+   }
+   @utility section-bg-gradient {
+     background: linear-gradient(to bottom, hsl(var(--background) / 0.3), transparent);
+   }
+   
+  /* ── Aside / callout presets ── */
+  .aside-note {
+    border-color: hsl(var(--aside-note) / 0.5);
+    background: hsl(var(--aside-note) / 0.2);
+    & .aside-icon { color: hsl(var(--aside-note)); }
+    & .aside-content { color: hsl(38 90% 80%); }
+  }
+  .aside-tip {
+    border-color: hsl(var(--aside-tip) / 0.25);
+    background: hsl(var(--aside-tip) / 0.1);
+    & .aside-icon { color: hsl(var(--aside-tip)); }
+    & .aside-content { color: hsl(var(--aside-tip)); }
+  }
+  .aside-caution {
+    border-color: hsl(var(--aside-caution) / 0.25);
+    background: hsl(var(--aside-caution) / 0.1);
+    & .aside-icon { color: hsl(var(--aside-caution)); }
+    & .aside-content { color: hsl(var(--aside-caution)); }
+  }
+  .aside-danger {
+    border-color: hsl(var(--aside-danger) / 0.25);
+    background: hsl(var(--aside-danger) / 0.1);
+    & .aside-icon { color: hsl(var(--aside-danger)); }
+    & .aside-content { color: hsl(var(--aside-danger)); }
+  }
+   
+   /* ── Diff line presets ── */
+   @utility diff-added {
+     background: hsl(var(--success) / 0.1);
+   }
+   @utility diff-removed {
+     background: hsl(var(--destructive) / 0.1);
+   }
+   
+   /* ============================================================
+      SCROLLBAR
+      ============================================================ */
+   
    ::-webkit-scrollbar { width: 6px; height: 6px; }
    ::-webkit-scrollbar-track { background: transparent; }
-   ::-webkit-scrollbar-thumb { background: var(--color-gray-5); border-radius: 3px; }
-   ::-webkit-scrollbar-thumb:hover { background: var(--color-gray-4); }
-   * { scrollbar-width: thin; scrollbar-color: var(--color-gray-5) transparent; }
+   ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+   ::-webkit-scrollbar-thumb:hover { background: var(--color-muted-foreground); }
+   * { scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
    
-   /* Hide scrollbar utility */
    .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
    .hide-scrollbar::-webkit-scrollbar { display: none; }
-
-   /* Cursor blink animation */
+   
+   /* ============================================================
+      EXTRA ANIMATIONS
+      ============================================================ */
+   
    @keyframes cursorBlink {
      0%, 100% { opacity: 1; }
      50% { opacity: 0; }
    }
    .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
    
-   /* Sidebar slide-in */
    @keyframes slideIn {
      from { transform: translateX(-100%); }
      to { transform: translateX(0); }
    }
    .animate-slide-in { animation: slideIn 0.2s ease-out; }
    
-   /* ============================================
-      DOCS PROSE STYLING
-      ============================================ */
-   
-   .docs-prose {
-    color: var(--color-foreground-secondary);
-    line-height: var(--lh-body);
-    font-size: var(--fs-body);
-   }
-   
-   .docs-prose h1,
-   .docs-prose h2,
-   .docs-prose h3,
-   .docs-prose h4 {
-    color: var(--color-foreground);
-    font-weight: 700;
-    line-height: var(--lh-heading);
-    letter-spacing: var(--tracking-heading);
-     scroll-margin-top: 4rem;
-   }
-   
-  .docs-prose h1 { font-size: var(--fs-h1); margin-top: 0; margin-bottom: 1rem; }
-   .docs-prose h2 {
-    font-size: var(--fs-h2); margin-top: 2.5rem; margin-bottom: 1rem;
-     padding-bottom: 0.5rem;
-    border-bottom: 1px solid hsl(var(--primary) / 0.12);
-   }
-  .docs-prose h3 { font-size: var(--fs-h3); margin-top: 2rem; margin-bottom: 0.75rem; }
-  .docs-prose h4 { font-size: var(--fs-h4); margin-top: 1.5rem; margin-bottom: 0.5rem; }
-   
-  .docs-prose p { margin-bottom: 1.25rem; color: var(--color-foreground-secondary); font-size: var(--fs-body); line-height: var(--lh-body); }
-  
-   
-  .docs-prose a { color: var(--color-primary); text-decoration: none; transition: color 0.15s ease, text-shadow 0.15s ease; }
-  .docs-prose a:hover { text-decoration: underline; color: var(--color-primary-hover); text-shadow: 0 0 12px hsl(var(--primary) / 0.35); }
-
-  /* Heading anchor icon (appears on hover) */
-  .docs-prose .heading-anchor { color: var(--color-foreground); text-decoration: none; transition: color 0.15s ease; }
-  .docs-prose .heading-anchor:hover { color: var(--color-foreground); text-decoration: none; text-shadow: none; }
-  .docs-prose .heading-anchor .anchor-icon {
-    opacity: 0;
-    margin-left: 0.35em;
-    color: var(--color-foreground-muted);
-    transition: opacity 0.15s ease, color 0.15s ease;
-    font-weight: 400;
-  }
-  .docs-prose h2:hover .anchor-icon,
-  .docs-prose h3:hover .anchor-icon,
-  .docs-prose h4:hover .anchor-icon {
-    opacity: 1;
-  }
-  .docs-prose .heading-anchor:hover .anchor-icon {
-    opacity: 1;
-    color: var(--color-primary);
-  }
-   
-  .docs-prose strong { color: hsl(215 85% 75%); font-weight: 650; }
-   
-  
-  .docs-prose ul, .docs-prose ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
-  .docs-prose ul { list-style: disc; }
-  .docs-prose ol { list-style: decimal; }
- .docs-prose li { margin-bottom: 0.375rem; color: var(--color-foreground-secondary); line-height: var(--lh-body); }
- .docs-prose li::marker { color: var(--color-foreground-muted); }
-  
-   .docs-prose :not(pre) > code {
-    background: hsl(var(--primary) / 0.08);
-    border: 1px solid hsl(var(--primary) / 0.15);
-    color: hsl(215 85% 75%);
-     padding: 0.15em 0.4em;
-     border-radius: 0.25rem;
-     font-size: 0.875em;
-     font-weight: 600;
-   }
-   
-   .docs-prose pre {
-    background: hsl(225 35% 7%);
-    border: 1px solid hsl(var(--primary) / 0.1);
-     border-radius: 0.5rem;
-     padding: 1rem 1.25rem;
-     margin: 1.5rem 0;
-     overflow-x: auto;
-     font-size: 0.875rem;
-     line-height: 1.6;
-     font-family: var(--font-mono), ui-monospace, monospace;
-     box-shadow: 0 2px 12px -4px hsl(var(--primary) / 0.08);
-   }
-  .docs-prose pre code { background: transparent; border: none; padding: 0; font-size: inherit; color: hsl(210 25% 88%); }
-   
-   .docs-prose blockquote {
-    border-left: 3px solid hsl(var(--primary) / 0.6);
-     padding: 0.75rem 1.25rem;
-     margin: 1.5rem 0;
-    background: hsl(var(--primary) / 0.06);
-     border-radius: 0 0.5rem 0.5rem 0;
-    color: var(--color-foreground-secondary);
-   }
-  .docs-prose blockquote p { margin-bottom: 0; color: var(--color-foreground-secondary); }
-   
-  /* Table styling is handled by MdxTable component — 
-    only reset display to avoid markdown-to-html quirks */
-  .docs-prose table {
-    display: table; width: 100%;
-    border-collapse: collapse; margin: 0;
-    font-size: var(--fs-small);
-    border: none;
-  }
-  .docs-prose thead { display: table-header-group; }
-  .docs-prose tbody { display: table-row-group; }
-  .docs-prose tr { display: table-row; }
-  .docs-prose th, .docs-prose td {
-    display: table-cell;
-    border: none;
-  }
-  .docs-prose tr:last-child td { border-bottom: none; }
-  
- .docs-prose hr { border: none; border-top: 1px solid hsl(var(--border) / 1); margin: 2rem 0; }
-  .docs-prose img { border-radius: 0.5rem; border: 1px solid hsl(var(--border) / 1); margin: 1.5rem 0; max-width: 100%; }
-   
-   .docs-prose details {
-    background: var(--color-card);
-    border: 1px solid var(--color-card-border);
-     border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;
-   }
-  .docs-prose summary { cursor: pointer; color: var(--color-foreground); font-weight: 650; }
-
-  .docs-prose .docs-media {
-    margin: 1.5rem 0;
-  }
-  .docs-prose .docs-media--md {
-    max-width: 720px;
-  }
-
-  /* Feature list table used in some MDX files */
-  .docs-prose .docs-feature-table {
-    border: 1px solid var(--color-card-border);
-    background: var(--color-card);
-    border-radius: 0.75rem;
-    overflow: hidden;
-    margin: 1.5rem 0;
-  }
-
-  .docs-prose .docs-feature-table__header {
-    display: flex;
-    padding: 0.75rem 1.25rem;
-    background: hsl(var(--background-tertiary) / 0.55);
-    border-bottom: 1px solid hsl(var(--border) / 1);
-    font-weight: 700;
-    color: var(--color-foreground);
-    font-size: var(--fs-small);
-  }
-
-  .docs-prose .docs-feature-table__row {
-    display: flex;
-    padding: 0.625rem 1.25rem;
-    border-bottom: 1px solid hsl(var(--border) / 0.6);
-    color: var(--color-foreground-secondary);
-    font-size: var(--fs-small);
-  }
-  .docs-prose .docs-feature-table__row:last-child { border-bottom: none; }
-  .docs-prose .docs-feature-table__name { flex: 1; }
-  .docs-prose .docs-feature-table__status { font-weight: 650; }
-  .docs-prose .docs-feature-table__status--complete { color: var(--color-success); }
-
-  /* Splash/landing MDX (scoped so it can't affect app pages) */
-  .docs-prose .landing-container {
-    color: var(--color-foreground-secondary);
-  }
-  /* Landing section headers should read like H1 + subtitle */
-  .docs-prose .landing-container .section-header h1,
-  .docs-prose .landing-container .section-header h2 {
-    font-size: var(--fs-h1);
-    margin: 0 0 0.75rem 0;
-    text-align: center;
-  }
-  :where(.docs-prose .landing-container .section-header p) {
-    font-size: var(--fs-subtitle);
-    line-height: 1.65;
-    color: var(--color-foreground-secondary);
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  .docs-prose .landing-container h3 { font-size: var(--fs-h4); }
-  .docs-prose .landing-container p { color: var(--color-foreground-secondary); }
-
-  .docs-prose .landing-container a.primary,
-  .docs-prose .landing-container a.secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.75rem;
-    font-weight: 650;
-    text-decoration: none;
-    padding: 0.65rem 1rem;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-  }
-  .docs-prose .landing-container a.primary {
-    background: var(--color-primary);
-    color: var(--color-primary-foreground);
-  }
-  .docs-prose .landing-container a.primary:hover { background: var(--color-primary-hover); }
-  .docs-prose .landing-container a.secondary {
-    background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-foreground);
-  }
-  .docs-prose .landing-container a.secondary:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: hsl(var(--background-tertiary) / 0.4);
-  }
-
-  .docs-prose .landing-container .feature-box,
-  .docs-prose .landing-container .info-card,
-  .docs-prose .landing-container .comparison-card,
-  .docs-prose .landing-container a.info-card.link-card,
-  .docs-prose .landing-container a.support-link {
-    border: 1px solid var(--color-card-border);
-    background: var(--color-card);
-    border-radius: 0.75rem;
-    padding: 1.25rem;
-  }
-   
    /* ============================================================
-      CUSTOM UTILITIES
+      DOCS PROSE — Base class for MDX content
+      
+      Usage: <div class="docs-prose">…MDX output…</div>
+      All elements styled via nested selectors using semantic tokens.
       ============================================================ */
    
-  @utility text-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--tertiary)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+   .docs-prose {
+     color: hsl(var(--foreground-secondary));
+     font-size: var(--fs-body);
+     line-height: var(--lh-body);
+     max-width: 85ch;
+   
+     /* ── Headings ── */
+     & h1 {
+       font-size: var(--fs-h1);
+       font-weight: 750;
+       line-height: var(--lh-heading);
+       letter-spacing: var(--tracking-heading);
+       color: hsl(var(--foreground));
+       margin-top: 0;
+       margin-bottom: 1.5rem;
+     }
+   
+     & h2 {
+       font-size: var(--fs-h2);
+       font-weight: 700;
+       line-height: var(--lh-heading);
+       letter-spacing: var(--tracking-heading);
+       color: hsl(var(--foreground));
+       margin-top: 3rem;
+       margin-bottom: 1rem;
+       padding-bottom: 0.5rem;
+       border-bottom: 1px solid hsl(var(--border));
+     }
+   
+     & h3 {
+       font-size: var(--fs-h3);
+       font-weight: 650;
+       line-height: var(--lh-heading);
+       letter-spacing: var(--tracking-heading);
+       color: hsl(var(--color-foreground));
+       margin-top: 2.25rem;
+       margin-bottom: 0.75rem;
+     }
+   
+     & h4 {
+       font-size: var(--fs-h4);
+       font-weight: 650;
+       line-height: var(--lh-heading);
+       color: hsl(var(--foreground));
+       margin-top: 1.75rem;
+       margin-bottom: 0.5rem;
+     }
+   
+     & h5, & h6 {
+       font-size: var(--fs-body);
+       font-weight: 600;
+       color: hsl(var(--foreground-secondary));
+       margin-top: 1.5rem;
+       margin-bottom: 0.5rem;
+     }
+   
+     /* ── Body text ── */
+     & p {
+       color: hsl(var(--foreground-secondary));
+       font-size: var(--fs-body);
+       line-height: var(--lh-body);
+       margin-top: 0;
+       margin-bottom: 1.25rem;
+     }
+   
+     & strong {
+       color: hsl(var(--foreground));
+       font-weight: 650;
+     }
+   
+     & em {
+       font-style: italic;
+     }
+   
+     & small {
+       font-size: var(--fs-fine);
+       color: hsl(var(--foreground-muted));
+     }
+   
+    /* ── Links ── */
+    & a {
+      color: hsl(var(--primary));
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: hsl(var(--primary) / 0.4);
+      transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  
+      &:hover {
+        color: hsl(var(--primary-hover));
+        text-decoration-color: hsl(var(--primary));
+      }
+    }
 
-  /* ── Hover glow for interactive elements ── */
-  @utility hover-glow {
-    transition: box-shadow 0.2s ease;
-  }
-  @utility hover-glow-sm {
-    &:hover {
-      box-shadow: 0 0 12px -3px hsl(var(--primary) / 0.2);
+    /* ── Heading anchors (inherit heading color, not link blue) ── */
+    & a.heading-anchor {
+      color: inherit;
+      text-decoration: none;
+      text-decoration-color: transparent;
+
+      &:hover {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      & .heading-text:hover {
+        color: hsl(var(--primary));
+      }
     }
-  }
-  @utility hover-glow-md {
-    &:hover {
-      box-shadow: 0 0 20px -4px hsl(var(--primary) / 0.25);
-    }
-  }
-  @utility hover-glow-lg {
-    &:hover {
-      box-shadow: 0 0 20px -2px hsl(var(--primary) / 0.3), 0 0 0 1px hsl(var(--primary) / 0.15);
-    }
-  }
+   
+     /* ── Lists ── */
+     & ul, & ol {
+       margin-top: 0;
+       margin-bottom: 1.25rem;
+       padding-left: 1.5rem;
+     }
+   
+     & ul { list-style-type: disc; }
+     & ol { list-style-type: decimal; }
+   
+     & li {
+       color: hsl(var(--foreground-secondary));
+       margin-bottom: 0.375rem;
+       line-height: var(--lh-body);
+   
+       &::marker {
+         color: hsl(var(--tertiary));
+       }
+     }
+   
+     & li > ul, & li > ol {
+       margin-top: 0.375rem;
+       margin-bottom: 0;
+     }
+   
+     /* ── Inline code ── */
+     & :not(pre) > code {
+       font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
+       font-size: 0.85em;
+       padding: 0.15em 0.4em;
+       border-radius: 4px;
+       background: hsl(var(--code-bg));
+       border: 1px solid hsl(var(--code-border));
+       color: hsl(var(--primary-foreground));
+     }
+   
+     /* ── Code blocks (pre > code) ── */
+     & pre {
+       font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
+       font-size: var(--fs-small);
+       line-height: 1.6;
+       background: hsl(var(--code-bg));
+       border: 1px solid hsl(var(--code-border));
+       border-radius: 0.5rem;
+       padding: 1rem 1.25rem;
+       margin-top: 0;
+       margin-bottom: 1.5rem;
+       overflow-x: auto;
+   
+       & code {
+         font-size: inherit;
+         padding: 0;
+         border: none;
+         background: none;
+         color: hsl(var(--primary-hover));
+         border-radius: 0;
+       }
+     }
+   
+     /* ── Blockquotes ── */
+     & blockquote {
+       border-left: 3px solid hsl(var(--tertiary) / 0.5);
+       background: hsl(var(--background-secondary));
+       padding: 0.75rem 1.25rem;
+       margin: 0 0 1.25rem 0;
+       border-radius: 0 0.375rem 0.375rem 0;
+   
+       & p {
+         color: hsl(var(--foreground-secondary));
+         margin-bottom: 0;
+       }
+   
+       & p + p {
+         margin-top: 0.5rem;
+       }
+     }
+   
+     /* ── Horizontal rules ── */
+     & hr {
+       border: none;
+       border-top: 1px solid hsl(var(--border));
+       margin: 2.5rem 0;
+     }
+   
+     /* ── Tables ── */
+     & table {
+       width: 100%;
+       border-collapse: collapse;
+       margin-bottom: 1.5rem;
+       font-size: var(--fs-small);
+     }
+   
+     & thead {
+       background: hsl(var(--background-elevated));
+     }
+   
+     & th {
+       color: hsl(var(--foreground));
+       font-weight: 600;
+       text-align: left;
+       padding: 0.625rem 1rem;
+       border-bottom: 1px solid hsl(var(--border));
+       font-size: var(--fs-fine);
+      text-transform: none;
+      letter-spacing: normal;
+     }
+   
+     & td {
+       color: hsl(var(--foreground-secondary));
+       padding: 0.625rem 1rem;
+       border-bottom: 1px solid hsl(var(--border));
+     }
+   
+     & tbody tr:hover {
+       background: hsl(var(--background-secondary));
+     }
+   
+     /* ── Images ── */
+     & img {
+       max-width: 100%;
+       height: auto;
+       border-radius: 0.5rem;
+       border: 1px solid hsl(var(--border));
+       margin: 1.5rem 0;
+     }
+   
+     /* ── Definition lists ── */
+     & dt {
+       color: hsl(var(--foreground));
+       font-weight: 600;
+       margin-top: 1rem;
+     }
+   
+     & dd {
+       color: hsl(var(--foreground-secondary));
+       margin-left: 1.5rem;
+       margin-bottom: 0.5rem;
+     }
+   
+     /* ── Task lists (GitHub-style checkboxes) ── */
+     & ul:has(input[type="checkbox"]) {
+       list-style: none;
+       padding-left: 0;
+     }
+   
+     & input[type="checkbox"] {
+       margin-right: 0.5rem;
+       accent-color: hsl(var(--primary));
+     }
+   
+     /* ── Kbd (keyboard shortcut) ── */
+     & kbd {
+       font-family: var(--font-mono, monospace);
+       font-size: 0.8em;
+       padding: 0.1em 0.4em;
+       border-radius: 4px;
+       background: hsl(var(--background-tertiary));
+       border: 1px solid hsl(var(--border));
+       box-shadow: 0 1px 0 hsl(var(--border));
+       color: hsl(var(--foreground));
+     }
+   
+     /* ── Details / Summary (collapsible sections) ── */
+     & details {
+       margin-bottom: 1.25rem;
+       border: 1px solid hsl(var(--border));
+       border-radius: 0.5rem;
+       overflow: hidden;
+     }
+   
+     & summary {
+       cursor: pointer;
+       padding: 0.75rem 1rem;
+       font-weight: 600;
+       color: hsl(var(--foreground));
+       background: hsl(var(--background-secondary));
+       transition: background 0.15s ease;
+       list-style: none;
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+   
+       &::before {
+         content: '▶';
+         font-size: 0.65em;
+         transition: transform 0.2s ease;
+         color: hsl(var(--foreground-muted));
+       }
+   
+       &:hover {
+         background: hsl(var(--background-tertiary));
+       }
+     }
+   
+     & details[open] > summary::before {
+       transform: rotate(90deg);
+     }
+   
+     & details > *:not(summary) {
+       padding: 0 1rem;
+     }
+   
+     & details > *:not(summary):first-of-type {
+       padding-top: 0.75rem;
+     }
+   
+     /* ── Spacing between adjacent blocks ── */
+     & > *:first-child { margin-top: 0; }
+     & > *:last-child { margin-bottom: 0; }
+   }
+   
+   /* ============================================================
+      DOCS MEDIA — Image container presets
+      ============================================================ */
+   
+   .docs-media {
+     margin: 1.5rem 0;
+   }
+   .docs-media img {
+     max-width: 100%;
+     height: auto;
+     border-radius: 0.5rem;
+     border: 1px solid hsl(var(--border));
+   }
+   .docs-media--sm { max-width: 320px; }
+   .docs-media--md { max-width: 640px; }
+   .docs-media--lg { max-width: 960px; }
+   
+   /* ============================================================
+      HEADING ANCHORS — TOC link targets in doc pages
+      ============================================================ */
+   
+   .heading-anchor {
+     text-decoration: none;
+     color: inherit;
+   }
+   .heading-anchor:hover {
+     text-decoration: none;
+   }
+   .anchor-icon {
+     font-size: 0.8em;
+     transition: opacity 0.15s ease;
+   }
    

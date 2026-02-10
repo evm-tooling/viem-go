@@ -46,42 +46,28 @@ const StatusCell = ({ status }: { status: Status }) => {
 };
 
 const ComparisonSection = () => (
-  <section className="w-full py-8 px-8 bg-gradient-to-b from-dark-deep/30 to-transparent">
-    <div className="absolute top-0 left-0 right-0 h-px" />
-
+  <section className="w-full py-8 px-8 section-bg-dark">
     <div className="relative mx-auto max-w-4xl px-6">
       <AnimatedSection>
         <div className="mb-4 text-center">
-          <span className="inline-block rounded-full border border-tertiary/30 bg-tertiary/10 px-4 py-1 text-xs font-semibold text-tertiary uppercase tracking-wider">
-            Head to Head
-          </span>
+          <span className="section-badge section-badge-tertiary">Head to Head</span>
         </div>
-        <h2 className="text-center mb-4">viem-go vs go-ethereum</h2>
-        <p className="mx-auto max-w-2xl text-center mb-12 ">
+        <h1 className="text-center mb-4">Viem-go vs Go-ethereum</h1>
+        <p className="mx-auto max-w-2xl text-center mb-12">
           See how viem-go compares to the standard go-ethereum library.
         </p>
       </AnimatedSection>
 
       <AnimatedSection delay={0.15}>
-        <Card
-          variant="surface"
-          padding="none"
-          className="overflow-hidden shadow-xl shadow-primary/5"
-        >
-          {/* Table header */}
-          <div className="grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] border-b border-border bg-background-tertiary/40">
-            <div className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-foreground-muted">
-              Feature
+        <Card variant="surface" padding="none" className="overflow-hidden shadow-xl shadow-primary/5">
+          {/* Table header — uses default-light bg tier */}
+          <div className="grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] border-b border-border bg-background-elevated/40">
+            <div className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-foreground-muted">Feature</div>
+            <div className="px-4 py-4 text-center">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">viem-go</span>
             </div>
             <div className="px-4 py-4 text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                viem-go
-              </span>
-            </div>
-            <div className="px-4 py-4 text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-background-secondary px-3 py-1 text-xs font-bold text-foreground-secondary">
-                go-ethereum
-              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-background-secondary px-3 py-1 text-xs font-bold text-foreground-secondary">go-ethereum</span>
             </div>
           </div>
 
@@ -93,33 +79,21 @@ const ComparisonSection = () => (
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className={`grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] items-center transition-colors hover:bg-background-tertiary/40 ${
+              className={`grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] items-center transition-colors hover:bg-background-elevated/40 ${
                 i !== rows.length - 1 ? "border-b border-border/50" : ""
               }`}
             >
-              <div className="px-6 py-4 text-sm font-medium text-foreground">
-                {row.feature}
-              </div>
-              <div className="flex justify-center px-4 py-4">
-                <StatusCell status={row.viemGo} />
-              </div>
-              <div className="flex justify-center px-4 py-4">
-                <StatusCell status={row.goEth} />
-              </div>
+              <div className="px-6 py-4 text-sm font-medium text-foreground">{row.feature}</div>
+              <div className="flex justify-center px-4 py-4"><StatusCell status={row.viemGo} /></div>
+              <div className="flex justify-center px-4 py-4"><StatusCell status={row.goEth} /></div>
             </motion.div>
           ))}
 
           {/* Summary bar */}
-          <div className="grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] border-t border-border bg-background-tertiary/30">
-            <div className="px-6 py-3 text-xs font-bold uppercase tracking-wider text-foreground-muted">
-              Score
-            </div>
-            <div className="px-4 py-3 text-center">
-              <span className="text-lg font-black text-primary">7/7</span>
-            </div>
-            <div className="px-4 py-3 text-center">
-              <span className="text-lg font-black text-foreground-muted">2/7</span>
-            </div>
+          <div className="grid grid-cols-[1fr_140px_140px] sm:grid-cols-[1fr_180px_180px] border-t border-border bg-background-elevated/30">
+            <div className="px-6 py-3 text-xs font-bold uppercase tracking-wider text-foreground-muted">Score</div>
+            <div className="px-4 py-3 text-center"><span className="text-lg font-black text-primary">7/7</span></div>
+            <div className="px-4 py-3 text-center"><span className="text-lg font-black text-foreground-muted">2/7</span></div>
           </div>
         </Card>
       </AnimatedSection>

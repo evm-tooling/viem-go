@@ -4,13 +4,14 @@ import TerminalTyping from "./TerminalTyping";
 import GitHubStats from "./GitHubStats";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import RotatingText from "./RotatingText";
 
 export default function Hero() {
   return (
-    <section className="relative pt-28 pb-6">
+    <section className="relative pt-26">
       {/* Background image overlay */}
       <div
-        className="absolute top-2 left-[45%] -translate-x-1/2 w-[110vw] bottom-0  bg-cover opacity-25 z-0 pointer-events-none scale-110"
+        className="absolute top-2 left-[45%] -translate-x-1/2 w-[110vw] bottom-0 bg-cover opacity-25 z-0 pointer-events-none scale-110"
         style={{
           backgroundImage: "url('/svg/hero-bg.svg')",
           maskImage:
@@ -19,10 +20,6 @@ export default function Hero() {
             "linear-gradient(to bottom, black 0%, black 30%, transparent 100%)",
         }}
       />
-            {/* <div
-        className="absolute top-5 left-[45%] -translate-x-1/2 w-[110vw] bottom-0  bg-cover opacity-25 z-0 pointer-events-none scale-110 bg-secondary"
-        
-      /> */}
 
       <div className="relative z-10 flex justify-between items-stretch gap-12 mb-20 mt-6 max-lg:flex-col max-lg:items-center max-lg:text-center">
         {/* Left - text content */}
@@ -34,15 +31,16 @@ export default function Hero() {
             src="/svg/golem-logo-text-light.svg"
             alt="viem-go logo"
           />
+          <RotatingText />
           <p className="text-lead">
             Build reliable blockchain apps & libraries with{" "}
-            <strong className="text-gray-1 font-semibold">idiomatic Go</strong>,{" "}
-            <strong className="text-gray-1 font-semibold">type-safe</strong>, and{" "}
-            <strong className="text-gray-1 font-semibold">composable</strong> modules that
+            <strong className="text-foreground font-semibold">idiomatic Go</strong>,{" "}
+            <strong className="text-foreground font-semibold">type-safe</strong>, and{" "}
+            <strong className="text-foreground font-semibold">composable</strong> modules that
             interface with Ethereum — inspired by{" "}
             <a
               href="https://viem.sh"
-              className="text-accent hover:underline"
+              className="text-primary hover:underline"
             >
               viem
             </a>
@@ -69,9 +67,12 @@ export default function Hero() {
         {/* Right - terminal + stats */}
         <div className="w-[520px] shrink-0 flex flex-col justify-start gap-4 max-lg:hidden">
           {/* Install terminal */}
-          <div className="flex flex-col rounded-lg overflow-hidden border border-accent/20 bg-dark-deep min-h-[180px]">
-            <div className="flex justify-between items-center bg-dark-deep/30 border-b border-accent/15 pr-2">
-              <div className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium text-gray-1 bg-gray-6/40 border-b-2 border-accent" style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}>
+          <div className="flex flex-col rounded-lg overflow-hidden border border-primary/20 bg-code-bg min-h-[180px]">
+            <div className="flex justify-between items-center bg-code-bg/30 border-b border-primary/15 pr-2">
+              <div
+                className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium text-foreground bg-secondary/40 border-b-2 border-primary"
+                style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}
+              >
                 <svg
                   className="w-[18px] h-[18px] text-[#00ADD8]"
                   viewBox="0 0 24 24"
@@ -83,7 +84,10 @@ export default function Hero() {
               </div>
               <CopyButton text="go get github.com/ChefBingbong/viem-go" />
             </div>
-            <div className="flex-1 flex items-start py-2 px-5 text-[1rem]" style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}>
+            <div
+              className="flex-1 flex items-start py-2 px-5 text-[1rem]"
+              style={{ fontFamily: "'SF Mono', Menlo, Monaco, 'Courier New', monospace" }}
+            >
               <TerminalTyping />
             </div>
           </div>

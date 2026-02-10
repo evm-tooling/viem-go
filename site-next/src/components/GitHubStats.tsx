@@ -45,24 +45,24 @@ export default function GitHubStats() {
       {/* Stars badge */}
       <a
         href="https://github.com/ChefBingbong/viem-go/stargazers"
-        className="flex-1 h-12 p-1.5 flex items-center justify-center gap-2 rounded-lg border border-accent/20 bg-gray-5/60 text-center no-underline transition-all duration-200 hover:border-accent/50 hover:bg-gray-5/90 hover:-translate-y-px"
+        className="flex-1 h-12 p-1.5 flex items-center justify-center gap-2 rounded-lg border border-primary/20 bg-border/60 text-center no-underline transition-all duration-200 hover:border-primary/50 hover:bg-border/90 hover:-translate-y-px"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <span className="text-[15px] font-medium opacity-70 bg-dark-deep/60 px-3 h-full flex justify-center text-center items-center rounded-md text-gray-1 leading-[15.5px]">
+        <span className="text-md font-semibold opacity-75 bg-background/80 w-[60%] h-full flex justify-center text-center items-center rounded-md text-foreground">
           stars
         </span>
-        <span className="text-[15px] font-medium flex-1 text-center text-gray-1 hover:text-accent">
+        <span className="text-md font-semibold flex-1 text-center text-foreground hover:text-primary">
           {data.stars}
         </span>
       </a>
 
       {/* Coverage badge */}
       <div className="flex-1 h-12 p-1.5 flex items-center justify-center gap-2 rounded-lg border border-success/30 bg-success/10 text-center">
-        <span className="text-[15px] font-medium opacity-80 bg-dark-deep px-3 h-full flex justify-center text-center items-center rounded-md text-gray-1 leading-[15.5px]">
+        <span className="text-md font-semibold opacity-75 bg-background/90 w-[60%] h-full flex justify-center text-center items-center rounded-md text-foreground leading-[15.5px]">
           coverage
         </span>
-        <span className="text-[15px] font-medium flex-1 text-center text-success">
+        <span className="text-md font-semibold flex-1 text-center text-success">
           {coverage}
         </span>
       </div>
@@ -70,14 +70,14 @@ export default function GitHubStats() {
       {/* License badge */}
       <a
         href="https://github.com/ChefBingbong/viem-go/blob/main/LICENSE"
-        className="flex-1 h-12 p-1.5 flex items-center justify-center gap-2 rounded-lg border border-accent/20 bg-gray-5/60 text-center no-underline transition-all duration-200 hover:border-accent/50 hover:bg-gray-5/90 hover:-translate-y-px max-lg:hidden"
+        className="flex-1 h-12 p-1.5 flex items-center justify-center gap-2 rounded-lg border border-primary/20 bg-border/60 text-center no-underline transition-all duration-200 hover:border-primary/50 hover:bg-border/90 hover:-translate-y-px max-lg:hidden"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <span className="text-[15px] font-medium opacity-70 bg-dark-deep/60 px-3 h-full flex justify-center text-center items-center rounded-md text-gray-1 leading-[15.5px]">
+        <span className="text-md font-semibold opacity-75 bg-background/80 w-[60%] h-full flex justify-center text-center items-center rounded-md text-foreground leading-[15.5px]">
           license
         </span>
-        <span className="text-[15px] font-medium flex-1 text-center text-gray-1 hover:text-accent">
+        <span className="text-md font-semibold flex-1 text-center text-foreground hover:text-primary">
           {data.license}
         </span>
       </a>

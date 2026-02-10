@@ -75,21 +75,21 @@ go: added github.com/ChefBingbong/viem-go v1.0.0`;
   }, [key, resetAnimation]);
 
   return (
-    <div className="font-mono text-[0.9375rem] text-gray-2 w-full h-48">
+    <div className="font-mono text-[0.9375rem] text-foreground-secondary w-full h-56">
       <div className="whitespace-nowrap">
-        <span className="text-[#9d6ee4]">user@golem</span>
-        <span className="text-[#60a5fa]"> ~</span>
-        <span className="text-gray-3"> % </span>
-        <span className="text-[#fb923c]">go get </span>
+        <span className="text-terminal-user">user@golem</span>
+        <span className="text-terminal-path"> ~</span>
+        <span className="text-foreground-muted"> % </span>
+        <span className="text-terminal-command">go get </span>
         <span>{text}</span>
         {!showOutput && (
-          <span className="inline-block text-accent animate-cursor-blink ml-px">
+          <span className="inline-block text-terminal-cursor animate-cursor-blink ml-px">
             |
           </span>
         )}
       </div>
       {showOutput && (
-        <div className="mt-1.5 text-[0.8rem] text-[#4ade80] leading-normal">
+        <div className="mt-1.5 text-[0.8rem] text-terminal-output leading-normal">
           {outputText.split("\n").map((line, idx) => (
             <div key={idx} className="py-px">
               {line}
@@ -99,11 +99,11 @@ go: added github.com/ChefBingbong/viem-go v1.0.0`;
       )}
       {showNewPrompt && (
         <div className="whitespace-nowrap mt-3">
-          <span className="text-[#9d6ee4]">user@golem</span>
-          <span className="text-[#60a5fa]"> ~</span>
-          <span className="text-gray-3"> % </span>
+          <span className="text-terminal-user">user@golem</span>
+          <span className="text-terminal-path"> ~</span>
+          <span className="text-foreground-muted"> % </span>
           <span>{secondCommand}</span>
-          <span className="inline-block text-accent animate-cursor-blink ml-px">
+          <span className="inline-block text-terminal-cursor animate-cursor-blink ml-px">
             |
           </span>
         </div>

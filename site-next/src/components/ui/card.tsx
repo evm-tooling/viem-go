@@ -6,9 +6,9 @@ import { cn } from "@/lib/cn";
 const cardVariants = cva("rounded-xl border", {
   variants: {
     variant: {
-      default: "border-accent/20 bg-gray-6/50",
+      default: "border-primary/20 bg-secondary/50",
       interactive:
-        "border-accent/20 bg-gray-6/50 transition-all duration-200 hover:border-accent/40 hover:bg-gray-6/70 hover:-translate-y-0.5",
+        "border-primary/20 bg-secondary/50 transition-all duration-200 hover:border-primary/40 hover:bg-secondary/70 hover:-translate-y-0.5",
       surface: "border-card-border bg-card",
       surfaceInteractive:
         "border-card-border bg-card transition-all duration-200 hover:border-primary/30 hover:bg-card/80",
@@ -66,4 +66,3 @@ export function CardDescription({
     <p className={cn("text-body", className)} {...props} />
   );
 }
-

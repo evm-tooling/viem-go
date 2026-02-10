@@ -7,25 +7,19 @@ const viemMonoFontFamily =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
 type CodeLineMeta = {
-  /** Focused lines stay at full opacity; others are dimmed when any focus exists. */
   focused?: boolean;
-  /** Highlighted lines get a subtle background. */
   highlighted?: boolean;
-  /** Diff markers (optional). */
   added?: boolean;
   removed?: boolean;
 };
 
 type ParsedCode = {
-  /** Code with all `[!code ...]` directives removed. */
   cleanCode: string;
-  /** Per-line metadata (0-based index). */
   metaByLine: CodeLineMeta[];
-  /** Whether any focus directives were found. */
   hasFocus: boolean;
 };
 
-/** Custom muted dark theme (similar to One Dark / viem docs) */
+/** Custom muted dark theme (One Dark inspired) */
 const codeTheme: PrismTheme = {
   plain: { color: "#abb2bf", backgroundColor: "transparent" },
   styles: [
@@ -43,6 +37,7 @@ const codeTheme: PrismTheme = {
     { types: ["plain"], style: { color: "#abb2bf" } },
   ],
 };
+
 import {
   Tab,
   TabGroup,
@@ -84,19 +79,12 @@ function parseCodeDirectives(code: string): ParsedCode {
   const lines = code.split("\n");
   const metaByLine: CodeLineMeta[] = Array.from({ length: lines.length }, () => ({}));
   const cleanLines: string[] = [];
-
   let hasFocus = false;
 
   for (let i = 0; i < lines.length; i++) {
     const rawLine = lines[i] ?? "";
     let line = rawLine;
 
-    // Collect all directives on the line (supports multiple per line).
-    // Matches patterns like:
-    //   // [!code focus]
-    //   // [!code focus:10]
-    //   // [!code ++]
-    //   #  [!code focus]
     const directiveRegex = /(?:\/\/|#|--)\s*\[!code\s+([^\]]+)\]\s*/g;
     const directives: string[] = [];
     let m: RegExpExecArray | null;
@@ -105,11 +93,9 @@ function parseCodeDirectives(code: string): ParsedCode {
     }
 
     if (directives.length > 0) {
-      // Remove all directive fragments from the visible code.
       line = line.replace(directiveRegex, "").replace(/[ \t]+$/g, "");
 
       for (const directive of directives) {
-        // focus or focus:n
         if (directive.startsWith("focus")) {
           hasFocus = true;
           const [, countStr] = directive.split(":");
@@ -119,47 +105,28 @@ function parseCodeDirectives(code: string): ParsedCode {
           }
           continue;
         }
-
-        if (directive === "highlight") {
-          metaByLine[i]!.highlighted = true;
-          continue;
-        }
-
-        // Diff-style markers (optional, but matches viem docs notation)
-        if (directive === "++") {
-          metaByLine[i]!.added = true;
-          continue;
-        }
-        if (directive === "--") {
-          metaByLine[i]!.removed = true;
-          continue;
-        }
+        if (directive === "highlight") { metaByLine[i]!.highlighted = true; continue; }
+        if (directive === "++") { metaByLine[i]!.added = true; continue; }
+        if (directive === "--") { metaByLine[i]!.removed = true; continue; }
       }
     }
 
     cleanLines.push(line);
   }
 
-  return {
-    cleanCode: cleanLines.join("\n"),
-    metaByLine,
-    hasFocus,
-  };
+  return { cleanCode: cleanLines.join("\n"), metaByLine, hasFocus };
 }
 
 function lineClassName(meta: CodeLineMeta | undefined, hasFocus: boolean, active: boolean) {
   const classes: string[] = ["table-row", "m-0"];
 
-  if (hasFocus && !meta?.focused) classes.push("opacity-35 bg-deep-dark");
-  if (active ) classes.push("opacity-100 bg-deep-dark/40");
-
-  if (hasFocus && meta?.focused) classes.push("opacity-100 bg-deep-dark/40");
-
+  if (hasFocus && !meta?.focused) classes.push("opacity-35 bg-code-bg-deep");
+  if (active) classes.push("opacity-100 bg-code-bg-deep/40");
+  if (hasFocus && meta?.focused) classes.push("opacity-100 bg-code-bg-deep/40");
   if (meta?.focused) classes.push("font-semibold");
   if (meta?.highlighted) classes.push("font-semibold");
-
-  if (meta?.added) classes.push("bg-emerald-500/10");
-  if (meta?.removed) classes.push("bg-red-500/10");
+  if (meta?.added) classes.push("diff-added");
+  if (meta?.removed) classes.push("diff-removed");
 
   return classes.join(" ");
 }
@@ -168,13 +135,8 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [active, setActive] = React.useState(false);
 
-
   const tabs = tabsInput.map((tab) => ({
-    title:
-      tab.title ||
-      languageNames[tab.language || ""] ||
-      tab.language ||
-      "Code",
+    title: tab.title || languageNames[tab.language || ""] || tab.language || "Code",
     language: tab.language || "typescript",
     code: tab.code || "",
     showLineNumbers: tab.showLineNumbers ?? true,
@@ -183,17 +145,18 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   if (tabs.length === 0) return null;
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border border-accent/15 bg-dark-bg/80">
+    <div className="group/code my-6 rounded-lg border-1 border-code-border transition-all duration-300 !hover:border-tertiary/30 hover:shadow-[0_0_20px_-1px_hsl(var(--tertiary)/0.15)]">
+    <div className="rounded-lg overflow-hidden bg-code-bg/80">
       <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <div className="flex items-center justify-between h-11 bg-dark-bg/50 border-b border-accent/12">
+        <div className="flex items-center justify-between h-11 bg-code-bg/50 border-b border-code-border">
           <TabList className="flex h-full items-stretch">
             {tabs.map((tab, index) => (
               <Tab
                 key={index}
                 className={`flex items-center justify-center px-3.5 text-[0.8125rem] font-medium cursor-pointer transition-all duration-150 h-11 border-b-2 outline-none ${
                   selectedIndex === index
-                    ? "text-primary bg-dark-bg !border-primary"
-                    : "text-foreground-muted bg-transparent border-transparent hover:text-foreground-secondary hover:bg-dark-bg/30"
+                    ? "text-primary bg-code-bg !border-primary"
+                    : "text-foreground-muted bg-transparent border-transparent hover:text-foreground-secondary hover:bg-code-bg/30"
                 }`}
               >
                 {tab.title}
@@ -213,23 +176,14 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
             const codeStr = parsed.cleanCode.trim();
             return (
               <TabPanel key={index}>
-                <Highlight
-                  theme={codeTheme}
-                  code={codeStr}
-                  language={tab.language}
-                >
+                <Highlight theme={codeTheme} code={codeStr} language={tab.language}>
                   {({ tokens, getLineProps, getTokenProps }) => (
                     <pre
                       style={{ fontFamily: viemMonoFontFamily }}
-                      className="!m-0 !bg-dark-deep/20 !pb-4  !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed " 
-                      onMouseEnter={() => {
-                        if (active) return
-                        setActive(true)
-                      }} 
-                      onMouseLeave={() =>  {
-                        if (!active) return 
-                        setActive(false)
-                      }}>
+                      className="!m-0 !bg-code-bg-deep/20 !pb-4 !pt-3 !px-4 !border-0 overflow-auto text-[0.8125rem] leading-relaxed"
+                      onMouseEnter={() => { if (!active) setActive(true); }}
+                      onMouseLeave={() => { if (active) setActive(false); }}
+                    >
                       {tokens.map((line, i) => (
                         <div
                           key={i}
@@ -237,7 +191,7 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
                           className={`transition-all duration-300 ${lineClassName(parsed.metaByLine[i], parsed.hasFocus, active)}`}
                         >
                           {tab.showLineNumbers && (
-                            <span className="table-cell pr-3 text-right text-gray-4 select-none min-w-6">
+                            <span className="table-cell pr-3 text-right text-foreground-muted select-none min-w-6">
                               {i + 1}
                             </span>
                           )}
@@ -256,6 +210,7 @@ export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
           })}
         </TabPanels>
       </TabGroup>
+    </div>
     </div>
   );
 }

@@ -43,15 +43,14 @@ const communityLinks = [
 ];
 
 const CommunitySection = () => (
-  <section className="relative py-24 overflow-hidden">
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,hsl(var(--tertiary)/0.04)_0%,transparent_70%)]" />
+  <section className="relative pb-24 pt-6 overflow-hidden">
+    {/* Tertiary glow orb */}
+    <div className="glow-orb-tertiary top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]" />
 
     <div className="relative mx-auto max-w-7xl px-6">
       <AnimatedSection>
         <div className="mb-4 text-center">
-          <span className="inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary uppercase tracking-wider">
-            Join Us
-          </span>
+          <span className="section-badge section-badge-primary">Join Us</span>
         </div>
         <h2 className="text-center mb-4">Community</h2>
         <p className="mx-auto max-w-lg text-center mb-16">
@@ -75,7 +74,7 @@ const CommunitySection = () => (
               whileHover={{ x: 8 }}
               className="group flex items-center gap-6 rounded-xl border border-card-border bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
+              <div className="icon-box icon-box-primary h-12 w-12 shrink-0 rounded-xl transition-colors group-hover:bg-primary/20">
                 <link.icon className="h-6 w-6" />
               </div>
               <div className="flex-1">

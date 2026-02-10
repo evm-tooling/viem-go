@@ -30,32 +30,20 @@ const icons: Record<string, React.ReactNode> = {
   ),
 };
 
-const styles: Record<
-  string,
-  { border: string; bg: string; accent: string; content?: string }
-> = {
-  note: {
-    border: "border-[#c678dd]/20",
-    bg: "bg-[#c678dd]/[0.35]",
-    accent: "text-[#c678dd]",
-    content: "text-[#d4b0e8]",
-  },
-  tip: {
-    border: "border-[#c678dd]/25",
-    bg: "bg-[#c678dd]/10",
-    accent: "text-[#c678dd]",
-    content: "[&_:not(pre)>code]:text-[#c678dd]",
-  },
-  caution: {
-    border: "border-warning/25",
-    bg: "bg-warning/10",
-    accent: "text-warning",
-  },
-  danger: {
-    border: "border-destructive/25",
-    bg: "bg-destructive/10",
-    accent: "text-destructive",
-  },
+/**
+ * Aside / Callout component — uses semantic aside-* presets from globals.css
+ * 
+ * CSS presets used:
+ *   aside-note    → --aside-note token (purple)
+ *   aside-tip     → --aside-tip token (purple)
+ *   aside-caution → --aside-caution token (warning/orange)
+ *   aside-danger  → --aside-danger token (destructive/red)
+ */
+const styles: Record<string, string> = {
+  note: "aside-note",
+  tip: "aside-tip",
+  caution: "aside-caution",
+  danger: "aside-danger",
 };
 
 export default function Aside({
@@ -63,17 +51,15 @@ export default function Aside({
   title,
   children,
 }: AsideProps) {
-  const style = styles[type] || styles.note;
+  const presetClass = styles[type] || styles.note;
   const icon = icons[type] || icons.note;
 
   return (
     <div
-      className={`my-6 flex items-start gap-3 rounded-xl border ${style.border} ${style.bg} px-4 py-4`}
+      className={`my-6 flex items-start gap-3 rounded-xl border px-4 py-4 ${presetClass}`}
     >
-      <span className={`mt-0.5 shrink-0 ${style.accent}`}>{icon}</span>
-      <div
-        className={`text-sm leading-relaxed [&>p]:mb-0 ${style.content || "text-gray-2"}`}
-      >
+      <span className="aside-icon mt-0.5 shrink-0">{icon}</span>
+      <div className="aside-content text-sm leading-relaxed [&>p]:mb-0">
         {children}
       </div>
     </div>
