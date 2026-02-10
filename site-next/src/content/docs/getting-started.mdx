@@ -153,6 +153,10 @@ console.log('Balance:', balance)`
   ]}
 />
 
+<Aside type="tip">
+<span><code>ReadContract</code> works with any contract function, not just <code>balanceOf</code>. You can call any ERC-20, ERC-721, or ERC-1155 method -- or any custom contract ABI -- using the same pattern.</span>
+</Aside>
+
 
 ### Interactive Demo
 the demo below is a runnable live example showing how to fetch balances from an ERC20 contract.
@@ -168,3 +172,7 @@ the demo below is a runnable live example showing how to fetch balances from an 
 - Learn about [Clients](/docs/clients/intro/) in depth
 - Explore [Contract Interactions](/docs/contract/read-contract/)
 - Check out the [Utilities](/docs/utilities/units/) for common operations
+
+<Aside type="note">
+<span>Curious how viem-go stacks up against TypeScript viem? Check out the <a href="/docs/introduction">benchmark results</a> on the introduction page -- viem-go wins all 59 benchmarks with a 7.12x geometric mean speedup.</span>
+</Aside>

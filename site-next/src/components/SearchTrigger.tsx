@@ -44,7 +44,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
           variant="ghost"
           size="sm"
           onClick={() => setOpen(true)}
-          className="w-12 h-9 p-0 rounded-lg text-gray-3 hover:text-gray-1"
+          className="w-12 h-9 p-0 rounded-lg text-foreground-muted hover:text-foreground"
           aria-label="Search"
         >
           <svg
@@ -71,7 +71,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex py-2 items-center gap-2 min-w-[300px] h-12 px-3 rounded-[16px] border border-[1px] border-gray-5 bg-dark-bg text-gray-4 text-sm cursor-pointer transition-all duration-200 hover:border-primary/40 hover:text-gray-2 hover:opacity-65"
+        className="flex py-3 items-center gap-2 min-w-[300px] h-10 px-3 rounded-[16px] border border-border bg-background-tertiary/60 text-foreground-muted text-sm cursor-pointer transition-all duration-200 hover:border-primary/40 hover:text-foreground-secondary hover:opacity-65"
       >
         <svg
           className="w-4 h-4 shrink-0"
@@ -88,7 +88,7 @@ export default function SearchTrigger({ compact }: { compact?: boolean }) {
           />
         </svg>
         <span className="flex-1 text-left">Search...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[11px] text-gray-4 bg-dark-bg/60 border border-gray-5 rounded px-1.5 py-0.5 font-mono leading-none">
+        <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[11px] text-foreground-muted bg-background/60 border border-border rounded px-1.5 py-0.5 font-mono leading-none">
           {isMac ? "⌘" : "Ctrl"}K
         </kbd>
       </button>

@@ -47,24 +47,26 @@ function NavLink({
 export default function Header() {
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-50 w-full   bg-dark-bg py-[5px] opacity-100">
+    <header className={`sticky top-0 z-50 w-full ${pathname !== "/" ? "bg-background" : "bg-transparent"} py-[5px] opacity-100`}>
       <div className="px-4 sm:px-6 h-12 flex items-center justify-between gap-3">
-        {/* Left: logo area (matches sidebar width) + search (aligns with main content) */}
+        {/* Left: logo area + search */}
         <div className="flex items-center min-w-0">
           <div className={`flex items-center gap-3 sm:gap-4 shrink-0 ${pathname === "/" ? "" : "lg:w-[260px] xl:w-[320px] 2xl:w-[355px] xl:pl-14 2xl:pl-20"}`}>
             <SidebarToggle />
             <Link href="/" className="flex items-center gap-2 shrink-0">
               <Image
-              height={90}
-              width={90}
+                height={90}
+                width={90}
                 src="/svg/golem-logo-full-light.svg"
                 alt="viem-go"
               />
             </Link>
           </div>
-          { pathname !== "/" && <div className="hidden sm:block ">
-            <SearchTrigger />
-          </div>}{}
+          {pathname !== "/" && (
+            <div className="hidden sm:block">
+              <SearchTrigger />
+            </div>
+          )}
         </div>
 
         {/* Right: nav links */}
@@ -74,9 +76,11 @@ export default function Header() {
             GitHub
           </NavLink>
           {/* Mobile search (icon only) */}
-          { pathname !== "/" && <div className="sm:hidden">
-            <SearchTrigger compact />
-          </div>}
+          {pathname !== "/" && (
+            <div className="sm:hidden">
+              <SearchTrigger compact />
+            </div>
+          )}
           {/* Version dropdown */}
           <VersionDropdown />
         </nav>
@@ -111,24 +115,9 @@ function VersionDropdown() {
       </Button>
       <div className="absolute top-full right-0 mt-2 min-w-[160px] bg-card border border-card-border rounded-lg p-1 shadow-xl shadow-black/30 opacity-0 invisible -translate-y-1 transition-all group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
         <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
-          <a
-            href="https://github.com/ChefBingbong/viem-go/releases"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/ChefBingbong/viem-go/releases" target="_blank" rel="noopener noreferrer">
             Releases
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="opacity-50"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
@@ -136,24 +125,9 @@ function VersionDropdown() {
           </a>
         </Button>
         <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
-          <a
-            href="https://github.com/ChefBingbong/viem-go/tree/main/examples"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/ChefBingbong/viem-go/tree/main/examples" target="_blank" rel="noopener noreferrer">
             Examples
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="opacity-50"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
@@ -161,24 +135,9 @@ function VersionDropdown() {
           </a>
         </Button>
         <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
-          <a
-            href="https://github.com/ChefBingbong/viem-go/blob/main/.github/CONTRIBUTING.md"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/ChefBingbong/viem-go/blob/main/.github/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">
             Contributing
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="opacity-50"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />

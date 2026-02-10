@@ -3,50 +3,73 @@ title: Architecture
 description: How viem-go is structured, how requests flow, and where the performance comes from
 ---
 
-viem-go mirrors viem’s **Client → Transport → Actions** architecture, but implemented in idiomatic Go (contexts, channels, goroutines) with a strong focus on **reducing RPC round-trips** and **minimizing per-call overhead**.
+viem-go mirrors viem's **Client → Transport → Actions** architecture, but implemented in idiomatic Go (contexts, channels, goroutines) with a strong focus on **reducing RPC round-trips** and **minimizing per-call overhead**.
 
 ### The big idea
 
 - **Clients** are configured runtimes (`PublicClient`, `WalletClient`) built on top of a shared `BaseClient`.
 - **Actions** are typed operations implemented in terms of `client.Request(...)`.
 - **Transports** implement JSON-RPC over HTTP/WebSocket (plus fallback/custom patterns).
-- **ABI/contract utilities** sit “above” actions to encode/decode calldata/logs and provide ergonomic typed APIs.
+- **ABI/contract utilities** sit "above" actions to encode/decode calldata/logs and provide ergonomic typed APIs.
+
+<Aside type="note">
+<span>All client types (<code>PublicClient</code>, <code>WalletClient</code>) share a common <code>BaseClient</code> core. Any transport (HTTP, WebSocket, Fallback) works with any client type -- mix and match as needed.</span>
+</Aside>
 
 ### Component map
 
-```
-Your code
-  │
-  ▼
-High-level helpers
-  - contract.ReadContract[T](...)
-  - contracts/erc20 bindings (Name, Symbol, BalanceOf, ...)
-  │
-  ▼
-Actions (actions/public, actions/wallet)
-  - public.Multicall / MulticallConcurrent
-  - public.WatchBlockNumber / WatchEvent / WatchContractEvent
-  - wallet.SendTransaction / WriteContract / SignMessage / ...
-  │
-  ▼
-Client runtime (client/)
-  - PublicClient / WalletClient embed BaseClient
-  - BaseClient holds config + transport + UID
-  - BaseClient.Request(ctx, method, params...) is the “one RPC door”
-  │
-  ▼
-Transport layer (client/transport/)
-  - HTTP (optional JSON-RPC batching, retries, timeouts)
-  - WebSocket (subscriptions, keep-alive, reconnect)
-  - Fallback (multi-endpoint + ranking)
-  │
-  ▼
-Node/provider (JSON-RPC)
-```
+Every request flows through the same layered stack. Your application code sits at the top, and each layer adds a specific responsibility before the request reaches the JSON-RPC provider.
+
+<FlowDiagram
+  nodes={[
+    {
+      label: "Your code",
+      variant: "accent"
+    },
+    {
+      label: "High-level helpers",
+      items: [
+        "contract.ReadContract[T](...)",
+        "contracts/erc20 bindings (Name, Symbol, BalanceOf, ...)"
+      ]
+    },
+    {
+      label: "Actions",
+      sublabel: "actions/public, actions/wallet",
+      items: [
+        "public.Multicall / MulticallConcurrent",
+        "public.WatchBlockNumber / WatchEvent / WatchContractEvent",
+        "wallet.SendTransaction / WriteContract / SignMessage"
+      ]
+    },
+    {
+      label: "Client runtime",
+      sublabel: "client/",
+      items: [
+        "PublicClient / WalletClient embed BaseClient",
+        "BaseClient holds config + transport + UID",
+        "BaseClient.Request(ctx, method, params...) — the one RPC door"
+      ]
+    },
+    {
+      label: "Transport layer",
+      sublabel: "client/transport/",
+      items: [
+        "HTTP (optional JSON-RPC batching, retries, timeouts)",
+        "WebSocket (subscriptions, keep-alive, reconnect)",
+        "Fallback (multi-endpoint + ranking)"
+      ]
+    },
+    {
+      label: "Node / Provider (JSON-RPC)",
+      variant: "muted"
+    }
+  ]}
+/>
 
 ### Main packages & responsibilities
 
-| Package | What it’s for |
+| Package | What it's for |
 |---|---|
 | `client/` | `BaseClient`, `PublicClient`, `WalletClient`: config + one `Request` entrypoint + convenience methods |
 | `client/transport/` | HTTP/WS/custom/fallback JSON-RPC transports (retries, timeouts, batching) |
@@ -61,80 +84,134 @@ Node/provider (JSON-RPC)
 | `utils/rpc` | Low-level HTTP + WebSocket JSON-RPC clients + batch scheduler |
 | `utils/observe`, `utils/poll` | Shared subscription dedupe + polling primitives (Go equivalents of viem utilities) |
 
-### How requests flow (3 common paths)
+<Aside type="tip">
+<span>The <code>contracts/</code> package includes prebuilt ERC-20 bindings (<code>Name</code>, <code>Symbol</code>, <code>BalanceOf</code>, etc.) so you don't need to provide raw ABI JSON strings for common token interactions.</span>
+</Aside>
 
-### 1) Read contract (`eth_call`)
+### How requests flow
 
-```
-contract.ReadContract[T] (or PublicClient.ReadContract)
-  │  ABI encode calldata
-  ▼
-PublicClient.Call / public.Call
-  │  format request + block tag + overrides
-  ▼
-BaseClient.Request("eth_call", ...)
-  │
-  ▼
-HTTP/WebSocket transport → JSON-RPC → response
-  │
-  ▼
-ABI decode result → typed value (T / *big.Int / struct / ...)
-```
+Every interaction with the blockchain follows one of three common paths. Understanding these helps you reason about latency, batching, and where optimizations apply.
 
-### 2) Multicall (many reads, fewer round-trips)
+### 1. Read contract
 
-```
-public.Multicall / public.MulticallConcurrent
-  │  encode N calls → aggregate3 calldata
-  │  (optional) merge concurrent multicalls (batch.multicall)
-  ▼
-BaseClient.Request("eth_call", multicall3 aggregate3)
-  ▼
-decode aggregate3 results → per-call decoded values
-```
+The most common path. Your code calls `ReadContract`, which ABI-encodes the calldata, sends a single `eth_call` via the transport, and decodes the typed result back to you.
+
+<FlowDiagram
+  nodes={[
+    {
+      label: "contract.ReadContract[T]",
+      sublabel: "or PublicClient.ReadContract",
+      variant: "accent"
+    },
+    {
+      label: "ABI encode calldata",
+      variant: "muted"
+    },
+    {
+      label: "PublicClient.Call / public.Call",
+      sublabel: "format request + block tag + overrides"
+    },
+    {
+      label: "BaseClient.Request(\"eth_call\", ...)"
+    },
+    {
+      label: "HTTP / WebSocket transport",
+      sublabel: "JSON-RPC request → response",
+      variant: "muted"
+    },
+    {
+      label: "ABI decode result",
+      sublabel: "typed value (T / *big.Int / struct / ...)",
+      variant: "accent"
+    }
+  ]}
+/>
+
+### 2. Multicall
+
+When you need to read many values at once, Multicall aggregates them into a single `eth_call` to the Multicall3 contract. This dramatically reduces RPC round-trips -- especially when combined with concurrent batching across goroutines.
+
+<FlowDiagram
+  nodes={[
+    {
+      label: "public.Multicall / MulticallConcurrent",
+      variant: "accent"
+    },
+    {
+      label: "Encode N calls",
+      sublabel: "aggregate3 calldata + optional merge of concurrent multicalls (batch.multicall)",
+      variant: "muted"
+    },
+    {
+      label: "BaseClient.Request(\"eth_call\", multicall3 aggregate3)"
+    },
+    {
+      label: "Decode aggregate3 results",
+      sublabel: "per-call decoded values",
+      variant: "accent"
+    }
+  ]}
+/>
 
 There are two separate batching layers that can both apply:
 
 - **Transport-level JSON-RPC batching** (HTTP): batches multiple JSON-RPC requests into one HTTP request.
 - **Action-level Multicall aggregation**: batches many contract calls into one `eth_call` to Multicall3.
 
-### 3) Watch block number (poll or subscribe)
+### 3. Watch block number
 
-```
-public.WatchBlockNumber(ctx, client, params) → <-chan events
-  │
-  ├─ if HTTP (or forced poll):
-  │    poll eth_blockNumber on interval
-  │
-  └─ if WebSocket:
-       eth_subscribe(newHeads) → stream block headers
+Watch actions stream real-time events over a Go channel. The transport determines the strategy: WebSocket uses native `eth_subscribe` for low-latency push notifications, while HTTP falls back to polling on an interval. An observer layer deduplicates watchers so multiple consumers share a single source.
 
-Plus: observer dedupe so multiple watchers share one source per client UID.
-```
+<FlowDiagram
+  nodes={[
+    {
+      label: "public.WatchBlockNumber(ctx, client, params)",
+      sublabel: "returns <-chan events",
+      variant: "accent"
+    },
+    {
+      label: "Observer dedupe",
+      sublabel: "multiple watchers share one source per client UID",
+      variant: "muted"
+    }
+  ]}
+  branches={[
+    {
+      condition: "HTTP (or forced poll)",
+      label: "poll eth_blockNumber on interval"
+    },
+    {
+      condition: "WebSocket",
+      label: "eth_subscribe(newHeads) → stream block headers"
+    }
+  ]}
+/>
 
 ### Where performance comes from
 
-### A) The obvious win: fewer RPC round-trips
+viem-go's performance advantages come from two directions: reducing the number of network round-trips, and lowering the CPU cost of hot-path operations like ABI encoding and event decoding.
 
-Most Ethereum “slowness” is network + provider latency. The #1 thing that improves real-world throughput is **doing fewer requests**:
+### Fewer RPC round-trips
+
+Most Ethereum "slowness" is network + provider latency. The #1 thing that improves real-world throughput is **doing fewer requests**:
 
 - Multicall collapses many reads into one `eth_call`.
-- The Multicall batcher collapses many *concurrent* multicalls into fewer bigger multicalls (within a wait window), mirroring viem’s `batch.multicall`.
+- The Multicall batcher collapses many *concurrent* multicalls into fewer bigger multicalls (within a wait window), mirroring viem's `batch.multicall`.
 - Optional HTTP JSON-RPC batching can collapse unrelated requests (when the provider supports it).
 
-### B) Lower per-call overhead in hot paths
+### Lower per-call overhead in hot paths
 
 Even when RPC dominates, per-call overhead matters for:
 
 - decoding event logs at scale
 - large multicall arrays (hundreds/thousands of calls)
-- “inner loop” utilities (hashing, signature recovery, unit parsing)
+- "inner loop" utilities (hashing, signature recovery, unit parsing)
 
 viem-go includes specialized fast paths where they pay off most.
 
 One concrete example is Multicall3 `aggregate3` encoding/decoding: viem-go includes a hand-rolled encoder/decoder that writes/reads directly to/from bytes (no reflection, minimal allocations) for large call arrays.
 
-### Benchmarks: viem-go vs viem (TypeScript)
+### Benchmarks
 
 You have an apples-to-apples benchmark harness in-repo under `benchmarks/` with generated reports in `benchmarks/results/`.
 
@@ -148,14 +225,14 @@ From `benchmarks/results/comparison.md`:
   - **multicall:** **~2.9x**
   - **abi:** **~7.3x**
 
-The longer `benchmarks/results/full-report.md` also reports “average” speedups (different aggregation) but the direction is consistent: viem-go’s hot paths are substantially cheaper in your harness.
+The longer `benchmarks/results/full-report.md` also reports "average" speedups (different aggregation) but the direction is consistent: viem-go's hot paths are substantially cheaper in your harness.
 
-### How to talk about go-ethereum comparison (accurately)
+### Comparison with go-ethereum
 
 go-ethereum is the foundation for much of the Go ecosystem and viem-go uses parts of it (eg. ABI parsing and common types). The difference is **layering and workload shape**:
 
 - go-ethereum exposes low-level primitives (RPC client, ABI pack/unpack, etc.).
-- viem-go provides the higher-level “viem patterns” out of the box:
+- viem-go provides the higher-level "viem patterns" out of the box:
   - action-based API surface
   - multicall + deployless multicall
   - multicall batching across goroutines
@@ -172,4 +249,3 @@ So the strongest claim is:
 - [Public Client](/docs/clients/public/)
 - [HTTP Transport](/docs/clients/transports/http/)
 - [Examples](/docs/examples/)
-

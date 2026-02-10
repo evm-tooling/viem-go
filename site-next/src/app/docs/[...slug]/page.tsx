@@ -11,6 +11,7 @@ import GoPlayground from "@/components/GoPlayground";
 import ReadContractDemo from "@/components/ReadContractDemo";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/MdxTable";
 import DocsTable from "@/components/DocsTable";
+import FlowDiagram from "@/components/FlowDiagram";
 import TableOfContents from "@/components/TableOfContents";
 
 /** Generate a slug id from heading text (matches extractHeadings logic) */
@@ -32,9 +33,14 @@ function createHeading(level: 2 | 3 | 4) {
     const id = slugify(text);
     return (
       <Tag id={id}>
-        <a href={`#${id}`} className="heading-anchor">
-          {children}
-          <span className="anchor-icon" aria-hidden="true">#</span>
+        <a href={`#${id}`} className="heading-anchor group flex items-center gap-2 -ml-7 ">
+          <span className="anchor-icon opacity-0 group-hover:opacity-100 text-foreground-muted transition-opacity shrink-0" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+          </span>
+          <span className="heading-text transition-colors duration-150">{children}</span>
         </a>
       </Tag>
     );
@@ -61,6 +67,7 @@ const mdxComponents = {
   GoPlayground,
   ReadContractDemo,
   DocsTable,
+  FlowDiagram,
   h2: createHeading(2),
   h3: createHeading(3),
   h4: createHeading(4),
@@ -108,7 +115,7 @@ export default async function DocPage({ params }: PageProps) {
   const headings = extractHeadings(doc.content);
 
   return (
-    <div className="flex gap-0 ">
+    <div className="flex gap-0">
       <article className="flex-1 min-w-0 max-w-[80ch]">
         <h1 className="heading-1 mb-2">
           {doc.meta.title}

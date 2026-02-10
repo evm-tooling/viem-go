@@ -12,18 +12,15 @@ export default function TableOfContents({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    // Find all heading elements on the page
     const elements = headings
       .map((h) => document.getElementById(h.id))
       .filter(Boolean) as HTMLElement[];
 
     if (elements.length === 0) return;
 
-    // Use IntersectionObserver to track which heading is in view
     const scrollRoot = document.querySelector("main") || null;
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        // Find the first heading that is intersecting
         for (const entry of entries) {
           if (entry.isIntersecting) {
             setActiveId(entry.target.id);
@@ -45,8 +42,6 @@ export default function TableOfContents({
     return () => observerRef.current?.disconnect();
   }, [headings]);
 
-  // Also track scroll position for more accurate active state
-  // The scroll container is the <main> element (overflow-y-auto), not the window
   useEffect(() => {
     const scrollContainer =
       document.querySelector("main") || window;
@@ -67,7 +62,6 @@ export default function TableOfContents({
       if (current) setActiveId(current);
     }
     scrollContainer.addEventListener("scroll", onScroll, { passive: true });
-    // Set initial
     onScroll();
     return () => scrollContainer.removeEventListener("scroll", onScroll);
   }, [headings]);
@@ -75,9 +69,9 @@ export default function TableOfContents({
   if (headings.length === 0) return null;
 
   return (
-    <aside className="hidden xl:block w-[280px] shrink-0 sticky top-0 self-start h-[calc(100vh)] ">
+    <aside className="hidden xl:block w-[280px] shrink-0 sticky top-0 self-start h-[calc(100vh)]">
       <div className="pl-10 pr-2 overflow-y-auto h-full">
-        <p className="text-[0.8125rem] font-semibold !text-white uppercase tracking-wider mb-2">
+        <p className="text-[0.8125rem] font-semibold text-foreground uppercase tracking-wider mb-2">
           On this page
         </p>
         <nav className="flex flex-col gap-0">
@@ -105,11 +99,11 @@ export default function TableOfContents({
                   }
                 }}
                 className={`block text-[0.875rem] leading-snug no-underline py-1.5 transition-all duration-150 border-l-2 ${
-                  heading.depth === 3 ? "pl-12" : "pl-8 text-[0.98rem] "
+                  heading.depth === 3 ? "pl-12" : "pl-8 text-[0.98rem]"
                 } ${
                   isActive
-                    ? "text-accent !border-brand-blue-light"
-                    : "text-gray-4 border-transparent hover:text-gray-1 hover:border-gray-4"
+                    ? "text-primary !border-primary"
+                    : "text-foreground-muted border-transparent hover:text-foreground hover:border-foreground-muted"
                 }`}
               >
                 {heading.text}

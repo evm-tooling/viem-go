@@ -19,6 +19,10 @@ If you want the deeper “how it works” view (call flows, package responsibili
 - **Unlock Go performance advantages**: Go can address performance bottlenecks common in TypeScript workloads using concurrency and goroutines.
 - **High-level without sacrificing performance**: viem-go aims to provide a high-level API without giving up performance relative to go-ethereum, and to build on efficiency advantages over TypeScript viem where possible.
 
+<Aside type="tip">
+<span>viem-go uses go-ethereum under the hood for cryptographic primitives like Keccak256, ECDSA, and ABI encoding. If you already have go-ethereum experience, that knowledge transfers directly.</span>
+</Aside>
+
 ### Benchmarks
 
 Benchmarks are run against the same Anvil instance (mainnet fork) for a fair comparison.
@@ -29,6 +33,10 @@ Benchmarks are run against the same Anvil instance (mainnet fork) for a fair com
 | Avg ns/op | 2,020,982 | 10,567,395 |
 | Avg ops/s | 495 | 95 |
 | Wins | 59/59 | 0/59 |
+
+<Aside type="note">
+<span>These benchmarks are run against a local Anvil instance (mainnet fork). Real-world performance will vary depending on your RPC provider, network latency, and workload shape.</span>
+</Aside>
 
 ### Suite averages (from detailed results)
 
@@ -218,6 +226,10 @@ contractABI.UnpackIntoInterface(&balance, "balanceOf", result)`
   ]}
 />
 
+<Aside type="caution">
+<span>viem-go is under active development. While the core API is stable, some interfaces may change between minor releases. Pin your dependency version in production and check the changelog before upgrading.</span>
+</Aside>
+
 ### Design Principles
 
 ### 1. Mirror viem's API
@@ -231,6 +243,10 @@ While mirroring viem, we embrace Go conventions:
 - Context for cancellation
 - Interfaces for flexibility
 - Struct options instead of variadic params
+
+<Aside type="tip">
+<span>Every viem-go method that hits the network accepts a <code>context.Context</code> as its first argument. Use <code>context.WithTimeout</code> or <code>context.WithCancel</code> to control request lifetimes and avoid hanging calls.</span>
+</Aside>
 
 ### 3. Built on go-ethereum
 

@@ -17,9 +17,7 @@ const features = [
 const doubled = [...features, ...features];
 
 const FeaturesGrid = () => (
-  <section className="relative overflow-hidden py-10">
-    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-
+  <section className="relative overflow-hidden pb-10">
     <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
       <motion.div
         className="flex shrink-0 gap-5"
@@ -35,7 +33,7 @@ const FeaturesGrid = () => (
             {/* Hover glow */}
             <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
 
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
+            <div className="mb-4 icon-box icon-box-primary h-10 w-10 rounded-lg transition-colors group-hover:bg-primary/20">
               <f.icon className="h-5 w-5" />
             </div>
             <h4 className="mb-2 text-foreground group-hover:text-primary transition-colors">{f.title}</h4>
