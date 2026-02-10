@@ -6,7 +6,7 @@ require (
 	github.com/ethereum/go-ethereum v1.16.8
 	github.com/goccy/go-json v0.10.5
 	github.com/gorilla/websocket v1.5.3
-	github.com/onsi/ginkgo v1.12.3
+	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
 	github.com/renproject/surge v1.2.7
@@ -30,7 +30,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20260115054156-294ebfa9ad83 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
-	github.com/nxadm/tail v1.4.4 // indirect
+	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.32.0 // indirect
