@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import CopyButton from "./CopyButton";
 import TerminalTyping from "./TerminalTyping";
@@ -34,8 +34,24 @@ const fadeUp = {
   }),
 };
 
+// Hook to detect mobile screen size
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, [breakpoint]);
+  
+  return isMobile;
+}
+
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
+  const disableAnimations = shouldReduceMotion || isMobile;
   const marqueeRef = useRef(null);
   const isMarqueeInView = useInView(marqueeRef, { once: false, margin: "100px" });
 
@@ -57,9 +73,9 @@ export default function Hero() {
         {/* Left - text content */}
         <div className="max-w-[420px] flex flex-col gap-6">
           <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+            variants={disableAnimations ? undefined : fadeUp}
+            initial={disableAnimations ? false : "hidden"}
+            animate={disableAnimations ? false : "visible"}
             custom={0}
           >
             <Image
@@ -78,20 +94,15 @@ export default function Hero() {
             />
           </motion.div>
 
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={1}
-          >
-            <RotatingText />
-          </motion.div>
+          <div>
+            <RotatingText disableAnimation={disableAnimations} />
+          </div>
 
           <motion.p
             className="text-lead text-base sm:text-lg"
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+            variants={disableAnimations ? undefined : fadeUp}
+            initial={disableAnimations ? false : "hidden"}
+            animate={disableAnimations ? false : "visible"}
             custom={2}
           >
             Build reliable blockchain apps & libraries with{" "}
@@ -109,9 +120,9 @@ export default function Hero() {
 
           <motion.div
             className="flex gap-2 flex-wrap max-lg:justify-center"
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+            variants={disableAnimations ? undefined : fadeUp}
+            initial={disableAnimations ? false : "hidden"}
+            animate={disableAnimations ? false : "visible"}
             custom={3}
           >
             <Button asChild size="lg">
@@ -177,8 +188,8 @@ export default function Hero() {
         <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
           <motion.div
             className="flex shrink-0 gap-4 sm:gap-5"
-            animate={shouldReduceMotion || !isMarqueeInView ? {} : { x: ["0%", "-50%"] }}
-            transition={shouldReduceMotion ? {} : { duration: 45, repeat: Infinity, ease: "linear" }}
+            animate={disableAnimations || !isMarqueeInView ? {} : { x: ["0%", "-50%"] }}
+            transition={disableAnimations ? {} : { duration: 45, repeat: Infinity, ease: "linear" }}
           >
             {doubled.map((f, i) => (
               <Card
