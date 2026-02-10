@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import CopyButton from "./CopyButton";
 import TerminalTyping from "./TerminalTyping";
@@ -5,6 +7,31 @@ import GitHubStats from "./GitHubStats";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import RotatingText from "./RotatingText";
+import { motion } from "framer-motion";
+import { Code2, Layers, Shield, Cpu, Zap, GitBranch, Lock, Database } from "lucide-react";
+import { Card } from "@/components/ui/card";
+
+const features = [
+  { icon: Layers, title: "Familiar API", desc: "Same Client/Transport and Actions patterns as viem for TypeScript developers" },
+  { icon: Code2, title: "Idiomatic Go", desc: "Built with Go conventions: explicit errors, context, and interfaces" },
+  { icon: Shield, title: "Type Safe", desc: "Go's static typing for contract ABIs, transactions, and RPC calls" },
+  { icon: Cpu, title: "go-ethereum", desc: "Built on proven go-ethereum cryptographic primitives" },
+  { icon: Zap, title: "High Performance", desc: "Leverage Go's concurrency model for parallel RPC operations" },
+  { icon: GitBranch, title: "Composable", desc: "Modular architecture lets you import only what you need" },
+  { icon: Lock, title: "Battle Tested", desc: "Comprehensive test suite running against Anvil" },
+  { icon: Database, title: "ABI Utilities", desc: "Encoding, decoding, and inspection utilities for ABIs" },
+];
+
+const doubled = [...features, ...features];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number], delay: i * 0.12 },
+  }),
+};
 
 export default function Hero() {
   return (
@@ -24,15 +51,44 @@ export default function Hero() {
       <div className="relative z-10 flex justify-between items-stretch gap-12 mb-20 mt-6 max-lg:flex-col max-lg:items-center max-lg:text-center">
         {/* Left - text content */}
         <div className="max-w-[420px] flex flex-col gap-6">
-          <Image
-            className="items-left w-auto max-sm:h-[38px]"
-            width={100}
-            height={80}
-            src="/svg/golem-logo-text-light.svg"
-            alt="viem-go logo"
-          />
-          <RotatingText />
-          <p className="text-lead">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={0}
+          >
+            <Image
+              className="items-left w-auto max-sm:h-[38px] dark-only"
+              width={100}
+              height={80}
+              src="/svg/golem-logo-text-light.svg"
+              alt="viem-go logo"
+            />
+            <Image
+              className="items-left w-auto max-sm:h-[38px] light-only"
+              width={100}
+              height={80}
+              src="/svg/golem-logo-text-dark.svg"
+              alt="viem-go logo"
+            />
+          </motion.div>
+
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+          >
+            <RotatingText />
+          </motion.div>
+
+          <motion.p
+            className="text-lead"
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={2}
+          >
             Build reliable blockchain apps & libraries with{" "}
             <strong className="text-foreground font-semibold">idiomatic Go</strong>,{" "}
             <strong className="text-foreground font-semibold">type-safe</strong>, and{" "}
@@ -44,8 +100,15 @@ export default function Hero() {
             >
               viem
             </a>
-          </p>
-          <div className="flex gap-2 flex-wrap max-lg:justify-center">
+          </motion.p>
+
+          <motion.div
+            className="flex gap-2 flex-wrap max-lg:justify-center"
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={3}
+          >
             <Button asChild size="lg">
               <Link href="/docs/getting-started">Get started</Link>
             </Button>
@@ -61,11 +124,17 @@ export default function Hero() {
                 GitHub
               </a>
             </Button>
-          </div>
+          </motion.div>
         </div>
 
         {/* Right - terminal + stats */}
-        <div className="w-[520px] shrink-0 flex flex-col justify-start gap-4 max-lg:hidden">
+        <motion.div
+          className="w-[520px] shrink-0 flex flex-col justify-start gap-4 max-lg:hidden"
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={2}
+        >
           {/* Install terminal */}
           <div className="flex flex-col rounded-lg overflow-hidden border border-primary/20 bg-code-bg min-h-[180px]">
             <div className="flex justify-between items-center bg-code-bg/30 border-b border-primary/15 pr-2">
@@ -92,8 +161,40 @@ export default function Hero() {
             </div>
           </div>
           <GitHubStats />
-        </div>
+        </motion.div>
       </div>
+
+      {/* Features marquee */}
+      <motion.div
+        className="relative overflow-hidden pb-10"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={3}
+      >
+        <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+          <motion.div
+            className="flex shrink-0 gap-5"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+          >
+            {doubled.map((f, i) => (
+              <Card
+                key={i}
+                variant="surfaceInteractive"
+                className="group relative shrink-0 w-[280px] border-card-border/60 bg-card/40 backdrop-blur-md p-6 shadow-lg shadow-primary/5 duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+              >
+                <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                <div className="mb-4 icon-box icon-box-primary h-10 w-10 rounded-lg transition-colors group-hover:bg-primary/20">
+                  <f.icon className="h-5 w-5" />
+                </div>
+                <h4 className="mb-2 text-foreground group-hover:text-primary transition-colors">{f.title}</h4>
+                <p className="text-sm text-foreground-secondary">{f.desc}</p>
+              </Card>
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
     </section>
   );
 }

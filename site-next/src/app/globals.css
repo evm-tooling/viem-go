@@ -66,9 +66,10 @@
      --radius:               0.5rem;
    
      /* ── Code blocks ── */
-     --code-bg:              225 30% 8%;
-     --code-border:          225 20% 16%;
-     --code-bg-deep:         225 32% 5%;
+    --code-bg:              225 30% 8%;
+    --code-border:          225 20% 16%;
+    --code-bg-deep:         225 32% 5%;
+    --code-text:            0 0% 100%;
    
      /* ── Aside / callout accents ── */
      --aside-note:           24 95% 55%;    /* tertiary orange */
@@ -95,12 +96,101 @@
      --fs-fine:  0.8125rem;
      --lh-heading: 1.15;
      --lh-body: 1.75rem;
-     --tracking-heading: -0.02em;
-   }
-   
-   /* ============================================================
-      TAILWIND v4 THEME — Map tokens → Tailwind classes
-      ============================================================ */
+    --tracking-heading: -0.02em;
+  }
+
+  /* ── Light Theme ── */
+  .light {
+    --background:           220 20% 98%;
+    --background-secondary: 220 18% 94%;
+    --background-tertiary:  220 16% 90%;
+    --background-elevated:  0 0% 100%;
+
+    --foreground:           225 30% 12%;
+    --foreground-secondary: 220 18% 38%;
+    --foreground-muted:     220 12% 55%;
+
+    --primary:              215 85% 48%;
+    --primary-foreground:   0 0% 100%;
+    --primary-hover:        215 85% 40%;
+
+    --secondary:            220 18% 92%;
+    --secondary-foreground: 225 25% 20%;
+
+    --tertiary:             24 95% 48%;
+    --tertiary-foreground:  0 0% 100%;
+
+    --card:                 0 0% 100%;
+    --card-foreground:      225 30% 12%;
+    --card-border:          220 16% 86%;
+
+    --muted:                220 16% 92%;
+    --muted-foreground:     220 12% 50%;
+
+    --accent:               215 50% 92%;
+    --accent-foreground:    215 85% 42%;
+
+    --destructive:          0 75% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --success:              145 65% 36%;
+    --success-foreground:   0 0% 100%;
+    --warning:              38 90% 48%;
+    --warning-foreground:   38 90% 10%;
+
+    --border:               220 16% 86%;
+    --input:                220 16% 90%;
+    --ring:                 215 85% 48%;
+
+    --code-bg:              220 20% 95%;
+    --code-bg-deep:         220 18% 92%;
+    --code-border:          220 14% 82%;
+    --code-text:            225 30% 18%;
+
+    --aside-note:           24 95% 48%;
+    --aside-tip:            145 65% 36%;
+    --aside-caution:        38 90% 48%;
+    --aside-danger:         0 75% 50%;
+
+    --terminal-user:        270 55% 50%;
+    --terminal-path:        215 85% 42%;
+    --terminal-command:     24 85% 45%;
+    --terminal-output:      145 60% 32%;
+    --terminal-cursor:      215 85% 48%;
+  }
+
+  html.light {
+    color-scheme: light;
+  }
+
+  /* ── Light-mode overrides for embedded dark-bg assets ── */
+  .light .benchmark-chart {
+    filter: invert(0.88) hue-rotate(180deg);
+    border-radius: 0.5rem;
+  }
+
+  .light .benchmark-svg-inline svg text[fill="#FFFFFF"],
+  .light .benchmark-svg-inline svg text[fill="#ffffff"] {
+    fill: hsl(var(--foreground));
+  }
+  .light .benchmark-svg-inline svg text[fill="rgba(255,255,255,0.55)"] {
+    fill: hsl(var(--foreground-muted));
+  }
+  .light .benchmark-svg-inline svg rect[stroke="white"] {
+    stroke: hsl(var(--border));
+  }
+  .light .benchmark-svg-inline svg rect[stroke-opacity="0.23"] {
+    stroke-opacity: 0.5;
+  }
+
+  /* ── Theme-aware element visibility ── */
+  .dark-only  { display: block; }
+  .light-only { display: none; }
+  .light .dark-only  { display: none; }
+  .light .light-only { display: block; }
+  
+  /* ============================================================
+     TAILWIND v4 THEME — Map tokens → Tailwind classes
+     ============================================================ */
    
    @theme inline {
      /* ── Colors (all reference HSL tokens) ── */
@@ -144,9 +234,10 @@
      --color-input: hsl(var(--input));
      --color-ring: hsl(var(--ring));
    
-     --color-code-bg: hsl(var(--code-bg));
-     --color-code-border: hsl(var(--code-border));
-     --color-code-bg-deep: hsl(var(--code-bg-deep));
+    --color-code-bg: hsl(var(--code-bg));
+    --color-code-border: hsl(var(--code-border));
+    --color-code-bg-deep: hsl(var(--code-bg-deep));
+    --color-code-text: hsl(var(--code-text));
    
      --color-aside-note: hsl(var(--aside-note));
      --color-aside-tip: hsl(var(--aside-tip));
@@ -220,6 +311,10 @@
       ============================================================ */
    
    html {
+     color-scheme: light;
+   }
+
+   html:not(.light) {
      color-scheme: dark;
    }
    
@@ -419,10 +514,10 @@
    
   /* ── Aside / callout presets ── */
   .aside-note {
-    border-color: hsl(var(--aside-note) / 0.5);
-    background: hsl(var(--aside-note) / 0.2);
+    border-color: hsl(var(--aside-note) / 0.25);
+    background: hsl(var(--aside-note) / 0.1);
     & .aside-icon { color: hsl(var(--aside-note)); }
-    & .aside-content { color: hsl(38 90% 80%); }
+    & .aside-content  { color: hsl(var(--aside-note)); }
   }
   .aside-tip {
     border-color: hsl(var(--aside-tip) / 0.25);
@@ -621,16 +716,16 @@
        margin-bottom: 0;
      }
    
-     /* ── Inline code ── */
-     & :not(pre) > code {
-       font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
-       font-size: 0.85em;
-       padding: 0.15em 0.4em;
-       border-radius: 4px;
-       background: hsl(var(--code-bg));
-       border: 1px solid hsl(var(--code-border));
-       color: hsl(var(--primary-foreground));
-     }
+    /* ── Inline code ── */
+    & :not(pre) > code {
+      font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
+      font-size: 0.85em;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      background: hsl(var(--code-bg));
+      border: 1px solid hsl(var(--code-border));
+      color: hsl(var(--code-text));
+    }
    
      /* ── Code blocks (pre > code) ── */
      & pre {
@@ -645,14 +740,14 @@
        margin-bottom: 1.5rem;
        overflow-x: auto;
    
-       & code {
-         font-size: inherit;
-         padding: 0;
-         border: none;
-         background: none;
-         color: hsl(var(--primary-hover));
-         border-radius: 0;
-       }
+      & code {
+        font-size: inherit;
+        padding: 0;
+        border: none;
+        background: none;
+        color: hsl(var(--code-text));
+        border-radius: 0;
+      }
      }
    
      /* ── Blockquotes ── */

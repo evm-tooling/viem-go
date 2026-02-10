@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import FeaturesGrid from "@/components/FeaturesGrid";
+
 import CodeComparison from "@/components/CodeComparison";
 import WhyGoSection from "@/components/WhyGoSection";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -117,7 +117,6 @@ export default function Home() {
 
         <div className="relative max-w-[1120px] mx-auto px-6">
           <Hero />
-          <FeaturesGrid />
         </div>
 
         <BenchmarkBigNumber />

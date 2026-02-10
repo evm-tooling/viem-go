@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SearchTrigger from "./SearchTrigger";
 import SidebarToggle from "./SidebarToggle";
+import ThemeSwitcher from "./ThemeSwitcher";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
@@ -59,6 +60,14 @@ export default function Header() {
                 width={90}
                 src="/svg/golem-logo-full-light.svg"
                 alt="viem-go"
+                className="dark-only"
+              />
+              <Image
+                height={90}
+                width={90}
+                src="/svg/golem-logo-full-dark.svg"
+                alt="viem-go"
+                className="light-only"
               />
             </Link>
           </div>
@@ -81,6 +90,8 @@ export default function Header() {
               <SearchTrigger compact />
             </div>
           )}
+          {/* Theme switcher */}
+          <ThemeSwitcher />
           {/* Version dropdown */}
           <VersionDropdown />
         </nav>

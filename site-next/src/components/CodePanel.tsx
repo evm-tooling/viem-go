@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Highlight, type PrismTheme } from "prism-react-renderer";
+import { Highlight } from "prism-react-renderer";
+import { useCodeTheme } from "@/lib/use-code-theme";
 
 const viemMonoFontFamily =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
@@ -17,25 +18,6 @@ type ParsedCode = {
   cleanCode: string;
   metaByLine: CodeLineMeta[];
   hasFocus: boolean;
-};
-
-/** Custom muted dark theme (One Dark inspired) */
-const codeTheme: PrismTheme = {
-  plain: { color: "#abb2bf", backgroundColor: "transparent" },
-  styles: [
-    { types: ["comment", "prolog", "doctype", "cdata"], style: { color: "#5c6370", fontStyle: "italic" as const } },
-    { types: ["keyword", "operator", "tag"], style: { color: "#c678dd" } },
-    { types: ["property", "function"], style: { color: "#61afef" } },
-    { types: ["string", "attr-value", "template-string"], style: { color: "#d19a66" } },
-    { types: ["number", "boolean"], style: { color: "#d19a66" } },
-    { types: ["builtin", "class-name", "maybe-class-name"], style: { color: "#e5c07b" } },
-    { types: ["punctuation"], style: { color: "#abb2bf" } },
-    { types: ["attr-name"], style: { color: "#d19a66" } },
-    { types: ["char", "constant", "symbol"], style: { color: "#56b6c2" } },
-    { types: ["variable"], style: { color: "#e06c75" } },
-    { types: ["regex", "important"], style: { color: "#c678dd" } },
-    { types: ["plain"], style: { color: "#abb2bf" } },
-  ],
 };
 
 import {
@@ -123,8 +105,8 @@ function lineClassName(meta: CodeLineMeta | undefined, hasFocus: boolean, active
   if (hasFocus && !meta?.focused) classes.push("opacity-35 bg-code-bg-deep");
   if (active) classes.push("opacity-100 bg-code-bg-deep/40");
   if (hasFocus && meta?.focused) classes.push("opacity-100 bg-code-bg-deep/40");
-  if (meta?.focused) classes.push("font-semibold");
-  if (meta?.highlighted) classes.push("font-semibold");
+  // if (meta?.focused) classes.push("font-semibold");
+  // if (meta?.highlighted) classes.push("font-semibold");
   if (meta?.added) classes.push("diff-added");
   if (meta?.removed) classes.push("diff-removed");
 
@@ -134,6 +116,7 @@ function lineClassName(meta: CodeLineMeta | undefined, hasFocus: boolean, active
 export function CodeGroup({ tabs: tabsInput, title }: CodeGroupProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [active, setActive] = React.useState(false);
+  const codeTheme = useCodeTheme();
 
   const tabs = tabsInput.map((tab) => ({
     title: tab.title || languageNames[tab.language || ""] || tab.language || "Code",

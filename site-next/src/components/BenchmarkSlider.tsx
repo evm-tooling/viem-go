@@ -134,7 +134,7 @@ export default function BenchmarkSlider({ title, slides }: BenchmarkSliderProps)
                 <img
                   src={slide.src}
                   alt={slide.label}
-                  className="w-full h-auto rounded-lg"
+                  className="w-full h-auto rounded-lg benchmark-chart"
                   draggable={false}
                 />
               </div>

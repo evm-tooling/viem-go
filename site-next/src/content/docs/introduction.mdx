@@ -51,7 +51,7 @@ go-ethereum is excellent for low-level operations, but it can be verbose for com
       code: `// Reading an ERC20 balance
 result, _ := client.ReadContract(ctx, client.ReadContractOptions{
     Address:      common.HexToAddress("0xA0b86991c..."),
-    ABI:          \`[{"name":"balanceOf","type":"function",...}]\`,
+    ABI:          "[{"name":"balanceOf","type":"function",...}]",
     FunctionName: "balanceOf",
     Args:         []any{ownerAddress},
 })

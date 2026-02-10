@@ -15,7 +15,7 @@ export default function SupportSection() {
           asChild
           variant="secondary"
           size="lg"
-          className="h-auto py-4 px-6 rounded-xl font-semibold transition-all duration-200 hover:bg-background-elevated hover:-translate-y-0.5"
+          className="h-auto py-4 px-6 rounded-xl font-semibold transition-all duration-200  hover:-translate-y-0.5"
         >
           <a
             href="https://github.com/sponsors/ChefBingbong"
@@ -40,7 +40,7 @@ export default function SupportSection() {
           asChild
           variant="secondary"
           size="lg"
-          className="h-auto py-4 px-6 rounded-xl font-semibold transition-all duration-200 hover:bg-background-elevated hover:-translate-y-0.5"
+          className="h-auto py-4 px-6 rounded-xl font-semibold transition-all duration-200  hover:-translate-y-0.5"
         >
           <a
             href="https://github.com/ChefBingbong/viem-go"

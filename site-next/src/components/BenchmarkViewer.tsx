@@ -2,26 +2,8 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Highlight, type PrismTheme } from "prism-react-renderer";
-
-// ============================================================================
-// Code theme (matches CodePanel)
-// ============================================================================
-
-const codeTheme: PrismTheme = {
-  plain: { color: "#abb2bf", backgroundColor: "transparent" },
-  styles: [
-    { types: ["comment", "prolog", "doctype", "cdata"], style: { color: "#5c6370", fontStyle: "italic" as const } },
-    { types: ["keyword", "operator", "tag"], style: { color: "#c678dd" } },
-    { types: ["property", "function"], style: { color: "#61afef" } },
-    { types: ["string", "attr-value", "template-string"], style: { color: "#d19a66" } },
-    { types: ["number", "boolean"], style: { color: "#d19a66" } },
-    { types: ["builtin", "class-name", "maybe-class-name"], style: { color: "#e5c07b" } },
-    { types: ["punctuation"], style: { color: "#abb2bf" } },
-    { types: ["char", "constant", "symbol"], style: { color: "#56b6c2" } },
-    { types: ["variable"], style: { color: "#e06c75" } },
-  ],
-};
+import { Highlight } from "prism-react-renderer";
+import { useCodeTheme } from "@/lib/use-code-theme";
 
 const monoFont =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
@@ -79,7 +61,7 @@ function InlineSvg({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div
-      className="w-full rounded-lg bg-[hsl(var(--code-bg))] [&>svg]:w-full [&>svg]:h-auto [&>svg]:block"
+      className="w-full rounded-lg bg-[hsl(var(--code-bg))] benchmark-svg-inline [&>svg]:w-full [&>svg]:h-auto [&>svg]:block"
       role="img"
       aria-label={alt}
       dangerouslySetInnerHTML={{ __html: svg }}
@@ -149,6 +131,7 @@ export default function BenchmarkViewer({ suites }: BenchmarkViewerProps) {
   const [activeSlideIdx, setActiveSlideIdx] = React.useState(0);
   const [direction, setDirection] = React.useState(0); // +1 = right, -1 = left
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const codeTheme = useCodeTheme();
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const suite = suites[activeSuiteIdx];
