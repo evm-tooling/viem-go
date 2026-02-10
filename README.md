@@ -9,7 +9,7 @@ Go Interface for Ethereum -- inspired by [viem](https://viem.sh)
 
 ## Why viem go
 
-If you have used viem in TypeScript you already know the API. viem go brings a similar developer experience to Go with compiled performance and concurrency. It improves the workflow compared to go ethereum by providing a higher level interface and utilities such as ABI encoding helpers, multicall support, and unit parsing.
+If you have used viem in TypeScript you will be familiar with viem-go. Viem go brings a similar developer experience to Go with the extra benefits of compiled performance and concurrency. It improves the workflow compared to go ethereum by providing a higher level interface and utilities such as ABI encoding helpers, multicall support, and unit parsing, all whist not sacrificing any preofrmance relative to go-ethereum
 
 ## Install
 
@@ -147,9 +147,7 @@ Built in ERC standards are included such as erc20.
 
 ## Performance
 
-Benchmarks show viem go is faster across ABI encoding and decoding, hashing, signature operations, event log decoding, ENS utilities, call actions, multicall batching, and unit parsing. See benchmarks folder for methodology and results charts.
-
-viem-go doesn't just match viem's API -- it outperforms it. At 5000 iterations, Go wins **37/37 benchmarks (100%)** with a **14.55x geometric mean speedup**. At 50 iterations the speedup peaks at **29.89x**.
+Viem-go absolutley crushes viem across every benchmark we ran. Their is on avaerage 20x improvements across ABI encoding and decoding, hashing, signature operations, event log decoding, ENS utilities, call actions, multicall batching, and unit parsing. See benchmarks folder for methodology and results charts. At 5000 iterations, Go wins **37/37 benchmarks (100%)** with a **14.55x geometric mean speedup**. At 50 iterations the speedup peaks at **29.89x**.
 
 ### Summary (5000 iterations)
 
@@ -189,9 +187,9 @@ viem-go doesn't just match viem's API -- it outperforms it. At 5000 iterations, 
 
 ### Real-World Comparison: UniswapV2 Pool Extractor
 
-To see how these library-level benchmarks translate into a real application, check out [**viem-go-extractor-demo**](https://github.com/ChefBingbong/viem-go-extractor-demo) -- identical UniswapV2 pool extractors built in both Go (viem-go) and TypeScript (viem + Bun).
+To see how these library level benchmarks translate into a real application, check out [**viem-go-extractor-demo**](https://github.com/ChefBingbong/viem-go-extractor-demo). two identically built UniswapV2 pool extractors built in both Go (viem-go) and TypeScript (viem + Bun).
 
-Both extractors do the same work: sync 60,000+ pool pairs from on-chain UniswapV2 factories via multicall, decode Sync events from block logs, resolve ERC-20 token metadata, and serve the pool state over an HTTP API. The results show where each language shines:
+Both extractors do the same work. they sync 60,000+ pool pairs from on-chain UniswapV2 factories via multicall, decode Sync events from block logs, resolve ERC-20 token metadata, and serve the pool state over an HTTP API. The results show where each language shines:
 
 | Dimension | Winner | Key Finding |
 |---|---|---|
@@ -199,17 +197,12 @@ Both extractors do the same work: sync 60,000+ pool pairs from on-chain UniswapV
 | **Event decoding** | Go | **9-11x faster** -- compiled byte slicing vs full ABI schema resolution |
 | **Factory sync (end-to-end)** | Go | **1.2-2.2x faster** -- compounds across 60K+ pools |
 | **JSON serialization** | TypeScript | **1.7-2.3x faster** -- Bun's Zig-optimized `JSON.stringify` |
-| **HTTP API under load** | TypeScript | **5-7x lower latency** -- Bun's async I/O model handles 200 concurrent users efficiently |
-
-**The takeaway:** Go (viem-go) is the better choice for the **data pipeline** -- fetching, decoding, and processing on-chain data. TypeScript (viem) is the better choice for the **API layer** -- serving that data to clients. In a production architecture, the optimal design is a Go-based indexer feeding data into a TypeScript API server.
 
 ## Typed Contract Templates
 
-One of viem-go's unique features is its **typed contract template system** -- something that has no equivalent in either viem (TypeScript) or go-ethereum.
+One of viem-go's unique features is its **typed contract template system**. something that has no equivalent in either viem (TypeScript) or go-ethereum.
 
-In TypeScript, viem infers types dynamically from ABI string literals at compile time. Go can't do that. So you're normally stuck with either go-ethereum's `abigen` (thousands of lines of generated boilerplate) or raw `[]any` returns where you cast everything manually.
-
-viem-go solves this with two complementary approaches:
+In TypeScript, viem infers types dynamically from ABI string literals at compile time. Go can't do that. So you're normally stuck with either go-ethereum's `abigen` (thousands of lines of generated boilerplate) or raw `[]any` returns where you cast everything manually. viem-go solves this with two complementary approaches:
 
 ### 1. Typed Function Descriptors (Zero Codegen)
 
@@ -234,7 +227,7 @@ balance, err := contract.Call1(token, ctx, BalanceOf, ownerAddr)
 allowance, err := contract.Call2(token, ctx, Allowance, owner, spender)
 ```
 
-`Fn`, `Fn1`, `Fn2`, `Fn3`, and `Fn4` encode the argument count and types into the Go type system. `Call1` expects exactly one argument of the type specified in `Fn1` -- pass the wrong type and it's a compile error, not a runtime panic.
+`Fn`, `Fn1`, `Fn2`, `Fn3`, and `Fn4` encode the argument count and types into the Go type system. `Call1` expects exactly one argument of the type specified in `Fn1`. pass the wrong type and it's a compile error, not a runtime panic.
 
 ### 2. `viemgen` Code Generator
 
@@ -280,7 +273,7 @@ balance, _ := contract.Call1(token2, ctx, erc20.Methods.BalanceOf, owner)
 
 ## Implementation Status
 
-Early -- core client, public actions (`call`, `multicall`, `getBlockNumber`, `getBalance`, etc.), contract bindings, ABI encoding/decoding, unit parsing, hashing, and signature utilities are implemented.
+Early. Whilest most features have been build out, much work still needs to be done in order to relaise the maxoum amount of optimisation in relation to viem anf go-ethereum
 
 ## Development
 
