@@ -1,5 +1,4 @@
 'use client'
-import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
 import { Server, Terminal, Network, Globe } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -42,19 +41,17 @@ const WhyGoSection = () => (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {reasons.map((r, i) => (
           <AnimatedSection key={r.title} delay={i * 0.1}>
-            <Card asChild variant="surfaceInteractive" padding="md" className="group relative h-full duration-300">
-              <motion.div whileHover={{ y: -6 }}>
-                <div
-                  className={`absolute top-0 left-4 right-4 h-0.5 rounded-b-full ${r.accent === "tertiary" ? "bg-tertiary" : "bg-primary"} opacity-60`}
-                />
-                <div className={`mb-4 icon-box h-12 w-12 rounded-xl transition-transform group-hover:scale-110 ${
-                  r.accent === "tertiary" ? "icon-box-tertiary" : "icon-box-primary"
-                }`}>
-                  <r.icon className="h-6 w-6" />
-                </div>
-                <h4 className="mb-2 text-foreground">{r.title}</h4>
-                <p className="text-sm text-foreground-secondary">{r.desc}</p>
-              </motion.div>
+            <Card variant="surfaceInteractive" padding="md" className="group relative h-full hover:-translate-y-1 transition-transform duration-200">
+              <div
+                className={`absolute top-0 left-4 right-4 h-0.5 rounded-b-full ${r.accent === "tertiary" ? "bg-tertiary" : "bg-primary"} opacity-60`}
+              />
+              <div className={`mb-4 icon-box h-12 w-12 rounded-xl ${
+                r.accent === "tertiary" ? "icon-box-tertiary" : "icon-box-primary"
+              }`}>
+                <r.icon className="h-6 w-6" />
+              </div>
+              <h4 className="mb-2 text-foreground">{r.title}</h4>
+              <p className="text-sm text-foreground-secondary">{r.desc}</p>
             </Card>
           </AnimatedSection>
         ))}

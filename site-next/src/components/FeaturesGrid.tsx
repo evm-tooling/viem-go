@@ -1,5 +1,6 @@
 'use client'
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useInView } from "framer-motion";
 import { Code2, Layers, Shield, Cpu, Zap, GitBranch, Lock, Database } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -16,33 +17,36 @@ const features = [
 
 const doubled = [...features, ...features];
 
-const FeaturesGrid = () => (
-  <section className="relative overflow-hidden pb-10">
-    <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
-      <motion.div
-        className="flex shrink-0 gap-5"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-      >
-        {doubled.map((f, i) => (
-          <Card
-            key={i}
-            variant="surfaceInteractive"
-            className="group relative shrink-0 w-[280px] border-card-border/60 bg-card/40 backdrop-blur-md p-6 shadow-lg shadow-primary/5 duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
-          >
-            {/* Hover glow */}
-            <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+const FeaturesGrid = () => {
+  const shouldReduceMotion = useReducedMotion();
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, margin: "100px" });
 
-            <div className="mb-4 icon-box icon-box-primary h-10 w-10 rounded-lg transition-colors group-hover:bg-primary/20">
-              <f.icon className="h-5 w-5" />
-            </div>
-            <h4 className="mb-2 text-foreground group-hover:text-primary transition-colors">{f.title}</h4>
-            <p className="text-sm text-foreground-secondary">{f.desc}</p>
-          </Card>
-        ))}
-      </motion.div>
-    </div>
-  </section>
-);
+  return (
+    <section ref={ref} className="relative overflow-hidden pb-10">
+      <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+        <motion.div
+          className="flex shrink-0 gap-5"
+          animate={shouldReduceMotion || !isInView ? {} : { x: ["0%", "-50%"] }}
+          transition={shouldReduceMotion ? {} : { duration: 45, repeat: Infinity, ease: "linear" }}
+        >
+          {doubled.map((f, i) => (
+            <Card
+              key={i}
+              variant="surfaceInteractive"
+              className="group relative shrink-0 w-[280px] border-card-border/60 bg-card/40 sm:backdrop-blur-md p-6 shadow-lg shadow-primary/5"
+            >
+              <div className="mb-4 icon-box icon-box-primary h-10 w-10 rounded-lg">
+                <f.icon className="h-5 w-5" />
+              </div>
+              <h4 className="mb-2 text-foreground">{f.title}</h4>
+              <p className="text-sm text-foreground-secondary">{f.desc}</p>
+            </Card>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 export default FeaturesGrid;

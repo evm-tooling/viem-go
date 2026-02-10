@@ -1,5 +1,4 @@
 'use client'
-import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
 import { Check, X, Minus } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -73,12 +72,8 @@ const ComparisonSection = () => (
 
           {/* Table rows */}
           {rows.map((row, i) => (
-            <motion.div
+            <div
               key={row.feature}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
               className={`grid grid-cols-[1fr_60px_60px] sm:grid-cols-[1fr_180px_180px] items-center transition-colors hover:bg-background-elevated/40 ${
                 i !== rows.length - 1 ? "border-b border-border/50" : ""
               }`}
@@ -89,7 +84,7 @@ const ComparisonSection = () => (
               </div>
               <div className="flex justify-center px-1 sm:px-4 py-3 sm:py-4"><StatusCell status={row.viemGo} /></div>
               <div className="flex justify-center px-1 sm:px-4 py-3 sm:py-4"><StatusCell status={row.goEth} /></div>
-            </motion.div>
+            </div>
           ))}
 
           {/* Summary bar */}
