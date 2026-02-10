@@ -2,14 +2,19 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-background border-t border-border pt-16 pb-8  mt-8">
-      <div className="max-w-[1220px] mx-auto flex justify-between gap-12 flex-wrap">
+    <footer className="w-full bg-background border-t border-border pt-16 pb-8 mt-8">
+      <div className="max-w-[1220px] mx-auto px-6 flex justify-between gap-12 flex-wrap">
         {/* Brand */}
-        <div className="max-w-[280px]">
+        <div className="max-w-[280px] hidden md:block">
           <img
             src="/svg/golem-logo-text-light.svg"
             alt="viem-go"
-            className="h-8 mb-4"
+            className="h-8 mb-4 dark-only"
+          />
+          <img
+            src="/svg/golem-logo-text-dark.svg"
+            alt="viem-go"
+            className="h-8 mb-4 light-only"
           />
           <p className="text-foreground-secondary text-[1rem] leading-relaxed">
             Go Interface for Ethereum
@@ -64,7 +69,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="max-w-[1220px] mx-auto mt-12 pt-8 border-t border-border/60 flex justify-between items-center flex-wrap gap-4">
+      <div className="max-w-[1220px] mx-auto px-6 mt-12 pt-8 border-t border-border/60 flex justify-between items-center flex-wrap gap-4">
         <p className="text-muted-foreground text-md">Released under the MIT License.</p>
         <p className="text-muted-foreground text-md">
           Inspired by{" "}

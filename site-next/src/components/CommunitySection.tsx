@@ -26,10 +26,10 @@ const Counter = ({ target, label, suffix = "" }: { target: number; label: string
         }}
         viewport={{ once: true }}
       >
-        <span ref={ref} className="text-4xl font-black text-primary md:text-5xl">
+        <span ref={ref} className="text-3xl sm:text-4xl font-black text-primary md:text-5xl">
           0{suffix}
         </span>
-        <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-foreground-muted">{label}</p>
+        <p className="mt-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-foreground-muted">{label}</p>
       </motion.div>
     </AnimatedSection>
   );
@@ -59,9 +59,9 @@ const CommunitySection = () => (
       </AnimatedSection>
 
       {/* Stats counters */}
-      <div className="grid grid-cols-3 gap-8 mb-20 max-w-2xl mx-auto">
-        <Counter target={95} label="Test Coverage" suffix="%" />
-        <Counter target={2} label="GitHub Stars" />
+      <div className="grid grid-cols-3 gap-4 sm:gap-8 mb-20 max-w-2xl mx-auto px-2">
+        <Counter target={95} label="Coverage" suffix="%" />
+        <Counter target={2} label="Stars" />
         <Counter target={12} label="Contributors" />
       </div>
 

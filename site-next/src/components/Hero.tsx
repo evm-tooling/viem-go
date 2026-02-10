@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import CopyButton from "./CopyButton";
 import TerminalTyping from "./TerminalTyping";
@@ -7,7 +8,7 @@ import GitHubStats from "./GitHubStats";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import RotatingText from "./RotatingText";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, useInView } from "framer-motion";
 import { Code2, Layers, Shield, Cpu, Zap, GitBranch, Lock, Database } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -34,17 +35,21 @@ const fadeUp = {
 };
 
 export default function Hero() {
+  const shouldReduceMotion = useReducedMotion();
+  const marqueeRef = useRef(null);
+  const isMarqueeInView = useInView(marqueeRef, { once: false, margin: "100px" });
+
   return (
     <section className="relative pt-26">
       {/* Background image overlay */}
       <div
-        className="absolute top-2 left-[45%] -translate-x-1/2 w-[110vw] bottom-0 bg-cover opacity-25 z-0 pointer-events-none scale-110"
+        className="absolute top-0 left-1/2 lg:left-[calc(50%-30px)] -translate-x-1/2 w-[110vw] min-w-[800px] bottom-0 bg-cover bg-top opacity-25 z-0 pointer-events-none scale-110"
         style={{
           backgroundImage: "url('/svg/hero-bg.svg')",
           maskImage:
-            "linear-gradient(to bottom, black 0%, black 30%, transparent 100%)",
+            "linear-gradient(to bottom, black 0%, black 20%, transparent 65%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 30%, transparent 100%)",
+            "linear-gradient(to bottom, black 0%, black 20%, transparent 65%)",
         }}
       />
 
@@ -58,14 +63,14 @@ export default function Hero() {
             custom={0}
           >
             <Image
-              className="items-left w-auto max-sm:h-[38px] dark-only"
+              className="items-left w-auto max-sm:h-[60px] max-lg:mx-auto dark-only"
               width={100}
               height={80}
               src="/svg/golem-logo-text-light.svg"
               alt="viem-go logo"
             />
             <Image
-              className="items-left w-auto max-sm:h-[38px] light-only"
+              className="items-left w-auto max-sm:h-[60px] max-lg:mx-auto light-only"
               width={100}
               height={80}
               src="/svg/golem-logo-text-dark.svg"
@@ -83,7 +88,7 @@ export default function Hero() {
           </motion.div>
 
           <motion.p
-            className="text-lead"
+            className="text-lead text-base sm:text-lg"
             variants={fadeUp}
             initial="hidden"
             animate="visible"
@@ -166,6 +171,7 @@ export default function Hero() {
 
       {/* Features marquee */}
       <motion.div
+        ref={marqueeRef}
         className="relative overflow-hidden pb-10"
         variants={fadeUp}
         initial="hidden"
@@ -175,14 +181,14 @@ export default function Hero() {
         <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
           <motion.div
             className="flex shrink-0 gap-5"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+            animate={shouldReduceMotion || !isMarqueeInView ? {} : { x: ["0%", "-50%"] }}
+            transition={shouldReduceMotion ? {} : { duration: 45, repeat: Infinity, ease: "linear" }}
           >
             {doubled.map((f, i) => (
               <Card
                 key={i}
                 variant="surfaceInteractive"
-                className="group relative shrink-0 w-[280px] border-card-border/60 bg-card/40 backdrop-blur-md p-6 shadow-lg shadow-primary/5 duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+                className="group relative shrink-0 w-[240px] sm:w-[280px] border-card-border/60 bg-card/40 sm:backdrop-blur-md p-4 sm:p-6 shadow-lg shadow-primary/5 duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
               >
                 <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
                 <div className="mb-4 icon-box icon-box-primary h-10 w-10 rounded-lg transition-colors group-hover:bg-primary/20">

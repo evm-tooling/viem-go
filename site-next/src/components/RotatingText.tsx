@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 const phrases = [
   "Viem in Go",
@@ -11,23 +11,26 @@ const phrases = [
 
 const RotatingText = () => {
   const [index, setIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    // Slow down rotation interval for reduced motion users (or skip animation)
+    const intervalMs = shouldReduceMotion ? 5000 : 3000;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
-    }, 3000);
+    }, intervalMs);
     return () => clearInterval(interval);
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
-    <span className="inline-block relative text-7xl font-bold">
+    <span className="inline-block relative text-4xl sm:text-5xl md:text-7xl font-bold">
       <AnimatePresence mode="wait">
         <motion.span
           key={phrases[index]}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+          animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: shouldReduceMotion ? 0.2 : 0.4, ease: "easeInOut" }}
           className="inline-block text-primary"
         >
           {phrases[index]}

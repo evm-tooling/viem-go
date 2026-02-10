@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SearchTrigger from "./SearchTrigger";
@@ -48,7 +49,7 @@ function NavLink({
 export default function Header() {
   const pathname = usePathname();
   return (
-    <header className={`sticky top-0 z-50 w-full ${pathname !== "/" ? "bg-background" : "bg-transparent"} py-[5px] opacity-100`}>
+    <header className={`sticky top-0 z-50 w-full bg-background py-[5px] opacity-100`}>
       <div className="px-4 sm:px-6 h-12 flex items-center justify-between gap-3">
         {/* Left: logo area + search */}
         <div className="flex items-center min-w-0">
@@ -101,12 +102,33 @@ export default function Header() {
 }
 
 function VersionDropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative group">
+    <div className="relative" ref={dropdownRef}>
       <Button
         variant="secondary"
         size="sm"
         className="h-auto px-3 py-1.5 rounded-md gap-1"
+        onClick={() => setIsOpen(!isOpen)}
       >
         v0.1.0
         <svg
@@ -119,12 +141,12 @@ function VersionDropdown() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="transition-transform group-hover:rotate-180"
+          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </Button>
-      <div className="absolute top-full right-0 mt-2 min-w-[160px] bg-card border border-card-border rounded-lg p-1 shadow-xl shadow-black/30 opacity-0 invisible -translate-y-1 transition-all group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+      <div className={`absolute top-full right-0 mt-2 min-w-[160px] bg-card border border-card-border rounded-lg p-1 shadow-xl shadow-black/30 transition-all z-50 ${isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1"}`}>
         <Button asChild variant="ghost" size="sm" className="w-full justify-between px-3 py-2 h-auto rounded-md text-foreground-secondary hover:text-primary">
           <a href="https://github.com/ChefBingbong/viem-go/releases" target="_blank" rel="noopener noreferrer">
             Releases
