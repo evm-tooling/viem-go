@@ -13,6 +13,7 @@ export const docsNav: NavItem[] = [
         items: [
           { label: "Why viem-go", slug: "introduction" },
           { label: "Getting Started", slug: "getting-started" },
+          { label: "Performance", slug: "performance" },
           { label: "Examples", slug: "examples" },
         ],
       },

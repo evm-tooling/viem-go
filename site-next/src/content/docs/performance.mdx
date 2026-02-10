@@ -1,0 +1,303 @@
+---
+title: Performance
+description: Benchmark comparisons between viem-go and TypeScript viem across all test suites
+---
+
+<div data-pagefind-weight="8">
+
+viem-go is benchmarked head-to-head against TypeScript [viem](https://viem.sh) across 59 individual tests spanning 9 suites. Both runtimes target the same Anvil instance (mainnet fork) for a fair comparison.
+
+### Overview
+
+| Metric | Go (viem-go) | TypeScript (viem) |
+|--------|--------------|-------------------|
+| Geometric mean speedup | 7.12x | - |
+| Avg ns/op | 2,020,982 | 10,567,395 |
+| Avg ops/s | 495 | 95 |
+| Wins | 59/59 | 0/59 |
+
+<Aside type="note">
+<span>Benchmarks are run against a local Anvil instance (mainnet fork). Real-world performance will vary depending on your RPC provider, network latency, and workload shape.</span>
+</Aside>
+
+### Suite averages
+
+| Suite | Benchmarks | Go avg (ns/op) | TS avg (ns/op) | Go avg (ops/s) | TS avg (ops/s) | Avg speedup |
+|------|-----------:|---------------:|---------------:|---------------:|---------------:|------------:|
+| abi | 6 | 428 | 4,275 | 3,445,808 | 626,605 | 10.00x |
+| address | 5 | 488 | 4,275 | 11,011,379 | 2,126,570 | 8.75x |
+| call | 6 | 196,058 | 15,262,714 | 5,230 | 741 | 77.85x |
+| ens | 5 | 1,271 | 14,653 | 1,446,853 | 336,587 | 11.53x |
+| event | 3 | 14,786 | 368,891 | 613,584 | 36,198 | 24.95x |
+| hash | 7 | 1,257 | 14,452 | 1,938,169 | 193,156 | 11.50x |
+| multicall | 16 | 7,371,364 | 32,964,665 | 2,258 | 1,092 | 4.47x |
+| signature | 5 | 10,942 | 627,205 | 1,443,857 | 158,895 | 57.32x |
+| unit | 6 | 94 | 208 | 11,370,705 | 5,193,740 | 2.21x |
+
+### Interactive charts
+
+Use the dropdown to switch between suites and click through individual benchmark comparisons. Each chart shows the total execution time over all iterations — lower is better.
+
+<BenchmarkViewer
+  suites={[
+    {
+      id: "abi",
+      label: "ABI",
+      badge: "10x avg",
+      slides: [
+        { src: "/benchmarks/encode-simple.svg", label: "Encode Simple", summary: "Basic single-argument ABI encoding. Go's compiled encoder is ~32x faster than viem's JS runtime encoder for simple types.", code: 'encoded, _ := abi.Encode([]string{"uint256"}, big.NewInt(42))' },
+        { src: "/benchmarks/encode-complex.svg", label: "Encode Complex", summary: "Encodes a struct with nested types (arrays, tuples). Go maintains a ~14x advantage even with complex ABI structures.", code: 'encoded, _ := abi.Encode(\n  []string{"address", "uint256", "bytes32"},\n  addr, amount, hash,\n)' },
+        { src: "/benchmarks/encode-3-arg.svg", label: "Encode 3-Arg", summary: "Multi-argument encoding (address, uint256, bytes). Go's type-safe encoding avoids the reflection overhead that JS incurs.", code: 'encoded, _ := abi.Encode(\n  []string{"address", "uint256", "bytes"},\n  addr, amount, data,\n)' },
+        { src: "/benchmarks/decode-result.svg", label: "Decode Result", summary: "Decodes a single return value from contract call output. Go is ~9x faster due to direct binary unpacking vs JS BigInt conversion.", code: 'values, _ := abi.Decode([]string{"uint256"}, data)' },
+        { src: "/benchmarks/encodepacked.svg", label: "EncodePacked", summary: "Solidity-style abi.encodePacked with a single argument. The gap narrows here since packed encoding is simpler — Go is only ~1.3x faster.", code: 'packed, _ := abi.EncodePacked(\n  []string{"address"},\n  addr,\n)' },
+        { src: "/benchmarks/encodepacked-multi.svg", label: "EncodePacked Multi", summary: "Packed encoding with multiple heterogeneous arguments. Go's advantage grows to ~2.5x with more arguments to concatenate.", code: 'packed, _ := abi.EncodePacked(\n  []string{"address", "uint256", "bytes32"},\n  addr, amount, hash,\n)' },
+      ],
+    },
+    {
+      id: "address",
+      label: "Address",
+      badge: "8.8x avg",
+      slides: [
+        { src: "/benchmarks/isaddress.svg", label: "IsAddress", summary: "Validates an Ethereum address (checksum or lowercase). Go's string operations and hex validation are ~6x faster than the JS regex-based approach.", code: 'valid := address.IsAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")' },
+        { src: "/benchmarks/isaddress-lower.svg", label: "IsAddress Lower", summary: "Validates an already-lowercased address. Similar performance profile to mixed-case — Go wins by ~4x.", code: 'valid := address.IsAddress("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")' },
+        { src: "/benchmarks/checksum.svg", label: "Checksum", summary: "Computes the EIP-55 mixed-case checksum of an address. Go is ~5x faster thanks to native Keccak256 and byte-level manipulation.", code: 'checksummed := address.Checksum("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")' },
+        { src: "/benchmarks/create.svg", label: "CREATE", summary: "Computes a CREATE deployment address from sender + nonce. Go is ~6x faster with compiled RLP encoding and hashing.", code: 'addr := address.Create(sender, nonce)' },
+        { src: "/benchmarks/create2.svg", label: "CREATE2", summary: "Computes a CREATE2 address from sender, salt, and init code hash. Go's ~12x advantage comes from efficient hash chaining.", code: 'addr := address.Create2(sender, salt, initCodeHash)' },
+      ],
+    },
+    {
+      id: "hash",
+      label: "Hash",
+      badge: "11.5x avg",
+      slides: [
+        { src: "/benchmarks/keccak256-short.svg", label: "Keccak256 Short", summary: "Keccak256 of a short input (32 bytes). Go's native crypto implementation is ~46x faster than the JS WASM-based Keccak.", code: 'h := hash.Keccak256([]byte("hello world"))' },
+        { src: "/benchmarks/keccak256-long.svg", label: "Keccak256 Long", summary: "Keccak256 of a large input (1KB+). Go maintains ~17x advantage. The gap narrows vs short input because hash throughput matters more than setup cost.", code: 'h := hash.Keccak256(largePayload)' },
+        { src: "/benchmarks/keccak256-hex.svg", label: "Keccak256 Hex", summary: "Keccak256 from hex-encoded input. Go is ~11x faster — the hex decoding overhead is small compared to the hashing itself.", code: 'h := hash.Keccak256Hex("0xdeadbeef...")' },
+        { src: "/benchmarks/sha-256-short.svg", label: "SHA-256 Short", summary: "SHA-256 of a short input. Go is ~9x faster using hardware-accelerated SHA-256 (ARM SHA extensions on Apple Silicon).", code: 'h := hash.Sha256([]byte("hello world"))' },
+        { src: "/benchmarks/sha-256-long.svg", label: "SHA-256 Long", summary: "SHA-256 of a large input. Go's ~20x advantage benefits from hardware acceleration on longer inputs where throughput dominates.", code: 'h := hash.Sha256(largePayload)' },
+        { src: "/benchmarks/fn-selector.svg", label: "Fn Selector", summary: "Computes a 4-byte function selector from a signature string. Go is ~3x faster — the function signature parsing is comparable, but Go's Keccak is faster.", code: 'sel := hash.FunctionSelector("transfer(address,uint256)")' },
+        { src: "/benchmarks/event-selector.svg", label: "Event Selector", summary: "Computes a 32-byte event topic from a signature string. Similar to function selector — Go is ~3x faster.", code: 'topic := hash.EventSelector("Transfer(address,address,uint256)")' },
+      ],
+    },
+    {
+      id: "ens",
+      label: "ENS",
+      badge: "11.5x avg",
+      slides: [
+        { src: "/benchmarks/namehash.svg", label: "Namehash", summary: "Computes the ENS namehash of a standard domain (e.g. 'vitalik.eth'). Go is ~12.5x faster with iterative label hashing using native Keccak.", code: 'node := ens.Namehash("vitalik.eth")' },
+        { src: "/benchmarks/namehash-deep.svg", label: "Namehash Deep", summary: "Namehash of a deeply nested domain (e.g. 'a.b.c.d.e.eth'). Go is ~14x faster — the advantage scales with label count.", code: 'node := ens.Namehash("a.b.c.d.e.eth")' },
+        { src: "/benchmarks/labelhash.svg", label: "Labelhash", summary: "Keccak256 hash of a single ENS label. Go is ~12x faster, reflecting the raw Keccak256 performance difference.", code: 'h := ens.Labelhash("vitalik")' },
+        { src: "/benchmarks/normalize.svg", label: "Normalize", summary: "UTS-46 normalization of a short ENS name. Go is ~3x faster with compiled Unicode normalization tables.", code: 'normalized := ens.Normalize("Vitalik.eth")' },
+        { src: "/benchmarks/normalize-long.svg", label: "Normalize Long", summary: "UTS-46 normalization of a longer name with mixed scripts. Go is ~3x faster — normalization cost scales similarly in both runtimes.", code: 'normalized := ens.Normalize("My-Long.Subdomain.vitalik.eth")' },
+      ],
+    },
+    {
+      id: "event",
+      label: "Event",
+      badge: "25x avg",
+      slides: [
+        { src: "/benchmarks/decode-transfer.svg", label: "Decode Transfer", summary: "Decodes a single ERC-20 Transfer event log. Go is ~16x faster with direct ABI decoding from raw log bytes.", code: 'event, _ := abi.DecodeEventLog(transferABI, log)' },
+        { src: "/benchmarks/decode-batch-10.svg", label: "Decode Batch 10", summary: "Decodes 10 event logs in a batch. Go is ~26x faster — batch decoding in Go benefits from zero-copy slice operations.", code: 'for _, log := range logs {\n  event, _ := abi.DecodeEventLog(transferABI, log)\n}' },
+        { src: "/benchmarks/decode-batch-100.svg", label: "Decode Batch 100", summary: "Decodes 100 event logs. Go is ~25x faster. The per-event overhead is consistent, showing Go's advantage scales linearly.", code: 'for _, log := range logs { // 100 logs\n  event, _ := abi.DecodeEventLog(transferABI, log)\n}' },
+      ],
+    },
+    {
+      id: "signature",
+      label: "Signature",
+      badge: "57x avg",
+      slides: [
+        { src: "/benchmarks/hashmessage.svg", label: "HashMessage", summary: "Computes the EIP-191 personal message hash. Go is ~9x faster — the prefix concatenation and Keccak hash are both faster natively.", code: 'hash := signature.HashMessage([]byte("hello"))' },
+        { src: "/benchmarks/hashmessage-long.svg", label: "HashMessage Long", summary: "EIP-191 hash of a longer message. Go is ~8x faster. The margin narrows slightly since message length dominates.", code: 'hash := signature.HashMessage(longMessage)' },
+        { src: "/benchmarks/recover-address.svg", label: "Recover Address", summary: "Recovers a signer address from a signature via ecrecover. Go is ~61x faster — secp256k1 recovery in Go uses optimized C bindings (libsecp256k1) vs JS elliptic curve math.", code: 'addr, _ := signature.RecoverAddress(hash, sig)' },
+        { src: "/benchmarks/verify-message.svg", label: "Verify Message", summary: "Full message verification (hash + recover + compare). Go is ~59x faster, dominated by the ecrecover step.", code: 'ok, _ := signature.VerifyMessage(addr, message, sig)' },
+        { src: "/benchmarks/parse-signature.svg", label: "Parse Signature", summary: "Parses a 65-byte signature into r, s, v components. Go is ~9x faster with direct byte slicing vs JS Buffer operations.", code: 'r, s, v := signature.Parse(sigBytes)' },
+      ],
+    },
+    {
+      id: "unit",
+      label: "Unit",
+      badge: "2.2x avg",
+      slides: [
+        { src: "/benchmarks/parseether.svg", label: "ParseEther", summary: "Parses a decimal string like '1.5' into wei (big.Int). Go is ~5x faster with compiled decimal-to-bigint conversion.", code: 'wei := unit.ParseEther("1.5")' },
+        { src: "/benchmarks/parseether-large.svg", label: "ParseEther Large", summary: "Parses a large ether value with many decimal places. Go is ~1.8x faster — big integer arithmetic dominates at this scale.", code: 'wei := unit.ParseEther("123456789.123456789012345678")' },
+        { src: "/benchmarks/formatether.svg", label: "FormatEther", summary: "Formats wei back to a decimal ether string. Go is ~1.2x faster — string formatting performance is comparable across runtimes.", code: 'eth := unit.FormatEther(weiBigInt)' },
+        { src: "/benchmarks/parseunits-6.svg", label: "ParseUnits(6)", summary: "Parses a value with 6 decimals (e.g. USDC). Go is ~2.4x faster than the JS implementation.", code: 'amount := unit.ParseUnits("100.50", 6)' },
+        { src: "/benchmarks/parsegwei.svg", label: "ParseGwei", summary: "Parses a gwei string to wei. Go is ~3x faster with efficient 9-decimal scaling.", code: 'wei := unit.ParseGwei("20.5")' },
+        { src: "/benchmarks/formatunits.svg", label: "FormatUnits", summary: "Formats a bigint to a decimal string with custom precision. Go is ~1.5x faster — narrowest gap in the unit suite.", code: 'str := unit.FormatUnits(amount, 6)' },
+      ],
+    },
+    {
+      id: "call",
+      label: "Call",
+      badge: "78x avg",
+      slides: [
+        { src: "/benchmarks/basic.svg", label: "Basic", summary: "A basic eth_call to a contract with no arguments. Go is ~68x faster — the RPC serialization, HTTP round-trip, and response parsing are all faster in Go.", code: 'result, _ := client.Call(ctx, client.CallOptions{\n  To: &contractAddr,\n  Data: calldata,\n})' },
+        { src: "/benchmarks/with-data.svg", label: "With Data", summary: "eth_call with encoded calldata. Go is ~100x faster. The combined ABI encoding + RPC overhead compounds Go's advantage.", code: 'result, _ := client.Call(ctx, client.CallOptions{\n  To:   &contractAddr,\n  Data: encodedCalldata,\n})' },
+        { src: "/benchmarks/with-account.svg", label: "With Account", summary: "eth_call with a from account specified. Only ~1.4x faster — this test involves minimal RPC overhead where both runtimes are comparable.", code: 'result, _ := client.Call(ctx, client.CallOptions{\n  Account: account,\n  To:      &contractAddr,\n  Data:    calldata,\n})' },
+        { src: "/benchmarks/decimals.svg", label: "Decimals", summary: "Reads the decimals() view function from an ERC-20. Go is ~102x faster end-to-end.", code: 'result, _ := client.ReadContract(ctx, client.ReadContractOptions{\n  Address:      tokenAddr,\n  FunctionName: "decimals",\n})' },
+        { src: "/benchmarks/symbol.svg", label: "Symbol", summary: "Reads the symbol() view function. Go is ~100x faster. String return decoding is efficient in both, but Go's RPC layer dominates.", code: 'result, _ := client.ReadContract(ctx, client.ReadContractOptions{\n  Address:      tokenAddr,\n  FunctionName: "symbol",\n})' },
+        { src: "/benchmarks/balanceof-multi.svg", label: "BalanceOf Multi", summary: "Multiple sequential balanceOf calls. Go is ~99x faster — each call benefits from Go's faster HTTP client and JSON handling.", code: 'result, _ := client.ReadContract(ctx, client.ReadContractOptions{\n  Address:      tokenAddr,\n  FunctionName: "balanceOf",\n  Args:         []any{owner},\n})' },
+      ],
+    },
+    {
+      id: "multicall",
+      label: "Multicall",
+      badge: "4.5x avg",
+      slides: [
+        { src: "/benchmarks/multi-contract.svg", label: "Multi-Contract", summary: "Multicall across different contract addresses. Go is ~1.7x faster — the batching overhead is similar but Go's encoding is faster.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts,\n})' },
+        { src: "/benchmarks/10-calls.svg", label: "10 Calls", summary: "Batches 10 calls into a single multicall. Go is ~2x faster with efficient call encoding and result decoding.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts, // 10 calls\n})' },
+        { src: "/benchmarks/30-calls.svg", label: "30 Calls", summary: "30 batched calls. Go is ~2.4x faster — the advantage grows with batch size as encoding/decoding work scales.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts, // 30 calls\n})' },
+        { src: "/benchmarks/50-calls.svg", label: "50 Calls", summary: "50 batched calls. Go is ~2.6x faster. The encoding speedup compounds with more calls to serialize.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts, // 50 calls\n})' },
+        { src: "/benchmarks/100-calls.svg", label: "100 Calls", summary: "100 batched calls. Go is ~2.5x faster. The RPC payload is larger, but Go handles it more efficiently.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts, // 100 calls\n})' },
+        { src: "/benchmarks/500-calls.svg", label: "500 Calls", summary: "500 batched calls. Go is ~4x faster. At this scale, memory allocation patterns in Go (stack-allocated buffers) outperform JS heap allocations.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts, // 500 calls\n})' },
+        { src: "/benchmarks/1k-calls.svg", label: "1K Calls", summary: "1000 batched calls. Go is ~5.7x faster. Go's advantage accelerates as batch size grows due to more efficient memory handling.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts: contracts, // 1000 calls\n})' },
+        { src: "/benchmarks/10k-chunked.svg", label: "10K Chunked", summary: "10,000 calls split into auto-sized chunks sent in parallel. Go is ~8.9x faster — goroutine-based parallelism outperforms Promise.all.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts:    contracts, // 10,000 calls\n  BatchSize:    1024,\n  Multicall3:   multicall3Addr,\n})' },
+        { src: "/benchmarks/10k-aggressive.svg", label: "10K Aggressive", summary: "10,000 calls with aggressive chunking (smaller chunks, more parallelism). Go is ~7.2x faster with goroutine scheduling.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts:    contracts, // 10,000 calls\n  BatchSize:    256, // aggressive chunking\n  Multicall3:   multicall3Addr,\n})' },
+        { src: "/benchmarks/10k-single-rpc.svg", label: "10K Single RPC", summary: "10,000 calls in a single massive RPC payload. Go is ~2.4x faster — both runtimes are limited by the single RPC round-trip.", code: 'results, _ := client.Multicall(ctx, client.MulticallOptions{\n  Contracts:  contracts, // 10,000 calls\n  BatchSize:  0, // single RPC\n  Multicall3: multicall3Addr,\n})' },
+      ],
+    },
+  ]}
+/>
+
+### Detailed results
+
+<details>
+  <summary>Abi (6 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Abi_EncodeSimple | 215 | 6,827 | 4,659,832 | 146,473 | Go 31.81x faster |
+| Abi_EncodeComplex | 544 | 7,677 | 1,838,235 | 130,262 | Go 14.11x faster |
+| Abi_EncodeMultiArg | 685 | 8,318 | 1,459,002 | 120,224 | Go 12.14x faster |
+| Abi_DecodeResult | 115 | 977 | 8,733,624 | 1,023,132 | Go 8.54x faster |
+| Abi_EncodePacked | 523 | 670 | 1,912,046 | 1,492,562 | Go 1.28x faster |
+| Abi_EncodePackedMulti | 483 | 1,181 | 2,072,109 | 846,977 | Go 2.45x faster |
+
+</details>
+
+<details>
+  <summary>Address (5 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Address_IsAddress | 38 | 233 | 26,116,479 | 4,293,464 | Go 6.08x faster |
+| Address_IsAddressLower | 59 | 239 | 17,044,486 | 4,178,762 | Go 4.08x faster |
+| Address_Checksum | 99 | 514 | 10,112,246 | 1,945,403 | Go 5.20x faster |
+| Address_Create | 1,167 | 7,163 | 856,898 | 139,611 | Go 6.14x faster |
+| Address_Create2 | 1,079 | 13,226 | 926,784 | 75,610 | Go 12.26x faster |
+
+</details>
+
+<details>
+  <summary>Call (6 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Call_Basic | 274,381 | 18,601,087 | 3,645 | 54 | Go 67.79x faster |
+| Call_WithData | 187,542 | 18,737,540 | 5,332 | 53 | Go 99.91x faster |
+| Call_WithAccount | 175,643 | 239,669 | 5,693 | 4,172 | Go 1.36x faster |
+| Call_Decimals | 174,224 | 17,801,545 | 5,740 | 56 | Go 102.18x faster |
+| Call_Symbol | 180,635 | 18,073,803 | 5,536 | 55 | Go 100.06x faster |
+| Call_BalanceOfMultiple | 183,921 | 18,122,640 | 5,437 | 55 | Go 98.53x faster |
+
+</details>
+
+<details>
+  <summary>Ens (5 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Ens_Namehash | 1,661 | 20,762 | 602,047 | 48,165 | Go 12.50x faster |
+| Ens_NamehashDeep | 3,029 | 43,586 | 330,142 | 22,943 | Go 14.39x faster |
+| Ens_Labelhash | 434 | 5,399 | 2,304,678 | 185,214 | Go 12.44x faster |
+| Ens_Normalize | 349 | 966 | 2,864,509 | 1,034,895 | Go 2.77x faster |
+| Ens_NormalizeLong | 883 | 2,553 | 1,132,888 | 391,720 | Go 2.89x faster |
+
+</details>
+
+<details>
+  <summary>Event (3 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Event_DecodeTransfer | 639 | 10,210 | 1,564,456 | 97,939 | Go 15.97x faster |
+| Event_DecodeBatch10 | 3,982 | 103,642 | 251,130 | 9,649 | Go 26.03x faster |
+| Event_DecodeBatch100 | 39,738 | 992,822 | 25,165 | 1,007 | Go 24.98x faster |
+
+</details>
+
+<details>
+  <summary>Hash (7 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Hash_Keccak256Short | 435 | 20,174 | 2,301,496 | 49,568 | Go 46.43x faster |
+| Hash_Keccak256Long | 2,812 | 48,695 | 355,619 | 20,536 | Go 17.32x faster |
+| Hash_Keccak256Hex | 460 | 5,264 | 2,175,332 | 189,971 | Go 11.45x faster |
+| Hash_Sha256Short | 161 | 1,428 | 6,211,180 | 700,346 | Go 8.87x faster |
+| Hash_Sha256Long | 632 | 12,863 | 1,582,028 | 77,740 | Go 20.35x faster |
+| Hash_FunctionSelector | 1,920 | 6,319 | 520,833 | 158,242 | Go 3.29x faster |
+| Hash_EventSelector | 2,377 | 6,423 | 420,698 | 155,691 | Go 2.70x faster |
+
+</details>
+
+<details>
+  <summary>Multicall (16 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Multicall_Basic | 182,793 | 459,455 | 5,471 | 2,176 | Go 2.51x faster |
+| Multicall_WithArgs | 189,193 | 364,049 | 5,286 | 2,747 | Go 1.92x faster |
+| Multicall_MultiContract | 220,815 | 374,585 | 4,529 | 2,670 | Go 1.70x faster |
+| Multicall_10Calls | 227,875 | 463,719 | 4,388 | 2,156 | Go 2.03x faster |
+| Multicall_30Calls | 377,187 | 914,261 | 2,651 | 1,094 | Go 2.42x faster |
+| Multicall_Deployless | 352,429 | 558,138 | 2,837 | 1,792 | Go 1.58x faster |
+| Multicall_TokenMetadata | 202,770 | 372,581 | 4,932 | 2,684 | Go 1.84x faster |
+| Multicall_50Calls | 484,157 | 1,253,997 | 2,065 | 797 | Go 2.59x faster |
+| Multicall_100Calls | 869,667 | 2,150,954 | 1,150 | 465 | Go 2.47x faster |
+| Multicall_200Calls | 1,410,831 | 4,344,237 | 709 | 230 | Go 3.08x faster |
+| Multicall_500Calls | 2,172,946 | 8,864,462 | 460 | 113 | Go 4.08x faster |
+| Multicall_MixedContracts_100 | 843,830 | 2,149,151 | 1,185 | 465 | Go 2.55x faster |
+| Multicall_1000Calls | 2,909,357 | 16,605,503 | 344 | 60 | Go 5.71x faster |
+| Multicall_10000Calls_SingleRPC | 66,612,371 | 162,662,459 | 15 | 6 | Go 2.44x faster |
+| Multicall_10000Calls_Chunked | 18,517,578 | 164,741,932 | 54 | 6 | Go 8.90x faster |
+| Multicall_10000Calls_AggressiveChunking | 22,368,029 | 161,155,160 | 45 | 6 | Go 7.20x faster |
+
+</details>
+
+<details>
+  <summary>Signature (5 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Signature_HashMessage | 772 | 6,733 | 1,295,672 | 148,522 | Go 8.72x faster |
+| Signature_HashMessageLong | 1,809 | 14,494 | 552,792 | 68,996 | Go 8.01x faster |
+| Signature_RecoverAddress | 25,877 | 1,569,686 | 38,644 | 637 | Go 60.66x faster |
+| Signature_VerifyMessage | 26,062 | 1,543,377 | 38,370 | 648 | Go 59.22x faster |
+| Signature_ParseSignature | 189 | 1,737 | 5,293,806 | 575,671 | Go 9.20x faster |
+
+</details>
+
+<details>
+  <summary>Unit (6 benchmarks)</summary>
+
+| Benchmark | Go (ns/op) | TS (ns/op) | Go (ops/s) | TS (ops/s) | Result |
+|-----------|-----------:|-----------:|-----------:|-----------:|--------|
+| Unit_ParseEther | 65 | 315 | 15,396,459 | 3,170,982 | Go 4.86x faster |
+| Unit_ParseEtherLarge | 130 | 235 | 7,680,492 | 4,252,017 | Go 1.81x faster |
+| Unit_FormatEther | 116 | 145 | 8,605,852 | 6,915,772 | Go 1.24x faster |
+| Unit_ParseUnits6 | 89 | 211 | 11,196,954 | 4,737,299 | Go 2.36x faster |
+| Unit_ParseGwei | 67 | 201 | 14,992,504 | 4,982,042 | Go 3.01x faster |
+| Unit_FormatUnits | 97 | 141 | 10,351,967 | 7,104,329 | Go 1.46x faster |
+
+</details>
+
+### Methodology
+
+- **Go benchmarks**: Standard `testing.B` benchmarks with `-benchmem`
+- **TypeScript benchmarks**: Vitest bench with matching iteration counts
+- **Environment**: Both runtimes target the same local Anvil instance (mainnet fork) on Apple M4 Pro
+- **Iterations**: CPU-bound suites use 5,000 iterations; RPC-bound suites (call, multicall) use 5 iterations
+- **Metric**: Total wall-clock time over all iterations, measured per-operation then multiplied
+
+</div>

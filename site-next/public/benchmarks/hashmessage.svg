@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" fill="none">
+<rect width="1200" height="440" fill="#1E1E20"/>
+<defs>
+  <radialGradient id="accentGrad" cx="0.5" cy="0.5" r="0.8">
+    <stop stop-color="#FF8A00"/>
+    <stop offset="1" stop-color="#FFBA07"/>
+  </radialGradient>
+  <linearGradient id="goFill" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#00ADD8" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#0891B2" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="tsFill" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#3178C6" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.7"/>
+  </linearGradient>
+  <filter id="accentShadow" x="-80%" y="-20%" width="260%" height="150%">
+    <feDropShadow dx="0" dy="4" stdDeviation="5.5" flood-color="#FF8A00" flood-opacity="0.98"/>
+  </filter>
+</defs>
+<text x="600" y="50" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF">HashMessage</text>
+<text x="600" y="82" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="17" fill="rgba(255,255,255,0.55)">Signature · Go 15x faster · 5,000 iterations</text>
+<rect x="80" y="122" width="16" height="256" rx="8" fill="url(#accentGrad)" fill-opacity="0.96" filter="url(#accentShadow)"/>
+<rect x="250" y="130" width="860" height="110" rx="30" stroke="white" stroke-opacity="0.23" stroke-width="3" fill="none"/>
+<rect x="260" y="145" width="53.0" height="80" rx="14" fill="url(#goFill)" stroke="#787878" stroke-width="2"/>
+<text x="232" y="192" text-anchor="end" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#00ADD8">Go</text>
+<text x="329.0" y="192" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="#FFFFFF">3.96ms</text>
+<rect x="250" y="260" width="860" height="110" rx="30" stroke="white" stroke-opacity="0.23" stroke-width="3" fill="none"/>
+<rect x="260" y="275" width="780.0" height="80" rx="14" fill="url(#tsFill)" stroke="#787878" stroke-width="2"/>
+<text x="232" y="322" text-anchor="end" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#3178C6">TS</text>
+<text x="1056.0" y="322" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="#FFFFFF">58.28ms</text>
+<text x="600" y="415" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="rgba(255,255,255,0.55)">total time over 5,000 iterations · lower is better</text>
+</svg>

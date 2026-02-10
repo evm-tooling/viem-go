@@ -445,7 +445,7 @@ export default function DocsSidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-[260px] xl:w-[320px] 2xl:w-[380px] pl-4 xl:pl-12 2xl:pl-20 shrink-0 h-full flex-col bg-background overflow-y-auto">
+      <aside className="hidden lg:flex w-[260px] xl:w-[320px] 2xl:w-[380px] pl-4 xl:pl-12 shrink-0 h-full flex-col bg-background overflow-y-auto">
         <SidebarContent pathname={pathname} />
       </aside>
 
