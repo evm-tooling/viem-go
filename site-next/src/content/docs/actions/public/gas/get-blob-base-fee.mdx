@@ -3,11 +3,9 @@ title: getBlobBaseFee
 description: Returns the current blob base fee in wei
 ---
 
-# getBlobBaseFee
-
-Returns the current blob base fee (in wei).
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the current blob base fee (in wei).
 />
 
 ### Usage
+
+An example showing how to construct a public client and query the current blob base fee.
 
 <CodeGroup
   tabs={[
@@ -69,5 +69,7 @@ The current blob base fee in wei.
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_blobBaseFee`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_blobbasefee) (EIP-4844)

@@ -15,6 +15,8 @@ This action requires a local account that implements AuthorizationSignableAccoun
 
 ### Import
 
+Import the wallet actions package so you can call this action.
+
 <CodeGroup
   tabs={[
     {
@@ -27,6 +29,8 @@ This action requires a local account that implements AuthorizationSignableAccoun
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -83,15 +87,23 @@ The signed EIP-7702 authorization.
 
 All parameters from [prepareAuthorization](/docs/actions/wallet/signing/prepare-authorization) are supported:
 
-### Account (optional)
+### Account
+
+Control which account is used to sign the authorization.
 
 - **Type:** `Account`
 
+- **Optional**
+
 The account to sign with. If nil, uses the client's account. Must be a local account.
 
-### ContractAddress (required)
+### ContractAddress
+
+Specify the contract address that the authorization applies to.
 
 - **Type:** `string`
+
+-- **Required**
 
 The contract address being authorized.
 
@@ -108,27 +120,43 @@ The contract address being authorized.
   ]}
 />
 
-### Address (optional)
+### Address
+
+Optionally provide an alias for the contract address.
 
 - **Type:** `string`
 
+- **Optional**
+
 An alias for ContractAddress (for compatibility).
 
-### ChainID (optional)
+### ChainID
+
+Override the chain ID used for the authorization.
 
 - **Type:** `*int`
+
+- **Optional**
 
 The chain ID for the authorization. If nil, it will be fetched from the client's chain or via eth_chainId.
 
-### Nonce (optional)
+### Nonce
+
+Override the nonce used for the authorization.
 
 - **Type:** `*int`
 
+- **Optional**
+
 The nonce for the authorization. If nil, it will be fetched via eth_getTransactionCount with "pending" block tag.
 
-### Executor (optional)
+### Executor
+
+Configure who will execute the EIP-7702 transaction.
 
 - **Type:** `any`
+
+- **Optional**
 
 Specifies who will execute the EIP-7702 transaction:
 - `nil`: assumes another account will execute

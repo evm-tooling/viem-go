@@ -3,10 +3,6 @@ title: watchContractEvent
 description: Watches and returns emitted contract event logs with ABI decoding
 ---
 
-# watchContractEvent
-
-Watches and returns emitted contract event logs with ABI decoding.
-
 Unlike `watchEvent`, `watchContractEvent`:
 - Requires an ABI for event decoding
 - Automatically encodes event topics from ABI
@@ -16,6 +12,8 @@ Unlike `watchEvent`, `watchContractEvent`:
 Watch actions return a channel of events. Cancel the context to stop watching.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -29,6 +27,8 @@ Watch actions return a channel of events. Cancel the context to stop watching.
 />
 
 ### Usage
+
+An example showing how to watch for a specific contract event and decode logs using an ABI.
 
 <CodeGroup
   tabs={[
@@ -103,9 +103,12 @@ A channel that emits `WatchContractEventEvent` structs containing:
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+- **Required**
 
 The contract address(es) to filter logs from.
 
@@ -130,9 +133,10 @@ events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEvent
   ]}
 />
 
-### ABI (required)
+### ABI
 
 - **Type:** `*abi.ABI`
+- **Required**
 
 The contract ABI for decoding event logs.
 
@@ -154,9 +158,10 @@ events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEvent
   ]}
 />
 
-### EventName (required)
+### EventName
 
 - **Type:** `string`
+- **Required**
 
 The name of the event to filter for. Must match an event in the ABI.
 
@@ -175,9 +180,10 @@ The name of the event to filter for. Must match an event in the ABI.
   ]}
 />
 
-### Args (optional)
+### Args
 
 - **Type:** `map[string]any`
+- **Optional**
 
 Indexed event arguments to filter by. Keys are parameter names, values are the expected values.
 
@@ -198,10 +204,11 @@ events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEvent
   ]}
 />
 
-### Batch (optional)
+### Batch
 
 - **Type:** `bool`
 - **Default:** `true`
+- **Optional**
 
 Whether to batch logs together. When true, multiple logs are collected and emitted together. When false, each log is emitted as a separate event.
 
@@ -221,9 +228,10 @@ Whether to batch logs together. When true, multiple logs are collected and emitt
   ]}
 />
 
-### FromBlock (optional)
+### FromBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to start watching from. If set, forces polling mode.
 
@@ -244,10 +252,11 @@ events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEvent
   ]}
 />
 
-### Poll (optional)
+### Poll
 
 - **Type:** `*bool`
 - **Default:** `false` for WebSocket Transports, `true` for non-WebSocket Transports
+- **Optional**
 
 Whether or not to use a polling mechanism instead of a WebSocket subscription.
 
@@ -268,10 +277,11 @@ events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEvent
   ]}
 />
 
-### PollingInterval (optional)
+### PollingInterval
 
 - **Type:** `time.Duration`
 - **Default:** Client's `PollingInterval`
+- **Optional**
 
 The interval between polls when using polling mode.
 
@@ -293,10 +303,11 @@ events := public.WatchContractEvent(ctx, publicClient, public.WatchContractEvent
   ]}
 />
 
-### Strict (optional)
+### Strict
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Determines whether logs must match the event definition exactly. When true, logs with mismatched indexed/non-indexed arguments are skipped.
 
@@ -316,10 +327,11 @@ Determines whether logs must match the event definition exactly. When true, logs
   ]}
 />
 
-### WorkerPoolSize (optional)
+### WorkerPoolSize
 
 - **Type:** `int`
 - **Default:** `4`
+- **Optional**
 
 The number of workers for parallel log decoding.
 
@@ -340,6 +352,8 @@ The number of workers for parallel log decoding.
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 - When polling with filter support:
   - Calls [`eth_newFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newfilter) to create a filter

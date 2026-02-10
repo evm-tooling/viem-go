@@ -3,11 +3,9 @@ title: getProof
 description: Returns the account and storage values of the specified account including the Merkle-proof
 ---
 
-# getProof
-
-Returns the account and storage values of the specified account including the Merkle-proof.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the account and storage values of the specified account including the Me
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and call this action.
 
 <CodeGroup
   tabs={[
@@ -79,9 +79,12 @@ Proof data containing:
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 Account address.
 
@@ -104,9 +107,10 @@ proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
   ]}
 />
 
-### StorageKeys (required)
+### StorageKeys
 
 - **Type:** `[]common.Hash`
+- **Required**
 
 Array of storage keys that should be proofed and included.
 
@@ -131,9 +135,10 @@ proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 Proof at a given block number.
 
@@ -155,10 +160,11 @@ proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
 - **Default:** `"latest"`
+- **Optional**
 
 Proof at a given block tag.
 
@@ -180,5 +186,7 @@ proof, err := public.GetProof(ctx, publicClient, public.GetProofParameters{
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Calls [`eth_getProof`](https://eips.ethereum.org/EIPS/eip-1186) (EIP-1186).

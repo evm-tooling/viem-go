@@ -326,9 +326,10 @@ const addresses = await walletClient.getAddresses()`,
 
 ### Parameters
 
-### Account (optional)
+### Account
 
 - **Type:** `client.Account`
+- **Optional**
 
 The Account to use for the Wallet Client. When provided, wallet actions can fall back to this account by default.
 
@@ -363,9 +364,10 @@ walletClient, err := client.CreateWalletClient(client.WalletClientConfig{
   ]}
 />
 
-### Chain (optional)
+### Chain
 
 - **Type:** `*chain.Chain`
+- **Optional**
 
 The Chain configuration (e.g. `definitions.Mainnet`) for the Wallet Client.
 
@@ -394,9 +396,10 @@ This is used for chain-aware behavior (like validating chain ID where applicable
   ]}
 />
 
-### Transport (required)
+### Transport
 
 - **Type:** `transport.TransportFactory`
+- **Required**
 
 Transport factory for JSON-RPC calls. This parameter is required.
 
@@ -425,10 +428,11 @@ If your transport needs its own configuration, keep it in the transport construc
   ]}
 />
 
-### CacheTime (optional)
+### CacheTime
 
 - **Type:** `time.Duration`
 - **Default:** `PollingInterval`
+- **Optional**
 
 Time that cached data will remain in memory.
 
@@ -459,10 +463,11 @@ In viem-go, if `CacheTime` is not set, it defaults to the client `PollingInterva
   ]}
 />
 
-### Key (optional)
+### Key
 
 - **Type:** `string`
 - **Default:** `"wallet"`
+- **Optional**
 
 A key for the Client.
 
@@ -493,10 +498,11 @@ This is primarily useful when you have multiple clients in the same process and 
   ]}
 />
 
-### Name (optional)
+### Name
 
 - **Type:** `string`
 - **Default:** `"Wallet Client"`
+- **Optional**
 
 A human-readable name for the Client.
 
@@ -527,10 +533,11 @@ This is useful for debugging (e.g. printing which client instance is in use) and
   ]}
 />
 
-### PollingInterval (optional)
+### PollingInterval
 
 - **Type:** `time.Duration`
 - **Default:** `min(max(chain.BlockTime/2, 500ms), 4s)` (defaults to `4s` when `Chain` is not provided)
+- **Optional**
 
 Frequency for polling-enabled behavior.
 

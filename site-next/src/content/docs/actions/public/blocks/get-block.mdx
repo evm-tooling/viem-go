@@ -3,11 +3,9 @@ title: getBlock
 description: Returns information about a block at a block number, hash or tag
 ---
 
-# getBlock
-
-Returns information about a block at a block number, hash or tag.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns information about a block at a block number, hash or tag.
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and fetch block data.
 
 <CodeGroup
   tabs={[
@@ -80,9 +80,12 @@ Information about the block.
 
 ### Parameters
 
-### BlockHash (optional)
+Configuration options accepted by this action.
+
+### BlockHash
 
 - **Type:** `*common.Hash`
+- **Optional**
 
 Information at a given block hash.
 
@@ -113,9 +116,10 @@ block, err := public.GetBlock(ctx, publicClient, public.GetBlockParameters{
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 Information at a given block number.
 
@@ -143,10 +147,11 @@ block, err := public.GetBlock(ctx, publicClient, public.GetBlockParameters{
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
 - **Default:** `"latest"`
+- **Optional**
 
 Information at a given block tag.
 
@@ -173,10 +178,11 @@ block, err := public.GetBlock(ctx, publicClient, public.GetBlockParameters{
   ]}
 />
 
-### IncludeTransactions (optional)
+### IncludeTransactions
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Whether or not to include transactions (as a structured array of `Transaction` objects).
 
@@ -204,6 +210,8 @@ block, err := public.GetBlock(ctx, publicClient, public.GetBlockParameters{
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 - Calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) for `blockNumber` & `blockTag`.
 - Calls [`eth_getBlockByHash`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbyhash) for `blockHash`.

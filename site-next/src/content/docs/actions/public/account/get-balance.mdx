@@ -3,11 +3,9 @@ title: getBalance
 description: Returns the balance of an address in wei
 ---
 
-# getBalance
-
-Returns the balance of an address in wei.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the balance of an address in wei.
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and call this action.
 
 <CodeGroup
   tabs={[
@@ -79,9 +79,12 @@ The balance of the address in wei.
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The address of the account.
 
@@ -111,9 +114,10 @@ balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The balance of the account at a block number.
 
@@ -143,9 +147,10 @@ balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The balance of the account at a block tag.
 
@@ -176,8 +181,12 @@ balance, err := public.GetBalance(ctx, publicClient, public.GetBalanceParameters
 
 ### Tips
 
+Additional hints for working with this action.
+
 - You can convert the balance to ether units using utility functions from your math library.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getBalance`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getbalance)

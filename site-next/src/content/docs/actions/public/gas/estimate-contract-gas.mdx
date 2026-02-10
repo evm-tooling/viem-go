@@ -3,13 +3,13 @@ title: estimateContractGas
 description: Estimates the gas required to successfully execute a contract write function call
 ---
 
-# estimateContractGas
-
 Estimates the gas required to successfully execute a contract write function call.
 
 Internally, this uses the `EstimateGas` action with ABI-encoded calldata.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +23,8 @@ Internally, this uses the `EstimateGas` action with ABI-encoded calldata.
 />
 
 ### Usage
+
+An example showing how to estimate gas for a specific contract write function using its ABI.
 
 <CodeGroup
   tabs={[
@@ -99,9 +101,12 @@ The estimated gas amount in units of gas.
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The contract address.
 
@@ -127,9 +132,10 @@ gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContrac
   ]}
 />
 
-### ABI (required)
+### ABI
 
 - **Type:** `*abi.ABI`
+- **Required**
 
 The contract ABI.
 
@@ -152,9 +158,10 @@ gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContrac
   ]}
 />
 
-### FunctionName (required)
+### FunctionName
 
 - **Type:** `string`
+- **Required**
 
 The name of the function to call.
 
@@ -174,9 +181,10 @@ The name of the function to call.
   ]}
 />
 
-### Args (optional)
+### Args
 
 - **Type:** `[]any`
+- **Optional**
 
 The function arguments.
 
@@ -198,9 +206,10 @@ gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContrac
   ]}
 />
 
-### Account (optional)
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account attached to the call (msg.sender).
 
@@ -222,9 +231,10 @@ gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContrac
   ]}
 />
 
-### Value (optional)
+### Value
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The amount of wei to send with the call.
 
@@ -247,9 +257,10 @@ gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContrac
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to estimate at.
 
@@ -271,9 +282,10 @@ gas, err := public.EstimateContractGas(ctx, publicClient, public.EstimateContrac
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to estimate at (e.g., "latest", "pending").
 
@@ -294,18 +306,22 @@ The block tag to estimate at (e.g., "latest", "pending").
   ]}
 />
 
-### StateOverride (optional)
+### StateOverride
 
 - **Type:** `types.StateOverride`
+- **Optional**
 
 State overrides for the estimation.
 
-### DataSuffix (optional)
+### DataSuffix
 
 - **Type:** `[]byte`
+- **Optional**
 
 Optional data to append to the end of the calldata. Useful for adding a "domain" tag.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Uses [`eth_estimateGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_estimategas) with ABI-encoded data.

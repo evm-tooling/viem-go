@@ -3,14 +3,12 @@ title: signTransaction
 description: Signs a transaction with the Account's private key
 ---
 
-# signTransaction
-
-Signs a transaction.
-
 - For local accounts (implementing TransactionSignableAccount), signs locally without an RPC call.
 - For JSON-RPC accounts, delegates to the `eth_signTransaction` RPC method.
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +22,8 @@ Signs a transaction.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -73,21 +73,29 @@ The signed transaction as a hex string.
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `Account`
 
+- **Optional**
+
 The account to sign with. If nil, uses the client's account.
 
-### Chain (optional)
+### Chain
 
 - **Type:** `*chain.Chain`
 
+- **Optional**
+
 The target chain. If there is a mismatch between the wallet's current chain & the target chain, an error will be thrown.
 
-### SkipChainAssertion (optional)
+### SkipChainAssertion
 
 - **Type:** `bool`
+
+- **Optional**
 
 When true, skips the chain ID mismatch assertion.
 

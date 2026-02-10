@@ -11,6 +11,8 @@ With the prepared Authorization object, you can use [signAuthorization](/docs/ac
 
 ### Import
 
+Import the wallet actions package so you can call this action.
+
 <CodeGroup
   tabs={[
     {
@@ -23,6 +25,8 @@ With the prepared Authorization object, you can use [signAuthorization](/docs/ac
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -70,9 +74,13 @@ The prepared authorization request with all required fields populated.
 
 ### Parameters
 
-### Account (optional)
+### Account
+
+Control which account is used to prepare the authorization.
 
 - **Type:** `Account`
+
+- **Optional**
 
 The account to prepare authorization for. If nil, uses the client's account.
 
@@ -97,9 +105,13 @@ auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthor
   ]}
 />
 
-### ContractAddress (required)
+### ContractAddress
+
+Specify the contract address that the authorization applies to.
 
 - **Type:** `string`
+
+-- **Required**
 
 The contract address being authorized. Either ContractAddress or Address must be provided.
 
@@ -116,15 +128,23 @@ The contract address being authorized. Either ContractAddress or Address must be
   ]}
 />
 
-### Address (optional)
+### Address
+
+Optionally provide an alias for the contract address.
 
 - **Type:** `string`
 
+- **Optional**
+
 An alias for ContractAddress (for compatibility).
 
-### ChainID (optional)
+### ChainID
+
+Override the chain ID used for the authorization.
 
 - **Type:** `*int`
+
+- **Optional**
 
 The chain ID for the authorization. If nil, it will be fetched from the client's chain or via eth_chainId.
 
@@ -143,9 +163,13 @@ auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthor
   ]}
 />
 
-### Nonce (optional)
+### Nonce
+
+Override the nonce used for the authorization.
 
 - **Type:** `*int`
+
+- **Optional**
 
 The nonce for the authorization. If nil, it will be fetched via eth_getTransactionCount with "pending" block tag.
 
@@ -164,9 +188,13 @@ auth, err := wallet.PrepareAuthorization(ctx, walletClient, wallet.PrepareAuthor
   ]}
 />
 
-### Executor (optional)
+### Executor
+
+Configure who will execute the EIP-7702 transaction.
 
 - **Type:** `any`
+
+- **Optional**
 
 Specifies who will execute the EIP-7702 transaction:
 - `nil`: assumes another account will execute

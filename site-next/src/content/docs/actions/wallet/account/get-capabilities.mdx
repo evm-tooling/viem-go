@@ -3,13 +3,11 @@ title: getCapabilities
 description: Gets wallet capabilities (EIP-5792)
 ---
 
-# getCapabilities
-
-Extracts capabilities that a connected wallet supports (e.g. paymasters, session keys, etc).
-
 This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +21,8 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -62,6 +62,8 @@ log.Printf("Capabilities: %+v", capabilities)`,
 
 ### Get Capabilities for Specific Chain
 
+Query capabilities for a specific chain ID.
+
 <CodeGroup
   tabs={[
     {
@@ -88,9 +90,13 @@ A map where keys are chain IDs and values are capability objects for that chain.
 
 ### Parameters
 
-### Account (optional)
+### Account
+
+Control which account address to use when resolving capabilities.
 
 - **Type:** `*string`
+
+- **Optional**
 
 The account address to get capabilities for. If nil, uses the client's account.
 
@@ -108,9 +114,13 @@ capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabil
   ]}
 />
 
-### ChainID (optional)
+### ChainID
+
+Restrict capabilities to a particular chain ID.
 
 - **Type:** `*int64`
+
+- **Optional**
 
 Optionally restricts capabilities to a specific chain. If set, returns capabilities only for this chain ID. If nil, returns capabilities for all chains.
 
@@ -129,5 +139,7 @@ capabilities, err := wallet.GetCapabilities(ctx, walletClient, wallet.GetCapabil
 />
 
 ### JSON-RPC Method
+
+- The underlying JSON-RPC method invoked by this action.
 
 - [`wallet_getCapabilities`](https://eips.ethereum.org/EIPS/eip-5792#wallet_getcapabilities) (EIP-5792)

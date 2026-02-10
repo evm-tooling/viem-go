@@ -3,11 +3,9 @@ title: simulateBlocks
 description: Simulates multiple blocks and returns their results
 ---
 
-# simulateBlocks
-
-Simulates multiple blocks and returns their results.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Simulates multiple blocks and returns their results.
 />
 
 ### Usage
+
+An example showing how to configure block simulations and inspect their results.
 
 <CodeGroup
   tabs={[
@@ -83,9 +83,12 @@ An array of block results, each containing:
 
 ### Parameters
 
-### Blocks (required)
+Configuration options accepted by this action.
+
+### Blocks
 
 - **Type:** `[]SimulateBlock`
+- **Required**
 
 The blocks to simulate.
 
@@ -111,9 +114,10 @@ The blocks to simulate.
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to simulate at.
 
@@ -132,9 +136,10 @@ result, err := public.SimulateBlocks(ctx, publicClient, public.SimulateBlocksPar
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to simulate at (e.g., "latest", "pending").
 
@@ -152,10 +157,11 @@ The block tag to simulate at (e.g., "latest", "pending").
   ]}
 />
 
-### ReturnFullTransactions (optional)
+### ReturnFullTransactions
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Whether to return full transaction objects.
 
@@ -173,10 +179,11 @@ Whether to return full transaction objects.
   ]}
 />
 
-### TraceTransfers (optional)
+### TraceTransfers
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables transfer tracing.
 
@@ -194,10 +201,11 @@ Enables transfer tracing.
   ]}
 />
 
-### Validation (optional)
+### Validation
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables validation mode.
 
@@ -216,5 +224,7 @@ Enables validation mode.
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Uses [`eth_simulateV1`](https://github.com/ethereum/execution-apis/blob/main/src/engine/simulation.md) (if supported) for block simulation.

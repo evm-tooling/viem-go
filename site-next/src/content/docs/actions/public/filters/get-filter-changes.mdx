@@ -3,8 +3,6 @@ title: getFilterChanges
 description: Returns a list of logs or hashes based on a filter since the last time it was called
 ---
 
-# getFilterChanges
-
 Returns a list of logs or hashes based on a filter since the last time it was called.
 
 A filter can be created from:
@@ -14,6 +12,8 @@ A filter can be created from:
 - [`createPendingTransactionFilter`](/docs/actions/public/filters/create-pending-transaction-filter)
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -28,7 +28,9 @@ A filter can be created from:
 
 ### Usage
 
-### Event Logs
+#### Event Logs
+
+Fetch filter changes for an event filter and inspect the new logs since the last poll.
 
 <CodeGroup
   tabs={[
@@ -81,7 +83,9 @@ const logs = await publicClient.getFilterChanges({ filter })`,
   ]}
 />
 
-### Block Hashes
+#### Block Hashes
+
+Fetch filter changes for a block filter and inspect newly seen block hashes.
 
 <CodeGroup
   tabs={[
@@ -100,7 +104,9 @@ log.Printf("Found %d new blocks", len(blockHashes))`,
   ]}
 />
 
-### Pending Transaction Hashes
+#### Pending Transaction Hashes
+
+Fetch filter changes for a pending transaction filter and inspect newly seen transaction hashes.
 
 <CodeGroup
   tabs={[
@@ -128,9 +134,12 @@ The return type depends on the filter type:
 
 ### Parameters
 
-### FilterID (required)
+Configuration options accepted by this action.
+
+### FilterID
 
 - **Type:** `FilterID`
+- **Required**
 
 The filter identifier returned by `CreateEventFilter`, `CreateBlockFilter`, or `CreatePendingTransactionFilter`.
 
@@ -164,5 +173,7 @@ const logs = await publicClient.getFilterChanges({
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getFilterChanges`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterchanges)

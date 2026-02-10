@@ -3,8 +3,6 @@ title: estimateFeesPerGas
 description: Returns an estimate for the fees per gas for a transaction to be likely included in the next block
 ---
 
-# estimateFeesPerGas
-
 Returns an estimate for the fees per gas (in wei) for a transaction to be likely included in the next block.
 
 - For EIP-1559 chains, returns `maxFeePerGas` & `maxPriorityFeePerGas`.
@@ -12,6 +10,8 @@ Returns an estimate for the fees per gas (in wei) for a transaction to be likely
 - Applies a base fee multiplier (default 1.2) to provide a safety buffer.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -25,6 +25,8 @@ Returns an estimate for the fees per gas (in wei) for a transaction to be likely
 />
 
 ### Usage
+
+An example showing how to construct a public client and estimate fees for the next block.
 
 <CodeGroup
   tabs={[
@@ -85,10 +87,13 @@ An object containing:
 
 ### Parameters
 
-### Type (optional)
+Configuration options accepted by this action.
+
+### Type
 
 - **Type:** `FeeValuesType`
 - **Default:** `FeeValuesTypeEIP1559`
+- **Optional**
 
 The type of fee values to return.
 
@@ -105,10 +110,11 @@ The type of fee values to return.
   ]}
 />
 
-### BaseFeeMultiplier (optional)
+### BaseFeeMultiplier
 
 - **Type:** `*float64`
 - **Default:** `1.2` (20% buffer)
+- **Optional**
 
 The multiplier applied to the base fee per gas (or gas price for legacy chains) when computing fees.
 
@@ -127,5 +133,7 @@ fees, err := public.EstimateFeesPerGas(ctx, publicClient, public.EstimateFeesPer
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 Uses [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber), [`eth_maxPriorityFeePerGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_maxpriorityfeepergas), and [`eth_gasPrice`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gasprice) to compute fees.

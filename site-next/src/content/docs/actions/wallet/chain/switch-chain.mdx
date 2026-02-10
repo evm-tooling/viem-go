@@ -3,11 +3,9 @@ title: switchChain
 description: Switches the wallet's active chain
 ---
 
-# switchChain
-
-Switches the target chain in a wallet.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Switches the target chain in a wallet.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -75,9 +75,13 @@ Returns an error if the request fails.
 
 ### Parameters
 
-### ID (required)
+Configuration options accepted by this action.
+
+### ID
 
 - **Type:** `int64`
+
+- **Required**
 
 The chain ID to switch to.
 

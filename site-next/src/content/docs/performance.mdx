@@ -5,38 +5,10 @@ description: Benchmark comparisons between viem-go and TypeScript viem across al
 
 <div data-pagefind-weight="8">
 
-viem-go is benchmarked head-to-head against TypeScript [viem](https://viem.sh) across 59 individual tests spanning 9 suites. Both runtimes target the same Anvil instance (mainnet fork) for a fair comparison.
-
 ### Overview
 
-| Metric | Go (viem-go) | TypeScript (viem) |
-|--------|--------------|-------------------|
-| Geometric mean speedup | 7.12x | - |
-| Avg ns/op | 2,020,982 | 10,567,395 |
-| Avg ops/s | 495 | 95 |
-| Wins | 59/59 | 0/59 |
-
-<Aside type="note">
-<span>Benchmarks are run against a local Anvil instance (mainnet fork). Real-world performance will vary depending on your RPC provider, network latency, and workload shape.</span>
-</Aside>
-
-### Suite averages
-
-| Suite | Benchmarks | Go avg (ns/op) | TS avg (ns/op) | Go avg (ops/s) | TS avg (ops/s) | Avg speedup |
-|------|-----------:|---------------:|---------------:|---------------:|---------------:|------------:|
-| abi | 6 | 428 | 4,275 | 3,445,808 | 626,605 | 10.00x |
-| address | 5 | 488 | 4,275 | 11,011,379 | 2,126,570 | 8.75x |
-| call | 6 | 196,058 | 15,262,714 | 5,230 | 741 | 77.85x |
-| ens | 5 | 1,271 | 14,653 | 1,446,853 | 336,587 | 11.53x |
-| event | 3 | 14,786 | 368,891 | 613,584 | 36,198 | 24.95x |
-| hash | 7 | 1,257 | 14,452 | 1,938,169 | 193,156 | 11.50x |
-| multicall | 16 | 7,371,364 | 32,964,665 | 2,258 | 1,092 | 4.47x |
-| signature | 5 | 10,942 | 627,205 | 1,443,857 | 158,895 | 57.32x |
-| unit | 6 | 94 | 208 | 11,370,705 | 5,193,740 | 2.21x |
-
-### Interactive charts
-
-Use the dropdown to switch between suites and click through individual benchmark comparisons. Each chart shows the total execution time over all iterations — lower is better.
+viem-go is benchmarked head-to-head against TypeScript [viem](https://viem.sh) across 59 individual tests spanning 9 suites. Both runtimes target the same Anvil instance (mainnet fork) for a fair comparison.
+. Use the dropdown to switch between suites and click through individual benchmark comparisons. Each chart shows the total execution time over all iterations — lower is better.
 
 <BenchmarkViewer
   suites={[
@@ -160,6 +132,32 @@ Use the dropdown to switch between suites and click through individual benchmark
 />
 
 ### Detailed results
+Below are the detailed results for each benchmark suite that we ran showing the number of **operations/second** for both `Go` and `Tyescript` libraries.
+
+| Metric | Go (viem-go) | TypeScript (viem) |
+|--------|--------------|-------------------|
+| Geometric mean speedup | 7.12x | - |
+| Avg ns/op | 2,020,982 | 10,567,395 |
+| Avg ops/s | 495 | 95 |
+| Wins | 59/59 | 0/59 |
+
+<Aside type="note">
+<span>Benchmarks are run against a local Anvil instance (mainnet fork). Real-world performance will vary depending on your RPC provider, network latency, and workload shape.</span>
+</Aside>
+
+### Suite averages
+
+| Suite | Benchmarks | Go avg (ns/op) | TS avg (ns/op) | Go avg (ops/s) | TS avg (ops/s) | Avg speedup |
+|------|-----------:|---------------:|---------------:|---------------:|---------------:|------------:|
+| abi | 6 | 428 | 4,275 | 3,445,808 | 626,605 | 10.00x |
+| address | 5 | 488 | 4,275 | 11,011,379 | 2,126,570 | 8.75x |
+| call | 6 | 196,058 | 15,262,714 | 5,230 | 741 | 77.85x |
+| ens | 5 | 1,271 | 14,653 | 1,446,853 | 336,587 | 11.53x |
+| event | 3 | 14,786 | 368,891 | 613,584 | 36,198 | 24.95x |
+| hash | 7 | 1,257 | 14,452 | 1,938,169 | 193,156 | 11.50x |
+| multicall | 16 | 7,371,364 | 32,964,665 | 2,258 | 1,092 | 4.47x |
+| signature | 5 | 10,942 | 627,205 | 1,443,857 | 158,895 | 57.32x |
+| unit | 6 | 94 | 208 | 11,370,705 | 5,193,740 | 2.21x |
 
 <details>
   <summary>Abi (6 benchmarks)</summary>

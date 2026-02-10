@@ -3,11 +3,9 @@ title: getStorageAt
 description: Returns the value from a storage slot at a given address
 ---
 
-# getStorageAt
-
-Returns the value from a storage slot at a given address.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the value from a storage slot at a given address.
 />
 
 ### Usage
+
+A minimal example showing how to construct a public client and call this action.
 
 <CodeGroup
   tabs={[
@@ -70,9 +70,12 @@ The raw 32-byte storage value. Returns `nil` if the storage slot is zero/empty.
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The contract/account address to read storage from.
 
@@ -95,9 +98,10 @@ value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParamete
   ]}
 />
 
-### Slot (required)
+### Slot
 
 - **Type:** `common.Hash`
+- **Required**
 
 The 32-byte storage slot key.
 
@@ -120,9 +124,10 @@ value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParamete
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to read the storage at.
 
@@ -144,10 +149,11 @@ value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParamete
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
 - **Default:** `"latest"`
+- **Optional**
 
 The block tag to read the storage at (e.g., "latest", "pending").
 
@@ -169,5 +175,7 @@ value, err := public.GetStorageAt(ctx, publicClient, public.GetStorageAtParamete
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getStorageAt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat)

@@ -3,11 +3,9 @@ title: sendRawTransactionSync
 description: Sends a signed transaction to the network synchronously
 ---
 
-# sendRawTransactionSync
-
-Sends a **signed** transaction to the network synchronously, and waits for the transaction to be included in a block. Returns the transaction receipt.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Sends a **signed** transaction to the network synchronously, and waits for the t
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -68,9 +68,13 @@ The transaction receipt after the transaction is included in a block.
 
 ### Parameters
 
-### SerializedTransaction (required)
+Configuration options accepted by this action.
+
+### SerializedTransaction
 
 - **Type:** `string`
+
+- **Required**
 
 The signed serialized transaction hex string.
 
@@ -87,10 +91,12 @@ The signed serialized transaction hex string.
   ]}
 />
 
-### ThrowOnReceiptRevert (optional)
+### ThrowOnReceiptRevert
 
 - **Type:** `*bool`
 - **Default:** `true`
+
+- **Optional**
 
 When true, throws an error if the transaction was detected as reverted.
 
@@ -109,9 +115,11 @@ receipt, err := wallet.SendRawTransactionSync(ctx, walletClient, wallet.SendRawT
   ]}
 />
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `*int64`
+
+- **Optional**
 
 The timeout (in milliseconds) for the transaction.
 

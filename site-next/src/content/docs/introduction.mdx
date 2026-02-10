@@ -1,16 +1,13 @@
 ---
 title: Why viem-go
-description: Learn why viem-go provides a better developer experience for Ethereum in Go
+description:
+
 ---
 
 
 <div data-pagefind-weight="10">
 
-viem-go brings a modern, high-level Ethereum developer experience to the Go ecosystem — inspired by the architecture and abstractions pioneered by TypeScript [viem](https://viem.sh).
-
-If you want the deeper "how it works" view (call flows, package responsibilities, and where the benchmark wins come from), see **[Architecture](/docs/architecture/)**.
-
-### Why viem-go?
+ Viem-go brings a modern, high-level Ethereum developer experience to the Go ecosystem — inspired by the architecture and abstractions pioneered by TypeScript [viem](https://viem.sh).
 
 - **Go lacks high-level Ethereum abstractions**: There isn't a widely adopted, high-level Ethereum API abstraction in the Go ecosystem that makes common tasks feel straightforward.
 - **go-ethereum is low-level by design**: go-ethereum is excellent, but working directly with its lower-level APIs can be tedious and creates a higher barrier to entry for day-to-day EVM development in Go.
@@ -23,9 +20,9 @@ If you want the deeper "how it works" view (call flows, package responsibilities
 <span>viem-go uses go-ethereum under the hood for cryptographic primitives like Keccak256, ECDSA, and ABI encoding. If you already have go-ethereum experience, that knowledge transfers directly.</span>
 </Aside>
 
-### Benchmarks
+### Viem-go Is Fast
 
-Benchmarks are run against the same Anvil instance (mainnet fork) for a fair comparison.
+Viem-go blows TypeScript [viem](https://viem.sh) out of the water in every benchmark we ran. Benchmarks are run against the same Anvil instance (mainnet fork) for a fair comparison.
 
 | Metric | Go (viem-go) | TypeScript (viem) |
 |--------|--------------|-------------------|
@@ -49,13 +46,13 @@ go-ethereum is excellent for low-level operations, but it can be verbose for com
       title: "viem-go",
       language: "go",
       code: `// Reading an ERC20 balance
-result, _ := client.ReadContract(ctx, client.ReadContractOptions{
-    Address:      common.HexToAddress("0xA0b86991c..."),
-    ABI:          "[{"name":"balanceOf","type":"function",...}]",
+balance, _ := client.ReadContract(ctx, client.ReadContractOptions{
+    Address:      "0xA0b86991c...",
+    ABI:          abiJSON,
     FunctionName: "balanceOf",
     Args:         []any{ownerAddress},
 })
-balance := result.(*big.Int)`
+`
     },
     {
       title: "go-ethereum",
@@ -76,6 +73,8 @@ contractABI.UnpackIntoInterface(&balance, "balanceOf", result)`
 </Aside>
 
 ### Design Principles
+Viem-go was built with simplicity and composability in mind. Thats why we decided to build from the roots of the very sucessful  TypeScript [viem](https://viem.sh) library. Neary every ethereum developer knows of or has expereience wth viem. The Golang
+developer ecosystem doesnt have such an equivilent resource for ethereum dev. So we decided to fix that that building on top of what is currently the industry standard.
 
 ### 1. Mirror viem's API
 
@@ -95,15 +94,11 @@ While mirroring viem, we embrace Go conventions:
 
 ### 3. Built on go-ethereum
 
-viem-go doesn't reinvent cryptographic wheels. It uses go-ethereum for:
+viem-go doesn't reinvent cryptographic wheels. It des howeevry optimise for small things in the go-ethereum library that are tailored specifically for viem-go's usecase that otherwise would be unfeasable to optimise for in go-ethereum. It uses go-ethereum for:
 - Keccak256 hashing
 - ECDSA signing
 - ABI encoding/decoding
 - RLP serialization
-
-### 4. Comprehensive Testing
-
-The test suite runs against actual Ethereum nodes (via Anvil) to ensure real-world compatibility.
 
 ### What's Implemented
 

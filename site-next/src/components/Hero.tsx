@@ -110,10 +110,10 @@ export default function Hero() {
             custom={3}
           >
             <Button asChild size="lg">
-              <Link href="/docs/getting-started">Get started</Link>
+              <Link href="/docs/introduction">Docs</Link>
             </Button>
             <Button asChild variant="secondary" size="lg">
-              <Link href="/docs/introduction">Why viem-go?</Link>
+              <Link href="/docs/performance">Benchmarks</Link>
             </Button>
             <Button asChild variant="secondary" size="lg">
               <a

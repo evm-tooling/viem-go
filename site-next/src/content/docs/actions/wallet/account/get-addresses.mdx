@@ -3,13 +3,11 @@ title: getAddresses
 description: Returns a list of addresses owned by the wallet or client
 ---
 
-# getAddresses
-
-Returns a list of account addresses owned by the wallet or client.
-
 If the client has a local account attached (implements LocalAccount), it returns the local address directly without making an RPC call.
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +21,8 @@ If the client has a local account attached (implements LocalAccount), it returns
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -78,6 +78,8 @@ A list of checksummed Ethereum addresses.
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+- The underlying JSON-RPC method invoked by this action.
 
 - [`eth_accounts`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_accounts)
 

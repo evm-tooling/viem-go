@@ -3,13 +3,13 @@ title: getFilterLogs
 description: Returns a list of event logs since the filter was created
 ---
 
-# getFilterLogs
-
 Returns a list of event logs since the filter was created.
 
 Note: `getFilterLogs` is only compatible with **event filters**.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,7 +24,7 @@ Note: `getFilterLogs` is only compatible with **event filters**.
 
 ### Usage
 
-With a basic event filter:
+With a basic event filter, you can retrieve all logs since the filter was created:
 
 <CodeGroup
   tabs={[
@@ -79,7 +79,7 @@ const logs = await publicClient.getFilterLogs({ filter })`,
   ]}
 />
 
-With a contract event filter (includes decoded args):
+With a contract event filter (includes decoded args), you also get decoded arguments for each log:
 
 <CodeGroup
   tabs={[
@@ -118,9 +118,12 @@ A list of event logs, each containing:
 
 ### Parameters
 
-### Filter (required)
+Configuration options accepted by this action.
+
+### Filter
 
 - **Type:** `any` (accepts `FilterID`, `*CreateEventFilterReturnType`, or `*CreateContractEventFilterReturnType`)
+- **Required**
 
 The filter to get logs for. Can be a basic event filter or a contract event filter with ABI.
 
@@ -156,5 +159,7 @@ const logs = await publicClient.getFilterLogs({
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getFilterLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getfilterlogs)

@@ -3,8 +3,6 @@ title: verifyTypedData
 description: Verifies a typed data signature
 ---
 
-# verifyTypedData
-
 Verify that typed data was signed by the provided address.
 
 Supports verification of:
@@ -14,6 +12,8 @@ Supports verification of:
   - **Pre-deployed** (via [ERC-6492](https://eips.ethereum.org/EIPS/eip-6492))
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -27,6 +27,8 @@ Supports verification of:
 />
 
 ### Usage
+
+An example showing how to verify an EIP-712 typed data signature against a given address.
 
 <CodeGroup
   tabs={[
@@ -132,9 +134,12 @@ Whether the signed typed data is valid for the given address.
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The Ethereum address that signed the original typed data.
 
@@ -171,9 +176,10 @@ valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataPa
   ]}
 />
 
-### TypedData (required)
+### TypedData
 
 - **Type:** `signature.TypedDataDefinition`
+- **Required**
 
 The full EIP-712 typed data definition, including domain, types, primary type, and message.
 
@@ -267,9 +273,10 @@ valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataPa
   ]}
 />
 
-### Signature (required)
+### Signature
 
 - **Type:** `any` (accepts `string`, `[]byte`, or `*signature.Signature`)
+- **Required**
 
 The signature of the typed data.
 
@@ -301,9 +308,10 @@ The signature of the typed data.
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 Only used when verifying typed data that was signed by a Smart Contract Account. The block number to check if the contract was already deployed.
 
@@ -338,10 +346,11 @@ valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataPa
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
 - **Default:** `"latest"`
+- **Optional**
 
 Only used when verifying typed data that was signed by a Smart Contract Account. The block tag to check if the contract was already deployed.
 
@@ -375,9 +384,10 @@ Only used when verifying typed data that was signed by a Smart Contract Account.
   ]}
 />
 
-### Factory (optional)
+### Factory
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The ERC-4337 Account Factory address for counterfactual verification. Used with `FactoryData` for undeployed smart accounts.
 
@@ -399,9 +409,10 @@ valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataPa
   ]}
 />
 
-### FactoryData (optional)
+### FactoryData
 
 - **Type:** `[]byte`
+- **Optional**
 
 The calldata to deploy the account via Factory. Used with `Factory` for undeployed smart accounts.
 
@@ -422,9 +433,10 @@ The calldata to deploy the account via Factory. Used with `Factory` for undeploy
   ]}
 />
 
-### ERC6492VerifierAddress (optional)
+### ERC6492VerifierAddress
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The address of a deployed ERC-6492 signature verifier contract. If provided, uses this contract instead of deployless verification.
 
@@ -446,5 +458,7 @@ valid, err := public.VerifyTypedData(ctx, publicClient, public.VerifyTypedDataPa
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) to verify signatures onchain via ERC-1271 or ERC-6492.

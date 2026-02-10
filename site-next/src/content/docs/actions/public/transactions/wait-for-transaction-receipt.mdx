@@ -3,8 +3,6 @@ title: waitForTransactionReceipt
 description: Waits for the transaction to be included on a block and returns the transaction receipt
 ---
 
-# waitForTransactionReceipt
-
 Waits for the transaction to be included on a block (one confirmation), and then returns the transaction receipt.
 
 The `waitForTransactionReceipt` action additionally supports replacement detection (e.g., sped up transactions). Transactions can be replaced when a user modifies their transaction in their wallet (to speed up or cancel). Transactions are replaced when they are sent from the same nonce.
@@ -15,6 +13,8 @@ There are 3 types of transaction replacement reasons:
 - **replaced**: The transaction has been replaced (e.g., different value or data)
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -28,6 +28,8 @@ There are 3 types of transaction replacement reasons:
 />
 
 ### Usage
+
+An example showing how to wait for a transaction to be mined and handle timeouts.
 
 <CodeGroup
   tabs={[
@@ -87,9 +89,12 @@ The transaction receipt.
 
 ### Parameters
 
-### Hash (required)
+Configuration options accepted by this action.
+
+### Hash
 
 - **Type:** `common.Hash`
+- **Required**
 
 The hash of the transaction to wait for.
 
@@ -120,10 +125,11 @@ receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitF
   ]}
 />
 
-### Confirmations (optional)
+### Confirmations
 
 - **Type:** `uint64`
 - **Default:** `1`
+- **Optional**
 
 The number of confirmations (blocks that have passed) to wait before resolving.
 
@@ -150,10 +156,11 @@ The number of confirmations (blocks that have passed) to wait before resolving.
   ]}
 />
 
-### CheckReplacement (optional)
+### CheckReplacement
 
 - **Type:** `*bool`
 - **Default:** `true`
+- **Optional**
 
 Whether to check for transaction replacements.
 
@@ -172,9 +179,10 @@ receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitF
   ]}
 />
 
-### OnReplaced (optional)
+### OnReplaced
 
 - **Type:** `func(ReplacementInfo)`
+- **Optional**
 
 Optional callback to emit if the transaction has been replaced.
 
@@ -203,10 +211,11 @@ Optional callback to emit if the transaction has been replaced.
   ]}
 />
 
-### PollingInterval (optional)
+### PollingInterval
 
 - **Type:** `time.Duration`
 - **Default:** `4 seconds`
+- **Optional**
 
 Polling frequency.
 
@@ -235,10 +244,11 @@ receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitF
   ]}
 />
 
-### RetryCount (optional)
+### RetryCount
 
 - **Type:** `int`
 - **Default:** `6`
+- **Optional**
 
 Number of times to retry if the transaction or block is not found.
 
@@ -256,10 +266,11 @@ Number of times to retry if the transaction or block is not found.
   ]}
 />
 
-### RetryDelay (optional)
+### RetryDelay
 
 - **Type:** `func(int) time.Duration`
 - **Default:** Exponential backoff: `(1 << count) * 200ms`
+- **Optional**
 
 Time to wait between retries.
 
@@ -281,10 +292,11 @@ receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitF
   ]}
 />
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `time.Duration`
 - **Default:** `180 seconds`
+- **Optional**
 
 Optional timeout to wait before stopping polling.
 
@@ -314,5 +326,7 @@ receipt, err := public.WaitForTransactionReceipt(ctx, publicClient, public.WaitF
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC methods used by this action.
 
 Polls [`eth_getTransactionReceipt`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getTransactionReceipt) on each block until it has been processed. If a transaction has been replaced, calls [`eth_getBlockByNumber`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getblockbynumber) to find the replacement.

@@ -3,11 +3,9 @@ title: getChainId
 description: Returns the chain ID of the current network
 ---
 
-# getChainId
-
-Returns the chain ID of the current network.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the chain ID of the current network.
 />
 
 ### Usage
+
+An example showing how to construct a public client and query the current chain ID.
 
 <CodeGroup
   tabs={[
@@ -76,5 +76,7 @@ The chain ID of the current network.
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_chainId`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_chainid)

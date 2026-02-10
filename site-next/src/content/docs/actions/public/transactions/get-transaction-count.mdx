@@ -3,11 +3,9 @@ title: getTransactionCount
 description: Returns the number of transactions an account has sent
 ---
 
-# getTransactionCount
-
-Returns the number of transactions an account has broadcast / sent.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Returns the number of transactions an account has broadcast / sent.
 />
 
 ### Usage
+
+An example showing how to construct a public client and query an account's transaction count.
 
 <CodeGroup
   tabs={[
@@ -78,9 +78,12 @@ The number of transactions an account has sent.
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `common.Address`
+- **Required**
 
 The address of the account.
 
@@ -110,9 +113,10 @@ count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactio
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 Get the count at a block number.
 
@@ -142,9 +146,10 @@ count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactio
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 Get the count at a block tag.
 
@@ -178,5 +183,7 @@ count, err := public.GetTransactionCount(ctx, publicClient, public.GetTransactio
 - The transaction count of an account can also be used as a nonce.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_getTransactionCount`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_gettransactioncount)

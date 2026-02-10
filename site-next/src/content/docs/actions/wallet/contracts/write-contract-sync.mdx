@@ -3,10 +3,6 @@ title: writeContractSync
 description: Executes a write function on a contract synchronously
 ---
 
-# writeContractSync
-
-Executes a write function on a contract synchronously. Returns the transaction receipt after the transaction is included in a block.
-
 A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a Transaction is needed to be broadcast in order to change the state.
 
 Internally, encodes the function call using the ABI and delegates to [sendTransactionSync](/docs/actions/wallet/transactions/send-transaction-sync) with the ABI-encoded data.
@@ -21,6 +17,8 @@ This Action is only recommended to be used on chains with low block times and fa
 
 ### Import
 
+Import the wallet actions package so you can call this action synchronously.
+
 <CodeGroup
   tabs={[
     {
@@ -34,6 +32,7 @@ This Action is only recommended to be used on chains with low block times and fa
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -87,24 +86,32 @@ The transaction receipt after the transaction is included in a block.
 
 All parameters from [writeContract](/docs/actions/wallet/contracts/write-contract) are supported, plus:
 
-### PollingInterval (optional)
+### PollingInterval
+
+Control how frequently the transaction receipt is polled.
 
 - **Type:** `time.Duration`
 - **Default:** `client.PollingInterval()`
 
+- **Optional**
+
 The polling interval to poll for the transaction receipt.
 
-### ThrowOnReceiptRevert (optional)
+### ThrowOnReceiptRevert
 
 - **Type:** `*bool`
 - **Default:** `true`
 
+- **Optional**
+
 When true, throws an error if the transaction was detected as reverted.
 
-### Timeout (optional)
+### Timeout
 
 - **Type:** `*time.Duration`
 - **Default:** `max(chain.blockTime * 3, 5000ms)`
+
+- **Optional**
 
 The timeout to wait for a response.
 

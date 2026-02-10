@@ -3,11 +3,9 @@ title: addChain
 description: Adds an EVM chain to the wallet
 ---
 
-# addChain
-
-Adds an EVM chain to the wallet.
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Adds an EVM chain to the wallet.
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -75,9 +75,13 @@ Returns an error if the request fails.
 
 ### Parameters
 
-### Chain (required)
+Configuration options accepted by this action.
+
+### Chain
 
 - **Type:** `*chain.Chain`
+
+- **Required**
 
 The chain to add to the wallet.
 

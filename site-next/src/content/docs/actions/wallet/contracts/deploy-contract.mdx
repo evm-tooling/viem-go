@@ -3,13 +3,11 @@ title: deployContract
 description: Deploys a contract to the network
 ---
 
-# deployContract
-
-Deploys a contract to the network, given bytecode and constructor arguments.
-
 Internally, encodes the deploy data (bytecode + ABI-encoded constructor args) and delegates to [sendTransaction](/docs/actions/wallet/transactions/send-transaction) with no `to` address (contract creation).
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +22,7 @@ Internally, encodes the deploy data (bytecode + ABI-encoded constructor args) an
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -65,6 +64,8 @@ log.Printf("Deployment transaction hash: %s", hash)`,
 
 ### With Constructor Arguments
 
+Deploy a contract that expects constructor arguments.
+
 <CodeGroup
   tabs={[
     {
@@ -91,15 +92,25 @@ The transaction hash as a hex string.
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
+
+Control which account is used to deploy the contract.
 
 - **Type:** `Account`
 
+- **Optional**
+
 The account to deploy from. If nil, uses the client's account.
 
-### ABI (required)
+### ABI
+
+Provide the ABI used to encode the constructor arguments.
 
 - **Type:** `any` ([]byte, string, or *abi.ABI)
+
+- **Required**
 
 The contract ABI as JSON bytes, string, or a pre-parsed *abi.ABI. Required for encoding constructor arguments.
 
@@ -117,9 +128,13 @@ The contract ABI as JSON bytes, string, or a pre-parsed *abi.ABI. Required for e
   ]}
 />
 
-### Bytecode (required)
+### Bytecode
+
+Specify the compiled bytecode for the contract.
 
 - **Type:** `string`
+
+- **Required**
 
 The contract bytecode as a hex string (with or without 0x prefix).
 
@@ -137,9 +152,13 @@ The contract bytecode as a hex string (with or without 0x prefix).
   ]}
 />
 
-### Args (optional)
+### Args
+
+Pass the constructor arguments for the contract.
 
 - **Type:** `[]any`
+
+- **Optional**
 
 The constructor arguments.
 
@@ -158,9 +177,13 @@ The constructor arguments.
   ]}
 />
 
-### Value (optional)
+### Value
+
+Optionally send ETH alongside the deployment transaction.
 
 - **Type:** `*big.Int`
+
+- **Optional**
 
 The amount of ETH to send with the deployment transaction.
 

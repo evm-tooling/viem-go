@@ -3,11 +3,11 @@ title: getContractEvents
 description: Returns a list of event logs emitted by a contract with decoded event data
 ---
 
-# getContractEvents
-
 Returns a list of event logs emitted by a contract with decoded event data using the provided ABI.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +21,8 @@ Returns a list of event logs emitted by a contract with decoded event data using
 />
 
 ### Usage
+
+An example showing how to fetch and decode contract events using an ABI.
 
 <CodeGroup
   tabs={[
@@ -93,9 +95,12 @@ A list of decoded event logs, each containing:
 
 ### Parameters
 
-### Address (required)
+Configuration options accepted by this action.
+
+### Address
 
 - **Type:** `any` (accepts `common.Address`, `*common.Address`, `[]common.Address`, `string`, or `[]string`)
+- **Required**
 
 The contract address(es) to filter logs from.
 
@@ -120,9 +125,10 @@ logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEvent
   ]}
 />
 
-### ABI (required)
+### ABI
 
 - **Type:** `any` (accepts `*abi.ABI`, JSON bytes, or string)
+- **Required**
 
 The contract ABI for decoding event logs.
 
@@ -144,9 +150,10 @@ logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEvent
   ]}
 />
 
-### EventName (optional)
+### EventName
 
 - **Type:** `string`
+- **Optional**
 
 Filters logs to a specific event. If omitted, all events from the ABI are matched.
 
@@ -165,9 +172,10 @@ Filters logs to a specific event. If omitted, all events from the ABI are matche
   ]}
 />
 
-### Args (optional)
+### Args
 
 - **Type:** `[]any`
+- **Optional**
 
 Filters logs by indexed event parameters. Provide indexed args in order (use nil for "any" match).
 
@@ -188,9 +196,10 @@ logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEvent
   ]}
 />
 
-### FromBlock (optional)
+### FromBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to start filtering from. Mutually exclusive with `FromBlockTag`.
 
@@ -211,9 +220,10 @@ logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEvent
   ]}
 />
 
-### FromBlockTag (optional)
+### FromBlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to start filtering from. Mutually exclusive with `FromBlock`.
 
@@ -233,9 +243,10 @@ The block tag to start filtering from. Mutually exclusive with `FromBlock`.
   ]}
 />
 
-### ToBlock (optional)
+### ToBlock
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to stop filtering at. Mutually exclusive with `ToBlockTag`.
 
@@ -256,9 +267,10 @@ logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEvent
   ]}
 />
 
-### ToBlockTag (optional)
+### ToBlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
 
@@ -278,9 +290,10 @@ The block tag to stop filtering at. Mutually exclusive with `ToBlock`.
   ]}
 />
 
-### BlockHash (optional)
+### BlockHash
 
 - **Type:** `*common.Hash`
+- **Optional**
 
 Filters logs from a specific block by hash. Mutually exclusive with `FromBlock`/`ToBlock`.
 
@@ -301,10 +314,11 @@ logs, err := public.GetContractEvents(ctx, publicClient, public.GetContractEvent
   ]}
 />
 
-### Strict (optional)
+### Strict
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Filters out logs that don't match the indexed/non-indexed arguments in the event ABI.
 
@@ -325,5 +339,7 @@ Filters out logs that don't match the indexed/non-indexed arguments in the event
 />
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Uses [`eth_getLogs`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getlogs) with ABI-encoded topics and decoded event data.

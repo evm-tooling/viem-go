@@ -3,11 +3,9 @@ title: estimateGas
 description: Estimates the gas necessary to complete a transaction without submitting it to the network
 ---
 
-# estimateGas
-
-Estimates the gas necessary to complete a transaction without submitting it to the network.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Estimates the gas necessary to complete a transaction without submitting it to t
 />
 
 ### Usage
+
+An example showing how to construct a public client and estimate gas for a transaction.
 
 <CodeGroup
   tabs={[
@@ -86,9 +86,12 @@ The estimated gas amount in units of gas.
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account attached to the transaction (msg.sender).
 
@@ -123,9 +126,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### To (optional)
+### To
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The recipient address. If nil, this is treated as a deployment transaction.
 
@@ -155,9 +159,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### Data (optional)
+### Data
 
 - **Type:** `[]byte`
+- **Optional**
 
 The calldata to send.
 
@@ -187,9 +192,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### Value (optional)
+### Value
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The amount of wei to send.
 
@@ -211,9 +217,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### Gas (optional)
+### Gas
 
 - **Type:** `*uint64`
+- **Optional**
 
 The gas limit for the transaction.
 
@@ -234,9 +241,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### MaxFeePerGas (optional)
+### MaxFeePerGas
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The max fee per gas (EIP-1559).
 
@@ -259,9 +267,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### MaxPriorityFeePerGas (optional)
+### MaxPriorityFeePerGas
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The max priority fee per gas (EIP-1559).
 
@@ -284,9 +293,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to estimate at.
 
@@ -307,9 +317,10 @@ gas, err := public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to estimate at (e.g., "latest", "pending").
 
@@ -329,12 +340,15 @@ The block tag to estimate at (e.g., "latest", "pending").
   ]}
 />
 
-### StateOverride (optional)
+### StateOverride
 
 - **Type:** `types.StateOverride`
+- **Optional**
 
 State overrides for the estimation.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_estimateGas`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_estimategas)

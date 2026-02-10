@@ -3,15 +3,13 @@ title: requestAddresses
 description: Requests a list of accounts managed by a wallet
 ---
 
-# requestAddresses
-
-Requests a list of accounts managed by a wallet.
-
 Sends a request to the wallet, asking for permission to access the user's accounts. After the user accepts the request, it will return a list of accounts (addresses).
 
 This API can be useful for dapps that need to access the user's accounts in order to execute transactions or interact with smart contracts.
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -25,6 +23,8 @@ This API can be useful for dapps that need to access the user's accounts in orde
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -80,5 +80,7 @@ A list of checksummed Ethereum addresses.
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+- The underlying JSON-RPC method invoked by this action.
 
 - [`eth_requestAccounts`](https://eips.ethereum.org/EIPS/eip-1102) (EIP-1102)

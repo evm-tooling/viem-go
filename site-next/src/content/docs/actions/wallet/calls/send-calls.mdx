@@ -3,13 +3,11 @@ title: sendCalls
 description: Sends a batch of calls (EIP-5792)
 ---
 
-# sendCalls
-
-Requests the connected wallet to send a batch of calls. This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
-
 [Read more about EIP-5792](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls)
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +22,7 @@ Requests the connected wallet to send a batch of calls. This implements [EIP-579
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -107,15 +106,25 @@ An object containing:
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
+
+Control which account is used to send the batched calls.
 
 - **Type:** `Account`
 
+- **Optional**
+
 The account to send from. If nil, uses the client's account.
 
-### Calls (required)
+### Calls
+
+Provide the list of calls that will be batched and sent.
 
 - **Type:** `[]wallet.Call`
+
+- **Required**
 
 An array of calls to be signed and broadcasted.
 
@@ -146,10 +155,12 @@ result, err := wallet.SendCalls(ctx, walletClient, wallet.SendCallsParameters{
   ]}
 />
 
-### ForceAtomic (optional)
+### ForceAtomic
 
 - **Type:** `bool`
 - **Default:** `false`
+
+- **Optional**
 
 Force the calls to be executed atomically.
 
@@ -167,9 +178,11 @@ Force the calls to be executed atomically.
   ]}
 />
 
-### ID (optional)
+### ID
 
 - **Type:** `string`
+
+- **Optional**
 
 An optional identifier for the call batch.
 
@@ -187,16 +200,20 @@ An optional identifier for the call batch.
   ]}
 />
 
-### Version (optional)
+### Version
 
 - **Type:** `string`
 - **Default:** `"2.0.0"`
 
+- **Optional**
+
 The EIP-5792 version.
 
-### Capabilities (optional)
+### Capabilities
 
 - **Type:** `map[string]any`
+
+- **Optional**
 
 Capability metadata for the calls (e.g. specifying a paymaster).
 
@@ -216,10 +233,12 @@ Capability metadata for the calls (e.g. specifying a paymaster).
   ]}
 />
 
-### ExperimentalFallback (optional)
+### ExperimentalFallback
 
 - **Type:** `bool`
 - **Default:** `false`
+
+- **Optional**
 
 When true, falls back to `eth_sendTransaction` if `wallet_sendCalls` is not supported.
 
@@ -227,10 +246,12 @@ When true, falls back to `eth_sendTransaction` if `wallet_sendCalls` is not supp
 When using `ExperimentalFallback` with a wallet that does not support EIP-5792, viem-go will return a custom bundle identifier (`id`). While this identifier works with viem-go's [`getCallsStatus`](/docs/actions/wallet/calls/get-calls-status) action, it cannot be used with the native `wallet_getCallsStatus` RPC method.
 :::
 
-### ExperimentalFallbackDelay (optional)
+### ExperimentalFallbackDelay
 
 - **Type:** `*int`
 - **Default:** `32ms`
+
+- **Optional**
 
 The delay (in milliseconds) between fallback transactions when using `ExperimentalFallback`.
 

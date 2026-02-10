@@ -6,7 +6,11 @@ description: Real-world examples showing viem-go in action, with TypeScript comp
 
 ### Basic Examples
 
-### Get Transaction Receipt
+Common read operations you'll reach for in almost every project — querying transactions, blocks, and other on-chain state. Each snippet shows the viem-go call alongside the equivalent TypeScript viem code so you can map between the two.
+
+#### Get Transaction Receipt
+
+Fetch the receipt for a mined transaction to inspect its status, gas usage, and the block it landed in.
 
 <CodeGroup 
 
@@ -41,7 +45,11 @@ console.log('Block:', receipt.blockNumber)`
 
 ### Contract Examples
 
+Interacting with smart contracts is the core of most Ethereum applications. These examples cover reading on-chain state through view functions and encoding calldata for contract writes — the two operations you'll use most often.
+
 #### Read ERC20 Token Info
+
+Query an ERC-20 contract for its name, symbol, decimals, and total supply. viem-go's built-in ERC-20 bindings make this a single struct — no manual ABI wrangling required.
 
 <CodeGroup 
 
@@ -84,7 +92,9 @@ console.log(\`Total Supply: \${formatUnits(totalSupply, decimals)}\`)`
   ]}
 />
 
-### Encode Function Data
+#### Encode Function Data
+
+Manually encode calldata from an ABI and arguments. This is useful when you need raw calldata for low-level `eth_call` or `eth_sendTransaction` without the higher-level `ReadContract`/`WriteContract` helpers.
 
 <CodeGroup 
 
@@ -128,7 +138,11 @@ console.log('Encoded:', data)`
 
 ### Account Examples
 
-### Create Account from Private Key
+Accounts are how you sign transactions and messages. viem-go supports creating accounts from raw private keys or BIP-39 mnemonics, with the same API shape as viem's `accounts` module.
+
+#### Create Account from Private Key
+
+Derive an account (address + public key) from a hex-encoded private key. This is the most direct way to create a signer for wallet client operations.
 
 <CodeGroup 
 
@@ -156,7 +170,9 @@ console.log('Public Key:', account.publicKey)`
   ]}
 />
 
-### Create Account from Mnemonic
+#### Create Account from Mnemonic
+
+Derive an account from a BIP-39 mnemonic phrase. An optional derivation path lets you generate multiple accounts from the same seed.
 
 <CodeGroup 
 
@@ -188,7 +204,11 @@ console.log('Address:', account.address)`
 
 ### Utility Examples
 
-### Parse and Format Units
+Helpers for the low-level operations that come up constantly in Ethereum development — unit conversions between human-readable values and raw integers, hashing, and cryptographic signature recovery.
+
+#### Parse and Format Units
+
+Convert between human-readable token amounts (like `"1.5"` ETH) and their raw integer representations (wei). viem-go supports arbitrary decimal precision for any ERC-20 denomination.
 
 <CodeGroup 
 
@@ -230,7 +250,9 @@ console.log('ETH:', ethString) // "1.5"`
   ]}
 />
 
-### Hash and Signature Utilities
+#### Hash and Signature Utilities
+
+Keccak256 hashing, EIP-191 message signing, and `ecrecover`-based address recovery. These are the building blocks for signature verification, permit flows, and off-chain authentication.
 
 <CodeGroup 
 
@@ -278,9 +300,9 @@ console.log('Recovered:', address)`
   ]}
 />
 
-### Real-world (Advanced): UniswapV2 extractor in Go
+### Advanced Examples
 
-These snippets are cherry-picked from the Go implementation in [`viem-go-extractor-demo`](https://github.com/ChefBingbong/viem-go-extractor-demo/tree/main) — a real UniswapV2 pool extractor that heavily exercises **multicall batching**, **concurrent fan-out**, **reorg-aware log watching**, and **on-disk caching**.
+Production-grade patterns that go beyond single RPC calls. The snippets below are cherry-picked from [`viem-go-extractor-demo`](https://github.com/ChefBingbong/viem-go-extractor-demo/tree/main) — a real UniswapV2 pool extractor that heavily exercises **multicall batching**, **concurrent fan-out**, **reorg-aware log watching**, and **on-disk caching**. These show how viem-go's primitives compose into non-trivial data pipelines.
 
 <CodeGroup
   tabs={[

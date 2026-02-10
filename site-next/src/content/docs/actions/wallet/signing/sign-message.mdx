@@ -3,14 +3,12 @@ title: signMessage
 description: Signs a message with the Account's private key
 ---
 
-# signMessage
-
-Calculates an Ethereum-specific signature in [EIP-191 format](https://eips.ethereum.org/EIPS/eip-191): `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`.
-
 - For local accounts (implementing SignableAccount), signs locally without an RPC call.
 - For JSON-RPC accounts, delegates to the `personal_sign` RPC method.
 
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +22,8 @@ Calculates an Ethereum-specific signature in [EIP-191 format](https://eips.ether
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -80,9 +80,13 @@ The signed message as a hex string.
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `Account`
+
+- **Optional**
 
 Account to use for signing. If nil, uses the client's account.
 
@@ -109,9 +113,11 @@ sig, err := wallet.SignMessage(ctx, walletClient, wallet.SignMessageParameters{
   ]}
 />
 
-### Message (required)
+### Message
 
 - **Type:** `signature.SignableMessage`
+
+- **Required**
 
 Message to sign. Can be a string message or raw hex/bytes.
 

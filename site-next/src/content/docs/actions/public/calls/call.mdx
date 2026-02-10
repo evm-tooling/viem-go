@@ -3,11 +3,9 @@ title: call
 description: Executes a new message call immediately without submitting a transaction to the network
 ---
 
-# call
-
-Executes a new message call immediately without submitting a transaction to the network.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Executes a new message call immediately without submitting a transaction to the 
 />
 
 ### Usage
+
+Examples showing how to execute a read-only call against a contract.
 
 <CodeGroup
   tabs={[
@@ -148,9 +148,12 @@ An object containing:
 
 ### Parameters
 
-### Account (optional)
+Configuration options accepted by this action.
+
+### Account
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The account attached to the call (msg.sender).
 
@@ -185,9 +188,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### To (optional)
+### To
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The contract address to call.
 
@@ -216,9 +220,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### Data (optional)
+### Data
 
 - **Type:** `[]byte`
+- **Optional**
 
 The calldata to send.
 
@@ -247,9 +252,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### Value (optional)
+### Value
 
 - **Type:** `*big.Int`
+- **Optional**
 
 The amount of wei to send with the call.
 
@@ -270,9 +276,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to execute the call at.
 
@@ -292,9 +299,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to execute the call at (e.g., "latest", "pending").
 
@@ -313,9 +321,10 @@ The block tag to execute the call at (e.g., "latest", "pending").
   ]}
 />
 
-### Code (optional)
+### Code
 
 - **Type:** `[]byte`
+- **Optional**
 
 Bytecode for deployless calls (call code without deploying). Mutually exclusive with `Factory`/`FactoryData`.
 
@@ -334,9 +343,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### Factory (optional)
+### Factory
 
 - **Type:** `*common.Address`
+- **Optional**
 
 The contract deployment factory address (e.g., Create2 factory). Used with `FactoryData` for deployless calls via factory.
 
@@ -357,9 +367,10 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### FactoryData (optional)
+### FactoryData
 
 - **Type:** `[]byte`
+- **Optional**
 
 The calldata to execute on the factory to deploy the contract. Used with `Factory` for deployless calls via factory.
 
@@ -379,9 +390,10 @@ The calldata to execute on the factory to deploy the contract. Used with `Factor
   ]}
 />
 
-### Batch (optional)
+### Batch
 
 - **Type:** `*bool`
+- **Optional**
 
 Enables multicall batching for this call. If nil, uses client's batch setting.
 
@@ -401,18 +413,22 @@ result, err := public.Call(ctx, publicClient, public.CallParameters{
   ]}
 />
 
-### StateOverride (optional)
+### StateOverride
 
 - **Type:** `types.StateOverride`
+- **Optional**
 
 State overrides for the call.
 
-### BlockOverrides (optional)
+### BlockOverrides
 
 - **Type:** `*types.BlockOverrides`
+- **Optional**
 
 Block-level overrides (baseFeePerGas, gasLimit, etc.).
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call)

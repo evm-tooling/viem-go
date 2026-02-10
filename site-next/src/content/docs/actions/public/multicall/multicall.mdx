@@ -3,13 +3,13 @@ title: multicall
 description: Batches multiple contract function calls into a single RPC call using the multicall3 contract
 ---
 
-# multicall
-
 Batches multiple contract function calls into a single RPC call using the multicall3 contract.
 
 When the client has `Batch.Multicall` configured, concurrent `Multicall()` calls within the Wait window are automatically aggregated into a single larger multicall RPC call. This mirrors viem's `batch: { multicall: { ... } }` behavior.
 
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -23,6 +23,8 @@ When the client has `Batch.Multicall` configured, concurrent `Multicall()` calls
 />
 
 ### Usage
+
+An example showing how to batch multiple contract reads into a single multicall.
 
 <CodeGroup
   tabs={[
@@ -119,9 +121,12 @@ An array of results, each containing:
 
 ### Parameters
 
-### Contracts (required)
+Configuration options accepted by this action.
+
+### Contracts
 
 - **Type:** `[]MulticallContract`
+- **Required**
 
 The list of contract calls to execute.
 
@@ -170,10 +175,11 @@ The list of contract calls to execute.
   ]}
 />
 
-### AllowFailure (optional)
+### AllowFailure
 
 - **Type:** `*bool`
 - **Default:** `true`
+- **Optional**
 
 Determines whether to continue if individual calls fail. If true, failed calls will be marked with status "failure" but won't stop the entire multicall.
 
@@ -201,10 +207,11 @@ results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
   ]}
 />
 
-### BatchSize (optional)
+### BatchSize
 
 - **Type:** `int`
 - **Default:** `1024` bytes
+- **Optional**
 
 The maximum size in bytes for each batch of calls. Calls are chunked into batches based on their calldata size.
 
@@ -231,10 +238,11 @@ The maximum size in bytes for each batch of calls. Calls are chunked into batche
   ]}
 />
 
-### Deployless (optional)
+### Deployless
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables deployless multicall using bytecode execution. This allows multicall on chains without a deployed multicall3 contract.
 
@@ -252,10 +260,11 @@ Enables deployless multicall using bytecode execution. This allows multicall on 
   ]}
 />
 
-### ShouldBatch (optional)
+### ShouldBatch
 
 - **Type:** `bool`
 - **Default:** `false`
+- **Optional**
 
 Enables automatic batching of concurrent multicall calls when the client has batch configuration enabled.
 
@@ -273,9 +282,10 @@ Enables automatic batching of concurrent multicall calls when the client has bat
   ]}
 />
 
-### MulticallAddress (optional)
+### MulticallAddress
 
 - **Type:** `*common.Address`
+- **Optional**
 
 Overrides the default multicall3 contract address.
 
@@ -294,9 +304,10 @@ results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
   ]}
 />
 
-### BlockNumber (optional)
+### BlockNumber
 
 - **Type:** `*uint64`
+- **Optional**
 
 The block number to execute the calls at. Mutually exclusive with `BlockTag`.
 
@@ -315,9 +326,10 @@ results, err := public.Multicall(ctx, publicClient, public.MulticallParameters{
   ]}
 />
 
-### BlockTag (optional)
+### BlockTag
 
 - **Type:** `BlockTag`
+- **Optional**
 
 The block tag to execute the calls at. Mutually exclusive with `BlockNumber`.
 
@@ -335,10 +347,11 @@ The block tag to execute the calls at. Mutually exclusive with `BlockNumber`.
   ]}
 />
 
-### MaxConcurrentChunks (optional)
+### MaxConcurrentChunks
 
 - **Type:** `int`
 - **Default:** `4`
+- **Optional**
 
 Limits the number of concurrent chunk executions. This prevents overwhelming RPC endpoints. Set to 0 or negative for unlimited concurrency.
 
@@ -358,11 +371,15 @@ Limits the number of concurrent chunk executions. This prevents overwhelming RPC
 
 ### Tips
 
+Additional hints for working with this action.
+
 - Multicall automatically chunks large batches of calls to avoid RPC size limits
 - Use `AllowFailure: true` to continue processing even if some calls fail
 - Enable `ShouldBatch` to automatically batch concurrent multicall calls
 - Use `Deployless: true` for chains without a deployed multicall3 contract
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 Uses [`eth_call`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call) to execute calls via the multicall3 contract's `aggregate3` function.

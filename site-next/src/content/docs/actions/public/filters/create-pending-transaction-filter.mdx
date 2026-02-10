@@ -3,11 +3,9 @@ title: createPendingTransactionFilter
 description: Creates a filter to listen for new pending transactions
 ---
 
-# createPendingTransactionFilter
-
-Creates a filter to listen for new pending transactions.
-
 ### Import
+
+Import the public actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -21,6 +19,8 @@ Creates a filter to listen for new pending transactions.
 />
 
 ### Usage
+
+An example showing how to create a pending transaction filter and use it to fetch new transactions.
 
 <CodeGroup
   tabs={[
@@ -80,5 +80,7 @@ A filter object containing:
 This action takes no parameters.
 
 ### JSON-RPC Method
+
+Underlying JSON-RPC method used by this action.
 
 [`eth_newPendingTransactionFilter`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_newpendingtransactionfilter)

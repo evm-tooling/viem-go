@@ -12,6 +12,8 @@ Signs typed data and calculates an Ethereum-specific signature in [EIP-712 forma
 
 ### Import
 
+Import the wallet actions package so you can call this action.
+
 <CodeGroup
   tabs={[
     {
@@ -24,6 +26,8 @@ Signs typed data and calculates an Ethereum-specific signature in [EIP-712 forma
 />
 
 ### Usage
+
+See how to construct a wallet client and call this action.
 
 <CodeGroup
   tabs={[
@@ -95,15 +99,23 @@ The signed data as a hex string.
 
 ### Parameters
 
-### Account (optional)
+### Account
+
+Control which account is used to sign the typed data.
 
 - **Type:** `Account`
 
+- **Optional**
+
 Account to use for signing. If nil, uses the client's account.
 
-### Domain (required)
+### Domain
+
+Provide the EIP-712 domain configuration for the typed data.
 
 - **Type:** `signature.TypedDataDomain`
+
+-- **Required**
 
 The typed data domain. All properties are optional.
 
@@ -131,9 +143,13 @@ sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParamete
   ]}
 />
 
-### Types (required)
+### Types
+
+Define the set of structured types used by the typed data.
 
 - **Type:** `map[string][]signature.TypedDataField`
+
+-- **Required**
 
 The type definitions for the typed data (excluding EIP712Domain, which is auto-generated).
 
@@ -163,9 +179,13 @@ sig, err := wallet.SignTypedData(ctx, walletClient, wallet.SignTypedDataParamete
   ]}
 />
 
-### PrimaryType (required)
+### PrimaryType
+
+Specify the primary type to sign from the `types` mapping.
 
 - **Type:** `string`
+
+-- **Required**
 
 The primary type to extract from `types` and use in `message`.
 
@@ -183,9 +203,13 @@ The primary type to extract from `types` and use in `message`.
   ]}
 />
 
-### Message (required)
+### Message
+
+Provide the structured message payload that matches the primary type.
 
 - **Type:** `map[string]any`
+
+-- **Required**
 
 The structured message to sign, matching the `PrimaryType` structure.
 

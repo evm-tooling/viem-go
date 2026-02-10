@@ -3,13 +3,9 @@ title: showCallsStatus
 description: Shows call status in wallet UI (EIP-5792)
 ---
 
-# showCallsStatus
-
-Requests the wallet to show information about a call batch that was sent via [sendCalls](/docs/actions/wallet/calls/send-calls) in the wallet's UI.
-
-This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
-
 ### Import
+
+Import the wallet actions package so you can call this action.
 
 <CodeGroup
   tabs={[
@@ -24,6 +20,7 @@ This implements [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
 
 ### Usage
 
+See how to construct a wallet client and call this action.
 <CodeGroup
   tabs={[
     {
@@ -69,9 +66,13 @@ Returns an error if the request fails.
 
 ### Parameters
 
-### ID (required)
+### ID
+
+Specify which call batch to display in the wallet UI.
 
 - **Type:** `string`
+
+- **Required**
 
 The identifier of the call batch (returned from [sendCalls](/docs/actions/wallet/calls/send-calls)).
 
