@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.4",
-    "viem": "^2.45.1"
+    "viem": "^2.45.3"
   },
   "packageManager": "bun@1.2.0"
 }
