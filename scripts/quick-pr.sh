@@ -141,7 +141,7 @@ sleep 2
 
 # Squash and merge
 info "Squash-merging PR..."
-gh pr merge "$BRANCH_NAME" --squash --delete-branch
+gh pr merge "$BRANCH_NAME" --squash --delete-branch --admin
 success "PR squash-merged and branch deleted"
 
 # Pull changes to master
