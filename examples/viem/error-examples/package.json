@@ -1,0 +1,17 @@
+{
+  "name": "viem-error-examples",
+  "version": "1.0.0",
+  "description": "Error path examples for viem call/contract operations",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "dev": "bun --watch run index.ts"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1",
+    "typescript": "^5.0.0"
+  }
+}
