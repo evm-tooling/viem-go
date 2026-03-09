@@ -100,6 +100,7 @@ func GetContractError(err error, params GetContractErrorParams) error {
 
 			cause = &pkgerrors.ContractFunctionRevertedError{
 				FunctionName: params.FunctionName,
+				ErrorName:    decoded.ErrorName,
 				Reason:       reason,
 				Signature:    signature,
 				Data:         decodedData,
@@ -125,6 +126,7 @@ func GetContractError(err error, params GetContractErrorParams) error {
 			}
 			cause = &pkgerrors.ContractFunctionRevertedError{
 				FunctionName: params.FunctionName,
+				ErrorName:    decoded.ErrorName,
 				Reason:       reason,
 				Raw:          revertData,
 			}

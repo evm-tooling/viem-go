@@ -49,8 +49,10 @@ func (e *ContractFunctionExecutionError) Unwrap() error {
 }
 
 // ContractFunctionRevertedError is returned when a contract function reverts.
+// ErrorName is the decoded custom error name (e.g. "ERC20InsufficientBalance", "Error", "Panic").
 type ContractFunctionRevertedError struct {
 	FunctionName string
+	ErrorName    string // Decoded error name for custom error extraction (parity with viem)
 	Reason       string
 	Signature    string
 	Data         interface{}

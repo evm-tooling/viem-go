@@ -9,6 +9,14 @@ cd examples/viem/error-examples
 bun run start
 ```
 
+### Custom Error Extraction
+
+Showcases `err.walk()` for extracting `ContractFunctionRevertedError` and `data.errorName`:
+
+```bash
+bun run custom-error
+```
+
 Or from the examples root:
 
 ```bash
@@ -28,5 +36,19 @@ bun run error-examples
 ## Error Types Demonstrated
 
 - `ContractFunctionExecutionError` - Contract call failed (wraps revert)
-- `ContractFunctionRevertedError` - Decoded revert (reason, signature)
+- `ContractFunctionRevertedError` - Decoded revert (reason, signature, data.errorName)
 - `CallExecutionError` - Wraps transport errors with call context
+
+### Custom Error Handling (viem)
+
+Use `BaseError.walk()` to find `ContractFunctionRevertedError` and branch on `data.errorName`:
+
+```ts
+if (err instanceof BaseError) {
+  const revertError = err.walk((e) => e instanceof ContractFunctionRevertedError)
+  if (revertError instanceof ContractFunctionRevertedError) {
+    const errorName = revertError.data?.errorName ?? ''
+    // branch on errorName: "Error", "Panic", "ERC20InsufficientBalance", etc.
+  }
+}
+```
