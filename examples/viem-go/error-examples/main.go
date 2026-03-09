@@ -175,9 +175,9 @@ func main() {
 	})
 	_, err = public.EstimateGas(ctx, publicClient, public.EstimateGasParameters{
 		Account: &zeroAddress,
-		To:     &usdcAddress,
-		Data:   transferRevertData,
-		Value:  big.NewInt(0),
+		To:      &usdcAddress,
+		Data:    transferRevertData,
+		Value:   big.NewInt(0),
 	})
 	if err != nil {
 		var estErr *pkgerrors.EstimateGasExecutionError
@@ -195,8 +195,8 @@ func main() {
 	fmt.Println("\n--- Phase 2a: CreateAccessList -> CallExecutionError (GetCallError) ---")
 	_, err = public.CreateAccessList(ctx, publicClient, public.CreateAccessListParameters{
 		Account: &zeroAddress,
-		To:     &usdcAddress,
-		Data:   transferRevertData,
+		To:      &usdcAddress,
+		Data:    transferRevertData,
 	})
 	if err != nil {
 		var callErr *pkgerrors.CallExecutionError
