@@ -30,12 +30,12 @@ type ProviderRpcError struct {
 
 // RPC error codes (EIP-1474)
 const (
-	RpcCodeParse          = -32700
-	RpcCodeInvalidRequest = -32600
-	RpcCodeMethodNotFound = -32601
-	RpcCodeInvalidParams  = -32602
-	RpcCodeInternal       = -32603
-	RpcCodeInvalidInput   = -32000
+	RpcCodeParse               = -32700
+	RpcCodeInvalidRequest      = -32600
+	RpcCodeMethodNotFound      = -32601
+	RpcCodeInvalidParams       = -32602
+	RpcCodeInternal            = -32603
+	RpcCodeInvalidInput        = -32000
 	RpcCodeResourceNotFound    = -32001
 	RpcCodeResourceUnavailable = -32002
 	RpcCodeTransactionRejected = -32003
@@ -46,20 +46,20 @@ const (
 
 // Provider error codes (EIP-1193, EIP-5792)
 const (
-	RpcCodeUserRejected      = 4001
-	RpcCodeUnauthorized      = 4100
-	RpcCodeUnsupportedMethod = 4200
-	RpcCodeDisconnected      = 4900
-	RpcCodeChainDisconnected = 4901
-	RpcCodeSwitchChain       = 4902
+	RpcCodeUserRejected          = 4001
+	RpcCodeUnauthorized          = 4100
+	RpcCodeUnsupportedMethod     = 4200
+	RpcCodeDisconnected          = 4900
+	RpcCodeChainDisconnected     = 4901
+	RpcCodeSwitchChain           = 4902
 	RpcCodeUnsupportedCapability = 5700
-	RpcCodeUnsupportedChainId   = 5710
-	RpcCodeDuplicateId         = 5720
-	RpcCodeUnknownBundleId      = 5730
-	RpcCodeBundleTooLarge       = 5740
-	RpcCodeAtomicRejected       = 5750
+	RpcCodeUnsupportedChainId    = 5710
+	RpcCodeDuplicateId           = 5720
+	RpcCodeUnknownBundleId       = 5730
+	RpcCodeBundleTooLarge        = 5740
+	RpcCodeAtomicRejected        = 5750
 	RpcCodeAtomicityNotSupported = 5760
-	RpcCodeWalletConnectSession = 7000
+	RpcCodeWalletConnectSession  = 7000
 )
 
 // NewParseRpcError creates a Parse error (-32700).

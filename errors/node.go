@@ -36,7 +36,7 @@ func (e *ExecutionRevertedError) Unwrap() error {
 
 // FeeCapTooHighError is returned when maxFeePerGas exceeds maximum.
 type FeeCapTooHighError struct {
-	Cause       error
+	Cause        error
 	MaxFeePerGas *big.Int
 }
 
@@ -55,7 +55,7 @@ func (e *FeeCapTooHighError) Unwrap() error {
 
 // FeeCapTooLowError is returned when maxFeePerGas is below block base fee.
 type FeeCapTooLowError struct {
-	Cause       error
+	Cause        error
 	MaxFeePerGas *big.Int
 }
 

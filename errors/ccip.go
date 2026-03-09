@@ -58,7 +58,6 @@ func (e *OffchainLookupResponseMalformedError) Error() string {
 	return msg
 }
 
-
 // OffchainLookupSenderMismatchError is returned when sender does not match target.
 type OffchainLookupSenderMismatchError struct {
 	Sender string

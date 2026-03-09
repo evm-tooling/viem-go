@@ -4,8 +4,8 @@ import "fmt"
 
 // SiweInvalidMessageFieldError is returned when SIWE message field is invalid.
 type SiweInvalidMessageFieldError struct {
-	Field       string
-	DocsPath    string
+	Field        string
+	DocsPath     string
 	MetaMessages []string
 }
 
