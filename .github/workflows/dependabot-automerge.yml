@@ -1,0 +1,58 @@
+# Dependabot auto-merge - enables auto-merge for Dependabot PRs.
+# Waits for all CI checks to pass before enabling auto-merge.
+#
+# Uses third-party actions - see their terms of service.
+name: Dependabot auto-merge
+
+on:
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot-automerge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GH_PAT }}"
+
+      - name: Wait for Build
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        with:
+          token: ${{ secrets.GH_PAT }}
+          checkName: Build
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Wait for Lint
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        with:
+          token: ${{ secrets.GH_PAT }}
+          checkName: Lint
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Wait for Test
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        with:
+          token: ${{ secrets.GH_PAT }}
+          checkName: Test
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Wait for Examples (TypeScript)
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        with:
+          token: ${{ secrets.GH_PAT }}
+          checkName: Examples (TypeScript)
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Enable auto-merge for Dependabot PRs
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr merge --auto --merge
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
