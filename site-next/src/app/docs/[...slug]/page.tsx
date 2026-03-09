@@ -18,6 +18,7 @@ import BenchmarkSlider from "@/components/BenchmarkSlider";
 import BenchmarkViewer from "@/components/BenchmarkViewer";
 import TableOfContents from "@/components/TableOfContents";
 import DocsPageFooter from "@/components/DocsPageFooter";
+import { Suspense } from "react";
 
 /** Generate a slug id from heading text (matches extractHeadings logic) */
 function slugify(text: string): string {
@@ -152,11 +153,17 @@ export default async function DocPage({ params }: PageProps) {
             </p>
           )}
           <div className="docs-prose ">
-            <MDXRemote
-              source={doc.content}
-              components={mdxComponents}
-              options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
-            />
+            <Suspense fallback={<>Loading...</>}>
+              <MDXRemote
+                source={doc.content}
+                components={mdxComponents}
+                options={{
+                  mdxOptions: { remarkPlugins: [remarkGfm] },
+                  parseFrontmatter: false,
+                  blockJS: false,
+                }}
+              />
+            </Suspense>
           </div>
           <DocsPageFooter
             slug={slugStr}
