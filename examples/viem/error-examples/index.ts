@@ -26,8 +26,8 @@ import {
   ContractFunctionRevertedError,
   ContractFunctionZeroDataError,
   createPublicClient,
-  encodeFunctionData,
   EstimateGasExecutionError,
+  encodeFunctionData,
   http,
   MethodNotFoundRpcError,
   parseAbi,
@@ -61,8 +61,7 @@ async function main() {
   // 1. Invalid params: code + to (mutually exclusive)
   printSection('1. Invalid Params: code + to (mutually exclusive)')
   try {
-    const simpleBytecode =
-      '0x602a60005260206000f3' as `0x${string}`
+    const simpleBytecode = '0x602a60005260206000f3' as `0x${string}`
     await client.call({
       code: simpleBytecode,
       to: USDC_ADDRESS,
@@ -70,8 +69,13 @@ async function main() {
     })
   } catch (error: unknown) {
     const msg = (error as Error).message
-    if (msg.includes("cannot provide both 'code' and 'to'") || msg.includes('code') && msg.includes('to')) {
-      console.log(`  ✓ Caught invalid params error: ${(error as Error).message?.slice(0, 80)}...`)
+    if (
+      msg.includes("cannot provide both 'code' and 'to'") ||
+      (msg.includes('code') && msg.includes('to'))
+    ) {
+      console.log(
+        `  ✓ Caught invalid params error: ${(error as Error).message?.slice(0, 80)}...`,
+      )
     } else {
       console.log(`  Error: ${(error as Error).message}`)
     }
@@ -80,8 +84,7 @@ async function main() {
   // 2. Invalid params: code + factory (mutually exclusive)
   printSection('2. Invalid Params: code + factory (mutually exclusive)')
   try {
-    const simpleBytecode =
-      '0x602a60005260206000f3' as `0x${string}`
+    const simpleBytecode = '0x602a60005260206000f3' as `0x${string}`
     const factoryAddress =
       '0x4e59b44847b379578588920cA78FbF26c0B4956C' as Address
     await client.call({
@@ -91,8 +94,13 @@ async function main() {
     })
   } catch (error: unknown) {
     const msg = (error as Error).message
-    if (msg.includes('code') && (msg.includes('factory') || msg.includes('factoryData'))) {
-      console.log(`  ✓ Caught invalid params error: ${(error as Error).message?.slice(0, 80)}...`)
+    if (
+      msg.includes('code') &&
+      (msg.includes('factory') || msg.includes('factoryData'))
+    ) {
+      console.log(
+        `  ✓ Caught invalid params error: ${(error as Error).message?.slice(0, 80)}...`,
+      )
     } else {
       console.log(`  Error: ${(error as Error).message}`)
     }
@@ -110,7 +118,9 @@ async function main() {
     })
   } catch (error: unknown) {
     if (error instanceof ContractFunctionExecutionError) {
-      console.log(`  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`)
+      console.log(
+        `  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`,
+      )
     }
     if (error instanceof ContractFunctionRevertedError) {
       console.log(`  ✓ Decoded revert - Reason: "${error.reason}"`)
@@ -136,10 +146,14 @@ async function main() {
     })
   } catch (error: unknown) {
     if (error instanceof ContractFunctionExecutionError) {
-      console.log(`  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`)
+      console.log(
+        `  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`,
+      )
     }
     if (error instanceof ContractFunctionRevertedError) {
-      console.log(`  ✓ Decoded revert - Reason: "${error.reason}", Signature: ${error.signature ?? 'n/a'}`)
+      console.log(
+        `  ✓ Decoded revert - Reason: "${error.reason}", Signature: ${error.signature ?? 'n/a'}`,
+      )
     }
     console.log(`  Full error: ${(error as Error).message}`)
   }
@@ -192,7 +206,9 @@ async function main() {
   }
 
   // --- Phase 2a: createAccessList -> CallExecutionError (getCallError) ---
-  printSection('Phase 2a: createAccessList -> CallExecutionError (getCallError)')
+  printSection(
+    'Phase 2a: createAccessList -> CallExecutionError (getCallError)',
+  )
   try {
     await client.createAccessList({
       account: ZERO_ADDRESS,
@@ -208,7 +224,9 @@ async function main() {
   }
 
   // --- Phase 2b: estimateContractGas -> ContractFunctionExecutionError (getContractError) ---
-  printSection('Phase 2b: estimateContractGas -> ContractFunctionExecutionError (getContractError)')
+  printSection(
+    'Phase 2b: estimateContractGas -> ContractFunctionExecutionError (getContractError)',
+  )
   try {
     await client.estimateContractGas({
       account: ZERO_ADDRESS,
@@ -219,7 +237,9 @@ async function main() {
     })
   } catch (error: unknown) {
     if (error instanceof ContractFunctionExecutionError) {
-      console.log(`  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`)
+      console.log(
+        `  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`,
+      )
     }
     if (error instanceof ContractFunctionRevertedError) {
       console.log(`  ✓ Decoded revert - Reason: "${error.reason}"`)
@@ -228,7 +248,9 @@ async function main() {
   }
 
   // --- Phase 2c: simulateContract -> ContractFunctionExecutionError (getContractError) ---
-  printSection('Phase 2c: simulateContract -> ContractFunctionExecutionError (getContractError)')
+  printSection(
+    'Phase 2c: simulateContract -> ContractFunctionExecutionError (getContractError)',
+  )
   try {
     await client.simulateContract({
       account: ZERO_ADDRESS,
@@ -239,7 +261,9 @@ async function main() {
     })
   } catch (error: unknown) {
     if (error instanceof ContractFunctionExecutionError) {
-      console.log(`  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`)
+      console.log(
+        `  ✓ Caught ContractFunctionExecutionError for "${error.functionName}"`,
+      )
     }
     console.log(`  Error: ${(error as Error).message}`)
   }
@@ -258,7 +282,9 @@ async function main() {
       console.log(`  ✓ Caught ContractFunctionZeroDataError`)
     }
     if (error instanceof ContractFunctionExecutionError) {
-      console.log(`  ✓ Caught ContractFunctionExecutionError (EOA may revert instead)`)
+      console.log(
+        `  ✓ Caught ContractFunctionExecutionError (EOA may revert instead)`,
+      )
     }
     console.log(`  Error: ${(error as Error).message}`)
   }
@@ -266,7 +292,14 @@ async function main() {
   // --- Phase 4: MethodNotFoundRpcError (non-existent RPC method) ---
   printSection('Phase 4: MethodNotFoundRpcError (non-existent RPC method)')
   try {
-    await (client as { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> }).request({
+    await (
+      client as {
+        request: (args: {
+          method: string
+          params?: unknown[]
+        }) => Promise<unknown>
+      }
+    ).request({
       method: 'eth_nonexistent',
       params: ['latest'],
     })
@@ -280,10 +313,14 @@ async function main() {
   // 7. Summary
   printSection('7. Error type classification summary')
   console.log('  Phase 1: EstimateGasExecutionError')
-  console.log('  Phase 2: CallExecutionError (createAccessList), ContractFunctionExecutionError (estimateContractGas, simulateContract)')
+  console.log(
+    '  Phase 2: CallExecutionError (createAccessList), ContractFunctionExecutionError (estimateContractGas, simulateContract)',
+  )
   console.log('  Phase 3: ContractFunctionZeroDataError (readContract on EOA)')
   console.log('  Phase 4: MethodNotFoundRpcError')
-  console.log('  Also: Invalid params, ContractFunctionRevertedError, CallExecutionError')
+  console.log(
+    '  Also: Invalid params, ContractFunctionRevertedError, CallExecutionError',
+  )
   console.log()
 }
 
