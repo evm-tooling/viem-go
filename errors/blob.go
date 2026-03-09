@@ -24,8 +24,8 @@ func (e *EmptyBlobError) Error() string {
 
 // InvalidVersionedHashSizeError is returned when versioned hash size is invalid.
 type InvalidVersionedHashSizeError struct {
-	Hash   string
-	Size   int
+	Hash string
+	Size int
 }
 
 func (e *InvalidVersionedHashSizeError) Error() string {

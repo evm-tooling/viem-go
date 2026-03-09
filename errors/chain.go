@@ -24,8 +24,8 @@ func (e *ChainDoesNotSupportContract) Error() string {
 
 // ChainMismatchError is returned when wallet chain does not match target chain.
 type ChainMismatchError struct {
-	ChainID      int64
-	ChainName    string
+	ChainID        int64
+	ChainName      string
 	CurrentChainID int64
 }
 

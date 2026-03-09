@@ -72,8 +72,8 @@ func (e *AbiEncodingArrayLengthMismatchError) Error() string {
 // AbiEncodingBytesSizeMismatchError is returned when bytes size does not match expected.
 type AbiEncodingBytesSizeMismatchError struct {
 	ExpectedSize int
-	Value       string
-	ActualSize  int
+	Value        string
+	ActualSize   int
 }
 
 func (e *AbiEncodingBytesSizeMismatchError) Error() string {
@@ -298,7 +298,7 @@ func (e *DecodeLogTopicsMismatch) Error() string {
 
 // InvalidAbiEncodingTypeError is returned when type is not a valid encoding type.
 type InvalidAbiEncodingTypeError struct {
-	Type    string
+	Type     string
 	DocsPath string
 }
 
@@ -313,7 +313,7 @@ func (e *InvalidAbiEncodingTypeError) Error() string {
 
 // InvalidAbiDecodingTypeError is returned when type is not a valid decoding type.
 type InvalidAbiDecodingTypeError struct {
-	Type    string
+	Type     string
 	DocsPath string
 }
 
@@ -354,4 +354,3 @@ type UnsupportedPackedAbiType struct {
 func (e *UnsupportedPackedAbiType) Error() string {
 	return fmt.Sprintf(`Type "%v" is not supported for packed encoding.`, e.Type)
 }
-
