@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "bun run index.ts",
-    "dev": "bun --watch run index.ts"
+    "dev": "bun --watch run index.ts",
+    "custom-error": "bun run custom-error-extraction.ts"
   },
   "dependencies": {
     "viem": "^2.21.0"

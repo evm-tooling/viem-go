@@ -6,7 +6,15 @@ Tests various error failure paths for call/contract operations.
 
 ```bash
 cd examples/viem-go/error-examples
-go run main.go
+go run .
+```
+
+### Custom Error Extraction
+
+Showcases `errors.As` for extracting `ContractFunctionRevertedError` and `ErrorName` (parity with viem):
+
+```bash
+go run ./custom-error-extraction
 ```
 
 ## Error Scenarios Tested
@@ -22,5 +30,17 @@ go run main.go
 
 - `InvalidCallParamsError` - Invalid parameter combinations
 - `ContractFunctionExecutionError` - Contract call failed (wraps revert)
-- `ContractFunctionRevertedError` - Decoded revert (reason, signature)
+- `ContractFunctionRevertedError` - Decoded revert (reason, signature, ErrorName)
 - `CallExecutionError` - Wraps transport errors with call context
+
+### Custom Error Handling (viem-go)
+
+Use `errors.As` to find `ContractFunctionRevertedError` and branch on `ErrorName`:
+
+```go
+var revertErr *pkgerrors.ContractFunctionRevertedError
+if errors.As(err, &revertErr) {
+    errorName := revertErr.ErrorName
+    // branch on errorName: "Error", "Panic", "ERC20InsufficientBalance", etc.
+}
+```
