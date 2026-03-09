@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 	stateoverride "github.com/ChefBingbong/viem-go/utils/state_override"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
 )
@@ -190,7 +191,18 @@ func EstimateGas(
 	// Execute the request.
 	resp, err := client.Request(ctx, "eth_estimateGas", rpcParams...)
 	if err != nil {
-		return 0, fmt.Errorf("eth_estimateGas failed: %w", err)
+		return 0, errors.GetEstimateGasError(err, errors.GetEstimateGasErrorParams{
+			Account:              params.Account,
+			Chain:                client.Chain(),
+			Data:                 params.Data,
+			Gas:                  params.Gas,
+			GasPrice:             params.GasPrice,
+			MaxFeePerGas:         params.MaxFeePerGas,
+			MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
+			Nonce:                params.Nonce,
+			To:                   params.To,
+			Value:                params.Value,
+		})
 	}
 
 	var hexGas string

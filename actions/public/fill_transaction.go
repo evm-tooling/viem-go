@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // FillTransactionParameters contains the parameters for the FillTransaction action.
@@ -191,7 +192,7 @@ func FillTransaction(ctx context.Context, client Client, params FillTransactionP
 	// Execute the request
 	resp, err := client.Request(ctx, "eth_fillTransaction", req)
 	if err != nil {
-		return nil, &FillTransactionError{Cause: err}
+		return nil, errors.GetTransactionError(err, buildFillTransactionErrorParams(client, params))
 	}
 
 	// Parse the response
@@ -353,17 +354,27 @@ func applyFeeMultiplier(fee *big.Int, multiplier float64) *big.Int {
 	return result
 }
 
-// FillTransactionError is returned when filling a transaction fails.
-type FillTransactionError struct {
-	Cause error
-}
-
-func (e *FillTransactionError) Error() string {
-	return fmt.Sprintf("failed to fill transaction: %v", e.Cause)
-}
-
-func (e *FillTransactionError) Unwrap() error {
-	return e.Cause
+// buildFillTransactionErrorParams builds GetTransactionErrorParams from fill transaction context.
+func buildFillTransactionErrorParams(client Client, params FillTransactionParameters) errors.GetTransactionErrorParams {
+	p := errors.GetTransactionErrorParams{
+		Account:              params.Account,
+		Chain:                client.Chain(),
+		Value:                params.Value,
+		Gas:                  params.Gas,
+		GasPrice:             params.GasPrice,
+		MaxFeePerGas:         params.MaxFeePerGas,
+		MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
+		Nonce:                params.Nonce,
+		To:                   nil,
+	}
+	if params.To != nil {
+		s := params.To.Hex()
+		p.To = &s
+	}
+	if len(params.Data) > 0 {
+		p.Data = "0x" + hexutil.Encode(params.Data)
+	}
+	return p
 }
 
 // BaseFeeScalarError is returned when the base fee multiplier is less than 1.

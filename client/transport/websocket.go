@@ -193,13 +193,14 @@ func (t *WebSocketTransport) retryRequest(ctx context.Context, body RPCRequest) 
 					Body:     body,
 					RPCError: resp.Error,
 				}
+				typedErr := MapRpcErrorToTyped(rpcErr)
 
 				// Check if RPC error is retryable
 				if !IsRetryableError(resp.Error) || attempt >= t.config.RetryCount {
-					return nil, rpcErr
+					return nil, typedErr
 				}
 
-				lastErr = rpcErr
+				lastErr = typedErr
 			} else {
 				return resp, nil
 			}
