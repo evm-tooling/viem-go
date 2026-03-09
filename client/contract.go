@@ -12,6 +12,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // ReadContractOptions contains options for reading from a contract.
@@ -131,7 +132,13 @@ func (c *PublicClient) ReadContract(ctx context.Context, opts ReadContractOption
 		result, err = c.Call(ctx, callReq)
 	}
 	if err != nil {
-		return nil, err
+		return nil, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          parsedABI,
+			FunctionName: opts.FunctionName,
+			Address:      &opts.Address,
+			Args:         opts.Args,
+			Sender:       opts.From,
+		})
 	}
 
 	// Decode the return values
@@ -174,7 +181,13 @@ func (c *PublicClient) SimulateContract(ctx context.Context, opts SimulateContra
 		result, err = c.Call(ctx, callReq)
 	}
 	if err != nil {
-		return nil, err
+		return nil, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          parsedABI,
+			FunctionName: opts.FunctionName,
+			Address:      &opts.Address,
+			Args:         opts.Args,
+			Sender:       opts.From,
+		})
 	}
 
 	// Decode the return values
@@ -183,7 +196,6 @@ func (c *PublicClient) SimulateContract(ctx context.Context, opts SimulateContra
 		return nil, fmt.Errorf("failed to decode result for %q: %w", opts.FunctionName, err)
 	}
 
-	fmt.Println(decoded)
 	return decoded, nil
 }
 
