@@ -12,7 +12,6 @@
 import {
   type Address,
   BaseError,
-  ContractFunctionExecutionError,
   ContractFunctionRevertedError,
   createPublicClient,
   http,
@@ -51,7 +50,9 @@ async function main() {
     })
   } catch (err) {
     if (err instanceof BaseError) {
-      const revertError = err.walk((e) => e instanceof ContractFunctionRevertedError)
+      const revertError = err.walk(
+        (e) => e instanceof ContractFunctionRevertedError,
+      )
       if (revertError instanceof ContractFunctionRevertedError) {
         const errorName = revertError.data?.errorName ?? ''
         const args = revertError.data?.args
@@ -67,14 +68,20 @@ async function main() {
         // Example: branch on error type
         switch (errorName) {
           case 'Error':
-            console.log('  → Standard Error(string) - handle generic revert message')
+            console.log(
+              '  → Standard Error(string) - handle generic revert message',
+            )
             break
           case 'Panic':
-            console.log('  → Standard Panic(uint256) - handle assertion failure')
+            console.log(
+              '  → Standard Panic(uint256) - handle assertion failure',
+            )
             break
           case 'ERC20InsufficientBalance':
           case 'ERC20InsufficientAllowance':
-            console.log('  → Custom ERC20 error - handle insufficient balance/allowance')
+            console.log(
+              '  → Custom ERC20 error - handle insufficient balance/allowance',
+            )
             break
           default:
             console.log(`  → Custom error "${errorName}" - handle as needed`)
@@ -87,8 +94,12 @@ async function main() {
   }
 
   console.log('\n--- Summary ---')
-  console.log('  viem supports: err.walk(fn) to find ContractFunctionRevertedError,')
-  console.log('  then access revertError.data?.errorName and revertError.data?.args')
+  console.log(
+    '  viem supports: err.walk(fn) to find ContractFunctionRevertedError,',
+  )
+  console.log(
+    '  then access revertError.data?.errorName and revertError.data?.args',
+  )
   console.log()
 }
 
