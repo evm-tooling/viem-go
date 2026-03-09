@@ -9,6 +9,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // SimulateContractParameters contains the parameters for the SimulateContract action.
@@ -168,12 +169,13 @@ func SimulateContract(ctx context.Context, client Client, params SimulateContrac
 	// Encode function data
 	calldata, err := params.ABI.EncodeFunctionData(params.FunctionName, params.Args...)
 	if err != nil {
-		return nil, &SimulateContractError{
-			Cause:        err,
-			Address:      params.Address,
+		return nil, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          params.ABI,
 			FunctionName: params.FunctionName,
+			Address:      &params.Address,
 			Args:         params.Args,
-		}
+			Sender:       params.Account,
+		})
 	}
 
 	// Append data suffix if provided
@@ -202,12 +204,13 @@ func SimulateContract(ctx context.Context, client Client, params SimulateContrac
 
 	callResult, err := Call(ctx, client, callParams)
 	if err != nil {
-		return nil, &SimulateContractError{
-			Cause:        err,
-			Address:      params.Address,
+		return nil, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          params.ABI,
 			FunctionName: params.FunctionName,
+			Address:      &params.Address,
 			Args:         params.Args,
-		}
+			Sender:       params.Account,
+		})
 	}
 
 	// Decode the result
@@ -215,12 +218,13 @@ func SimulateContract(ctx context.Context, client Client, params SimulateContrac
 	if len(callResult.Data) > 0 {
 		decoded, decodeErr := params.ABI.DecodeFunctionResult(params.FunctionName, callResult.Data)
 		if decodeErr != nil {
-			return nil, &SimulateContractError{
-				Cause:        fmt.Errorf("failed to decode result: %w", decodeErr),
-				Address:      params.Address,
+			return nil, errors.GetContractError(fmt.Errorf("failed to decode result: %w", decodeErr), errors.GetContractErrorParams{
+				ABI:          params.ABI,
 				FunctionName: params.FunctionName,
+				Address:      &params.Address,
 				Args:         params.Args,
-			}
+				Sender:       params.Account,
+			})
 		}
 
 		// If single return value, unwrap it
@@ -253,23 +257,4 @@ func SimulateContract(ctx context.Context, client Client, params SimulateContrac
 			BlockTag:             params.BlockTag,
 		},
 	}, nil
-}
-
-// SimulateContractError is returned when contract simulation fails.
-type SimulateContractError struct {
-	Cause        error
-	Address      common.Address
-	FunctionName string
-	Args         []any
-}
-
-func (e *SimulateContractError) Error() string {
-	if e.Cause != nil {
-		return fmt.Sprintf("contract simulation failed for %s.%s: %v", e.Address.Hex(), e.FunctionName, e.Cause)
-	}
-	return fmt.Sprintf("contract simulation failed for %s.%s", e.Address.Hex(), e.FunctionName)
-}
-
-func (e *SimulateContractError) Unwrap() error {
-	return e.Cause
 }

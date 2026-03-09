@@ -9,6 +9,7 @@ import (
 
 	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // EstimateContractGasParameters contains the parameters for the
@@ -118,7 +119,13 @@ func EstimateContractGas(
 		BlockTag:             params.BlockTag,
 	})
 	if err != nil {
-		return 0, fmt.Errorf("contract gas estimation failed for %s.%s: %w", params.Address.Hex(), params.FunctionName, err)
+		return 0, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          params.ABI,
+			FunctionName: params.FunctionName,
+			Address:      &params.Address,
+			Args:         params.Args,
+			Sender:       params.Account,
+		})
 	}
 
 	return gas, nil
