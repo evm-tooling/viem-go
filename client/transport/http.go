@@ -187,11 +187,12 @@ func (t *HTTPTransport) batchedRequest(ctx context.Context, body RPCRequest) (*R
 
 	// Check for RPC error
 	if resp.Error != nil {
-		return nil, &RPCRequestError{
+		rpcErr := &RPCRequestError{
 			URL:      t.config.URL,
 			Body:     body,
 			RPCError: resp.Error,
 		}
+		return nil, MapRpcErrorToTyped(rpcErr)
 	}
 
 	return resp, nil
@@ -217,13 +218,14 @@ func (t *HTTPTransport) retryRequest(ctx context.Context, body RPCRequest) (*RPC
 					Body:     body,
 					RPCError: resp.Error,
 				}
+				typedErr := MapRpcErrorToTyped(rpcErr)
 
 				// Check if RPC error is retryable
 				if !IsRetryableError(resp.Error) || attempt >= t.config.RetryCount {
-					return nil, rpcErr
+					return nil, typedErr
 				}
 
-				lastErr = rpcErr
+				lastErr = typedErr
 			} else {
 				return resp, nil
 			}

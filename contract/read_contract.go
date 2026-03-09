@@ -11,6 +11,7 @@ import (
 	"github.com/ChefBingbong/viem-go/abi"
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // ReadContractParams contains the parameters for a ReadContract call.
@@ -76,7 +77,13 @@ func ReadContract[T any](c *client.PublicClient, params ReadContractParams) (T, 
 		result, err = c.Call(context.Background(), callReq)
 	}
 	if err != nil {
-		return zero, fmt.Errorf("eth_call failed for %q: %w", params.FunctionName, err)
+		return zero, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          parsedABI,
+			FunctionName: params.FunctionName,
+			Address:      &params.Address,
+			Args:         params.Args,
+			Sender:       params.From,
+		})
 	}
 
 	// Decode and convert the result to type T
@@ -114,7 +121,13 @@ func ReadContractWithContext[T any](ctx context.Context, c *client.PublicClient,
 		result, err = c.Call(ctx, callReq)
 	}
 	if err != nil {
-		return zero, fmt.Errorf("eth_call failed for %q: %w", params.FunctionName, err)
+		return zero, errors.GetContractError(err, errors.GetContractErrorParams{
+			ABI:          parsedABI,
+			FunctionName: params.FunctionName,
+			Address:      &params.Address,
+			Args:         params.Args,
+			Sender:       params.From,
+		})
 	}
 
 	// Decode and convert the result to type T

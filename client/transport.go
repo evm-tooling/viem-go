@@ -91,7 +91,7 @@ func (t *HTTPTransport) Call(ctx context.Context, method string, params ...any) 
 	// Send request
 	resp, err := t.client.Do(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("HTTP request failed: %w", err)
+		return nil, fmt.Errorf("HTTP request failedq: %w", err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
