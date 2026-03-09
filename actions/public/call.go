@@ -18,6 +18,7 @@ import (
 	blockoverride "github.com/ChefBingbong/viem-go/utils/block_override"
 	"github.com/ChefBingbong/viem-go/utils/ccip"
 	"github.com/ChefBingbong/viem-go/utils/deployless"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 	stateoverride "github.com/ChefBingbong/viem-go/utils/state_override"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
 )
@@ -278,7 +279,7 @@ func Call(ctx context.Context, client Client, params CallParameters) (*CallRetur
 	resp, err := client.Request(ctx, "eth_call", rpcParams...)
 	if err != nil {
 		// Handle CCIP-Read
-		revertData := getRevertErrorData(err)
+		revertData := errors.GetRevertErrorData(err)
 		if len(revertData) >= 4 {
 			selector := hexutil.Encode(revertData[:4])
 
@@ -298,7 +299,24 @@ func Call(ctx context.Context, client Client, params CallParameters) (*CallRetur
 			}
 		}
 
-		return nil, &CallExecutionError{Cause: err, To: params.To, Data: data}
+		var chainID *int64
+		var nativeSymbol string
+		if chain := client.Chain(); chain != nil {
+			chainID = &chain.ID
+			nativeSymbol = chain.NativeCurrency.Symbol
+		}
+		return nil, errors.GetCallError(err, errors.CallErrorParams{
+			From:                 params.Account,
+			To:                   params.To,
+			Data:                 data,
+			Value:                params.Value,
+			Gas:                  params.Gas,
+			GasPrice:             params.GasPrice,
+			MaxFeePerGas:         params.MaxFeePerGas,
+			MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
+			ChainID:              chainID,
+			NativeCurrencySymbol: nativeSymbol,
+		})
 	}
 
 	var hexResult string
@@ -512,35 +530,6 @@ func handleCCIPRead(ctx context.Context, client Client, params CallParameters, r
 		BlockNumber: params.BlockNumber,
 		BlockTag:    params.BlockTag,
 	})
-}
-
-// getRevertErrorData extracts revert data from an error.
-func getRevertErrorData(err error) []byte {
-	if err == nil {
-		return nil
-	}
-
-	// Try to extract from error message (common RPC error format)
-	errStr := err.Error()
-
-	// Look for hex data in the error
-	if idx := strings.Index(errStr, "0x"); idx >= 0 {
-		hexStr := errStr[idx:]
-		// Find end of hex string
-		end := len(hexStr)
-		for i, c := range hexStr[2:] {
-			isHexDigit := (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')
-			if !isHexDigit {
-				end = i + 2
-				break
-			}
-		}
-		if end > 2 {
-			return common.FromHex(hexStr[:end])
-		}
-	}
-
-	return nil
 }
 
 // resolveBlockTag determines the block tag to use for a request.
