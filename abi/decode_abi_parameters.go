@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
+
+	"github.com/ChefBingbong/viem-go/errors"
 )
 
 // DecodeAbiParameters decodes ABI-encoded data based on parameter definitions.
@@ -24,7 +26,7 @@ func DecodeAbiParameters(params []AbiParam, data []byte) ([]any, error) {
 	}
 
 	if len(data) == 0 && len(params) > 0 {
-		return nil, fmt.Errorf("cannot decode zero data with non-empty params")
+		return nil, &errors.AbiDecodingZeroDataError{}
 	}
 
 	if len(data) > 0 && len(data) < 32 {
@@ -278,7 +280,7 @@ func DecodeAbiParametersInto(params []AbiParam, data []byte, output any) error {
 	}
 
 	if len(data) == 0 && len(params) > 0 {
-		return fmt.Errorf("cannot decode zero data with non-empty params")
+		return &errors.AbiDecodingZeroDataError{}
 	}
 
 	// Build go-ethereum Arguments from our params
