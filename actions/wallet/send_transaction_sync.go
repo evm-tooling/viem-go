@@ -14,6 +14,7 @@ import (
 	viemchain "github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/utils/data"
 	"github.com/ChefBingbong/viem-go/utils/encoding"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 	"github.com/ChefBingbong/viem-go/utils/formatters"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
 )
@@ -245,7 +246,19 @@ func sendTransactionSyncViaRPC(
 	// Uses the same LRU cache as sendTransaction (shared supportsWalletNamespace).
 	hash, err := sendWithNamespaceFallback(ctx, client, rpcReq)
 	if err != nil {
-		return nil, err
+		addr := common.HexToAddress(account.Address().Hex())
+		return nil, errors.GetTransactionError(err, errors.GetTransactionErrorParams{
+			Account:              &addr,
+			Chain:                ch,
+			Data:                 txData,
+			Gas:                  bigIntToUint64Ptr(params.Gas),
+			GasPrice:             params.GasPrice,
+			MaxFeePerGas:         params.MaxFeePerGas,
+			MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
+			Nonce:                intToUint64Ptr(params.Nonce),
+			To:                   strPtr(to),
+			Value:                params.Value,
+		})
 	}
 
 	// Wait for the transaction receipt
@@ -335,11 +348,27 @@ func sendTransactionSyncViaLocalSign(
 	// Send via sendRawTransactionSync
 	// This mirrors viem's: sendRawTransactionSync({ serializedTransaction, throwOnReceiptRevert, timeout })
 	timeoutMs := timeout.Milliseconds()
-	return SendRawTransactionSync(ctx, client, SendRawTransactionSyncParameters{
+	receipt, sendErr := SendRawTransactionSync(ctx, client, SendRawTransactionSyncParameters{
 		SerializedTransaction: serializedTx,
 		ThrowOnReceiptRevert:  params.ThrowOnReceiptRevert,
 		Timeout:               &timeoutMs,
 	})
+	if sendErr != nil {
+		addr := common.HexToAddress(account.Address().Hex())
+		return nil, errors.GetTransactionError(sendErr, errors.GetTransactionErrorParams{
+			Account:              &addr,
+			Chain:                ch,
+			Data:                 prepared.Data,
+			Gas:                  bigIntToUint64Ptr(prepared.Gas),
+			GasPrice:             prepared.GasPrice,
+			MaxFeePerGas:         prepared.MaxFeePerGas,
+			MaxPriorityFeePerGas: prepared.MaxPriorityFeePerGas,
+			Nonce:                intToUint64Ptr(prepared.Nonce),
+			To:                   strPtr(prepared.To),
+			Value:                prepared.Value,
+		})
+	}
+	return receipt, nil
 }
 
 // resolveTimeout resolves the timeout for sendTransactionSync.

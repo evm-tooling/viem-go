@@ -8,12 +8,15 @@ import (
 
 	json "github.com/goccy/go-json"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/ChefBingbong/viem-go/actions/public"
 	viemchain "github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/utils"
 	"github.com/ChefBingbong/viem-go/utils/authorization"
 	"github.com/ChefBingbong/viem-go/utils/data"
 	"github.com/ChefBingbong/viem-go/utils/encoding"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 	"github.com/ChefBingbong/viem-go/utils/formatters"
 	"github.com/ChefBingbong/viem-go/utils/signature"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
@@ -238,7 +241,23 @@ func sendTransactionViaRPC(
 	// Send with wallet_sendTransaction namespace fallback.
 	// Mirrors viem's: try eth_sendTransaction first, on certain RPC errors
 	// retry with wallet_sendTransaction, cache the result per client.UID().
-	return sendWithNamespaceFallback(ctx, client, rpcReq)
+	hash, err := sendWithNamespaceFallback(ctx, client, rpcReq)
+	if err != nil {
+		addr := common.HexToAddress(account.Address().Hex())
+		return "", errors.GetTransactionError(err, errors.GetTransactionErrorParams{
+			Account:              &addr,
+			Chain:                ch,
+			Data:                 txData,
+			Gas:                  bigIntToUint64Ptr(params.Gas),
+			GasPrice:             params.GasPrice,
+			MaxFeePerGas:         params.MaxFeePerGas,
+			MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
+			Nonce:                intToUint64Ptr(params.Nonce),
+			To:                   strPtr(to),
+			Value:                params.Value,
+		})
+	}
+	return hash, nil
 }
 
 // sendTransactionViaLocalSign handles the local account path: prepare + sign + sendRawTransaction.
@@ -297,9 +316,25 @@ func sendTransactionViaLocalSign(
 
 	// Send the raw signed transaction
 	// This mirrors viem's: sendRawTransaction({ serializedTransaction })
-	return SendRawTransaction(ctx, client, SendRawTransactionParameters{
+	hash, sendErr := SendRawTransaction(ctx, client, SendRawTransactionParameters{
 		SerializedTransaction: serializedTx,
 	})
+	if sendErr != nil {
+		addr := common.HexToAddress(account.Address().Hex())
+		return "", errors.GetTransactionError(sendErr, errors.GetTransactionErrorParams{
+			Account:              &addr,
+			Chain:                ch,
+			Data:                 prepared.Data,
+			Gas:                  bigIntToUint64Ptr(prepared.Gas),
+			GasPrice:             prepared.GasPrice,
+			MaxFeePerGas:         prepared.MaxFeePerGas,
+			MaxPriorityFeePerGas: prepared.MaxPriorityFeePerGas,
+			Nonce:                intToUint64Ptr(prepared.Nonce),
+			To:                   strPtr(prepared.To),
+			Value:                prepared.Value,
+		})
+	}
+	return hash, nil
 }
 
 // sendWithNamespaceFallback sends a transaction via eth_sendTransaction, falling back
@@ -456,4 +491,27 @@ func preparedParamsToTransaction(params *PrepareTransactionRequestParameters) *t
 	}
 
 	return tx
+}
+
+func bigIntToUint64Ptr(b *big.Int) *uint64 {
+	if b == nil {
+		return nil
+	}
+	u := b.Uint64()
+	return &u
+}
+
+func intToUint64Ptr(i *int) *uint64 {
+	if i == nil {
+		return nil
+	}
+	u := uint64(*i)
+	return &u
+}
+
+func strPtr(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
 }

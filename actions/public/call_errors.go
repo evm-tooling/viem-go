@@ -4,29 +4,13 @@ import (
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
+
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // CallExecutionError is returned when a call execution fails.
-type CallExecutionError struct {
-	Cause   error
-	Message string
-	To      *common.Address
-	Data    []byte
-}
-
-func (e *CallExecutionError) Error() string {
-	if e.Message != "" {
-		return fmt.Sprintf("call execution failed: %s", e.Message)
-	}
-	if e.Cause != nil {
-		return fmt.Sprintf("call execution failed: %v", e.Cause)
-	}
-	return "call execution failed"
-}
-
-func (e *CallExecutionError) Unwrap() error {
-	return e.Cause
-}
+// Re-exported from utils/errors for backwards compatibility.
+type CallExecutionError = errors.CallExecutionError
 
 // CounterfactualDeploymentFailedError is returned when a deployless call via
 // factory fails to deploy the contract.
