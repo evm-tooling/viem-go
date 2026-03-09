@@ -138,7 +138,7 @@ func (c *HTTPClient) doRequest(ctx context.Context, bodies []RPCRequest) ([]RPCR
 	// Create HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.url, bytes.NewReader(reqBody))
 	if err != nil {
-		return nil, NewHTTPRequestError(c.url, 0, "", bodies, err)
+		return nil, NewHTTPRequestError(c.url, 0, "", requestBodyForError(bodies), err)
 	}
 
 	// Set headers
@@ -157,7 +157,7 @@ func (c *HTTPClient) doRequest(ctx context.Context, bodies []RPCRequest) ([]RPCR
 	// Send request
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, NewHTTPRequestError(c.url, 0, "", bodies, err)
+		return nil, NewHTTPRequestError(c.url, 0, "", requestBodyForError(bodies), err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
@@ -171,17 +171,26 @@ func (c *HTTPClient) doRequest(ctx context.Context, bodies []RPCRequest) ([]RPCR
 	// Read response body
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, NewHTTPRequestError(c.url, resp.StatusCode, resp.Status, bodies, err)
+		return nil, NewHTTPRequestError(c.url, resp.StatusCode, resp.Status, requestBodyForError(bodies), err)
 	}
 
 	// Check HTTP status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		// Try to parse error response
-		var data any
-		if json.Unmarshal(respBody, &data) != nil {
-			data = string(respBody)
+		// Parse response to extract error details (mirrors viem: body=request, details=response error)
+		var respData map[string]any
+		details := resp.Status
+		if json.Unmarshal(respBody, &respData) == nil {
+			if errObj, ok := respData["error"]; ok {
+				if errMap, ok := errObj.(map[string]any); ok {
+					if msg, ok := errMap["message"].(string); ok {
+						details = msg
+					}
+				} else if msg, ok := errObj.(string); ok {
+					details = msg
+				}
+			}
 		}
-		return nil, NewHTTPRequestError(c.url, resp.StatusCode, resp.Status, data, nil)
+		return nil, NewHTTPRequestErrorWithDetails(c.url, resp.StatusCode, resp.Status, requestBodyForError(bodies), details)
 	}
 
 	// Parse response
@@ -209,6 +218,14 @@ func (c *HTTPClient) Close() error {
 // URL returns the client URL.
 func (c *HTTPClient) URL() string {
 	return c.url
+}
+
+// requestBodyForError returns the request body in format for error display (single object or array).
+func requestBodyForError(bodies []RPCRequest) any {
+	if len(bodies) == 1 {
+		return bodies[0]
+	}
+	return bodies
 }
 
 // parseURL extracts authentication from URL and returns clean URL with auth headers.

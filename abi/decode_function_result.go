@@ -6,6 +6,8 @@ import (
 	"reflect"
 
 	"github.com/ethereum/go-ethereum/common"
+
+	"github.com/ChefBingbong/viem-go/errors"
 )
 
 // DecodeFunctionResult decodes the return data from a function call.
@@ -22,7 +24,7 @@ func (a *ABI) DecodeFunctionResult(functionName string, data []byte) ([]any, err
 
 	if len(data) == 0 {
 		if len(m.Outputs) > 0 {
-			return nil, fmt.Errorf("expected return data for function %q but got empty", functionName)
+			return nil, &errors.AbiDecodingZeroDataError{}
 		}
 		return nil, nil
 	}
@@ -59,7 +61,7 @@ func (a *ABI) DecodeFunctionResultInto(functionName string, data []byte, output 
 
 	if len(data) == 0 {
 		if len(m.Outputs) > 0 {
-			return fmt.Errorf("expected return data for function %q but got empty", functionName)
+			return &errors.AbiDecodingZeroDataError{}
 		}
 		return nil
 	}

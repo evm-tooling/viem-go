@@ -5,6 +5,7 @@
     "*"
   ],
   "scripts": {
+    "error-examples": "bun run --cwd error-examples start",
     "wallet-dashboard": "bun run --cwd wallet-dashboard start",
     "check": "tsc --noEmit",
     "lint": "biome check .",

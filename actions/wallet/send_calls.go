@@ -8,9 +8,13 @@ import (
 
 	json "github.com/goccy/go-json"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	viemabi "github.com/ChefBingbong/viem-go/abi"
+	"github.com/ChefBingbong/viem-go/chain"
 	"github.com/ChefBingbong/viem-go/utils/data"
 	"github.com/ChefBingbong/viem-go/utils/encoding"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 )
 
 // Call represents a single call in a batch.
@@ -191,7 +195,8 @@ func SendCalls(ctx context.Context, client Client, params SendCallsParameters) (
 		if params.ExperimentalFallback && isMethodNotSupportedError(err) {
 			return sendCallsFallback(ctx, client, account, params, rpcCalls)
 		}
-		return nil, fmt.Errorf("wallet_sendCalls failed: %w", err)
+		txErr := errors.GetTransactionError(err, buildSendCallsErrorParams(account, ch, params, rpcCalls))
+		return nil, txErr
 	}
 
 	// Response can be a string (just id) or an object
@@ -353,4 +358,27 @@ func searchString(s, substr string) bool {
 		}
 	}
 	return false
+}
+
+// buildSendCallsErrorParams builds GetTransactionErrorParams from sendCalls context.
+// Uses first call as representative when available.
+func buildSendCallsErrorParams(account Account, ch *chain.Chain, params SendCallsParameters, rpcCalls []sendCallsRpcCall) errors.GetTransactionErrorParams {
+	p := errors.GetTransactionErrorParams{Chain: ch}
+	if account != nil {
+		addr := common.HexToAddress(account.Address().Hex())
+		p.Account = &addr
+	}
+	if len(rpcCalls) > 0 {
+		c := rpcCalls[0]
+		p.Data = c.Data
+		if c.To != "" {
+			p.To = &c.To
+		}
+		if c.Value != "" {
+			if v, err := encoding.HexToBigInt(c.Value, false); err == nil {
+				p.Value = v
+			}
+		}
+	}
+	return p
 }

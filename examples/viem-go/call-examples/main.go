@@ -11,6 +11,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/big"
 	"strings"
@@ -22,6 +23,7 @@ import (
 	"github.com/ChefBingbong/viem-go/client"
 	"github.com/ChefBingbong/viem-go/client/transport"
 	"github.com/ChefBingbong/viem-go/contracts/erc20"
+	pkgerrors "github.com/ChefBingbong/viem-go/errors"
 	"github.com/ChefBingbong/viem-go/types"
 	"github.com/ChefBingbong/viem-go/utils/unit"
 )
@@ -344,6 +346,31 @@ func main() {
 		}
 	}
 
+	// Example 15: Custom Error Handling - Contract revert with decoded error
+	printSection("16. Custom Error Handling (decoded reverts)")
+	fmt.Println("\nTest: ReadContract on reverting call (transfer exceeds balance)...")
+	// Simulate transfer of 10^60 USDC - will revert with insufficient balance
+	_, err = publicClient.ReadContract(ctx, client.ReadContractOptions{
+		Address:      usdcAddress,
+		ABI:          erc20.ContractABI,
+		FunctionName: "transfer",
+		Args:         []any{common.HexToAddress("0x0000000000000000000000000000000000000001"), new(big.Int).Exp(big.NewInt(10), big.NewInt(60), nil)},
+	})
+	if err != nil {
+		var execErr *pkgerrors.ContractFunctionExecutionError
+		if errors.As(err, &execErr) {
+			fmt.Printf("  Caught ContractFunctionExecutionError for %q\n", execErr.FunctionName)
+			var revertedErr *pkgerrors.ContractFunctionRevertedError
+			if errors.As(err, &revertedErr) {
+				fmt.Printf("  Decoded revert - Reason: %q\n", revertedErr.Reason)
+				if revertedErr.Signature != "" {
+					fmt.Printf("  Decoded revert - Signature: %s\n", revertedErr.Signature)
+				}
+			}
+		}
+		fmt.Printf("  Error: %v\n", err)
+	}
+
 	// Summary
 	printHeader("Examples Complete")
 	fmt.Println("Demonstrated Call features:")
@@ -356,6 +383,7 @@ func main() {
 	fmt.Println("  - Access lists (EIP-2930)")
 	fmt.Println("  - Deployless calls (execute bytecode)")
 	fmt.Println("  - Error handling for invalid parameters")
+	fmt.Println("  - Custom error decoding (ContractFunctionRevertedError)")
 	fmt.Println()
 }
 

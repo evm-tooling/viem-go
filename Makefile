@@ -90,3 +90,12 @@ endif
 # Requires: Foundry (anvil), Node.js, bun (optional for compare)
 bench:
 	$(MAKE) -C benchmarks bench
+
+
+.PHONY: pr
+
+pr:
+ifndef TITLE
+	$(error Usage: make pr TITLE="your-pr-title")
+endif
+	@./scripts/quick-pr.sh "$(TITLE)"
