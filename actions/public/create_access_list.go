@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/ChefBingbong/viem-go/types"
+	"github.com/ChefBingbong/viem-go/utils/errors"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
 )
 
@@ -165,7 +166,26 @@ func CreateAccessList(ctx context.Context, client Client, params CreateAccessLis
 	// Execute the call
 	resp, err := client.Request(ctx, "eth_createAccessList", req, blockTag)
 	if err != nil {
-		return nil, &CreateAccessListError{Cause: err, To: params.To, Data: params.Data}
+		var chainID *int64
+		if ch := client.Chain(); ch != nil {
+			chainID = &ch.ID
+		}
+		nativeSymbol := "ETH"
+		if ch := client.Chain(); ch != nil && ch.NativeCurrency.Symbol != "" {
+			nativeSymbol = ch.NativeCurrency.Symbol
+		}
+		return nil, errors.GetCallError(err, errors.CallErrorParams{
+			From:                 params.Account,
+			To:                   params.To,
+			Data:                 params.Data,
+			Value:                params.Value,
+			Gas:                  params.Gas,
+			GasPrice:             params.GasPrice,
+			MaxFeePerGas:         params.MaxFeePerGas,
+			MaxPriorityFeePerGas: params.MaxPriorityFeePerGas,
+			ChainID:              chainID,
+			NativeCurrencySymbol: nativeSymbol,
+		})
 	}
 
 	// Parse the response
@@ -197,22 +217,4 @@ func CreateAccessList(ctx context.Context, client Client, params CreateAccessLis
 		AccessList: accessList,
 		GasUsed:    gasUsed,
 	}, nil
-}
-
-// CreateAccessListError is returned when access list creation fails.
-type CreateAccessListError struct {
-	Cause error
-	To    *common.Address
-	Data  []byte
-}
-
-func (e *CreateAccessListError) Error() string {
-	if e.Cause != nil {
-		return fmt.Sprintf("access list creation failed: %v", e.Cause)
-	}
-	return "access list creation failed"
-}
-
-func (e *CreateAccessListError) Unwrap() error {
-	return e.Cause
 }
