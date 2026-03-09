@@ -61,13 +61,13 @@ func (e *RPCError) Error() string {
 // HTTPRequestError represents an HTTP request error.
 // Mirrors viem's HttpRequestError: body is the JSON-RPC request sent, details is the error message from the response.
 type HTTPRequestError struct {
-	URL         string
-	Status      int
-	StatusText  string
-	Body        any   // JSON-RPC request body that was sent (for "Request body" in error message)
-	Details     string // Error message from response (for "Details" in error message)
-	Headers     map[string]string
-	Cause error
+	URL        string
+	Status     int
+	StatusText string
+	Body       any    // JSON-RPC request body that was sent (for "Request body" in error message)
+	Details    string // Error message from response (for "Details" in error message)
+	Headers    map[string]string
+	Cause      error
 }
 
 func (e *HTTPRequestError) Error() string {
