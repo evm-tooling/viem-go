@@ -23,25 +23,23 @@ func AssertTransactionEIP7702(tx *Transaction) error {
 
 // AssertTransactionEIP4844 validates an EIP-4844 (blob) transaction.
 func AssertTransactionEIP4844(tx *Transaction) error {
-	// Validate blob versioned hashes
-	if len(tx.BlobVersionedHashes) > 0 {
-		if len(tx.BlobVersionedHashes) == 0 {
-			return ErrEmptyBlob
+	// Validate blob versioned hashes - EIP-4844 transactions must have at least one blob
+	if len(tx.BlobVersionedHashes) == 0 {
+		return ErrEmptyBlob
+	}
+
+	for _, hash := range tx.BlobVersionedHashes {
+		// Check size (should be 32 bytes = 66 chars with 0x prefix)
+		hashClean := strings.TrimPrefix(hash, "0x")
+		if len(hashClean) != 64 {
+			return fmt.Errorf("%w: %s (size: %d)", ErrInvalidVersionedHashSize, hash, len(hashClean)/2)
 		}
 
-		for _, hash := range tx.BlobVersionedHashes {
-			// Check size (should be 32 bytes = 66 chars with 0x prefix)
-			hashClean := strings.TrimPrefix(hash, "0x")
-			if len(hashClean) != 64 {
-				return fmt.Errorf("%w: %s (size: %d)", ErrInvalidVersionedHashSize, hash, len(hashClean)/2)
-			}
-
-			// Check version (first byte should be 0x01 for KZG)
-			if len(hashClean) >= 2 {
-				version := hexToInt(hashClean[0:2])
-				if version != VersionedHashVersionKzg {
-					return fmt.Errorf("%w: %s (version: %d)", ErrInvalidVersionedHashVersion, hash, version)
-				}
+		// Check version (first byte should be 0x01 for KZG)
+		if len(hashClean) >= 2 {
+			version := hexToInt(hashClean[0:2])
+			if version != VersionedHashVersionKzg {
+				return fmt.Errorf("%w: %s (version: %d)", ErrInvalidVersionedHashVersion, hash, version)
 			}
 		}
 	}

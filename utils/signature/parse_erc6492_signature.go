@@ -1,6 +1,8 @@
 package signature
 
 import (
+	"errors"
+
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -45,9 +47,24 @@ func ParseErc6492Signature(signature string) (*Erc6492Signature, error) {
 		return nil, err
 	}
 
-	address := unpacked[0].(common.Address)
-	data := unpacked[1].([]byte)
-	innerSignature := unpacked[2].([]byte)
+	if len(unpacked) != 3 {
+		return nil, errors.New("invalid ERC-6492 signature: expected 3 decoded values")
+	}
+
+	address, ok := unpacked[0].(common.Address)
+	if !ok {
+		return nil, errors.New("invalid ERC-6492 signature: failed to decode address")
+	}
+
+	data, ok := unpacked[1].([]byte)
+	if !ok {
+		return nil, errors.New("invalid ERC-6492 signature: failed to decode data")
+	}
+
+	innerSignature, ok := unpacked[2].([]byte)
+	if !ok {
+		return nil, errors.New("invalid ERC-6492 signature: failed to decode inner signature")
+	}
 
 	return &Erc6492Signature{
 		Address:   address.Hex(),
