@@ -49,7 +49,6 @@ type WatchEventParameters struct {
 	// Batch determines whether to batch logs together.
 	// When true, multiple logs are collected and emitted together.
 	// When false, each log is emitted as a separate event.
-	// Default: true
 	Batch bool
 
 	// Poll forces polling mode even when WebSocket transport is available.
@@ -124,11 +123,7 @@ func WatchEvent(
 	client WatchClient,
 	params WatchEventParameters,
 ) <-chan WatchEventEvent {
-	// Default batch to true
 	batchMode := params.Batch
-	if !batchMode {
-		batchMode = true // Default to true
-	}
 
 	// Determine if we should poll or subscribe
 	enablePolling := ShouldPoll(client, params.Poll)

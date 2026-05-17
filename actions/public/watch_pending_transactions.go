@@ -21,7 +21,6 @@ type WatchPendingTransactionsParameters struct {
 	// Batch determines whether to batch pending transaction hashes together.
 	// When true, multiple hashes are collected and emitted together.
 	// When false, each hash is emitted individually.
-	// Default: true
 	Batch bool
 
 	// Poll forces polling mode even when WebSocket transport is available.
@@ -86,7 +85,6 @@ func WatchPendingTransactions(
 	client WatchClient,
 	params WatchPendingTransactionsParameters,
 ) <-chan WatchPendingTransactionsEvent {
-	// Default batch to true
 	batchMode := params.Batch
 
 	// Determine if we should poll or subscribe
