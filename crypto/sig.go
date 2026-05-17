@@ -22,7 +22,7 @@ const (
 // where V is either 0 or 1.
 type Signature [SizeHintSignature]byte
 
-// Signatory returns the that signed the Hash to produce this Signature.
+// Signatory returns the Signatory that signed the Hash to produce this Signature.
 func (signature Signature) Signatory(hash *Hash) (Signatory, error) {
 	pubKey, err := crypto.SigToPub(hash[:], signature[:])
 	if err != nil {
@@ -94,7 +94,7 @@ func (signature Signature) String() string {
 // Signature.
 type Signatory [SizeHintSignatory]byte
 
-// NewSignatory returns the the Signatory of the given ECSDA.PublicKey
+// NewSignatory returns the Signatory of the given ECDSA PublicKey.
 func NewSignatory(pubKey *PubKey) Signatory {
 	x := [32]byte{}
 	xData := pubKey.X.Bytes()

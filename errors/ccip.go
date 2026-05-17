@@ -14,7 +14,7 @@ func (e *OffchainLookupError) Error() string {
 	if e.Cause != nil {
 		return e.Cause.Error()
 	}
-	msg := "An error occurred while fetching for an offchain result."
+	msg := "An error occurred while fetching an offchain result."
 	if len(e.URLs) > 0 {
 		msg += "\nOffchain Gateway Call:"
 		msg += "\n  Gateway URL(s):"
@@ -65,7 +65,7 @@ type OffchainLookupSenderMismatchError struct {
 }
 
 func (e *OffchainLookupSenderMismatchError) Error() string {
-	msg := "Reverted sender address does not match target contract address (`to`)."
+	msg := "The sender address from the revert does not match the target contract address (`to`)."
 	if e.To != "" || e.Sender != "" {
 		msg += "\nContract address: " + e.To
 		msg += "\nOffchainLookup sender address: " + e.Sender

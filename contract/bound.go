@@ -53,7 +53,7 @@ func Bind(address common.Address, abiJSON []byte, c *client.PublicClient) (*Boun
 	return &BoundContract{Contract: cont}, nil
 }
 
-// BindWithABI creates a BoundContract using a pre-parsed ABI string.
+// BindWithABI creates a BoundContract using an ABI JSON string.
 func BindWithABI(address common.Address, abiStr string, c *client.PublicClient) (*BoundContract, error) {
 	return Bind(address, []byte(abiStr), c)
 }

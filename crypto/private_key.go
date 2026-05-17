@@ -37,7 +37,7 @@ func (pubKey PubKey) Marshal(buf []byte, rem int) ([]byte, int, error) {
 	data := crypto.CompressPubkey((*ecdsa.PublicKey)(&pubKey))
 	if len(data) != SizeHintPubKey {
 		// Defensive check. The CompressPubkey function currently guarantees
-		// that it returns exacty 33 bytes, but there is no guarantee that this
+		// that it returns exactly 33 bytes, but there is no guarantee that this
 		// will not change in future versions.
 		panic(fmt.Errorf("expected len=%v, got len=%v", SizeHintPubKey, len(data)))
 	}
@@ -64,7 +64,7 @@ func (pubKey *PubKey) Unmarshal(buf []byte, rem int) ([]byte, int, error) {
 }
 
 // MarshalJSON implements the JSON marshaler interface by representing this
-// private key as an unpadded base64 string.
+// public key as an unpadded base64 string.
 func (pubKey PubKey) MarshalJSON() ([]byte, error) {
 	buf := make([]byte, SizeHintPubKey)
 	if _, _, err := pubKey.Marshal(buf, surge.MaxBytes); err != nil {
@@ -74,7 +74,7 @@ func (pubKey PubKey) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON implements the JSON unmarshaler interface by representing this
-// private key as an unpadded base64 string.
+// public key as an unpadded base64 string.
 func (pubKey *PubKey) UnmarshalJSON(data []byte) error {
 	str := ""
 	if err := json.Unmarshal(data, &str); err != nil {
@@ -146,7 +146,7 @@ func (privKey PrivKey) Sign(hash *Hash) (Signature, error) {
 	return signature, nil
 }
 
-// PubKey returns the ECDSA public key associated with this privey key.
+// PubKey returns the ECDSA public key associated with this private key.
 func (privKey PrivKey) PubKey() *PubKey {
 	return (*PubKey)(&privKey.PublicKey)
 }
@@ -157,7 +157,7 @@ func (privKey PrivKey) Signatory() Signatory {
 	return NewSignatory(privKey.PubKey())
 }
 
-// SizeHint returns the numbers of bytes required to represent this PrivKey in
+// SizeHint returns the number of bytes required to represent this PrivKey in
 // binary.
 func (privKey PrivKey) SizeHint() int {
 	return SizeHintPrivKey

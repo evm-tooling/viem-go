@@ -21,8 +21,7 @@ func (a *ABI) EncodeFunctionData(functionName string, args ...any) ([]byte, erro
 		return nil, fmt.Errorf("failed to encode function data for %q: %w", functionName, err)
 	}
 
-	// gethABI.Pack already includes the selector
-	_ = m // method found
+	_ = m // method validated above
 	return packed, nil
 }
 
