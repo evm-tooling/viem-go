@@ -158,7 +158,7 @@ type chunkJob struct {
 // getNumWorkers returns the number of workers to use based on job count.
 // Uses GOMAXPROCS but caps at job count to avoid idle workers.
 func getNumWorkers(numJobs int) int {
-	workers := runtime.GOMAXPROCS(1)
+	workers := runtime.GOMAXPROCS(0) // 0 returns current value without changing it
 	if workers > numJobs {
 		workers = numJobs
 	}

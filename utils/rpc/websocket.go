@@ -284,7 +284,7 @@ func (c *WebSocketClient) resubscribe() {
 
 		// Re-send subscription request
 		if err := c.Request(*callback.body, callback.onResponse, callback.onError); err != nil {
-			fmt.Println("Error resubscrbing request", err)
+			fmt.Println("Error resubscribing request", err)
 		}
 	}
 }
