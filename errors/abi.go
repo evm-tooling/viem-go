@@ -21,7 +21,7 @@ type AbiConstructorParamsNotFoundError struct {
 }
 
 func (e *AbiConstructorParamsNotFoundError) Error() string {
-	msg := "Constructor arguments were provided (`args`), but a constructor parameters (`inputs`) were not found on the ABI.\nMake sure you are using the correct ABI, and that the `inputs` attribute on the constructor exists."
+	msg := "Constructor arguments were provided (`args`), but constructor parameters (`inputs`) were not found on the ABI.\nMake sure you are using the correct ABI, and that the `inputs` attribute on the constructor exists."
 	if e.DocsPath != "" {
 		msg += fmt.Sprintf("\nDocs: https://viem.sh%s", e.DocsPath)
 	}
@@ -35,7 +35,7 @@ type AbiDecodingDataSizeInvalidError struct {
 }
 
 func (e *AbiDecodingDataSizeInvalidError) Error() string {
-	msg := fmt.Sprintf("Data size of %d bytes is invalid.\nSize must be in increments of 32 bytes (size %% 32 === 0).\nData: %s (%d bytes)", e.Size, e.Data, e.Size)
+	msg := fmt.Sprintf("Data size of %d bytes is invalid.\nSize must be in increments of 32 bytes (size %% 32 == 0).\nData: %s (%d bytes)", e.Size, e.Data, e.Size)
 	return msg
 }
 

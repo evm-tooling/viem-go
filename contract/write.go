@@ -141,7 +141,7 @@ func (c *Contract) Calldata(method string, args ...any) ([]byte, error) {
 	return c.abi.EncodeCall(method, args...)
 }
 
-// Deploy deploys a new contract with the given bytecode and constructor arguments.
+// PrepareDeployTransaction prepares a deployment transaction with the given bytecode and constructor arguments.
 // Returns the prepared transaction. Use a WalletClient to sign and send.
 func PrepareDeployTransaction(ctx context.Context, cl *client.PublicClient, contractABI []byte, bytecode []byte, opts WriteOptions, args ...any) (*types.Transaction, error) {
 	parsedABI, err := parseABIForDeploy(contractABI)

@@ -8,7 +8,6 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 
 	accountUtils "github.com/ChefBingbong/viem-go/accounts/utils"
-	"github.com/ChefBingbong/viem-go/utils/authorization"
 	"github.com/ChefBingbong/viem-go/utils/signature"
 	"github.com/ChefBingbong/viem-go/utils/transaction"
 )
@@ -124,6 +123,3 @@ func MustPrivateKeyToAccount(privateKey string, opts ...PrivateKeyToAccountOptio
 	}
 	return account
 }
-
-// Ensure we use the authorization import
-var _ = authorization.AuthorizationRequest{}

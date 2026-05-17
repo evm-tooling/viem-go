@@ -39,7 +39,8 @@ type ParseEventLogsOptions struct {
 	// Args filters logs to only those matching the specified indexed arguments.
 	// The map keys are parameter names, values are the expected values.
 	Args map[string]any
-	// Strict mode fails on decode errors instead of skipping. Default is true.
+	// Strict mode skips logs that fail to decode. When false, failed logs are
+	// included with empty args. Default is true.
 	Strict bool
 }
 
