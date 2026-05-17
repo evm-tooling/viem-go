@@ -33,9 +33,8 @@ func (c *Contract) ReadWithOptions(ctx context.Context, opts ReadOptions, method
 		return nil, err
 	}
 
-	// Check if method is read-only (pure/view)
 	// Note: We allow calling non-view functions via eth_call for simulation
-	_ = fn.IsReadOnly() // Currently we don't enforce read-only, eth_call works for simulation
+	_ = fn // method validated above
 
 	// Encode the call
 	calldata, err := c.abi.EncodeCall(method, args...)

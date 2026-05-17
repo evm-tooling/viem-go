@@ -140,7 +140,7 @@ func (a *ABI) GetAbiItem(nameOrSelector string, opts *GetAbiItemOptions) (AbiIte
 	return matches[0], nil
 }
 
-// GetFunction finds a function by name or selector.
+// GetFunction finds a function by name.
 func (a *ABI) GetFunction(name string) (*Function, error) {
 	fn, ok := a.Functions[name]
 	if !ok {
