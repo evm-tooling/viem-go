@@ -118,33 +118,6 @@ msgHash := signature.HashMessage(signature.NewSignableMessage("hello world"))
 valid, _ := signature.VerifyMessage(address, signature.NewSignableMessage("hello"), sig)
 ```
 
-## Typed contracts
-
-viem go supports typed contract templates using generics and an optional code generator.
-
-Typed function descriptors
-
-```go
-var (
-  Name      = contract.Fn[string]{Name: "name"}
-  BalanceOf = contract.Fn1[common.Address, *big.Int]{Name: "balanceOf"}
-)
-
-token, _ := contract.Bind(tokenAddr, abiJSON, client)
-name, _ := contract.Call(token, ctx, Name)
-balance, _ := contract.Call1(token, ctx, BalanceOf, ownerAddr)
-```
-
-Code generator
-
-```bash
-go run ./cmd/viemgen init
-cp MyToken.json _contracts_typed/json/mytoken.json
-go run ./cmd/viemgen --pkg mytoken
-```
-
-Built in ERC standards are included such as erc20.
-
 ## Performance
 
 Viem-go absolutley crushes viem across every benchmark we ran. Their is on avaerage 20x improvements across ABI encoding and decoding, hashing, signature operations, event log decoding, ENS utilities, call actions, multicall batching, and unit parsing. See benchmarks folder for methodology and results charts. At 5000 iterations, Go wins **37/37 benchmarks (100%)** with a **14.55x geometric mean speedup**. At 50 iterations the speedup peaks at **29.89x**.
