@@ -62,7 +62,7 @@ jobs:
         run: go run build/ci.go test-cover
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           files: ./coverage.out
           fail_ci_if_error: false
